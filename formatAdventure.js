@@ -70,7 +70,16 @@ function findSections(text) {
       id: sectionNum,
       position: match.index,
       matchText: match[0],
+      weak: !!match[5],
+      explicit: !!(match[1] || match[2]),
     });
+  }
+
+  // A bare "1." / "1:" line is ambiguous: it is also how numbered lists inside a section are
+  // written. If the text uses explicit "Section N" headers, ignore the bare form so list items
+  // don't become duplicate sections.
+  if (sections.some(s => s.explicit)) {
+    return sections.filter(s => !s.weak);
   }
 
   return sections;

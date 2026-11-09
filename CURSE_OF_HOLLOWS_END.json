@@ -2254,23 +2254,8 @@
     },
     {
       "id": 139,
-      "text": "You find a crumpled note, hastily scribbled in what looks like blood: \r\n\r\n\r\n\"The ritual requires three components:",
-      "title": "You find a crumpled note, hastily scribbled in what looks like blood:"
-    },
-    {
-      "id": 1,
-      "text": "Virgin blood (the girl Lydia)",
-      "title": "Virgin blood (the girl Lydia)"
-    },
-    {
-      "id": 2,
-      "text": "The silver binding broken completely",
-      "title": "The silver binding broken completely"
-    },
-    {
-      "id": 3,
-      "text": "The Widow's true name spoken at midnight \r\n\r\n\r\nWhen all three come together, she will rise at full power. Her vengeance will be absolute. Hollow's End will fall, and darkness will spread like plague across the land.\" \r\n\r\n\r\nThis is crucial intelligence! The cultists' plans are laid bare. \r\n\r\n\r\nTurn to 378.",
-      "title": "The Widow's true name spoken at midnight",
+      "text": "You find a crumpled note, hastily scribbled in what looks like blood: \r\n\r\n\r\n\"The ritual requires three components:\r\n\r\n\r\n1. Virgin blood (the girl Lydia)\r\n\r\n\r\n2. The silver binding broken completely\r\n\r\n\r\n3. The Widow's true name spoken at midnight \r\n\r\n\r\nWhen all three come together, she will rise at full power. Her vengeance will be absolute. Hollow's End will fall, and darkness will spread like plague across the land.\" \r\n\r\n\r\nThis is crucial intelligence! The cultists' plans are laid bare. \r\n\r\n\r\nTurn to 378.",
+      "title": "You find a crumpled note, hastily scribbled in what looks like blood:",
       "choices": [
         {
           "text": "Turn to 378",
@@ -2657,29 +2642,7 @@
     },
     {
       "id": 159,
-      "text": "A ghostly figure appears, translucent and shimmering. It points toward a section of wall and whispers in a voice like wind through reeds: \"Silver key... true name... midnight bell...\" \r\n\r\n\r\nThe ghost fades before you can ask questions, but its message is clear enough. These are the three components needed to bind the Widow:"
-    },
-    {
-      "id": 1,
-      "text": "A silver key (for the binding)",
-      "title": "A silver key (for the binding)",
-      "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
-        }
-      ]
-    },
-    {
-      "id": 2,
-      "text": "Her true name (to invoke her properly)",
-      "title": "Her true name (to invoke her properly)"
-    },
-    {
-      "id": 3,
-      "text": "Midnight (the time of greatest power)\r\n\r\n\r\nTurn to 335.",
-      "title": "Midnight (the time of greatest power)",
+      "text": "A ghostly figure appears, translucent and shimmering. It points toward a section of wall and whispers in a voice like wind through reeds: \"Silver key... true name... midnight bell...\" \r\n\r\n\r\nThe ghost fades before you can ask questions, but its message is clear enough. These are the three components needed to bind the Widow:\r\n\r\n\r\n1. A silver key (for the binding)\r\n\r\n\r\n2. Her true name (to invoke her properly)\r\n\r\n\r\n3. Midnight (the time of greatest power)\r\n\r\n\r\nTurn to 335.",
       "choices": [
         {
           "text": "Turn to 335",
@@ -7193,23 +7156,8 @@
     },
     {
       "id": 388,
-      "text": "You take a moment to review everything you've learned about the curse: \r\n\r\n\r\nTHE CURSE OF HOLLOW'S END - Complete History: \r\n\r\n\r\n242 years ago, Eliza Hollow married Thomas Ashford against her father's wishes. Mordecai Hollow wanted Eliza to marry a noble for political gain. During the wedding ceremony, Mordecai's men murdered Thomas before the altar. They then used forbidden necromancy to bind Eliza's spirit with silver chains, preventing her from seeking justice even in death. \r\n\r\n\r\nThe binding was designed to last only one generation—long enough for the guilty to die in peace. But it was never meant to be permanent. Each generation, the binding weakened. Now, 242 years later, it has failed completely. \r\n\r\n\r\nTo bind the Widow permanently, you need:",
-      "title": "You take a moment to review everything you've learned about the curse:"
-    },
-    {
-      "id": 1,
-      "text": "SILVER KEY (for physical binding)",
-      "title": "SILVER KEY (for physical binding)"
-    },
-    {
-      "id": 2,
-      "text": "HER TRUE NAME: ELIZA HOLLOW (for spiritual authority)",
-      "title": "HER TRUE NAME: ELIZA HOLLOW (for spiritual authority)"
-    },
-    {
-      "id": 3,
-      "text": "MIDNIGHT TIMING (for maximum power) \r\n\r\n\r\nBefore the final confrontation, you may:\r\n\r\n\r\nTurn to 137 to search for additional healing supplies\r\n\r\n\r\nTurn to 138 to find a hidden weapon cache\r\n\r\n\r\nTurn to 140 to discover a protective ward\r\n\r\n\r\nTurn to 146 to find a strength potion\r\n\r\n\r\nTurn to 147 to locate a luck charm\r\n\r\n\r\nTurn to 148 to discover a journal about fighting spirits\r\n\r\n\r\nTurn to 150 to find silver ammunition\r\n\r\n\r\nTurn to 153 to search for a shield\r\n\r\n\r\nTurn to 157 to find a cloak of shadows\r\n\r\n\r\nTurn to 160 to discover boots of speed\r\n\r\n\r\nTurn to 161 to find a ring of protection\r\n\r\n\r\nTurn to 163 to locate a blessed weapon\r\n\r\n\r\nTurn to 167 to find gauntlets of strength\r\n\r\n\r\nTurn to 168 to discover a helm of clarity\r\n\r\n\r\nTurn to 169 to find an amulet of life\r\n\r\n\r\nTurn to 170 to search for final provisions\r\n\r\n\r\nTurn to 179 to find a scroll of banishment\r\n\r\n\r\nTurn to 181 to discover a potion of invulnerability\r\n\r\n\r\nTurn to 183 to find holy water\r\n\r\n\r\nTurn to 185 to locate silver dust\r\n\r\n\r\nTurn to 186 to find a prayer of protection\r\n\r\n\r\nTurn to 187 to discover binding chains\r\n\r\n\r\nTurn to 193 to find a ghost-speaking amulet\r\n\r\n\r\nTurn to 194 to locate a spirit trap\r\n\r\n\r\nTurn to 197 to find a soul anchor\r\n\r\n\r\nTurn to 199 to discover final secrets\r\n\r\n\r\nTurn to 381 to pray at a shrine\r\n\r\n\r\nTurn to 382 to rest before battle\r\n\r\n\r\nTurn to 383 to sharpen your weapons\r\n\r\n\r\nTurn to 384 to review combat tactics\r\n\r\n\r\nTurn to 385 to meditate for clarity\r\n\r\n\r\nTurn to 386 to check your equipment\r\n\r\n\r\nTurn to 387 to say a final prayer\r\n\r\n\r\nTurn to 389 to face a guardian spirit\r\n\r\n\r\nTurn to 390 to find a healing fountain\r\n\r\n\r\nWhen ready for the final battle:\r\n\r\n\r\nTurn to 395 to face the Widow",
-      "title": "MIDNIGHT TIMING (for maximum power)",
+      "text": "You take a moment to review everything you've learned about the curse: \r\n\r\n\r\nTHE CURSE OF HOLLOW'S END - Complete History: \r\n\r\n\r\n242 years ago, Eliza Hollow married Thomas Ashford against her father's wishes. Mordecai Hollow wanted Eliza to marry a noble for political gain. During the wedding ceremony, Mordecai's men murdered Thomas before the altar. They then used forbidden necromancy to bind Eliza's spirit with silver chains, preventing her from seeking justice even in death. \r\n\r\n\r\nThe binding was designed to last only one generation—long enough for the guilty to die in peace. But it was never meant to be permanent. Each generation, the binding weakened. Now, 242 years later, it has failed completely. \r\n\r\n\r\nTo bind the Widow permanently, you need:\r\n\r\n\r\n1. SILVER KEY (for physical binding)\r\n\r\n\r\n2. HER TRUE NAME: ELIZA HOLLOW (for spiritual authority)\r\n\r\n\r\n3. MIDNIGHT TIMING (for maximum power) \r\n\r\n\r\nBefore the final confrontation, you may:\r\n\r\n\r\nTurn to 137 to search for additional healing supplies\r\n\r\n\r\nTurn to 138 to find a hidden weapon cache\r\n\r\n\r\nTurn to 140 to discover a protective ward\r\n\r\n\r\nTurn to 146 to find a strength potion\r\n\r\n\r\nTurn to 147 to locate a luck charm\r\n\r\n\r\nTurn to 148 to discover a journal about fighting spirits\r\n\r\n\r\nTurn to 150 to find silver ammunition\r\n\r\n\r\nTurn to 153 to search for a shield\r\n\r\n\r\nTurn to 157 to find a cloak of shadows\r\n\r\n\r\nTurn to 160 to discover boots of speed\r\n\r\n\r\nTurn to 161 to find a ring of protection\r\n\r\n\r\nTurn to 163 to locate a blessed weapon\r\n\r\n\r\nTurn to 167 to find gauntlets of strength\r\n\r\n\r\nTurn to 168 to discover a helm of clarity\r\n\r\n\r\nTurn to 169 to find an amulet of life\r\n\r\n\r\nTurn to 170 to search for final provisions\r\n\r\n\r\nTurn to 179 to find a scroll of banishment\r\n\r\n\r\nTurn to 181 to discover a potion of invulnerability\r\n\r\n\r\nTurn to 183 to find holy water\r\n\r\n\r\nTurn to 185 to locate silver dust\r\n\r\n\r\nTurn to 186 to find a prayer of protection\r\n\r\n\r\nTurn to 187 to discover binding chains\r\n\r\n\r\nTurn to 193 to find a ghost-speaking amulet\r\n\r\n\r\nTurn to 194 to locate a spirit trap\r\n\r\n\r\nTurn to 197 to find a soul anchor\r\n\r\n\r\nTurn to 199 to discover final secrets\r\n\r\n\r\nTurn to 381 to pray at a shrine\r\n\r\n\r\nTurn to 382 to rest before battle\r\n\r\n\r\nTurn to 383 to sharpen your weapons\r\n\r\n\r\nTurn to 384 to review combat tactics\r\n\r\n\r\nTurn to 385 to meditate for clarity\r\n\r\n\r\nTurn to 386 to check your equipment\r\n\r\n\r\nTurn to 387 to say a final prayer\r\n\r\n\r\nTurn to 389 to face a guardian spirit\r\n\r\n\r\nTurn to 390 to find a healing fountain\r\n\r\n\r\nWhen ready for the final battle:\r\n\r\n\r\nTurn to 395 to face the Widow",
+      "title": "You take a moment to review everything you've learned about the curse:",
       "choices": [
         {
           "text": "Turn to 137",
@@ -7354,33 +7302,6 @@
         {
           "text": "Turn to 395",
           "targetSection": 395
-        }
-      ],
-      "addItems": [
-        {
-          "id": "shield",
-          "name": "Shield",
-          "type": "armor"
-        },
-        {
-          "id": "ring",
-          "name": "Ring",
-          "type": "other"
-        },
-        {
-          "id": "amulet",
-          "name": "Amulet",
-          "type": "other"
-        },
-        {
-          "id": "scroll",
-          "name": "Scroll",
-          "type": "other"
-        },
-        {
-          "id": "potion",
-          "name": "Potion",
-          "type": "potion"
         }
       ]
     },

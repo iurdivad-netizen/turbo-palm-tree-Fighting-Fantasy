@@ -2125,8 +2125,18 @@
                 matches.push({
                     id: sectionId,
                     start: match.index,
-                    headerEnd: match.index + match[0].length
+                    headerEnd: match.index + match[0].length,
+                    weak: !!match[4]
                 });
+            }
+
+            // A bare "1." / "1:" line is ambiguous: it is also how numbered lists inside a
+            // section are written. If the text uses explicit "Section N" headers, ignore the
+            // bare form so list items don't become duplicate sections.
+            if (matches.some(m => /^section/i.test(text.substr(m.start, 7)))) {
+                for (let k = matches.length - 1; k >= 0; k--) {
+                    if (matches[k].weak) matches.splice(k, 1);
+                }
             }
 
             // Extract section content
@@ -2491,7 +2501,7 @@
                         // Hide the Fight button right away; if the book defines no victory
                         // section the section's own choices appear instead
                         GameState.combatDone = true;
-                        if (combat.onVictorySection) {
+                        if (GameState.currentBook.sections.some(sec => sec.id === combat.onVictorySection)) {
                             GameState.schedule(() => GameState.goToSection(combat.onVictorySection), 2000);
                         }
                     }
@@ -2515,7 +2525,8 @@
                     GameState.combatLog.push(`\n💀 You have been defeated...`);
                     GameState.inCombat = false;
                     GameState.currentCombatIndex = 0;
-                    if (combat.onDefeatSection) {
+                    const defeatTarget = GameState.currentBook.sections.some(sec => sec.id === combat.onDefeatSection);
+                    if (defeatTarget) {
                         // modifyStats already flagged game over; the book's defeat section takes over
                         GameState.isGameOver = false;
                         GameState.gameOverType = null;
