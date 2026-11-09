@@ -13,14 +13,7 @@
     {
       "id": 0,
       "text": "Background\r\n\r\n\r\nTwo hundred and forty-two years ago, on what should have been the happiest day of her life, Eliza Hollow was betrayed by her own family. Her father, Mordecai Hollow, murdered her beloved Thomas Ashford during their wedding ceremony and used forbidden necromancy to bind Eliza's spirit in eternal torment.\r\n\r\n\r\nFor generations, the Hollow family lived in fear as the curse grew stronger. Now the binding has finally broken, and the Widow has risen with an army of undead. The village of Hollow's End stands on the brink of destruction.\r\n\r\n\r\nYou are an adventurer who has answered Mayor Aldric Hollow's desperate call for help. Can you discover the Widow's true name, obtain the silver key, and bind her spirit before midnight strikes? The fate of Hollow's End rests in your hands.",
-      "title": "Background",
-      "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
-        }
-      ]
+      "title": "Background"
     },
     {
       "id": 1,
@@ -55,6 +48,13 @@
           "text": "Turn to 78",
           "targetSection": 78
         }
+      ],
+      "modifyStats": {
+        "skill": -2,
+        "stamina": -4
+      },
+      "removeItems": [
+        "mysterious-potion"
       ]
     },
     {
@@ -64,6 +64,13 @@
         {
           "text": "Turn to 180",
           "targetSection": 180
+        }
+      ],
+      "addItems": [
+        {
+          "id": "brass-key",
+          "name": "Brass Key",
+          "type": "key"
         }
       ]
     },
@@ -81,10 +88,6 @@
         {
           "text": "Turn to 94",
           "targetSection": 94
-        },
-        {
-          "text": "Turn to 221",
-          "targetSection": 221
         }
       ],
       "combat": {
@@ -92,7 +95,9 @@
         "enemySkill": 8,
         "enemyStamina": 12,
         "onVictorySection": 94,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "canFlee": true,
+        "fleeSection": 221
       }
     },
     {
@@ -112,23 +117,34 @@
     {
       "id": 7,
       "text": "The rope snaps with a sharp crack that echoes through the chamber! For a heart-stopping moment, you're suspended in mid-air. Then gravity takes hold, and you plummet into the darkness below. \r\n\r\n\r\nYour stomach lurches. Your arms windmill desperately. A scream tears from your throat—primal and terrified. \r\n\r\n\r\nRoll one die: \r\n\r\n\r\nOn 1-3: You hit the stone floor hard, the impact driving the breath from your lungs. At the last instant, you catch a narrow ledge that breaks your fall just enough to save your life. Lose 6 STAMINA. Bruised and bleeding, you drag yourself to safety. Turn to 156. \r\n\r\n\r\nOn 4-6: Your fall ends in disaster. Turn to 4.",
-      "choices": [
-        {
-          "text": "Turn to 156",
-          "targetSection": 156
-        },
-        {
-          "text": "Turn to 4",
-          "targetSection": 4
-        }
-      ],
+      "choices": [],
       "addItems": [
         {
           "id": "rope",
           "name": "Rope",
           "type": "other"
         }
-      ]
+      ],
+      "diceRoll": {
+        "label": "Roll one die",
+        "outcomes": [
+          {
+            "min": 1,
+            "max": 3,
+            "text": "You catch a narrow ledge and survive the fall.",
+            "targetSection": 156,
+            "modifyStats": {
+              "stamina": -6
+            }
+          },
+          {
+            "min": 4,
+            "max": 6,
+            "text": "Your fall ends in disaster.",
+            "targetSection": 4
+          }
+        ]
+      }
     },
     {
       "id": 8,
@@ -138,18 +154,50 @@
           "text": "Turn to 111",
           "targetSection": 111
         }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "30 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "iron-key",
+          "name": "Iron Key",
+          "type": "key"
+        }
       ]
     },
     {
       "id": 9,
       "text": "The Ghost's wail pierces your skull like a spike of ice! \r\n\r\n\r\nThe sound is inhuman, impossible, fundamentally wrong. It's the sound of pure anguish given voice, of rage and despair mixed into something that shouldn't exist. The frequency resonates with your bones, making your teeth ache. You can feel it in your chest, vibrating through your body. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: The wail fades after what feels like an eternity. Your ears ring but you're fundamentally intact. Turn to 335.   \r\nIf Unlucky: The Ghost's wail tears at your very essence. Permanently reduce your SKILL by 2 and your STAMINA by 4. You collapse, feeling as though part of your soul has been devoured. Turn to 335.",
       "title": "The Ghost's wail pierces your skull like a spike of ice!",
-      "choices": [
-        {
-          "text": "Turn to 335",
-          "targetSection": 335
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successSection": 335,
+        "failureSection": 335,
+        "successText": "The wail fades; your ears ring but you are intact.",
+        "failureText": "The wail tears at your very essence.",
+        "failureEffects": {
+          "permanentStats": {
+            "skill": -2,
+            "stamina": -4
+          }
         }
-      ]
+      }
     },
     {
       "id": 10,
@@ -180,17 +228,11 @@
           "targetSection": 234
         }
       ],
-      "addItems": [
-        {
-          "id": "healing-potion",
-          "name": "Healing Potion",
-          "type": "potion"
-        },
-        {
-          "id": "potion",
-          "name": "Potion",
-          "type": "potion"
-        }
+      "modifyStats": {
+        "stamina": 4
+      },
+      "removeItems": [
+        "healing-potion"
       ]
     },
     {
@@ -198,12 +240,18 @@
       "text": "The door before you is heavily reinforced with iron bands, and you can hear something moving on the other side—a shuffling, scraping sound that makes your skin crawl. The wood is scored with what look like claw marks from the inside, as if whatever is imprisoned here has spent years, perhaps decades, trying to escape. \r\n\r\n\r\nThe scratches are deep, gouged into the thick oak by something with immense strength and even greater desperation. Some of the marks look recent, the wood pale where it's been torn. Others are old, darkened with age and possibly blood. \r\n\r\n\r\nDo you have the BRASS KEY inscribed with strange symbols? \r\n\r\n\r\nIf yes: The key fits the lock perfectly. You hear a satisfying click, and with effort, you push the heavy door open. Beyond lies a chamber that makes your blood run cold. Turn to 5. \r\n\r\n\r\nIf no: The door remains sealed, and you have no means of opening it. Whatever lurks behind it will have to remain a mystery—or perhaps a blessing. Turn to 221.",
       "choices": [
         {
-          "text": "Turn to 5",
-          "targetSection": 5
+          "text": "Unlock the door with the Brass Key",
+          "targetSection": 5,
+          "conditions": {
+            "requiresItem": "brass-key"
+          }
         },
         {
-          "text": "Turn to 221",
-          "targetSection": 221
+          "text": "Leave the door sealed",
+          "targetSection": 221,
+          "conditions": {
+            "requiresNoItem": "brass-key"
+          }
         }
       ],
       "addItems": [
@@ -228,6 +276,13 @@
           "id": "scroll",
           "name": "Scroll",
           "type": "other"
+        },
+        {
+          "id": "true-name",
+          "name": "The Widow's True Name",
+          "type": "other",
+          "description": "Eliza Hollow",
+          "unique": true
         }
       ],
       "isEnding": true,
@@ -263,16 +318,19 @@
     {
       "id": 17,
       "text": "The passage ahead narrows dramatically, the walls pressing in from both sides until you can barely fit through. The ceiling lowers as well, forcing you to hunch forward, then to crouch, then finally to crawl on hands and knees. The air grows thick and stale, heavy with the weight of earth and stone pressing down from above. \r\n\r\n\r\nClaustrophobia claws at your mind. What if you get stuck? What if the walls close in further? What if the ceiling collapses? You can feel the weight of the entire cemetery, perhaps the entire village, pressing down on this fragile tunnel. \r\n\r\n\r\nYour armor scrapes against the stone walls with sounds that seem impossibly loud in the confined space. Each inch forward requires effort, your shoulders barely fitting through gaps that seem to shrink with every passing moment. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: You manage to squeeze through the tight space, though it takes several minutes of careful maneuvering and more than a few moments of panic. Your armor scrapes against stone with sounds that set your teeth on edge, but you emerge on the other side, gasping with relief. Turn to 155. \r\n\r\n\r\nIf Unlucky: You become stuck halfway through! Panic rises in your throat as you realize you can't move forward or backward. The walls seem to press in, the ceiling seems to lower. You struggle desperately, using precious energy, injuring yourself against the unforgiving stone. Lose 2 STAMINA from scrapes, bruises, and exhaustion. Finally, after what feels like hours but is probably only minutes, you manage to work yourself free and continue, your confidence shaken. Turn to 221.",
-      "choices": [
-        {
-          "text": "Turn to 155",
-          "targetSection": 155
-        },
-        {
-          "text": "Turn to 221",
-          "targetSection": 221
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successSection": 155,
+        "failureSection": 221,
+        "successText": "You squeeze through the tight space.",
+        "failureText": "You become stuck and scrape yourself free.",
+        "failureEffects": {
+          "modifyStats": {
+            "stamina": -2
+          }
         }
-      ]
+      }
     },
     {
       "id": 18,
@@ -282,7 +340,11 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "permanentStats": {
+        "stamina": -3,
+        "skill": -1
+      }
     },
     {
       "id": 19,
@@ -295,6 +357,19 @@
         {
           "text": "Turn to 127",
           "targetSection": 127
+        }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "50 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+4 stamina"
         }
       ]
     },
@@ -320,6 +395,12 @@
           "text": "Turn to 127",
           "targetSection": 127
         }
+      ],
+      "modifyStats": {
+        "stamina": 4
+      },
+      "removeItems": [
+        "rations"
       ]
     },
     {
@@ -340,7 +421,10 @@
           "text": "Turn to 155",
           "targetSection": 155
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 1
+      }
     },
     {
       "id": 24,
@@ -360,11 +444,6 @@
           "id": "book",
           "name": "Book",
           "type": "other"
-        },
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
         }
       ],
       "isEnding": true,
@@ -379,39 +458,65 @@
           "targetSection": 395
         }
       ],
-      "combat": {
-        "enemyName": "",
-        "enemySkill": 6,
-        "enemyStamina": 4,
-        "onVictorySection": 395,
-        "onDefeatSection": 999
-      }
+      "combat": [
+        {
+          "enemyName": "SHADOW 1",
+          "enemySkill": 6,
+          "enemyStamina": 4,
+          "onVictorySection": 395,
+          "onDefeatSection": 999,
+          "onWound": {
+            "skillLoss": 1,
+            "permanent": true
+          }
+        },
+        {
+          "enemyName": "SHADOW 2",
+          "enemySkill": 6,
+          "enemyStamina": 4,
+          "onVictorySection": 395,
+          "onDefeatSection": 999,
+          "onWound": {
+            "skillLoss": 1,
+            "permanent": true
+          }
+        },
+        {
+          "enemyName": "SHADOW 3",
+          "enemySkill": 5,
+          "enemyStamina": 3,
+          "onVictorySection": 395,
+          "onDefeatSection": 999,
+          "onWound": {
+            "skillLoss": 1,
+            "permanent": true
+          }
+        }
+      ]
     },
     {
       "id": 26,
       "text": "You drink the mysterious potion without hesitation, tipping the vial back and letting the thick liquid flow down your throat. For a moment, nothing happens. Then you feel it—warmth spreading through your body, but it's different from a healing potion. This is something else entirely. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: The potion is a powerful healing draft! The warmth intensifies, flowing into every injury, every bruised muscle, every strained tendon. Restore 6 STAMINA points (maximum of your Initial STAMINA). You feel rejuvenated, stronger, ready to face whatever challenges lie ahead. Turn to 156. \r\n\r\n\r\nIf Unlucky: The warmth turns to burning. Your stomach convulses, and you realize too late that the potion was poisoned—or perhaps simply went bad decades ago. Lose 4 STAMINA as your body tries to expel the toxins. You double over, retching and gasping, feeling weaker than before. The potion was a trap, or perhaps just bad luck. Turn to 156.",
-      "choices": [
-        {
-          "text": "Turn to 156",
-          "targetSection": 156
-        }
-      ],
-      "addItems": [
-        {
-          "id": "mysterious-potion",
-          "name": "Mysterious Potion",
-          "type": "potion"
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck: the potion",
+        "successSection": 156,
+        "failureSection": 156,
+        "successText": "The potion is a powerful healing draft!",
+        "failureText": "The potion was poisoned!",
+        "successEffects": {
+          "modifyStats": {
+            "stamina": 6
+          }
         },
-        {
-          "id": "healing-potion",
-          "name": "Healing Potion",
-          "type": "potion"
-        },
-        {
-          "id": "potion",
-          "name": "Potion",
-          "type": "potion"
+        "failureEffects": {
+          "modifyStats": {
+            "stamina": -4
+          }
         }
+      },
+      "removeItems": [
+        "mysterious-potion"
       ]
     },
     {
@@ -433,30 +538,34 @@
           "text": "Turn to 111",
           "targetSection": 111
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -1
+      }
     },
     {
       "id": 29,
       "text": "You remember something you read in a journal or heard from a frightened villager—something about silver being the key to binding the dead. The memory surfaces clearly now, urgent and vital: \"Silver binds the dead. Only silver can seal the Widow's power forever.\" \r\n\r\n\r\nThe knowledge burns in your mind with the certainty of truth. But knowledge alone isn't enough—you need the actual implement. Do you have the SILVER KEY that Mayor Aldric promised to give you if you rescued his daughter? \r\n\r\n\r\nIf you have the SILVER KEY: Excellent! You clutch the key tightly, feeling its weight in your hand, its cold metal warming slightly against your skin. This is one of the three critical items needed for victory. With the key, the Widow's true name, and proper timing, you might actually succeed in binding her spirit. Turn to 395. \r\n\r\n\r\nIf you don't have the SILVER KEY: Your heart sinks. The knowledge is useless without the tool. You cannot bind the Widow without silver, and without binding her, you cannot end the curse. You're missing one of the three critical items needed for victory. The final confrontation will be far more difficult, perhaps impossible. Turn to 362.",
       "choices": [
         {
-          "text": "Turn to 395",
-          "targetSection": 395
+          "text": "Carry the Silver Key to the final confrontation",
+          "targetSection": 395,
+          "conditions": {
+            "requiresItem": "silver-key"
+          }
         },
         {
-          "text": "Turn to 362",
-          "targetSection": 362
+          "text": "Without the Silver Key, press on regardless",
+          "targetSection": 362,
+          "conditions": {
+            "requiresNoItem": "silver-key"
+          }
         }
       ],
       "addItems": [
         {
           "id": "key",
           "name": "Key",
-          "type": "key"
-        },
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
           "type": "key"
         }
       ],
@@ -477,13 +586,20 @@
         "enemySkill": 6,
         "enemyStamina": 5,
         "onVictorySection": 155,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "weakTo": {
+          "property": "crushing",
+          "damage": 3
+        }
       },
       "addItems": [
         {
           "id": "mace",
           "name": "Mace",
-          "type": "weapon"
+          "type": "weapon",
+          "properties": [
+            "crushing"
+          ]
         }
       ]
     },
@@ -504,10 +620,6 @@
         {
           "text": "Turn to 3",
           "targetSection": 3
-        },
-        {
-          "text": "Turn to 221",
-          "targetSection": 221
         }
       ],
       "combat": {
@@ -515,7 +627,9 @@
         "enemySkill": 5,
         "enemyStamina": 4,
         "onVictorySection": 3,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "canFlee": true,
+        "fleeSection": 221
       }
     },
     {
@@ -523,12 +637,18 @@
       "text": "You examine the strange symbols carved into the walls around you—occult signs and sigils that seem to writhe and shift in the torchlight. Some you recognize from old books on dark magic: binding circles, summoning glyphs, marks of protection (or is it imprisonment?). Others are completely alien, their meanings lost to time or knowledge you've never acquired. \r\n\r\n\r\nDo you have the MAYOR'S LEDGER—the book that contains information about the \"Hollow Faith\" cult and its symbols? \r\n\r\n\r\nIf you have the MAYOR'S LEDGER: You pull out the ledger and flip through its pages, comparing the symbols on the walls to the sketches and notes within. Yes! These match! The ledger explains that these symbols are part of the original binding ritual used to imprison the Widow's spirit. Understanding them gives you insight into how the binding works and potentially how to renew it—or how to avoid breaking it further. This knowledge will prove valuable. Turn to 155. \r\n\r\n\r\nIf you don't have the ledger: The symbols remain meaningless to you—pretty pictures carved by hands long dead, serving purposes you can't fathom. Without context, they're just decorations on stone, mysteries you have neither the time nor the knowledge to solve. Turn to 111.",
       "choices": [
         {
-          "text": "Turn to 155",
-          "targetSection": 155
+          "text": "Use the Mayor's Ledger to read the symbols",
+          "targetSection": 155,
+          "conditions": {
+            "requiresItem": "mayors-ledger"
+          }
         },
         {
-          "text": "Turn to 111",
-          "targetSection": 111
+          "text": "Move on",
+          "targetSection": 111,
+          "conditions": {
+            "requiresNoItem": "mayors-ledger"
+          }
         }
       ],
       "addItems": [
@@ -542,20 +662,83 @@
     {
       "id": 34,
       "text": "The floor ahead looks solid enough, but your instincts—honed by years of adventure and countless brushes with death—scream warning. Something about the stones ahead looks wrong. The mortar between them is a slightly different color. The stones themselves sit at a subtly different height. It's a trap. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: Your instincts prove correct! You carefully examine the floor and spot the pressure plate hidden beneath a thin layer of dust and debris. One wrong step would have triggered it. You mark its location mentally and step carefully around it, avoiding the trap entirely. Turn to 155. \r\n\r\n\r\nIf Unlucky: You see the trap too late! Your foot comes down on the pressure plate, and you hear a click that makes your blood run cold. Immediately, darts shoot from hidden slots in the walls, whistling through the air with deadly precision. Most miss, but several strike home, piercing exposed flesh and injecting their ancient venom. Lose 5 STAMINA from the dart wounds and the poison they carry. You stagger forward, pulling the darts from your flesh, grateful that the ancient poison has weakened over time—otherwise, you'd already be dead. Turn to 155.",
-      "choices": [
-        {
-          "text": "Turn to 155",
-          "targetSection": 155
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successSection": 155,
+        "failureSection": 155,
+        "successText": "You spot the pressure plate and step around it.",
+        "failureText": "Darts shoot from the walls!",
+        "failureEffects": {
+          "modifyStats": {
+            "stamina": -5
+          }
         }
-      ]
+      }
     },
     {
       "id": 35,
       "text": "You discover a storage room that has somehow escaped the general looting and decay that plagues this place. On dusty shelves, you find: \r\n\r\n\r\n3 Provisions - Dried food that's still edible, if not exactly appetizing. Water in sealed containers. Food that could mean the difference between life and death. \r\n\r\n\r\nA mysterious vial containing thick, luminous blue liquid that seems to glow from within. The liquid swirls slowly, responding to the warmth of your hand as you pick it up. \r\n\r\n\r\nThis vial presents a choice. You could drink it immediately, taking a chance on its effects. According to faded writing on the label (in a language you barely recognize), this potion will permanently increase your SKILL by 1 (maximum Initial +1). However, there's a cost: drinking it will reduce your LUCK by 1 as the fates demand balance for such a gift. \r\n\r\n\r\nThe decision is yours: \r\n\r\n\r\nDrink the vial to gain +1 SKILL but lose 1 LUCK \r\n\r\n\r\nSave it for later (add it to your inventory) \r\n\r\n\r\nLeave it behind\r\n\r\n\r\nAdd the 3 Provisions to your Adventure Sheet. \r\n\r\n\r\nOnce you've made your decision about the vial, you continue exploring. \r\n\r\n\r\nTurn to 111.",
       "choices": [
         {
-          "text": "Turn to 111",
+          "text": "Drink the vial now (+1 SKILL permanently, -1 LUCK)",
+          "targetSection": 111,
+          "once": true,
+          "effects": {
+            "permanentStats": {
+              "skill": 1
+            },
+            "modifyStats": {
+              "luck": -1
+            }
+          }
+        },
+        {
+          "text": "Take the vial with you to drink later",
+          "targetSection": 111,
+          "once": true,
+          "effects": {
+            "addItems": [
+              {
+                "id": "luminous-vial",
+                "name": "Luminous Blue Vial",
+                "type": "potion",
+                "description": "Permanently +1 SKILL, but costs 1 LUCK when drunk.",
+                "onUse": {
+                  "permanentStats": {
+                    "skill": 1
+                  },
+                  "modifyStats": {
+                    "luck": -1
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "text": "Leave the vial behind and continue",
           "targetSection": 111
+        }
+      ],
+      "addItems": [
+        {
+          "id": "rations",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "rations",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "rations",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
         }
       ]
     },
@@ -573,7 +756,12 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 301,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "effectiveWeapons": [
+          "magical",
+          "silver"
+        ],
+        "normalWeaponDamage": 1
       },
       "isEnding": true,
       "endingType": "neutral"
@@ -634,14 +822,38 @@
     {
       "id": 41,
       "text": "The ceiling above you suddenly gives way without warning! Centuries of moisture and slow decay finally claim victory, and tons of earth and stone come crashing down. \r\n\r\n\r\nRoll one die: \r\n\r\n\r\nOn 1-2: The collapse is catastrophic. You're directly beneath the worst of it. Lose 6 STAMINA from the brutal impact of falling stone. You're battered, bruised, possibly suffering broken ribs or worse. If you survive, you dig yourself out from under the rubble, spitting blood and dust. If you're still alive, turn to 221. \r\n\r\n\r\nOn 3-4: You're caught by the edge of the collapse. Lose 3 STAMINA as smaller rocks and debris rain down on you. You manage to shield your head with your arms, but you don't escape unscathed. Once the dust settles, turn to 221. \r\n\r\n\r\nOn 5-6: Your reflexes save you! You see a crack form in the ceiling and dive aside just as tons of earth come crashing down where you were standing a second before. You avoid the collapse entirely, though your heart races and your hands shake from the close call. Turn to 221.",
-      "choices": [
-        {
-          "text": "turn to 221",
-          "targetSection": 221
-        }
-      ],
+      "choices": [],
       "isEnding": true,
-      "endingType": "victory"
+      "endingType": "victory",
+      "diceRoll": {
+        "label": "Roll one die",
+        "outcomes": [
+          {
+            "min": 1,
+            "max": 2,
+            "text": "The collapse is catastrophic!",
+            "targetSection": 221,
+            "modifyStats": {
+              "stamina": -6
+            }
+          },
+          {
+            "min": 3,
+            "max": 4,
+            "text": "You are caught by the edge of the collapse.",
+            "targetSection": 221,
+            "modifyStats": {
+              "stamina": -3
+            }
+          },
+          {
+            "min": 5,
+            "max": 6,
+            "text": "Your reflexes save you!",
+            "targetSection": 221
+          }
+        ]
+      }
     },
     {
       "id": 42,
@@ -658,7 +870,10 @@
           "name": "Map",
           "type": "other"
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 1
+      }
     },
     {
       "id": 43,
@@ -688,6 +903,17 @@
           "id": "dagger",
           "name": "Dagger",
           "type": "weapon"
+        },
+        {
+          "id": "gold",
+          "name": "40 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "cloak-of-protection",
+          "name": "Cloak of Protection",
+          "type": "armor",
+          "bonus": "+1 defense"
         }
       ]
     },
@@ -826,7 +1052,11 @@
         "enemySkill": 6,
         "enemyStamina": 6,
         "onVictorySection": 312,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "onWound": {
+          "skillLoss": 1,
+          "luckTest": true
+        }
       }
     },
     {
@@ -869,12 +1099,19 @@
     {
       "id": 50,
       "text": "The water is deeper than you expected, the current stronger, the cold more intense. You try to swim, but your armor weighs you down, the current pulls at you, and the water's icy grip saps your strength with terrifying speed. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: You manage to swim through the flooded section, though it's exhausting and terrifying. You emerge on the other side gasping and shivering but alive. Turn to 221. \r\n\r\n\r\nIf Unlucky: The current pulls you under! You fight desperately, lungs burning, limbs growing numb from the cold. Water fills your mouth and nose. You're drowning... but at the last moment, your foot finds purchase on the bottom, and you push yourself up, breaking the surface and gasping for air. Lose 3 STAMINA from near-drowning and hypothermia. You drag yourself out of the water, coughing and trembling. Turn to 221.",
-      "choices": [
-        {
-          "text": "Turn to 221",
-          "targetSection": 221
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successSection": 221,
+        "failureSection": 221,
+        "successText": "You swim through, exhausted but alive.",
+        "failureText": "The current pulls you under!",
+        "failureEffects": {
+          "modifyStats": {
+            "stamina": -3
+          }
         }
-      ]
+      }
     },
     {
       "id": 51,
@@ -909,7 +1146,10 @@
           "text": "Turn to 111",
           "targetSection": 111
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -2
+      }
     },
     {
       "id": 54,
@@ -940,7 +1180,11 @@
           "text": "Turn to 355",
           "targetSection": 355
         }
-      ]
+      ],
+      "permanentStats": {
+        "skill": -1,
+        "stamina": -2
+      }
     },
     {
       "id": 56,
@@ -949,13 +1193,6 @@
         {
           "text": "Turn to 127",
           "targetSection": 127
-        }
-      ],
-      "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
         }
       ],
       "isEnding": true,
@@ -979,7 +1216,10 @@
           "text": "Turn to 155",
           "targetSection": 155
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -4
+      }
     },
     {
       "id": 59,
@@ -997,26 +1237,32 @@
           "type": "armor"
         },
         {
-          "id": "blade",
-          "name": "Blade",
-          "type": "weapon"
-        },
-        {
-          "id": "sword",
-          "name": "Sword",
-          "type": "weapon"
+          "id": "magic-longsword",
+          "name": "+1 Longsword",
+          "type": "weapon",
+          "bonus": "+1 skill",
+          "properties": [
+            "magical"
+          ]
         }
       ]
     },
     {
       "id": 60,
       "text": "The floor beneath you is slick with blood—so much blood that it's pooled in the depressions between the stones, creating sticky, viscous puddles that squelch beneath your boots. The coppery smell is overwhelming, making your stomach churn. \r\n\r\n\r\nWhose blood is this? How many people died here? The questions flash through your mind, but you don't have time to ponder them. Test your Luck. \r\n\r\n\r\nIf Lucky: You manage to keep your footing despite the treacherous surface, moving carefully across the blood-slicked floor without incident. Turn to 301. \r\n\r\n\r\nIf Unlucky: Your foot slips in the blood! You go down hard, hitting the stone floor with painful force. Lose 2 STAMINA from the impact and from cutting your hands on the rough stone as you try to catch yourself. You rise slowly, covered in blood (not all of it yours), and continue more carefully. Turn to 301.",
-      "choices": [
-        {
-          "text": "Turn to 301",
-          "targetSection": 301
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successSection": 301,
+        "failureSection": 301,
+        "successText": "You keep your footing.",
+        "failureText": "Your foot slips in the blood!",
+        "failureEffects": {
+          "modifyStats": {
+            "stamina": -2
+          }
         }
-      ]
+      }
     },
     {
       "id": 61,
@@ -1026,7 +1272,10 @@
           "text": "Turn to 378",
           "targetSection": 378
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -1
+      }
     },
     {
       "id": 62,
@@ -1042,7 +1291,11 @@
         "enemySkill": 5,
         "enemyStamina": 6,
         "onVictorySection": 189,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "reviveOn": [
+          5,
+          6
+        ]
       }
     },
     {
@@ -1070,7 +1323,10 @@
           "text": "Turn to 335",
           "targetSection": 335
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 1
+      }
     },
     {
       "id": 65,
@@ -1093,6 +1349,11 @@
           "id": "scroll",
           "name": "Scroll",
           "type": "other"
+        },
+        {
+          "id": "gold",
+          "name": "50 Gold Pieces",
+          "type": "treasure"
         }
       ]
     },
@@ -1138,12 +1399,18 @@
       "text": "The door is magically sealed, its surface covered in glowing runes that pulse with eldritch energy. You can feel the power emanating from it— ancient magic, strong magic, dangerous magic. \r\n\r\n\r\nDo you have the ALCHEMIST'S JOURNAL in your possession? \r\n\r\n\r\nIf yes: You flip through the journal and find a section on magical barriers and counter-spells. Yes! The journal contains the exact counter-spell needed to break this particular seal. You speak the words carefully, pronouncing each syllable exactly as written, and the runes flare brightly before fading entirely. The door is now unsealed. Turn to 355. \r\n\r\n\r\nIf no: Without knowledge of the counter-spell, you have no way to break this magical seal. The door remains closed, its secrets beyond your reach. You'll need to find another way forward. Turn to 301.",
       "choices": [
         {
-          "text": "Turn to 355",
-          "targetSection": 355
+          "text": "Speak the counter-spell from the Alchemist's Journal",
+          "targetSection": 355,
+          "conditions": {
+            "requiresItem": "alchemists-journal"
+          }
         },
         {
-          "text": "Turn to 301",
-          "targetSection": 301
+          "text": "Find another way forward",
+          "targetSection": 301,
+          "conditions": {
+            "requiresNoItem": "alchemists-journal"
+          }
         }
       ]
     },
@@ -1172,7 +1439,10 @@
           "name": "Potion",
           "type": "potion"
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -3
+      }
     },
     {
       "id": 73,
@@ -1181,6 +1451,13 @@
         {
           "text": "Turn to 127",
           "targetSection": 127
+        }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "20 Gold Pieces",
+          "type": "treasure"
         }
       ]
     },
@@ -1206,7 +1483,10 @@
           "text": "Turn to 221",
           "targetSection": 221
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -2
+      }
     },
     {
       "id": 76,
@@ -1215,6 +1495,15 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
+        }
+      ],
+      "addItems": [
+        {
+          "id": "true-name",
+          "name": "The Widow's True Name",
+          "type": "other",
+          "description": "Eliza Hollow",
+          "unique": true
         }
       ]
     },
@@ -1263,12 +1552,25 @@
     {
       "id": 80,
       "text": "You drink from the ancient fountain, hoping the water might be blessed or possess healing properties. The water is cold and clear, tasting faintly metallic but not unpleasant. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: The water IS blessed! You feel warmth spreading through your body, healing your wounds and strengthening your spirit. Restore 4 STAMINA and 1 LUCK (maximum of your Initial scores). This fountain was once sacred ground, and some of that holiness remains. Turn to 301. \r\n\r\n\r\nIf Unlucky: The water is cursed! It burns as it goes down, and you feel your strength ebbing. Lose 3 STAMINA as the corruption of this place has tainted even the water that once flowed pure. You stumble away from the fountain, retching. Turn to 301.",
-      "choices": [
-        {
-          "text": "Turn to 301",
-          "targetSection": 301
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck: the water",
+        "successSection": 301,
+        "failureSection": 301,
+        "successText": "The water is blessed!",
+        "failureText": "The water is cursed!",
+        "successEffects": {
+          "modifyStats": {
+            "stamina": 4,
+            "luck": 1
+          }
+        },
+        "failureEffects": {
+          "modifyStats": {
+            "stamina": -3
+          }
         }
-      ]
+      }
     },
     {
       "id": 81,
@@ -1336,7 +1638,10 @@
           "text": "Turn to 355",
           "targetSection": 355
         }
-      ]
+      ],
+      "permanentStats": {
+        "skill": -1
+      }
     },
     {
       "id": 86,
@@ -1351,19 +1656,26 @@
     {
       "id": 87,
       "text": "A trap activates as you step on a hidden pressure plate! Spears shoot from slots in the walls, whistling through the air with deadly precision. Test your Luck. \r\n\r\n\r\nIf Lucky: Your reflexes save you! You see the spears coming and manage to dodge aside at the last instant. One grazes your arm, drawing blood but not doing serious damage. Turn to 155. \r\n\r\n\r\nIf Unlucky: A spear catches you! It grazes along your side, tearing through armor and flesh alike. Lose 4 STAMINA from the spear wound. You press your hand against the injury, feeling warm blood flowing between your fingers. The wound isn't fatal, but it's painful and debilitating. Turn to 155.",
-      "choices": [
-        {
-          "text": "Turn to 155",
-          "targetSection": 155
-        }
-      ],
+      "choices": [],
       "addItems": [
         {
           "id": "spear",
           "name": "Spear",
           "type": "weapon"
         }
-      ]
+      ],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successSection": 155,
+        "failureSection": 155,
+        "successText": "You dodge the spears.",
+        "failureText": "A spear catches you!",
+        "failureEffects": {
+          "modifyStats": {
+            "stamina": -4
+          }
+        }
+      }
     },
     {
       "id": 88,
@@ -1419,19 +1731,24 @@
       "title": "The Widow appears before you without warning!",
       "choices": [
         {
-          "text": "Turn to 395",
-          "targetSection": 395
+          "text": "Bind her with the Silver Key and her true name",
+          "targetSection": 395,
+          "conditions": {
+            "requiresItem": [
+              "silver-key",
+              "true-name"
+            ]
+          }
         },
         {
-          "text": "Turn to 362",
-          "targetSection": 362
-        }
-      ],
-      "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
+          "text": "Fight or flee: you are missing the key or her name",
+          "targetSection": 362,
+          "conditions": {
+            "requiresMissingAny": [
+              "silver-key",
+              "true-name"
+            ]
+          }
         }
       ]
     },
@@ -1443,6 +1760,12 @@
           "text": "Turn to 155",
           "targetSection": 155
         }
+      ],
+      "modifyStats": {
+        "stamina": 4
+      },
+      "removeItems": [
+        "rations"
       ]
     },
     {
@@ -1451,18 +1774,23 @@
       "title": "The door ahead is locked tight, secured with a heavy iron lock that looks formidable.",
       "choices": [
         {
-          "text": "Turn to 267",
-          "targetSection": 267
-        },
-        {
-          "text": "Turn to 27",
-          "targetSection": 27
-        },
-        {
-          "text": "Turn to 28",
-          "targetSection": 28
+          "text": "Unlock the door with the Brass Key",
+          "targetSection": 267,
+          "conditions": {
+            "requiresItem": "brass-key"
+          }
         }
-      ]
+      ],
+      "testLuck": {
+        "successSection": 27,
+        "failureSection": 28,
+        "label": "Force the door (Test Your Luck)",
+        "conditions": {
+          "requiresNoItem": "brass-key"
+        },
+        "successText": "The lock gives way.",
+        "failureText": "The door will not budge."
+      }
     },
     {
       "id": 94,
@@ -1482,13 +1810,6 @@
         {
           "text": "Turn to 335",
           "targetSection": 335
-        }
-      ],
-      "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
         }
       ]
     },
@@ -1510,7 +1831,11 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": "max",
+        "luck": 1
+      }
     },
     {
       "id": 98,
@@ -1519,6 +1844,13 @@
         {
           "text": "Turn to 180",
           "targetSection": 180
+        }
+      ],
+      "addItems": [
+        {
+          "id": "cult-medallion",
+          "name": "Cult Medallion",
+          "type": "other"
         }
       ]
     },
@@ -1536,6 +1868,11 @@
           "id": "rope",
           "name": "Rope",
           "type": "other"
+        },
+        {
+          "id": "gold",
+          "name": "30 Gold Pieces",
+          "type": "treasure"
         }
       ]
     },
@@ -1595,22 +1932,30 @@
           "id": "treasure",
           "name": "Treasure",
           "type": "treasure"
+        },
+        {
+          "id": "gold",
+          "name": "40 Gold Pieces",
+          "type": "treasure"
         }
       ]
     },
     {
       "id": 103,
       "text": "The passage ahead narrows dramatically, forcing you to turn sideways and shuffle through. The walls press in from both sides, and the ceiling lowers until you're hunched over. Your armor scrapes against stone with sounds that seem impossibly loud in the confined space. \r\n\r\n\r\nClaustrophobia begins to claw at your mind. What if you get stuck? What if the passage gets even narrower? What if the ceiling collapses? Test your Luck. \r\n\r\n\r\nIf Lucky: You manage to squeeze through the tight crawl space, though it takes several uncomfortable minutes. Your armor picks up new scratches and dents, and your muscles ache from the awkward positioning, but you emerge on the other side intact. Turn to 155. \r\n\r\n\r\nIf Unlucky: You become stuck halfway through! Panic floods your system as you realize you can't move forward or backward. Your breath comes in short gasps. Lose 2 STAMINA as you struggle desperately, scraping skin against rough stone, using precious energy to work yourself free. After what feels like an eternity, you manage to wiggle loose and continue, shaken and bruised. Turn to 111.",
-      "choices": [
-        {
-          "text": "Turn to 155",
-          "targetSection": 155
-        },
-        {
-          "text": "Turn to 111",
-          "targetSection": 111
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successSection": 155,
+        "failureSection": 111,
+        "successText": "You squeeze through the crawl space.",
+        "failureText": "You become stuck, and work yourself free.",
+        "failureEffects": {
+          "modifyStats": {
+            "stamina": -2
+          }
         }
-      ]
+      }
     },
     {
       "id": 104,
@@ -1626,7 +1971,10 @@
           "id": "silver-dagger",
           "name": "Silver Dagger",
           "type": "weapon",
-          "bonus": "+1"
+          "bonus": "+1",
+          "properties": [
+            "silver"
+          ]
         },
         {
           "id": "blade",
@@ -1643,7 +1991,13 @@
           "text": "Turn to 298",
           "targetSection": 298
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -3
+      },
+      "maxStats": {
+        "stamina": -1
+      }
     },
     {
       "id": 106,
@@ -1653,25 +2007,41 @@
           "text": "Turn to 355",
           "targetSection": 355
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 2
+      }
     },
     {
       "id": 107,
       "text": "The floor suddenly collapses beneath you! Ancient wood and rotted supports finally give way after centuries of bearing weight. Roll one die: \r\n\r\n\r\nOn 1-2: The collapse is catastrophic. Turn to 4 (instant death in the spike pit below). \r\n\r\n\r\nOn 3-4: You partially fall through but catch yourself at the last moment. Lose 5 STAMINA from the impact and from the effort of pulling yourself back up. Turn to 221. \r\n\r\n\r\nOn 5-6: Your reflexes save you! You see the floor beginning to give way and leap backward just in time. The section where you were standing collapses into darkness below, but you're safe on solid ground. Turn to 156.",
-      "choices": [
-        {
-          "text": "Turn to 4",
-          "targetSection": 4
-        },
-        {
-          "text": "Turn to 221",
-          "targetSection": 221
-        },
-        {
-          "text": "Turn to 156",
-          "targetSection": 156
-        }
-      ]
+      "choices": [],
+      "diceRoll": {
+        "label": "Roll one die",
+        "outcomes": [
+          {
+            "min": 1,
+            "max": 2,
+            "text": "The collapse is catastrophic: the spike pit below!",
+            "targetSection": 4
+          },
+          {
+            "min": 3,
+            "max": 4,
+            "text": "You catch yourself at the last moment.",
+            "targetSection": 221,
+            "modifyStats": {
+              "stamina": -5
+            }
+          },
+          {
+            "min": 5,
+            "max": 6,
+            "text": "You leap back just in time.",
+            "targetSection": 156
+          }
+        ]
+      }
     },
     {
       "id": 108,
@@ -1694,9 +2064,17 @@
       ],
       "addItems": [
         {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
+          "id": "alchemists-journal",
+          "name": "Alchemist's Journal",
+          "type": "other",
+          "unique": true
+        },
+        {
+          "id": "true-name",
+          "name": "The Widow's True Name",
+          "type": "other",
+          "description": "Eliza Hollow",
+          "unique": true
         }
       ]
     },
@@ -1842,9 +2220,10 @@
           "type": "potion"
         },
         {
-          "id": "potion",
-          "name": "Potion",
-          "type": "potion"
+          "id": "potion-of-luck",
+          "name": "Potion of Luck",
+          "type": "potion",
+          "restore": "+3 luck"
         }
       ]
     },
@@ -1873,7 +2252,10 @@
           "name": "Map",
           "type": "other"
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 1
+      }
     },
     {
       "id": 116,
@@ -1883,7 +2265,13 @@
           "text": "Turn to 355",
           "targetSection": 355
         }
-      ]
+      ],
+      "permanentStats": {
+        "skill": -1
+      },
+      "maxStats": {
+        "stamina": -2
+      }
     },
     {
       "id": 117,
@@ -1924,6 +2312,13 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "cloak-of-shadows",
+          "name": "Cloak of Shadows",
+          "type": "other"
+        }
       ]
     },
     {
@@ -1954,7 +2349,12 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "effectiveWeapons": [
+          "magical",
+          "silver"
+        ],
+        "normalWeaponDamage": 1
       }
     },
     {
@@ -2017,8 +2417,11 @@
           "targetSection": 298
         },
         {
-          "text": "Turn to 21",
-          "targetSection": 21
+          "text": "Eat a Provision and rest",
+          "targetSection": 21,
+          "conditions": {
+            "requiresItem": "rations"
+          }
         },
         {
           "text": "Turn to 46",
@@ -2120,7 +2523,10 @@
           "text": "Turn to 221",
           "targetSection": 221
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -2
+      }
     },
     {
       "id": 130,
@@ -2144,11 +2550,6 @@
       ],
       "addItems": [
         {
-          "id": "key",
-          "name": "Key",
-          "type": "key"
-        },
-        {
           "id": "iron-key",
           "name": "Iron Key",
           "type": "key"
@@ -2156,6 +2557,11 @@
         {
           "id": "silver-key",
           "name": "Silver Key",
+          "type": "key"
+        },
+        {
+          "id": "brass-key",
+          "name": "Brass Key",
           "type": "key"
         }
       ]
@@ -2172,6 +2578,19 @@
           "text": "Turn to 127",
           "targetSection": 127
         }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "50 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+4 stamina"
+        }
       ]
     },
     {
@@ -2182,17 +2601,27 @@
           "text": "Turn to 355",
           "targetSection": 355
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 1
+      }
     },
     {
       "id": 134,
       "text": "The water level rises rapidly without warning! What was ankle-deep suddenly becomes waist-deep, then chest-deep. The cold water rushes in from somewhere, filling the passage with terrifying speed. \r\n\r\n\r\nYou must swim for your life! \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: You manage to swim to higher ground before the passage floods completely. Your lungs burn and your limbs ache, but you escape the worst of it. Turn to 221. \r\n\r\n\r\nIf Unlucky: The rising water catches you! You go under, tumbling in the current, unable to tell which way is up. Lose 5 STAMINA from near drowning and hypothermia. Just when you think your lungs will burst, you break the surface, gasping and choking. Turn to 221.",
-      "choices": [
-        {
-          "text": "Turn to 221",
-          "targetSection": 221
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successSection": 221,
+        "failureSection": 221,
+        "successText": "You swim to higher ground.",
+        "failureText": "The rising water catches you!",
+        "failureEffects": {
+          "modifyStats": {
+            "stamina": -5
+          }
         }
-      ]
+      }
     },
     {
       "id": 135,
@@ -2205,8 +2634,8 @@
       ],
       "addItems": [
         {
-          "id": "map",
-          "name": "Map",
+          "id": "manor-map",
+          "name": "Manor Map",
           "type": "other"
         }
       ]
@@ -2225,7 +2654,12 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "effectiveWeapons": [
+          "magical",
+          "silver"
+        ],
+        "normalWeaponDamage": 1
       }
     },
     {
@@ -2254,23 +2688,8 @@
     },
     {
       "id": 139,
-      "text": "You find a crumpled note, hastily scribbled in what looks like blood: \r\n\r\n\r\n\"The ritual requires three components:",
-      "title": "You find a crumpled note, hastily scribbled in what looks like blood:"
-    },
-    {
-      "id": 1,
-      "text": "Virgin blood (the girl Lydia)",
-      "title": "Virgin blood (the girl Lydia)"
-    },
-    {
-      "id": 2,
-      "text": "The silver binding broken completely",
-      "title": "The silver binding broken completely"
-    },
-    {
-      "id": 3,
-      "text": "The Widow's true name spoken at midnight \r\n\r\n\r\nWhen all three come together, she will rise at full power. Her vengeance will be absolute. Hollow's End will fall, and darkness will spread like plague across the land.\" \r\n\r\n\r\nThis is crucial intelligence! The cultists' plans are laid bare. \r\n\r\n\r\nTurn to 378.",
-      "title": "The Widow's true name spoken at midnight",
+      "text": "You find a crumpled note, hastily scribbled in what looks like blood: \r\n\r\n\r\n\"The ritual requires three components:\r\n\r\n\r\n1. Virgin blood (the girl Lydia)\r\n\r\n\r\n2. The silver binding broken completely\r\n\r\n\r\n3. The Widow's true name spoken at midnight \r\n\r\n\r\nWhen all three come together, she will rise at full power. Her vengeance will be absolute. Hollow's End will fall, and darkness will spread like plague across the land.\" \r\n\r\n\r\nThis is crucial intelligence! The cultists' plans are laid bare. \r\n\r\n\r\nTurn to 378.",
+      "title": "You find a crumpled note, hastily scribbled in what looks like blood:",
       "choices": [
         {
           "text": "Turn to 378",
@@ -2286,7 +2705,10 @@
           "text": "Turn to 355",
           "targetSection": 355
         }
-      ]
+      ],
+      "permanentStats": {
+        "skill": -1
+      }
     },
     {
       "id": 141,
@@ -2322,6 +2744,13 @@
           "text": "Turn to 127",
           "targetSection": 127
         }
+      ],
+      "addItems": [
+        {
+          "id": "holy-symbol",
+          "name": "Holy Symbol",
+          "type": "other"
+        }
       ]
     },
     {
@@ -2338,7 +2767,11 @@
         "enemySkill": 6,
         "enemyStamina": 5,
         "onVictorySection": 155,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "weakTo": {
+          "property": "crushing",
+          "damage": 3
+        }
       }
     },
     {
@@ -2346,26 +2779,29 @@
       "text": "You follow the passage toward the sound of chanting. The voices grow louder as you approach—ancient words spoken in unison, rhythmic and hypnotic. The very air seems to vibrate with dark power. \r\n\r\n\r\nThe passage opens into a large chamber, and what you see makes your blood run cold: \r\n\r\n\r\nRobed cultists kneel in a circle around a massive summoning circle drawn in fresh blood. In the center of the circle, chained to a stone pillar, is a girl —pale, unconscious, but alive. This must be Lydia, the Mayor's daughter. \r\n\r\n\r\nThe cultists are so focused on their ritual that they haven't noticed you yet. You have the element of surprise—but what will you do with it? Do you have a CULT MEDALLION that might allow you to bluff your way in? \r\n\r\n\r\nIf yes, try bluffing: Turn to 16. \r\n\r\n\r\nIf no medallion but you want to attack immediately: Turn to 67. \r\n\r\n\r\nIf you want to sneak closer and assess the situation: Test your Luck. \r\n\r\n\r\nLucky: Turn to 71 \r\n\r\n\r\nUnlucky: Turn to 89 \r\n\r\n\r\nIf you want to retreat and find another way: Turn to 111.",
       "choices": [
         {
-          "text": "Turn to 16",
-          "targetSection": 16
+          "text": "Bluff your way in with the Cult Medallion",
+          "targetSection": 16,
+          "conditions": {
+            "requiresItem": "cult-medallion"
+          }
         },
         {
-          "text": "Turn to 67",
-          "targetSection": 67
-        },
-        {
-          "text": "Turn to 71",
-          "targetSection": 71
-        },
-        {
-          "text": "Turn to 89",
-          "targetSection": 89
+          "text": "Attack immediately",
+          "targetSection": 67,
+          "conditions": {
+            "requiresNoItem": "cult-medallion"
+          }
         },
         {
           "text": "Turn to 111",
           "targetSection": 111
         }
-      ]
+      ],
+      "testLuck": {
+        "successSection": 71,
+        "failureSection": 89,
+        "label": "Sneak closer (Test Your Luck)"
+      }
     },
     {
       "id": 146,
@@ -2439,6 +2875,13 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "rope",
+          "name": "Rope",
+          "type": "other"
+        }
       ]
     },
     {
@@ -2451,7 +2894,22 @@
         }
       ],
       "isEnding": true,
-      "endingType": "victory"
+      "endingType": "victory",
+      "addItems": [
+        {
+          "id": "alchemists-journal",
+          "name": "Alchemist's Journal",
+          "type": "other",
+          "unique": true
+        },
+        {
+          "id": "true-name",
+          "name": "The Widow's True Name",
+          "type": "other",
+          "description": "Eliza Hollow",
+          "unique": true
+        }
+      ]
     },
     {
       "id": 153,
@@ -2478,8 +2936,8 @@
       ],
       "addItems": [
         {
-          "id": "potion",
-          "name": "Potion",
+          "id": "potion-of-invisibility",
+          "name": "Potion of Invisibility",
           "type": "potion"
         }
       ]
@@ -2613,9 +3071,13 @@
       ],
       "addItems": [
         {
-          "id": "blade",
-          "name": "Blade",
-          "type": "weapon"
+          "id": "magic-longsword",
+          "name": "+1 Longsword",
+          "type": "weapon",
+          "bonus": "+1 skill",
+          "properties": [
+            "magical"
+          ]
         }
       ]
     },
@@ -2624,16 +3086,11 @@
       "text": "The door ahead is locked with a heavy mechanism. Do you have the BRASS KEY inscribed with strange symbols? If yes: The key fits perfectly. Turn to 267. \r\n\r\n\r\nIf no: You'll have to try forcing it. Test your Luck. \r\n\r\n\r\nLucky: You manage to break the lock. Turn to 27. \r\n\r\n\r\nUnlucky: The door won't budge. Turn to 28.",
       "choices": [
         {
-          "text": "Turn to 267",
-          "targetSection": 267
-        },
-        {
-          "text": "Turn to 27",
-          "targetSection": 27
-        },
-        {
-          "text": "Turn to 28",
-          "targetSection": 28
+          "text": "Unlock the door with the Brass Key",
+          "targetSection": 267,
+          "conditions": {
+            "requiresItem": "brass-key"
+          }
         }
       ],
       "addItems": [
@@ -2642,7 +3099,17 @@
           "name": "Key",
           "type": "key"
         }
-      ]
+      ],
+      "testLuck": {
+        "successSection": 27,
+        "failureSection": 28,
+        "label": "Force the door (Test Your Luck)",
+        "conditions": {
+          "requiresNoItem": "brass-key"
+        },
+        "successText": "The lock gives way.",
+        "failureText": "The door will not budge."
+      }
     },
     {
       "id": 158,
@@ -2657,29 +3124,7 @@
     },
     {
       "id": 159,
-      "text": "A ghostly figure appears, translucent and shimmering. It points toward a section of wall and whispers in a voice like wind through reeds: \"Silver key... true name... midnight bell...\" \r\n\r\n\r\nThe ghost fades before you can ask questions, but its message is clear enough. These are the three components needed to bind the Widow:"
-    },
-    {
-      "id": 1,
-      "text": "A silver key (for the binding)",
-      "title": "A silver key (for the binding)",
-      "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
-        }
-      ]
-    },
-    {
-      "id": 2,
-      "text": "Her true name (to invoke her properly)",
-      "title": "Her true name (to invoke her properly)"
-    },
-    {
-      "id": 3,
-      "text": "Midnight (the time of greatest power)\r\n\r\n\r\nTurn to 335.",
-      "title": "Midnight (the time of greatest power)",
+      "text": "A ghostly figure appears, translucent and shimmering. It points toward a section of wall and whispers in a voice like wind through reeds: \"Silver key... true name... midnight bell...\" \r\n\r\n\r\nThe ghost fades before you can ask questions, but its message is clear enough. These are the three components needed to bind the Widow:\r\n\r\n\r\n1. A silver key (for the binding)\r\n\r\n\r\n2. Her true name (to invoke her properly)\r\n\r\n\r\n3. Midnight (the time of greatest power)\r\n\r\n\r\nTurn to 335.",
       "choices": [
         {
           "text": "Turn to 335",
@@ -2717,6 +3162,25 @@
           "text": "Turn to 111",
           "targetSection": 111
         }
+      ],
+      "addItems": [
+        {
+          "id": "rations",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "rations",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "gold",
+          "name": "20 Gold Pieces",
+          "type": "treasure"
+        }
       ]
     },
     {
@@ -2728,7 +3192,13 @@
           "text": "Turn to 355",
           "targetSection": 355
         }
-      ]
+      ],
+      "permanentStats": {
+        "skill": -1
+      },
+      "maxStats": {
+        "stamina": -1
+      }
     },
     {
       "id": 164,
@@ -2773,16 +3243,27 @@
       "id": 167,
       "text": "The floor suddenly gives way beneath you, revealing a spike pit below! \r\n\r\n\r\nRoll one die: \r\n\r\n\r\nOn 1-3: Turn to 4 (instant death). \r\n\r\n\r\nOn 4-6: You catch the edge! Lose 4 STAMINA from the effort of pulling yourself up. Turn to 221.",
       "title": "The floor suddenly gives way beneath you, revealing a spike pit below!",
-      "choices": [
-        {
-          "text": "Turn to 4",
-          "targetSection": 4
-        },
-        {
-          "text": "Turn to 221",
-          "targetSection": 221
-        }
-      ]
+      "choices": [],
+      "diceRoll": {
+        "label": "Roll one die",
+        "outcomes": [
+          {
+            "min": 1,
+            "max": 3,
+            "text": "You fall into the spike pit!",
+            "targetSection": 4
+          },
+          {
+            "min": 4,
+            "max": 6,
+            "text": "You catch the edge and pull yourself up.",
+            "targetSection": 221,
+            "modifyStats": {
+              "stamina": -4
+            }
+          }
+        ]
+      }
     },
     {
       "id": 168,
@@ -2809,7 +3290,11 @@
         "enemySkill": 6,
         "enemyStamina": 6,
         "onVictorySection": 155,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "onWound": {
+          "skillLoss": 1,
+          "luckTest": true
+        }
       }
     },
     {
@@ -2829,13 +3314,6 @@
           "text": "Turn to 111",
           "targetSection": 111
         }
-      ],
-      "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
-        }
       ]
     },
     {
@@ -2852,7 +3330,10 @@
           "id": "silver-dagger",
           "name": "Silver Dagger",
           "type": "weapon",
-          "bonus": "+1"
+          "bonus": "+1",
+          "properties": [
+            "silver"
+          ]
         },
         {
           "id": "blade",
@@ -2885,7 +3366,11 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": 4,
+        "luck": 1
+      }
     },
     {
       "id": 174,
@@ -2896,7 +3381,10 @@
           "text": "Turn to 221",
           "targetSection": 221
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -2
+      }
     },
     {
       "id": 175,
@@ -2933,7 +3421,11 @@
         "enemySkill": 5,
         "enemyStamina": 6,
         "onVictorySection": 189,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "reviveOn": [
+          5,
+          6
+        ]
       }
     },
     {
@@ -2944,7 +3436,10 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 1
+      }
     },
     {
       "id": 179,
@@ -2961,7 +3456,12 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "effectiveWeapons": [
+          "magical",
+          "silver"
+        ],
+        "normalWeaponDamage": 1
       }
     },
     {
@@ -3053,19 +3553,62 @@
           "targetSection": 346
         }
       ],
-      "combat": {
-        "enemyName": "",
-        "enemySkill": 5,
-        "enemyStamina": 6,
-        "onVictorySection": 259,
-        "onDefeatSection": 999
-      },
+      "combat": [
+        {
+          "enemyName": "ZOMBIE 1",
+          "enemySkill": 5,
+          "enemyStamina": 6,
+          "onVictorySection": 259,
+          "onDefeatSection": 999,
+          "reviveOn": [
+            5,
+            6
+          ],
+          "canFlee": true,
+          "fleeSection": 346,
+          "fleeMaxStamina": 4,
+          "fleeTestLuck": true
+        },
+        {
+          "enemyName": "ZOMBIE 2",
+          "enemySkill": 5,
+          "enemyStamina": 6,
+          "onVictorySection": 259,
+          "onDefeatSection": 999,
+          "reviveOn": [
+            5,
+            6
+          ],
+          "canFlee": true,
+          "fleeSection": 346,
+          "fleeMaxStamina": 4,
+          "fleeTestLuck": true
+        },
+        {
+          "enemyName": "ZOMBIE 3",
+          "enemySkill": 4,
+          "enemyStamina": 5,
+          "onVictorySection": 259,
+          "onDefeatSection": 999,
+          "reviveOn": [
+            5,
+            6
+          ],
+          "canFlee": true,
+          "fleeSection": 346,
+          "fleeMaxStamina": 4,
+          "fleeTestLuck": true
+        }
+      ],
       "addItems": [
         {
           "id": "silver-dagger",
           "name": "Silver Dagger",
           "type": "weapon",
-          "bonus": "+1"
+          "bonus": "+1",
+          "properties": [
+            "silver"
+          ]
         }
       ]
     },
@@ -3115,6 +3658,19 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "40 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+6 stamina"
+        }
       ]
     },
     {
@@ -3131,7 +3687,11 @@
         "enemySkill": 6,
         "enemyStamina": 4,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "onWound": {
+          "skillLoss": 1,
+          "permanent": true
+        }
       }
     },
     {
@@ -3290,6 +3850,18 @@
           "text": "Turn to 155",
           "targetSection": 155
         }
+      ],
+      "addItems": [
+        {
+          "id": "magic-mace",
+          "name": "+1 Mace",
+          "type": "weapon",
+          "bonus": "+1 skill",
+          "properties": [
+            "magical",
+            "crushing"
+          ]
+        }
       ]
     },
     {
@@ -3300,7 +3872,10 @@
           "text": "Turn to 221",
           "targetSection": 221
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -1
+      }
     },
     {
       "id": 192,
@@ -3311,7 +3886,11 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": 3,
+        "luck": 1
+      }
     },
     {
       "id": 193,
@@ -3321,6 +3900,13 @@
         {
           "text": "Turn to 180",
           "targetSection": 180
+        }
+      ],
+      "addItems": [
+        {
+          "id": "cult-medallion",
+          "name": "Cult Medallion",
+          "type": "other"
         }
       ]
     },
@@ -3344,6 +3930,11 @@
         {
           "id": "book",
           "name": "Book",
+          "type": "other"
+        },
+        {
+          "id": "mayors-ledger",
+          "name": "Mayor's Ledger",
           "type": "other"
         }
       ]
@@ -3395,7 +3986,11 @@
         "enemySkill": 6,
         "enemyStamina": 5,
         "onVictorySection": 155,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "weakTo": {
+          "property": "crushing",
+          "damage": 3
+        }
       }
     },
     {
@@ -3406,6 +4001,13 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
+        }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "50 Gold Pieces",
+          "type": "treasure"
         }
       ]
     },
@@ -3449,7 +4051,11 @@
         "enemySkill": 6,
         "enemyStamina": 6,
         "onVictorySection": 312,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "onWound": {
+          "skillLoss": 1,
+          "luckTest": true
+        }
       }
     },
     {
@@ -3488,8 +4094,11 @@
       "title": "You search the tavern carefully, finding a journal with a chilling entry:",
       "choices": [
         {
-          "text": "Turn to 2",
-          "targetSection": 2
+          "text": "Drink the Mysterious Potion",
+          "targetSection": 2,
+          "conditions": {
+            "requiresItem": "mysterious-potion"
+          }
         },
         {
           "text": "Turn to 388",
@@ -3512,7 +4121,11 @@
         "enemySkill": 6,
         "enemyStamina": 4,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "onWound": {
+          "skillLoss": 1,
+          "permanent": true
+        }
       }
     },
     {
@@ -3523,7 +4136,10 @@
           "text": "Turn to 245",
           "targetSection": 245
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 1
+      }
     },
     {
       "id": 206,
@@ -3532,6 +4148,21 @@
         {
           "text": "Turn to 355",
           "targetSection": 355
+        }
+      ],
+      "addItems": [
+        {
+          "id": "alchemists-journal",
+          "name": "Alchemist's Journal",
+          "type": "other",
+          "unique": true
+        },
+        {
+          "id": "true-name",
+          "name": "The Widow's True Name",
+          "type": "other",
+          "description": "Eliza Hollow",
+          "unique": true
         }
       ]
     },
@@ -3543,7 +4174,10 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": "max"
+      }
     },
     {
       "id": 208,
@@ -3559,7 +4193,12 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "effectiveWeapons": [
+          "magical",
+          "silver"
+        ],
+        "normalWeaponDamage": 1
       }
     },
     {
@@ -3584,6 +4223,14 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "cloak-of-protection",
+          "name": "Cloak of Protection",
+          "type": "armor",
+          "bonus": "+1 defense"
+        }
       ]
     },
     {
@@ -3594,7 +4241,10 @@
           "text": "Turn to 298",
           "targetSection": 298
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -3
+      }
     },
     {
       "id": 212,
@@ -3621,9 +4271,13 @@
       ],
       "addItems": [
         {
-          "id": "sword",
-          "name": "Sword",
-          "type": "weapon"
+          "id": "magic-longsword",
+          "name": "+1 Longsword",
+          "type": "weapon",
+          "bonus": "+1 skill",
+          "properties": [
+            "magical"
+          ]
         }
       ]
     },
@@ -3659,12 +4313,19 @@
       "id": 216,
       "text": "A trap activates! Darts shoot from hidden slots in the walls. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: You see them coming and dodge aside. Turn to 155. \r\n\r\n\r\nIf Unlucky: Several darts strike home. Lose 4 STAMINA from the wounds and poison. Turn to 155.",
       "title": "A trap activates! Darts shoot from hidden slots in the walls.",
-      "choices": [
-        {
-          "text": "Turn to 155",
-          "targetSection": 155
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successSection": 155,
+        "failureSection": 155,
+        "successText": "You dodge the darts.",
+        "failureText": "Several darts strike home.",
+        "failureEffects": {
+          "modifyStats": {
+            "stamina": -4
+          }
         }
-      ]
+      }
     },
     {
       "id": 217,
@@ -3690,7 +4351,11 @@
         "enemySkill": 6,
         "enemyStamina": 5,
         "onVictorySection": 155,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "weakTo": {
+          "property": "crushing",
+          "damage": 3
+        }
       }
     },
     {
@@ -3700,6 +4365,13 @@
         {
           "text": "Turn to 127",
           "targetSection": 127
+        }
+      ],
+      "addItems": [
+        {
+          "id": "holy-symbol",
+          "name": "Holy Symbol",
+          "type": "other"
         }
       ]
     },
@@ -3833,8 +4505,8 @@
       ],
       "addItems": [
         {
-          "id": "map",
-          "name": "Map",
+          "id": "manor-map",
+          "name": "Manor Map",
           "type": "other"
         }
       ]
@@ -3873,6 +4545,25 @@
           "text": "Turn to 111",
           "targetSection": 111
         }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "30 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "rations",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "rations",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        }
       ]
     },
     {
@@ -3889,7 +4580,12 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "effectiveWeapons": [
+          "magical",
+          "silver"
+        ],
+        "normalWeaponDamage": 1
       }
     },
     {
@@ -3932,7 +4628,11 @@
         "enemySkill": 6,
         "enemyStamina": 4,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "onWound": {
+          "skillLoss": 1,
+          "permanent": true
+        }
       }
     },
     {
@@ -3970,7 +4670,11 @@
         "enemySkill": 6,
         "enemyStamina": 6,
         "onVictorySection": 312,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "onWound": {
+          "skillLoss": 1,
+          "luckTest": true
+        }
       }
     },
     {
@@ -3982,8 +4686,11 @@
           "targetSection": 10
         },
         {
-          "text": "Turn to 12",
-          "targetSection": 12
+          "text": "Drink a Healing Potion",
+          "targetSection": 12,
+          "conditions": {
+            "requiresItem": "healing-potion"
+          }
         },
         {
           "text": "Turn to 13",
@@ -4002,8 +4709,11 @@
           "targetSection": 20
         },
         {
-          "text": "Turn to 26",
-          "targetSection": 26
+          "text": "Drink the Mysterious Potion",
+          "targetSection": 26,
+          "conditions": {
+            "requiresItem": "mysterious-potion"
+          }
         },
         {
           "text": "Turn to 27",
@@ -4070,8 +4780,11 @@
           "targetSection": 87
         },
         {
-          "text": "Turn to 92",
-          "targetSection": 92
+          "text": "Eat a Provision and rest",
+          "targetSection": 92,
+          "conditions": {
+            "requiresItem": "rations"
+          }
         },
         {
           "text": "Turn to 94",
@@ -4120,11 +4833,6 @@
       ],
       "addItems": [
         {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
-        },
-        {
           "id": "old-rope",
           "name": "Old Rope",
           "type": "other"
@@ -4133,6 +4841,44 @@
           "id": "old-map",
           "name": "Old Map",
           "type": "other"
+        },
+        {
+          "id": "silver-dagger",
+          "name": "Silver Dagger",
+          "type": "weapon",
+          "bonus": "+2 attack",
+          "properties": [
+            "silver"
+          ]
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "gold",
+          "name": "50 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "mayors-ledger",
+          "name": "Mayor's Ledger",
+          "type": "other",
+          "unique": true
         }
       ]
     },
@@ -4142,12 +4888,18 @@
       "title": "The door ahead is magically sealed, covered in glowing runes that pulse with power.",
       "choices": [
         {
-          "text": "Turn to 355",
-          "targetSection": 355
+          "text": "Speak the counter-spell from the Alchemist's Journal",
+          "targetSection": 355,
+          "conditions": {
+            "requiresItem": "alchemists-journal"
+          }
         },
         {
-          "text": "Turn to 301",
-          "targetSection": 301
+          "text": "Find another way forward",
+          "targetSection": 301,
+          "conditions": {
+            "requiresNoItem": "alchemists-journal"
+          }
         }
       ]
     },
@@ -4156,12 +4908,18 @@
       "text": "You proceed toward the candlelight ahead. The passage opens into a ritual chamber, and what you see makes your blood run cold: \r\n\r\n\r\nBlack candles arranged in a circle cast flickering shadows across the walls. In the center sits an ancient altar stained with blood—centuries of blood, layer upon layer. Strange symbols pulse with dark energy around the altar's perimeter, and the air itself seems thick with malevolence. \r\n\r\n\r\nOn the altar lie ritual implements: a bone dagger, silver chalices, and a book written in an ancient language that hurts your eyes to look at. This is clearly where cultists perform their dark ceremonies. \r\n\r\n\r\nDo you have the MAYOR'S LEDGER with information about cult symbols? \r\n\r\n\r\nIf you have the ledger: You recognize these symbols from the ledger! They're part of the original binding ritual. Understanding them gives you insight into how the Widow was first imprisoned. Turn to 14 (you gain important knowledge). \r\n\r\n\r\nIf you don't have the ledger: The symbols are meaningless to you—just mysterious markings on ancient stone. Turn to 104 (examine the ritual book). \r\n\r\n\r\nYou could also: \r\n\r\n\r\nDestroy the altar to weaken the curse (Turn to 80) \r\n\r\n\r\nContinue deeper into the catacombs: west passage (Turn to 155) or east passage (Turn to 267)",
       "choices": [
         {
-          "text": "Turn to 14",
-          "targetSection": 14
+          "text": "Read the symbols using the Mayor's Ledger",
+          "targetSection": 14,
+          "conditions": {
+            "requiresItem": "mayors-ledger"
+          }
         },
         {
-          "text": "Turn to 104",
-          "targetSection": 104
+          "text": "Examine the ritual book",
+          "targetSection": 104,
+          "conditions": {
+            "requiresNoItem": "mayors-ledger"
+          }
         },
         {
           "text": "Turn to 80",
@@ -4221,6 +4979,18 @@
         {
           "text": "Turn to 155",
           "targetSection": 155
+        }
+      ],
+      "addItems": [
+        {
+          "id": "magic-mace",
+          "name": "+1 Mace",
+          "type": "weapon",
+          "bonus": "+1 skill",
+          "properties": [
+            "magical",
+            "crushing"
+          ]
         }
       ]
     },
@@ -4345,7 +5115,12 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "effectiveWeapons": [
+          "magical",
+          "silver"
+        ],
+        "normalWeaponDamage": 1
       }
     },
     {
@@ -4374,7 +5149,11 @@
         "enemySkill": 6,
         "enemyStamina": 4,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "onWound": {
+          "skillLoss": 1,
+          "permanent": true
+        }
       }
     },
     {
@@ -4386,7 +5165,10 @@
           "text": "Turn to 245",
           "targetSection": 245
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 1
+      }
     },
     {
       "id": 250,
@@ -4396,6 +5178,25 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
+        }
+      ],
+      "addItems": [
+        {
+          "id": "rations",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "rations",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "gold",
+          "name": "20 Gold Pieces",
+          "type": "treasure"
         }
       ]
     },
@@ -4414,7 +5215,11 @@
         "enemySkill": 6,
         "enemyStamina": 6,
         "onVictorySection": 312,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "onWound": {
+          "skillLoss": 1,
+          "luckTest": true
+        }
       }
     },
     {
@@ -4476,6 +5281,19 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "40 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+6 stamina"
+        }
       ]
     },
     {
@@ -4516,16 +5334,11 @@
       "text": "You take the eastern passage deeper into the catacombs. The air grows colder with each step, your breath misting in the frigid atmosphere. Frost forms on the walls—impossible this deep underground, yet there it is, glittering in your lantern light. \r\n\r\n\r\nWarning symbols carved into the stone line the passage: skulls and crossed bones, ancient warnings in languages you don't recognize, protective wards that have clearly failed. \r\n\r\n\r\nThe passage ends at a massive iron door bearing the Hollow family crest. The door is sealed with a heavy lock covered in occult symbols. Do you have the BRASS KEY inscribed with strange symbols? \r\n\r\n\r\nIf yes, you have the brass key: The symbols on the key match those on the lock perfectly. This is what the key was made for. Turn to 5. If no, you don't have the brass key: You'll have to try forcing the door. Test your Luck. \r\n\r\n\r\nLucky: Through sheer strength and determination, you manage to break the lock. Turn to 27. \r\n\r\n\r\nUnlucky: The door won't budge. It's too well made, too heavily reinforced. Turn to 28. \r\n\r\n\r\nOr you could go back and explore elsewhere: Turn to 111.",
       "choices": [
         {
-          "text": "Turn to 5",
-          "targetSection": 5
-        },
-        {
-          "text": "Turn to 27",
-          "targetSection": 27
-        },
-        {
-          "text": "Turn to 28",
-          "targetSection": 28
+          "text": "Unlock the door with the Brass Key",
+          "targetSection": 5,
+          "conditions": {
+            "requiresItem": "brass-key"
+          }
         },
         {
           "text": "Turn to 111",
@@ -4538,7 +5351,17 @@
           "name": "Key",
           "type": "key"
         }
-      ]
+      ],
+      "testLuck": {
+        "successSection": 27,
+        "failureSection": 28,
+        "label": "Force the door (Test Your Luck)",
+        "conditions": {
+          "requiresNoItem": "brass-key"
+        },
+        "successText": "The lock gives way.",
+        "failureText": "The door will not budge."
+      }
     },
     {
       "id": 259,
@@ -4551,8 +5374,8 @@
       ],
       "addItems": [
         {
-          "id": "map",
-          "name": "Map",
+          "id": "manor-map",
+          "name": "Manor Map",
           "type": "other"
         }
       ]
@@ -4572,7 +5395,11 @@
         "enemySkill": 6,
         "enemyStamina": 4,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "onWound": {
+          "skillLoss": 1,
+          "permanent": true
+        }
       }
     },
     {
@@ -4584,7 +5411,10 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": "max"
+      }
     },
     {
       "id": 262,
@@ -4611,7 +5441,12 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "effectiveWeapons": [
+          "magical",
+          "silver"
+        ],
+        "normalWeaponDamage": 1
       }
     },
     {
@@ -4622,6 +5457,13 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "cloak-of-shadows",
+          "name": "Cloak of Shadows",
+          "type": "other"
+        }
       ]
     },
     {
@@ -4630,26 +5472,30 @@
       "title": "The door ahead is locked with a complex mechanism.",
       "choices": [
         {
-          "text": "Turn to 355",
-          "targetSection": 355
-        },
-        {
-          "text": "Turn to 301",
-          "targetSection": 301
+          "text": "Unlock the door with the Silver Key",
+          "targetSection": 355,
+          "conditions": {
+            "requiresItem": "silver-key"
+          }
         }
       ],
       "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
-        },
         {
           "id": "key",
           "name": "Key",
           "type": "key"
         }
-      ]
+      ],
+      "testLuck": {
+        "label": "Force the door (Test Your Luck)",
+        "conditions": {
+          "requiresNoItem": "silver-key"
+        },
+        "successSection": 355,
+        "failureSection": 301,
+        "successText": "The lock gives way.",
+        "failureText": "The door will not budge."
+      }
     },
     {
       "id": 266,
@@ -4665,7 +5511,16 @@
         "enemySkill": 4,
         "enemyStamina": 5,
         "onVictorySection": 221,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "onStart": {
+          "skillLoss": 2,
+          "text": "Fighting underwater"
+        },
+        "onVictoryEffects": {
+          "modifyStats": {
+            "stamina": -2
+          }
+        }
       }
     },
     {
@@ -4689,8 +5544,11 @@
           "targetSection": 200
         },
         {
-          "text": "Turn to 5",
-          "targetSection": 5
+          "text": "Approach the sealed eastern door",
+          "targetSection": 5,
+          "conditions": {
+            "requiresItem": "brass-key"
+          }
         },
         {
           "text": "Turn to 180",
@@ -4736,6 +5594,17 @@
         {
           "text": "Turn to 355",
           "targetSection": 355
+        }
+      ],
+      "addItems": [
+        {
+          "id": "magic-longsword",
+          "name": "+1 Longsword",
+          "type": "weapon",
+          "bonus": "+1 skill",
+          "properties": [
+            "magical"
+          ]
         }
       ]
     },
@@ -4809,6 +5678,13 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "manor-map",
+          "name": "Manor Map",
+          "type": "other"
+        }
       ]
     },
     {
@@ -4841,7 +5717,11 @@
         "enemySkill": 6,
         "enemyStamina": 4,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "onWound": {
+          "skillLoss": 1,
+          "permanent": true
+        }
       }
     },
     {
@@ -4869,7 +5749,12 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "effectiveWeapons": [
+          "magical",
+          "silver"
+        ],
+        "normalWeaponDamage": 1
       }
     },
     {
@@ -4880,6 +5765,25 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
+        }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "50 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+4 stamina"
         }
       ]
     },
@@ -4892,6 +5796,26 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "rations",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "rations",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "rations",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        }
       ]
     },
     {
@@ -4901,6 +5825,13 @@
         {
           "text": "Turn to 111",
           "targetSection": 111
+        }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "15 Gold Pieces",
+          "type": "treasure"
         }
       ]
     },
@@ -4931,7 +5862,11 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": 4,
+        "luck": 1
+      }
     },
     {
       "id": 284,
@@ -5021,13 +5956,68 @@
           "targetSection": 346
         }
       ],
-      "combat": {
-        "enemyName": "",
-        "enemySkill": 5,
-        "enemyStamina": 6,
-        "onVictorySection": 312,
-        "onDefeatSection": 999
-      }
+      "combat": [
+        {
+          "enemyName": "ZOMBIE 1",
+          "enemySkill": 5,
+          "enemyStamina": 6,
+          "onVictorySection": 312,
+          "onDefeatSection": 999,
+          "reviveOn": [
+            5,
+            6
+          ],
+          "canFlee": true,
+          "fleeSection": 346,
+          "fleeMaxStamina": 4,
+          "fleeTestLuck": true
+        },
+        {
+          "enemyName": "ZOMBIE 2",
+          "enemySkill": 5,
+          "enemyStamina": 6,
+          "onVictorySection": 312,
+          "onDefeatSection": 999,
+          "reviveOn": [
+            5,
+            6
+          ],
+          "canFlee": true,
+          "fleeSection": 346,
+          "fleeMaxStamina": 4,
+          "fleeTestLuck": true
+        },
+        {
+          "enemyName": "ZOMBIE 3",
+          "enemySkill": 4,
+          "enemyStamina": 5,
+          "onVictorySection": 312,
+          "onDefeatSection": 999,
+          "reviveOn": [
+            5,
+            6
+          ],
+          "canFlee": true,
+          "fleeSection": 346,
+          "fleeMaxStamina": 4,
+          "fleeTestLuck": true
+        },
+        {
+          "enemyName": "GHOUL",
+          "enemySkill": 6,
+          "enemyStamina": 6,
+          "onVictorySection": 312,
+          "onDefeatSection": 999,
+          "canFlee": true,
+          "fleeSection": 346,
+          "fleeMaxStamina": 4,
+          "fleeTestLuck": true,
+          "onWound": {
+            "skillLoss": 1,
+            "luckTest": true
+          }
+        }
+      ]
     },
     {
       "id": 290,
@@ -5040,8 +6030,8 @@
       ],
       "addItems": [
         {
-          "id": "potion",
-          "name": "Potion",
+          "id": "potion-of-invisibility",
+          "name": "Potion of Invisibility",
           "type": "potion"
         }
       ]
@@ -5109,6 +6099,13 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "50 Gold Pieces",
+          "type": "treasure"
+        }
       ]
     },
     {
@@ -5151,13 +6148,6 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
-        }
-      ],
-      "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
         }
       ],
       "isEnding": true,
@@ -5384,7 +6374,12 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "effectiveWeapons": [
+          "magical",
+          "silver"
+        ],
+        "normalWeaponDamage": 1
       }
     },
     {
@@ -5406,6 +6401,19 @@
           "id": "amulet",
           "name": "Amulet",
           "type": "other"
+        },
+        {
+          "id": "alchemists-journal",
+          "name": "Alchemist's Journal",
+          "type": "other",
+          "unique": true
+        },
+        {
+          "id": "true-name",
+          "name": "The Widow's True Name",
+          "type": "other",
+          "description": "Eliza Hollow",
+          "unique": true
         }
       ]
     },
@@ -5431,7 +6439,11 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": 4,
+        "luck": 2
+      }
     },
     {
       "id": 306,
@@ -5448,7 +6460,11 @@
         "enemySkill": 6,
         "enemyStamina": 4,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "onWound": {
+          "skillLoss": 1,
+          "permanent": true
+        }
       }
     },
     {
@@ -5458,6 +6474,17 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
+        }
+      ],
+      "addItems": [
+        {
+          "id": "magic-longsword",
+          "name": "+1 Longsword",
+          "type": "weapon",
+          "bonus": "+1 skill",
+          "properties": [
+            "magical"
+          ]
         }
       ]
     },
@@ -5469,7 +6496,10 @@
           "text": "Turn to 378",
           "targetSection": 378
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -1
+      }
     },
     {
       "id": 309,
@@ -5515,7 +6545,11 @@
         "enemySkill": 6,
         "enemyStamina": 6,
         "onVictorySection": 312,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "onWound": {
+          "skillLoss": 1,
+          "luckTest": true
+        }
       }
     },
     {
@@ -5617,7 +6651,10 @@
           "id": "silver-dagger",
           "name": "Silver Dagger",
           "type": "weapon",
-          "bonus": "+1"
+          "bonus": "+1",
+          "properties": [
+            "silver"
+          ]
         },
         {
           "id": "silver-ring",
@@ -5627,6 +6664,22 @@
         {
           "id": "silver-amulet",
           "name": "Silver Amulet",
+          "type": "other"
+        },
+        {
+          "id": "gold",
+          "name": "20 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "holy-symbol",
+          "name": "Holy Symbol",
           "type": "other"
         }
       ]
@@ -5639,6 +6692,25 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
+        }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "30 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "rations",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "rations",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
         }
       ]
     },
@@ -5657,18 +6729,31 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "effectiveWeapons": [
+          "magical",
+          "silver"
+        ],
+        "normalWeaponDamage": 1
       }
     },
     {
       "id": 315,
       "text": "You discover a room filled with mirrors, each one reflecting not your current appearance but different versions of you—some showing you as you were when you entered Hollow's End, some showing you wounded and dying, some showing you victorious, some showing you as an undead servant of the Widow. \r\n\r\n\r\nThe mirrors are disorienting, perhaps even dangerous. One mirror in particular seems to pull at your consciousness, trying to trap you in its reflection. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: You resist the pull and leave the mirror room unharmed. Turn to 301. \r\n\r\n\r\nIf Unlucky: The mirror's magic affects you! Lose 2 STAMINA and 1 LUCK as part of your vitality is briefly trapped in the reflection. You manage to break free, but you're weakened. Turn to 301.",
-      "choices": [
-        {
-          "text": "Turn to 301",
-          "targetSection": 301
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successSection": 301,
+        "failureSection": 301,
+        "successText": "You resist the mirror's pull.",
+        "failureText": "The mirror traps part of your vitality!",
+        "failureEffects": {
+          "modifyStats": {
+            "stamina": -2,
+            "luck": -1
+          }
         }
-      ]
+      }
     },
     {
       "id": 316,
@@ -5707,7 +6792,10 @@
           "text": "Turn to 355",
           "targetSection": 355
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 1
+      }
     },
     {
       "id": 319,
@@ -5717,6 +6805,31 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
+        }
+      ],
+      "addItems": [
+        {
+          "id": "rations",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "rations",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "rations",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "gold",
+          "name": "40 Gold Pieces",
+          "type": "treasure"
         }
       ]
     },
@@ -5782,7 +6895,10 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": "max"
+      }
     },
     {
       "id": 324,
@@ -5852,7 +6968,11 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": 6,
+        "luck": 2
+      }
     },
     {
       "id": 329,
@@ -5880,6 +7000,17 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
+        }
+      ],
+      "addItems": [
+        {
+          "id": "silver-dagger",
+          "name": "Silver Dagger",
+          "type": "weapon",
+          "bonus": "+2 attack",
+          "properties": [
+            "silver"
+          ]
         }
       ]
     },
@@ -5909,6 +7040,18 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "50 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "silver-ring",
+          "name": "Silver Ring",
+          "type": "treasure"
+        }
       ]
     },
     {
@@ -5937,13 +7080,6 @@
         {
           "text": "Turn to 378",
           "targetSection": 378
-        }
-      ],
-      "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
         }
       ]
     },
@@ -6049,6 +7185,12 @@
           "id": "mysterious-potion",
           "name": "Mysterious Potion",
           "type": "potion"
+        },
+        {
+          "id": "cloak-of-protection",
+          "name": "Cloak of Protection",
+          "type": "armor",
+          "bonus": "+1 defense"
         }
       ]
     },
@@ -6114,6 +7256,19 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
+        }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "100 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "cloak-of-protection",
+          "name": "Cloak of Protection",
+          "type": "armor",
+          "bonus": "+1 defense"
         }
       ]
     },
@@ -6321,7 +7476,11 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": 4,
+        "luck": 1
+      }
     },
     {
       "id": 344,
@@ -6348,6 +7507,13 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
+        }
+      ],
+      "addItems": [
+        {
+          "id": "amulet-of-the-grave",
+          "name": "Amulet of the Grave",
+          "type": "other"
         }
       ]
     },
@@ -6424,6 +7590,18 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "blessed-silver-sword",
+          "name": "Blessed Silver Sword",
+          "type": "weapon",
+          "bonus": "+2 skill",
+          "properties": [
+            "silver",
+            "magical"
+          ]
+        }
       ]
     },
     {
@@ -6434,7 +7612,10 @@
           "text": "Turn to 388",
           "targetSection": 388
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 2
+      }
     },
     {
       "id": 352,
@@ -6463,7 +7644,10 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": "max"
+      }
     },
     {
       "id": 354,
@@ -6648,6 +7832,13 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "50 Gold Pieces",
+          "type": "treasure"
+        }
       ]
     },
     {
@@ -6676,13 +7867,6 @@
         {
           "text": "Turn to 378",
           "targetSection": 378
-        }
-      ],
-      "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
         }
       ]
     },
@@ -6713,28 +7897,58 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": 6,
+        "luck": 2
+      }
     },
     {
       "id": 362,
       "text": "You stand before the Widow without the necessary items to bind her properly! \r\n\r\n\r\nWithout the SILVER KEY, without knowing her TRUE NAME, or without proper understanding of the binding ritual, you're attempting to face one of the most powerful vengeful spirits in existence with no way to permanently defeat her. \r\n\r\n\r\nThe Widow materializes before you in all her terrible glory—a tall figure in a blood-stained wedding dress, her face hidden beneath a torn veil, her hands ending in spectral claws. The temperature plummets. Your breath forms ice crystals in the air. \r\n\r\n\r\n\"You DARE face me?\" her voice echoes from everywhere, filled with rage and anguish. \"You come to stop my vengeance with nothing but courage and steel? Foolish mortal. Join my army of the dead!\" \r\n\r\n\r\nShe raises her hands, and three Shadows tear themselves from the darkness to attack you. You must fight them all while she watches, gathering her power for the killing blow. \r\n\r\n\r\nSHADOW 1: SKILL 6 | STAMINA 4 \r\n\r\n\r\nSHADOW 2: SKILL 6 | STAMINA 4 \r\n\r\n\r\nSHADOW 3: SKILL 5 | STAMINA 3 \r\n\r\n\r\nEach Shadow's wound permanently reduces your SKILL by 1. \r\n\r\n\r\nIf you somehow defeat all three Shadows: \r\n\r\n\r\nThe Widow herself attacks! But without the proper binding tools, you cannot truly defeat her—only delay her. \r\n\r\n\r\nTHE WIDOW (Weakened by missing tools) \r\n\r\n\r\nSKILL 10 STAMINA 12 \r\n\r\n\r\nIf you reduce her to 0 STAMINA: She dissipates with a scream of rage... but you know it's temporary. Without proper binding, she'll reform. The curse continues. The village remains doomed. \r\n\r\n\r\nYou've achieved a temporary victory at best. The Widow will return, perhaps stronger than before. \r\n\r\n\r\nINCOMPLETE VICTORY \r\n\r\n\r\nYou've driven back the Widow temporarily, but without the Silver Key and her true name, you couldn't bind her spirit permanently. The curse will return, perhaps within days, certainly within weeks. \r\n\r\n\r\nHollow's End remains doomed to eventual destruction. \r\n\r\n\r\nTHE END (Partial Victory)",
       "title": "You stand before the Widow without the necessary items to bind her properly!",
-      "combat": {
-        "enemyName": "",
-        "enemySkill": 10,
-        "enemyStamina": 12,
-        "onVictorySection": 363,
-        "onDefeatSection": 999
-      },
-      "addItems": [
+      "combat": [
         {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
+          "enemyName": "SHADOW 1",
+          "enemySkill": 6,
+          "enemyStamina": 4,
+          "onVictorySection": 363,
+          "onDefeatSection": 999,
+          "onWound": {
+            "skillLoss": 1,
+            "permanent": true
+          }
+        },
+        {
+          "enemyName": "SHADOW 2",
+          "enemySkill": 6,
+          "enemyStamina": 4,
+          "onVictorySection": 363,
+          "onDefeatSection": 999,
+          "onWound": {
+            "skillLoss": 1,
+            "permanent": true
+          }
+        },
+        {
+          "enemyName": "SHADOW 3",
+          "enemySkill": 5,
+          "enemyStamina": 3,
+          "onVictorySection": 363,
+          "onDefeatSection": 999,
+          "onWound": {
+            "skillLoss": 1,
+            "permanent": true
+          }
+        },
+        {
+          "enemyName": "THE WIDOW (WEAKENED)",
+          "enemySkill": 10,
+          "enemyStamina": 12,
+          "onVictorySection": 363,
+          "onDefeatSection": 999
         }
-      ],
-      "isEnding": true,
-      "endingType": "victory"
+      ]
     },
     {
       "id": 363,
@@ -6762,6 +7976,18 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
+        }
+      ],
+      "addItems": [
+        {
+          "id": "magic-mace",
+          "name": "+1 Mace",
+          "type": "weapon",
+          "bonus": "+1 skill",
+          "properties": [
+            "magical",
+            "crushing"
+          ]
         }
       ]
     },
@@ -6855,7 +8081,10 @@
           "text": "Turn to 355",
           "targetSection": 355
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 1
+      }
     },
     {
       "id": 371,
@@ -6883,6 +8112,13 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
+        }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "75 Gold Pieces",
+          "type": "treasure"
         }
       ]
     },
@@ -6923,6 +8159,13 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "holy-symbol",
+          "name": "Holy Symbol",
+          "type": "other"
+        }
       ]
     },
     {
@@ -6951,6 +8194,14 @@
         {
           "text": "Turn to 395",
           "targetSection": 395
+        }
+      ],
+      "addItems": [
+        {
+          "id": "potion-of-strength",
+          "name": "Potion of Strength",
+          "type": "potion",
+          "restore": "+2 skill"
         }
       ]
     },
@@ -7070,7 +8321,11 @@
           "text": "Turn to 395",
           "targetSection": 395
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": "max",
+        "luck": 2
+      }
     },
     {
       "id": 381,
@@ -7100,13 +8355,9 @@
           "targetSection": 395
         }
       ],
-      "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
-        }
-      ]
+      "modifyStats": {
+        "luck": 1
+      }
     },
     {
       "id": 383,
@@ -7138,9 +8389,10 @@
       ],
       "addItems": [
         {
-          "id": "potion",
-          "name": "Potion",
-          "type": "potion"
+          "id": "potion-of-luck",
+          "name": "Potion of Luck",
+          "type": "potion",
+          "restore": "+3 luck"
         }
       ]
     },
@@ -7171,7 +8423,10 @@
           "text": "Turn to 395",
           "targetSection": 395
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 2
+      }
     },
     {
       "id": 387,
@@ -7193,23 +8448,8 @@
     },
     {
       "id": 388,
-      "text": "You take a moment to review everything you've learned about the curse: \r\n\r\n\r\nTHE CURSE OF HOLLOW'S END - Complete History: \r\n\r\n\r\n242 years ago, Eliza Hollow married Thomas Ashford against her father's wishes. Mordecai Hollow wanted Eliza to marry a noble for political gain. During the wedding ceremony, Mordecai's men murdered Thomas before the altar. They then used forbidden necromancy to bind Eliza's spirit with silver chains, preventing her from seeking justice even in death. \r\n\r\n\r\nThe binding was designed to last only one generation—long enough for the guilty to die in peace. But it was never meant to be permanent. Each generation, the binding weakened. Now, 242 years later, it has failed completely. \r\n\r\n\r\nTo bind the Widow permanently, you need:",
-      "title": "You take a moment to review everything you've learned about the curse:"
-    },
-    {
-      "id": 1,
-      "text": "SILVER KEY (for physical binding)",
-      "title": "SILVER KEY (for physical binding)"
-    },
-    {
-      "id": 2,
-      "text": "HER TRUE NAME: ELIZA HOLLOW (for spiritual authority)",
-      "title": "HER TRUE NAME: ELIZA HOLLOW (for spiritual authority)"
-    },
-    {
-      "id": 3,
-      "text": "MIDNIGHT TIMING (for maximum power) \r\n\r\n\r\nBefore the final confrontation, you may:\r\n\r\n\r\nTurn to 137 to search for additional healing supplies\r\n\r\n\r\nTurn to 138 to find a hidden weapon cache\r\n\r\n\r\nTurn to 140 to discover a protective ward\r\n\r\n\r\nTurn to 146 to find a strength potion\r\n\r\n\r\nTurn to 147 to locate a luck charm\r\n\r\n\r\nTurn to 148 to discover a journal about fighting spirits\r\n\r\n\r\nTurn to 150 to find silver ammunition\r\n\r\n\r\nTurn to 153 to search for a shield\r\n\r\n\r\nTurn to 157 to find a cloak of shadows\r\n\r\n\r\nTurn to 160 to discover boots of speed\r\n\r\n\r\nTurn to 161 to find a ring of protection\r\n\r\n\r\nTurn to 163 to locate a blessed weapon\r\n\r\n\r\nTurn to 167 to find gauntlets of strength\r\n\r\n\r\nTurn to 168 to discover a helm of clarity\r\n\r\n\r\nTurn to 169 to find an amulet of life\r\n\r\n\r\nTurn to 170 to search for final provisions\r\n\r\n\r\nTurn to 179 to find a scroll of banishment\r\n\r\n\r\nTurn to 181 to discover a potion of invulnerability\r\n\r\n\r\nTurn to 183 to find holy water\r\n\r\n\r\nTurn to 185 to locate silver dust\r\n\r\n\r\nTurn to 186 to find a prayer of protection\r\n\r\n\r\nTurn to 187 to discover binding chains\r\n\r\n\r\nTurn to 193 to find a ghost-speaking amulet\r\n\r\n\r\nTurn to 194 to locate a spirit trap\r\n\r\n\r\nTurn to 197 to find a soul anchor\r\n\r\n\r\nTurn to 199 to discover final secrets\r\n\r\n\r\nTurn to 381 to pray at a shrine\r\n\r\n\r\nTurn to 382 to rest before battle\r\n\r\n\r\nTurn to 383 to sharpen your weapons\r\n\r\n\r\nTurn to 384 to review combat tactics\r\n\r\n\r\nTurn to 385 to meditate for clarity\r\n\r\n\r\nTurn to 386 to check your equipment\r\n\r\n\r\nTurn to 387 to say a final prayer\r\n\r\n\r\nTurn to 389 to face a guardian spirit\r\n\r\n\r\nTurn to 390 to find a healing fountain\r\n\r\n\r\nWhen ready for the final battle:\r\n\r\n\r\nTurn to 395 to face the Widow",
-      "title": "MIDNIGHT TIMING (for maximum power)",
+      "text": "You take a moment to review everything you've learned about the curse: \r\n\r\n\r\nTHE CURSE OF HOLLOW'S END - Complete History: \r\n\r\n\r\n242 years ago, Eliza Hollow married Thomas Ashford against her father's wishes. Mordecai Hollow wanted Eliza to marry a noble for political gain. During the wedding ceremony, Mordecai's men murdered Thomas before the altar. They then used forbidden necromancy to bind Eliza's spirit with silver chains, preventing her from seeking justice even in death. \r\n\r\n\r\nThe binding was designed to last only one generation—long enough for the guilty to die in peace. But it was never meant to be permanent. Each generation, the binding weakened. Now, 242 years later, it has failed completely. \r\n\r\n\r\nTo bind the Widow permanently, you need:\r\n\r\n\r\n1. SILVER KEY (for physical binding)\r\n\r\n\r\n2. HER TRUE NAME: ELIZA HOLLOW (for spiritual authority)\r\n\r\n\r\n3. MIDNIGHT TIMING (for maximum power) \r\n\r\n\r\nBefore the final confrontation, you may:\r\n\r\n\r\nTurn to 137 to search for additional healing supplies\r\n\r\n\r\nTurn to 138 to find a hidden weapon cache\r\n\r\n\r\nTurn to 140 to discover a protective ward\r\n\r\n\r\nTurn to 146 to find a strength potion\r\n\r\n\r\nTurn to 147 to locate a luck charm\r\n\r\n\r\nTurn to 148 to discover a journal about fighting spirits\r\n\r\n\r\nTurn to 150 to find silver ammunition\r\n\r\n\r\nTurn to 153 to search for a shield\r\n\r\n\r\nTurn to 157 to find a cloak of shadows\r\n\r\n\r\nTurn to 160 to discover boots of speed\r\n\r\n\r\nTurn to 161 to find a ring of protection\r\n\r\n\r\nTurn to 163 to locate a blessed weapon\r\n\r\n\r\nTurn to 167 to find gauntlets of strength\r\n\r\n\r\nTurn to 168 to discover a helm of clarity\r\n\r\n\r\nTurn to 169 to find an amulet of life\r\n\r\n\r\nTurn to 170 to search for final provisions\r\n\r\n\r\nTurn to 179 to find a scroll of banishment\r\n\r\n\r\nTurn to 181 to discover a potion of invulnerability\r\n\r\n\r\nTurn to 183 to find holy water\r\n\r\n\r\nTurn to 185 to locate silver dust\r\n\r\n\r\nTurn to 186 to find a prayer of protection\r\n\r\n\r\nTurn to 187 to discover binding chains\r\n\r\n\r\nTurn to 193 to find a ghost-speaking amulet\r\n\r\n\r\nTurn to 194 to locate a spirit trap\r\n\r\n\r\nTurn to 197 to find a soul anchor\r\n\r\n\r\nTurn to 199 to discover final secrets\r\n\r\n\r\nTurn to 381 to pray at a shrine\r\n\r\n\r\nTurn to 382 to rest before battle\r\n\r\n\r\nTurn to 383 to sharpen your weapons\r\n\r\n\r\nTurn to 384 to review combat tactics\r\n\r\n\r\nTurn to 385 to meditate for clarity\r\n\r\n\r\nTurn to 386 to check your equipment\r\n\r\n\r\nTurn to 387 to say a final prayer\r\n\r\n\r\nTurn to 389 to face a guardian spirit\r\n\r\n\r\nTurn to 390 to find a healing fountain\r\n\r\n\r\nWhen ready for the final battle:\r\n\r\n\r\nTurn to 395 to face the Widow",
+      "title": "You take a moment to review everything you've learned about the curse:",
       "choices": [
         {
           "text": "Turn to 137",
@@ -7358,29 +8598,9 @@
       ],
       "addItems": [
         {
-          "id": "shield",
-          "name": "Shield",
-          "type": "armor"
-        },
-        {
-          "id": "ring",
-          "name": "Ring",
+          "id": "cloak-of-shadows",
+          "name": "Cloak of Shadows",
           "type": "other"
-        },
-        {
-          "id": "amulet",
-          "name": "Amulet",
-          "type": "other"
-        },
-        {
-          "id": "scroll",
-          "name": "Scroll",
-          "type": "other"
-        },
-        {
-          "id": "potion",
-          "name": "Potion",
-          "type": "potion"
         }
       ]
     },
@@ -7411,64 +8631,61 @@
           "text": "Turn to 395",
           "targetSection": 395
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": "max",
+        "luck": "max"
+      }
     },
     {
-      "id": 391,
-      "text": "-394 \r\n\r\n\r\n[Reserved for additional encounters or paths] \r\n\r\n\r\nTurn to 395 for the final confrontation.",
-      "title": "-394",
-      "choices": [
-        {
-          "text": "Turn to 395",
-          "targetSection": 395
-        }
-      ]
+      "id": 394,
+      "title": "The Binding Wavers",
+      "text": "The binding wavers! You must fight the Widow herself before the ritual can complete.\r\n\r\n\r\nTHE WIDOW SKILL 11 STAMINA 15\r\n\r\n\r\nSpecial: Wail of the Forsaken - At combat start, Test Luck or reduce SKILL by 2 for entire battle. Spectral Form - Immune to normal weapons (must have magical weapon).\r\n\r\n\r\nIf you win: Turn to 400 (VICTORY!)",
+      "choices": [],
+      "combat": {
+        "enemyName": "THE WIDOW",
+        "enemySkill": 11,
+        "enemyStamina": 15,
+        "onStart": {
+          "luckTest": true,
+          "skillLoss": 2
+        },
+        "effectiveWeapons": [
+          "magical"
+        ],
+        "normalWeaponDamage": 0,
+        "onVictorySection": 400,
+        "onDefeatSection": 999
+      }
     },
     {
       "id": 395,
       "text": "You push open the massive doors to the Widow's lair, and the temperature plummets instantly. Your breath forms ice crystals that fall like snow. The chamber beyond is vast—the manor's grand ballroom, now transformed into the heart of darkness itself. \r\n\r\n\r\nThe Widow stands in the center of the room, waiting for you. She's terrible and beautiful in equal measure—a tall figure in a wedding dress stained with 242 years of blood. Her face is hidden beneath a torn veil, but you can feel her hollow eyes fixed upon you with recognition and rage. \r\n\r\n\r\n\"So,\" her voice echoes from everywhere and nowhere, layered with the screams of the dead, \"another fool comes to stop me. Another hero seeking to prevent my righteous vengeance. Do you know what they did to me? Do you know what I suffered?\" \r\n\r\n\r\nYou can see the pain beneath the rage, the human woman trapped inside the monster. \r\n\r\n\r\n\"I was going to be HAPPY!\" she shrieks, her form expanding, becoming more terrible. \"I was going to have a LIFE! They murdered my husband! They CHAINED my spirit! They left me in darkness for TWO HUNDRED AND FORTY-TWO YEARS! And you... you dare try to imprison me again?\" \r\n\r\n\r\nThree Shadows tear themselves from the darkness, manifestations of her rage. They rush toward you, cold and terrible. Do you have the SILVER KEY and know her TRUE NAME (Eliza Hollow)? \r\n\r\n\r\nIf YES - you have both: Continue below for the proper binding ritual. \r\n\r\n\r\nIf NO - you're missing one or both: Turn to 362 (incomplete confrontation). \r\n\r\n\r\nTHE PROPER BINDING RITUAL: \r\n\r\n\r\nYou hold up the SILVER KEY with one hand while your other hand clutches whatever protective amulets you carry to your chest. Drawing upon every ounce of courage and strength you possess, you shout with absolute authority: \r\n\r\n\r\n\"ELIZA HOLLOW! I bind you by your true name, by this silver seal forged for spirit-binding, and by the ancient laws that govern the dead! Your curse ends TONIGHT!\" \r\n\r\n\r\nThe effect is immediate and dramatic. \r\n\r\n\r\nThe Widow freezes in mid-air, her spectral form rippling as if struck by invisible force. Her hollow eyes widen with shock, recognition, and—could it be?—hope. The SILVER KEY blazes with brilliant white light so bright you must squint. \r\n\r\n\r\nChains of pure silver energy materialize from the very air, wrapping around the Widow's form like ethereal rope. Each chain blazes with the same white light as the key. \r\n\r\n\r\n\"NO!\" she wails, but her voice is different now—less rage, more desperation. \"Not again! I will have my REVENGE!\" But her power is failing. The three Shadows dissipate like smoke. The temperature begins to rise. \r\n\r\n\r\nTest your LUCK:   \r\nIf Lucky: Turn to 400 (COMPLETE VICTORY!) \r\n\r\n\r\nIf Unlucky: The binding wavers! You must fight the Widow herself before the ritual can complete. \r\n\r\n\r\nTHE WIDOW SKILL 11 STAMINA 15 \r\n\r\n\r\nSpecial: Wail of the Forsaken - At combat start, Test Luck or reduce SKILL by 2 for entire battle. Spectral Form - Immune to normal weapons (must have magical weapon). \r\n\r\n\r\nIf you win: Turn to 400 (VICTORY!)",
       "choices": [
         {
-          "text": "Turn to 362",
-          "targetSection": 362
-        },
-        {
-          "text": "Turn to 400",
-          "targetSection": 400
+          "text": "You are missing the Silver Key or her true name",
+          "targetSection": 362,
+          "conditions": {
+            "requiresMissingAny": [
+              "silver-key",
+              "true-name"
+            ]
+          }
         }
       ],
-      "combat": {
-        "enemyName": "THE WIDOW",
-        "enemySkill": 11,
-        "enemyStamina": 15,
-        "onVictorySection": 362,
-        "onDefeatSection": 999
-      },
-      "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
+      "testLuck": {
+        "label": "Test your Luck: complete the binding ritual",
+        "conditions": {
+          "requiresItem": [
+            "silver-key",
+            "true-name"
+          ]
         },
-        {
-          "id": "key",
-          "name": "Key",
-          "type": "key"
-        }
-      ],
-      "isEnding": true,
-      "endingType": "victory"
-    },
-    {
-      "id": 396,
-      "text": "-399 \r\n\r\n\r\n[These sections can lead to various outcomes or alternative paths to Section 400] \r\n\r\n\r\nThe paths converge. All roads lead to the final moment. \r\n\r\n\r\nTurn to 400.",
-      "title": "-399",
-      "choices": [
-        {
-          "text": "Turn to 400",
-          "targetSection": 400
-        }
-      ]
+        "successSection": 400,
+        "failureSection": 394,
+        "successText": "The silver chains tighten and the binding holds!",
+        "failureText": "The binding wavers!"
+      }
     },
     {
       "id": 400,
@@ -7481,13 +8698,38 @@
           "type": "other"
         },
         {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
+          "id": "gold",
+          "name": "500 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "magic-longsword",
+          "name": "+1 Longsword",
+          "type": "weapon",
+          "bonus": "+1 skill",
+          "properties": [
+            "magical"
+          ],
+          "unique": true
+        },
+        {
+          "id": "cloak-of-protection",
+          "name": "Cloak of Protection",
+          "type": "armor",
+          "bonus": "+1 defense",
+          "unique": true
         }
       ],
       "isEnding": true,
       "endingType": "victory"
+    },
+    {
+      "id": 999,
+      "title": "Your Adventure Ends",
+      "text": "Your strength fails, and the darkness of Hollow's End closes around you. The last thing you hear is the Widow's laughter, cold and patient, echoing through the halls as your lantern gutters out.\r\n\r\n\r\nLydia will not be saved, and the curse of Hollow's End will claim another generation. Your adventure ends here.\r\n\r\n\r\nTo try again, restart the adventure and make different choices.",
+      "choices": [],
+      "isEnding": true,
+      "endingType": "defeat"
     }
   ]
 }

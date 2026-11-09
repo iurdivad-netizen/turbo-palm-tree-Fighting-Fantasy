@@ -416,10 +416,102 @@
             enemyCurrentStamina: 0,
             combatLog: [],
             currentCombatIndex: 0,
+            isGameOver: false,
+            combatDone: false,
+            lastWielded: null,
+            usedOnce: new Set(), // sections where a one-time decision (choice.once) was already made
+            rollResolved: false, // a Luck test / dice roll was already made in this section
+            tempSkillPenalty: 0, // SKILL lost for the rest of the current combat only
+            gameOverType: null,
+            pendingTimer: null,
+            nextUid: 1,
+
+            // Run a delayed action that is cancelled by any other navigation/reset
+            schedule(fn, ms) {
+                this.cancelPending();
+                this.pendingTimer = setTimeout(() => { this.pendingTimer = null; fn(); }, ms);
+            },
+
+            cancelPending() {
+                if (this.pendingTimer) { clearTimeout(this.pendingTimer); this.pendingTimer = null; }
+            },
+
+            // Give every inventory item a unique instance id (uid); `id` stays the book's item id
+            makeItem(item) {
+                const made = { ...item, uid: this.nextUid++ };
+                if (made.type === 'weapon' && !Array.isArray(made.properties)) {
+                    made.properties = this.inferWeaponProperties(made.name);
+                }
+                return made;
+            },
+
+            // Weapon properties: 'magical', 'silver', 'crushing'. Books can set them explicitly
+            // with "properties"; otherwise they are guessed from the item name.
+            inferWeaponProperties(name) {
+                const n = String(name || '').toLowerCase();
+                const props = [];
+                if (/silver/.test(n)) props.push('silver');
+                if (/magic|enchanted|blessed|holy/.test(n)) props.push('magical');
+                if (/\b(mace|club|hammer|flail|maul)\b/.test(n)) props.push('crushing');
+                return props;
+            },
+
+            // Numeric bonus from strings like "+1 skill", "+2 attack"
+            weaponBonus(item) {
+                const match = item && item.bonus ? String(item.bonus).match(/([+-]\d+)/) : null;
+                return match ? parseInt(match[1]) : 0;
+            },
+
+            // Damage the player deals per hit with a given weapon (or null = no weapon) against an enemy.
+            // Base damage is 2. Enemy fields (all optional):
+            //   effectiveWeapons: ['magical','silver'] + normalWeaponDamage: n  -> weapons without one of
+            //     those properties deal n damage instead of 2 (e.g. Incorporeal)
+            //   weakTo: { property: 'crushing', damage: 3 } -> weapons with the property deal more
+            damageAgainst(weapon, enemy) {
+                const props = (weapon && weapon.properties) || [];
+                let damage = 2;
+                if (Array.isArray(enemy.effectiveWeapons) && !enemy.effectiveWeapons.some(p => props.includes(p))) {
+                    damage = enemy.normalWeaponDamage != null ? enemy.normalWeaponDamage : 2;
+                }
+                if (enemy.weakTo && props.includes(enemy.weakTo.property)) {
+                    damage = enemy.weakTo.damage;
+                }
+                return damage;
+            },
+
+            // Only one weapon is wielded at a time: use whichever does the most damage to this
+            // enemy, then gives the biggest SKILL bonus.
+            chooseWeapon(enemy) {
+                let best = null, bestDamage = this.damageAgainst(null, enemy), bestBonus = 0;
+                for (const item of this.inventory) {
+                    if (item.type !== 'weapon') continue;
+                    const damage = this.damageAgainst(item, enemy);
+                    const bonus = this.weaponBonus(item);
+                    if (!best || damage > bestDamage || (damage === bestDamage && bonus > bestBonus)) {
+                        best = item; bestDamage = damage; bestBonus = bonus;
+                    }
+                }
+                return { weapon: best, damage: bestDamage, bonus: bestBonus };
+            },
 
             loadBook(book) {
+                this.cancelPending();
+                this.isGameOver = false;
+                this.gameOverType = null;
+                this.combatDone = false;
+                this.usedOnce = new Set();
+                this.inCombat = false;
+                this.combatLog = [];
                 this.currentBook = book;
                 this.isGameStarted = false;
+                if (!book) {
+                    this.currentSection = 1;
+                    this.stats = null;
+                    this.inventory = [];
+                    this.visitedSections = new Set();
+                    render();
+                    return;
+                }
                 // Check if section 0 exists (intro), if so show it first
                 const hasIntro = book.sections.some(s => s.id === 0);
                 this.currentSection = hasIntro ? 0 : book.startingSection;
@@ -432,6 +524,14 @@
             startGame() {
                 if (!this.currentBook) return;
 
+                this.cancelPending();
+                this.isGameOver = false;
+                this.gameOverType = null;
+                this.combatDone = false;
+                this.usedOnce = new Set();
+                this.inCombat = false;
+                this.combatLog = [];
+                this.currentCombatIndex = 0;
                 this.isGameStarted = true;
                 this.stats = {
                     skill: this.currentBook.initialStats.skill,
@@ -447,7 +547,7 @@
                 const bookStartingItems = this.currentBook.startingItems || [];
                 if (bookStartingItems.length === 0) {
                     // Default starting equipment: sword, shield, leather armor, backpack, and 10 rations
-                    this.inventory = [
+                    this.inventory = ([
                         { id: 'sword', name: 'Sword', type: 'weapon' },
                         { id: 'shield', name: 'Shield', type: 'armor' },
                         { id: 'leather-armor', name: 'Leather Armor', type: 'armor' },
@@ -463,9 +563,9 @@
                         { id: 'rations', name: 'Rations', type: 'food', restore: '+4 stamina' },
                         { id: 'rations', name: 'Rations', type: 'food', restore: '+4 stamina' },
                         { id: 'rations', name: 'Rations', type: 'food', restore: '+4 stamina' }
-                    ];
+                    ]).map(i => this.makeItem(i));
                 } else {
-                    this.inventory = [...bookStartingItems];
+                    this.inventory = bookStartingItems.map(i => this.makeItem(i));
                 }
 
                 this.currentSection = this.currentBook.startingSection;
@@ -474,6 +574,11 @@
             },
 
             resetGame() {
+                this.cancelPending();
+                this.usedOnce = new Set();
+                this.combatDone = false;
+                this.isGameOver = false;
+                this.gameOverType = null;
                 this.isGameStarted = false;
                 this.currentSection = this.currentBook?.startingSection || 1;
                 this.stats = null;
@@ -486,20 +591,75 @@
             },
 
             goToSection(sectionId) {
+                this.cancelPending();
+                this.combatDone = false;
+                this.rollResolved = false;
+                this.tempSkillPenalty = 0;
+                const firstVisit = !this.visitedSections.has(sectionId);
                 this.currentSection = sectionId;
                 this.visitedSections.add(sectionId);
                 this.inCombat = false;
                 this.combatLog = [];
                 this.currentCombatIndex = 0;
+                // Effects apply only the first time a section is entered, so revisits can't
+                // re-apply a trap, a healing room, or item pickups/removals
+                if (firstVisit) this.applySectionEffects(sectionId);
                 render();
             },
 
+            // changes: { skill, stamina, luck } - numbers add (clamped 0..Initial); 'max' restores to Initial
             modifyStats(changes) {
                 if (!this.stats) return;
-                if (changes.skill) this.stats.skill = Math.max(0, Math.min(this.stats.initialSkill, this.stats.skill + changes.skill));
-                if (changes.stamina) this.stats.stamina = Math.max(0, Math.min(this.stats.initialStamina, this.stats.stamina + changes.stamina));
-                if (changes.luck) this.stats.luck = Math.max(0, Math.min(this.stats.initialLuck, this.stats.luck + changes.luck));
+                const apply = (cur, init, v) => v === 'max' ? init : Math.max(0, Math.min(init, cur + v));
+                if (changes.skill) this.stats.skill = apply(this.stats.skill, this.stats.initialSkill, changes.skill);
+                if (changes.stamina) this.stats.stamina = apply(this.stats.stamina, this.stats.initialStamina, changes.stamina);
+                if (changes.luck) this.stats.luck = apply(this.stats.luck, this.stats.initialLuck, changes.luck);
+                this.checkDeath();
                 render();
+            },
+
+            // Lasting losses. permanent=true lowers current AND Initial (e.g. a Shadow's drain);
+            // permanent=false lowers only the Initial maximum ("reduce your maximum STAMINA by 1").
+            reduceStats(changes, permanent) {
+                if (!this.stats) return;
+                const names = { skill: 'Skill', stamina: 'Stamina', luck: 'Luck' };
+                for (const key of Object.keys(names)) {
+                    const amount = changes[key];
+                    if (!amount) continue;
+                    const init = 'initial' + names[key];
+                    this.stats[init] = Math.max(0, this.stats[init] + amount);
+                    this.stats[key] = permanent ? Math.max(0, this.stats[key] + amount) : this.stats[key];
+                    this.stats[key] = Math.min(this.stats[key], this.stats[init]);
+                }
+                this.checkDeath();
+                render();
+            },
+
+            // Death from any source (traps, poison, etc.), not only combat
+            checkDeath() {
+                if (this.stats && this.stats.stamina <= 0 && !this.isGameOver) {
+                    this.cancelPending();
+                    this.inCombat = false;
+                    this.isGameOver = true;
+                    this.gameOverType = 'defeat';
+                }
+            },
+
+            // Effects: any object with modifyStats / permanentStats / maxStats / addItems / removeItems
+            // (a section, or the outcome of a Luck test or dice roll)
+            applyEffects(effects) {
+                if (!effects) return;
+                if (effects.modifyStats) this.modifyStats(effects.modifyStats);
+                if (effects.permanentStats) this.reduceStats(effects.permanentStats, true);
+                if (effects.maxStats) this.reduceStats(effects.maxStats, false);
+                if (effects.addItems) effects.addItems.forEach(item => this.addItem(item));
+                if (effects.removeItems) effects.removeItems.forEach(itemId => this.removeItem(itemId));
+            },
+
+            // Effects of entering a section for the first time: stat changes, items gained and lost
+            applySectionEffects(sectionId) {
+                const section = this.currentBook.sections.find(s => s.id === sectionId);
+                if (section) this.applyEffects(section);
             },
 
             addGold(amount) {
@@ -518,14 +678,25 @@
                     const match = item.name.match(/(\d+)/);
                     const amount = match ? parseInt(match[1]) : 1;
                     this.addGold(amount);
+                } else if ((item.unique || (item.bonus && item.type !== 'potion')) && this.hasItem(item.id)) {
+                    // Don't collect a second copy of a unique item or of bonus equipment
+                    // (e.g. another Cloak of Protection): it would just stack its bonus.
                 } else {
-                    this.inventory.push(item);
+                    this.inventory.push(this.makeItem(item));
                 }
                 render();
             },
 
             removeItem(itemId) {
                 const index = this.inventory.findIndex(item => item.id === itemId);
+                if (index !== -1) {
+                    this.inventory.splice(index, 1);
+                    render();
+                }
+            },
+
+            removeItemByUid(uid) {
+                const index = this.inventory.findIndex(item => item.uid === uid);
                 if (index !== -1) {
                     this.inventory.splice(index, 1);
                     render();
@@ -548,22 +719,14 @@
                 if (!this.stats) return { success: false, newLuck: 0 };
                 const roll = this.rollTwoDice();
                 const success = roll <= this.stats.luck;
-                this.stats.luck -= 1;
-                return { success, newLuck: this.stats.luck };
+                this.stats.luck = Math.max(0, this.stats.luck - 1);
+                return { success, newLuck: this.stats.luck, roll };
             },
 
-            // Calculate total attack bonus from weapons in inventory
+            // Attack bonus from the best single weapon (weapon bonuses do not stack)
             calculateAttackBonus() {
-                return this.inventory.reduce((total, item) => {
-                    if (item.type === 'weapon' && item.bonus) {
-                        // Extract numeric bonus from strings like "+1 skill", "+2 attack", etc.
-                        const match = item.bonus.match(/([+-]\d+)/);
-                        if (match) {
-                            return total + parseInt(match[1]);
-                        }
-                    }
-                    return total;
-                }, 0);
+                return this.inventory.reduce((best, item) =>
+                    item.type === 'weapon' ? Math.max(best, this.weaponBonus(item)) : best, 0);
             },
 
             // Calculate total defense bonus from armor in inventory
@@ -581,8 +744,14 @@
             },
 
             // Use an item from inventory (e.g., healing potion, ration)
-            useItem(itemId) {
-                const item = this.inventory.find(i => i.id === itemId);
+            useItem(uid) {
+                const item = this.inventory.find(i => i.uid === uid);
+                if (item && item.onUse) {
+                    alert(`You used ${item.name}!${describeEffects(item.onUse)}`);
+                    this.removeItemByUid(uid);
+                    this.applyEffects(item.onUse);
+                    return;
+                }
                 if (!item || !item.restore) return;
 
                 // Parse the restore property (e.g., "+4 stamina", "+2 skill", "+1 luck")
@@ -602,7 +771,7 @@
 
                         // Remove consumable items after use
                         if (item.type === 'potion' || item.type === 'food') {
-                            this.removeItem(itemId);
+                            this.removeItemByUid(uid);
                         }
                     }
                 }
@@ -619,7 +788,11 @@
                     currentSection: this.currentSection,
                     stats: this.stats,
                     inventory: this.inventory,
-                    visitedSections: Array.from(this.visitedSections)
+                    visitedSections: Array.from(this.visitedSections),
+                    usedOnce: Array.from(this.usedOnce),
+                    inCombat: this.inCombat,
+                    enemyCurrentStamina: this.enemyCurrentStamina,
+                    currentCombatIndex: this.currentCombatIndex
                 };
 
                 const saves = JSON.parse(localStorage.getItem('ff_saves') || '[]');
@@ -628,6 +801,13 @@
                 alert('Game saved!');
             }
         };
+
+        // Escape text coming from books before putting it into innerHTML
+        function esc(value) {
+            return String(value ?? '').replace(/[&<>"']/g, ch => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[ch]));
+        }
 
         // Render Functions
         function render() {
@@ -674,9 +854,9 @@
                         <h2 class="card-title text-center">Load Adventure Book</h2>
 
                         <div class="book-info">
-                            <h3 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem;">${book.title}</h3>
-                            ${book.author ? `<p style="color: #6b7280; margin-bottom: 0.5rem;">By ${book.author}</p>` : ''}
-                            ${book.description ? `<p style="margin-bottom: 1rem;">${book.description}</p>` : ''}
+                            <h3 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem;">${esc(book.title)}</h3>
+                            ${book.author ? `<p style="color: #6b7280; margin-bottom: 0.5rem;">By ${esc(book.author)}</p>` : ''}
+                            ${book.description ? `<p style="margin-bottom: 1rem;">${esc(book.description)}</p>` : ''}
                             <div style="font-size: 0.875rem; color: #6b7280;">
                                 <p>Starting Stats:</p>
                                 <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
@@ -706,10 +886,14 @@
                 return `<div class="card"><p class="text-center" style="color: #ef4444;">Error: Section ${GameState.currentSection} not found</p></div>`;
             }
 
+            if (GameState.isGameOver) {
+                return renderGameOver();
+            }
+
             return `
                 <div class="card">
                     <div class="flex flex-between mb-2">
-                        <h2 class="card-title" style="margin: 0;">${GameState.currentBook.title}</h2>
+                        <h2 class="card-title" style="margin: 0;">${esc(GameState.currentBook.title)}</h2>
                         <div class="flex flex-gap">
                             <button class="button button-secondary" onclick="GameState.saveGame()">Save Game</button>
                             <button class="button button-danger" onclick="if(confirm('Restart the adventure?')) GameState.resetGame()">Restart</button>
@@ -730,6 +914,21 @@
             `;
         }
 
+        function renderGameOver() {
+            const won = GameState.gameOverType === 'victory';
+            return `
+                <div class="card text-center">
+                    <div class="${won ? 'ending-victory' : 'ending-defeat'}">${won ? '🎉 Victory!' : '💀 You have died...'}</div>
+                    <p class="mb-2" style="color: #6b7280;">${won ? 'You completed the adventure.' : 'Your STAMINA has reached 0. Your adventure ends here.'}</p>
+                    <button class="button button-danger" onclick="GameState.resetGame()">Return to Start</button>
+                </div>
+                <div class="grid grid-cols-3">
+                    <div style="grid-column: span 2;">${renderMapTracker()}</div>
+                    <div>${renderCharacterSheet()}</div>
+                </div>
+            `;
+        }
+
         function renderSection(section) {
             let html = `<div class="card">`;
 
@@ -739,9 +938,9 @@
             html += `
                 <div class="flex flex-between mb-2">
                     <h3 style="font-size: 1.5rem; font-weight: bold; color: #78350f;">${isIntro ? 'Introduction' : `Section ${section.id}`}</h3>
-                    ${section.title ? `<span style="font-size: 1.125rem; color: #6b7280;">${section.title}</span>` : ''}
+                    ${section.title ? `<span style="font-size: 1.125rem; color: #6b7280;">${esc(section.title)}</span>` : ''}
                 </div>
-                <div class="section-text">${section.text}</div>
+                <div class="section-text">${esc(section.text)}</div>
             `;
 
             // If this is section 0 (intro), show "Start Adventure" button
@@ -766,30 +965,42 @@
                 html += `<div class="${endingClass}">${endingText}</div>`;
             }
 
-            if (section.combat && !GameState.inCombat) {
+            if (section.combat && !GameState.inCombat && !GameState.combatDone) {
                 html += renderCombatStart(section.combat);
             } else if (GameState.inCombat && section.combat) {
                 html += renderCombat(section.combat);
             }
 
-            if (section.choices && section.choices.length > 0 && !section.combat) {
+            if (section.choices && section.choices.length > 0 && (!section.combat || GameState.combatDone)) {
                 html += `<div class="mt-2"><h4 style="font-weight: 600; margin-bottom: 1rem;">What do you do?</h4>`;
                 section.choices.forEach((choice, index) => {
+                    // "If you don't have X" branches only appear when they apply
+                    // One-time decisions (e.g. the vial in section 35) disappear once any of them was taken
+                    if (choice.once && GameState.usedOnce.has(section.id)) return;
+                    if (choice.conditions && hasNegativeCondition(choice.conditions) &&
+                        !canMakeChoice({ conditions: stripPositive(choice.conditions) })) return;
                     const disabled = !canMakeChoice(choice);
                     html += `
-                        <button class="choice-button" onclick="handleChoice(${choice.targetSection}, ${index})" ${disabled ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>
-                            ${choice.text}
-                            ${choice.conditions ? `<span style="font-size: 0.875rem; color: #6b7280;"> (requires conditions)</span>` : ''}
+                        <button class="choice-button" onclick="handleChoice(${Number(choice.targetSection)}, ${index})" ${disabled ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>
+                            ${esc(choice.text)}
+                            ${choice.conditions && disabled ? `<span style="font-size: 0.875rem; color: #6b7280;"> (${esc(describeConditions(choice.conditions))})</span>` : ''}
                         </button>
                     `;
                 });
                 html += `</div>`;
             }
 
-            if (section.testLuck) {
+            if (section.diceRoll) {
+                html += `<div style="background: #e0f2fe; padding: 1rem; border-radius: 0.5rem; margin-top: 1rem;">
+                    <h4 style="font-weight: bold; margin-bottom: 0.5rem;">${esc(section.diceRoll.label || 'Roll one die')}</h4>
+                    <button class="button button-primary" onclick="handleDiceRoll(${Number(section.id)})">🎲 Roll the Die</button>
+                </div>`;
+            }
+
+            if (section.testLuck && canMakeChoice({ conditions: section.testLuck.conditions })) {
                 html += `<div style="background: #f3e8ff; padding: 1rem; border-radius: 0.5rem; margin-top: 1rem;">
-                    <h4 style="font-weight: bold; margin-bottom: 0.5rem;">Test Your Luck!</h4>
-                    <button class="button button-warning" onclick="handleLuckTest(${section.id})">Roll the Dice</button>
+                    <h4 style="font-weight: bold; margin-bottom: 0.5rem;">${esc(section.testLuck.label || 'Test Your Luck!')}</h4>
+                    <button class="button button-warning" onclick="handleLuckTest(${Number(section.id)})">Roll the Dice</button>
                 </div>`;
             }
 
@@ -816,22 +1027,79 @@
                 combats.forEach((c, idx) => {
                     const isCurrent = idx === GameState.currentCombatIndex;
                     html += `<p style="text-align: center; font-size: 1rem; margin-bottom: 0.5rem; ${isCurrent ? 'font-weight: bold; color: #dc2626;' : 'color: #9ca3af;'}">
-                        ${isCurrent ? '→ ' : ''}${c.enemyName} - SKILL ${c.enemySkill}, STAMINA ${c.enemyStamina}
+                        ${isCurrent ? '→ ' : ''}${esc(c.enemyName)} - SKILL ${c.enemySkill}, STAMINA ${c.enemyStamina}
                     </p>`;
                 });
             } else {
                 html += `<p style="text-align: center; font-size: 1.125rem; margin-bottom: 1rem;">
-                    ${currentCombat.enemyName} - SKILL ${currentCombat.enemySkill}, STAMINA ${currentCombat.enemyStamina}
+                    ${esc(currentCombat.enemyName)} - SKILL ${currentCombat.enemySkill}, STAMINA ${currentCombat.enemyStamina}
                 </p>`;
             }
+            html += renderCombatNotes(currentCombat);
 
             html += `
-                    <button class="button button-danger" style="width: 100%;" onclick="startCombat(${currentCombat.enemyStamina})">
+                    <button class="button button-danger" style="width: 100%;" onclick="startCombat(${Number(currentCombat.enemyStamina)})">
                         Fight!
                     </button>
                 </div>
             `;
             return html;
+        }
+
+        // Effects that trigger when an enemy's fight begins (e.g. a wail: Test Luck or lose SKILL)
+        function applyCombatStart(enemy) {
+            const os = enemy.onStart;
+            if (!os) return;
+            const loss = os.skillLoss || 1;
+            if (!os.luckTest) {
+                // unconditional penalty for this fight (e.g. fighting underwater)
+                GameState.tempSkillPenalty += loss;
+                GameState.combatLog.push(`🌊 ${os.text || 'Difficult conditions'}: -${loss} SKILL for this combat. (SKILL now ${Math.max(0, GameState.stats.skill - GameState.tempSkillPenalty)})`);
+                return;
+            }
+            const lt = GameState.testLuck();
+            if (lt.success) {
+                GameState.combatLog.push(`🍀 Test your Luck (rolled ${lt.roll}): Lucky! ${enemy.enemyName}'s power does not touch you.`);
+            } else {
+                GameState.tempSkillPenalty += loss;
+                GameState.combatLog.push(`😱 Test your Luck (rolled ${lt.roll}): Unlucky! You lose ${loss} SKILL for the entire battle. (SKILL now ${Math.max(0, GameState.stats.skill - GameState.tempSkillPenalty)})`);
+            }
+        }
+
+        // One line per special rule so the player knows what they are up against
+        function combatNotes(c) {
+            const notes = [];
+            if (c.note) notes.push(c.note);
+            if (Array.isArray(c.effectiveWeapons)) {
+                const list = c.effectiveWeapons.join(' or ');
+                notes.push(c.normalWeaponDamage === 0
+                    ? `Immune to any weapon that is not ${list}`
+                    : `Weapons that are not ${list} deal only ${c.normalWeaponDamage ?? 2} damage`);
+            }
+            if (c.weakTo) notes.push(`${c.weakTo.property} weapons deal ${c.weakTo.damage} damage`);
+            if (c.onStart && c.onStart.luckTest) notes.push(`At the start of the fight, Test Luck or lose ${c.onStart.skillLoss || 1} SKILL for the battle`);
+            if (c.onStart && !c.onStart.luckTest) notes.push(`You fight at -${c.onStart.skillLoss || 1} SKILL${c.onStart.text ? ' (' + c.onStart.text.toLowerCase() + ')' : ''}`);
+            if (c.onVictoryEffects) notes.push(`Winning costs you:${describeEffects(c.onVictoryEffects)}`);
+            if (c.onWound) {
+                notes.push(c.onWound.luckTest ? `Each wound: Test Luck or lose ${c.onWound.skillLoss || 1} SKILL for the battle`
+                    : `Each wound permanently drains ${c.onWound.skillLoss || 1} SKILL`);
+            }
+            if (Array.isArray(c.reviveOn)) notes.push(`When reduced to 0 STAMINA, roll a die: on ${c.reviveOn.join(' or ')} it survives with 1 STAMINA`);
+            return notes;
+        }
+
+        function renderCombatNotes(c) {
+            const notes = combatNotes(c);
+            if (!notes.length) return '';
+            return `<ul style="margin: 0.5rem auto 1rem; max-width: 32rem; font-size: 0.875rem; color: #7f1d1d; list-style: none; text-align: center;">
+                ${notes.map(n => `<li>⚠️ ${esc(n)}</li>`).join('')}</ul>`;
+        }
+
+        // Flee is offered if the combat allows it and any STAMINA threshold is met
+        function canFleeNow(c) {
+            if (!c.canFlee) return false;
+            if (c.fleeMaxStamina != null && GameState.stats.stamina > c.fleeMaxStamina) return false;
+            return true;
         }
 
         function renderCombat(combat) {
@@ -846,7 +1114,7 @@
                     </h3>
                     ${combats.length > 1 ? `<p style="text-align: center; font-size: 0.875rem; color: #6b7280;">Enemy ${GameState.currentCombatIndex + 1} of ${combats.length}</p>` : ''}
                     <p style="text-align: center; font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">
-                        ${currentCombat.enemyName}
+                        ${esc(currentCombat.enemyName)}
                     </p>
                     <div class="flex" style="justify-content: center; gap: 2rem; margin-bottom: 1rem;">
                         <div class="text-center">
@@ -861,15 +1129,16 @@
                         </div>
                     </div>
 
+                    ${renderCombatNotes(currentCombat)}
                     <div class="combat-log">
-                        ${GameState.combatLog.map(log => `<div>${log}</div>`).join('')}
+                        ${GameState.combatLog.map(log => `<div>${esc(log)}</div>`).join('')}
                     </div>
 
                     <div class="flex flex-gap">
                         <button class="button button-danger" style="flex: 1;" onclick="fightRound()">
                             Fight Round
                         </button>
-                        ${currentCombat.canFlee ? `<button class="button button-warning" onclick="fleeCombat(${currentCombat.fleeSection})">Flee</button>` : ''}
+                        ${canFleeNow(currentCombat) ? `<button class="button button-warning" onclick="fleeCombat(${Number(currentCombat.fleeSection)})">${currentCombat.fleeTestLuck ? 'Flee (Test Luck)' : 'Flee'}</button>` : ''}
                     </div>
                 </div>
             `;
@@ -897,7 +1166,7 @@
         }
 
         function renderStatBar(label, current, initial) {
-            const percentage = Math.min(100, Math.max(0, (current / initial) * 100));
+            const percentage = initial > 0 ? Math.min(100, Math.max(0, (current / initial) * 100)) : 0;
             const colorClass = percentage > 66 ? 'high' : percentage > 33 ? 'medium' : 'low';
             const color = percentage > 66 ? '#10b981' : percentage > 33 ? '#f59e0b' : '#ef4444';
 
@@ -937,22 +1206,23 @@
             } else {
                 GameState.inventory.forEach((item, index) => {
                     const itemClass = `item-${item.type || 'other'}`;
-                    const isUsable = item.restore ? true : false;
+                    const isUsable = !!(item.restore || item.onUse);
 
                     html += `
                         <div class="inventory-item ${itemClass}">
                             <div style="flex: 1;">
                                 <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
                                     <span style="font-size: 1.5rem;">${icons[item.type] || icons.other}</span>
-                                    <strong>${item.name}</strong>
+                                    <strong>${esc(item.name)}</strong>
                                 </div>
-                                ${item.description ? `<div style="font-size: 0.875rem; color: #6b7280; margin-left: 2rem;">${item.description}</div>` : ''}
-                                ${item.restore ? `<div style="font-size: 0.75rem; color: #059669; margin-left: 2rem; margin-top: 0.25rem;">✨ ${item.restore}</div>` : ''}
-                                ${item.bonus ? `<div style="font-size: 0.75rem; color: #7c3aed; margin-left: 2rem; margin-top: 0.25rem;">⚡ ${item.bonus}</div>` : ''}
+                                ${item.description ? `<div style="font-size: 0.875rem; color: #6b7280; margin-left: 2rem;">${esc(item.description)}</div>` : ''}
+                                ${item.restore ? `<div style="font-size: 0.75rem; color: #059669; margin-left: 2rem; margin-top: 0.25rem;">✨ ${esc(item.restore)}</div>` : ''}
+                                ${item.properties && item.properties.length ? `<div style="font-size: 0.75rem; color: #b45309; margin-left: 2rem; margin-top: 0.25rem;">🏷️ ${item.properties.map(esc).join(', ')}</div>` : ''}
+                                ${item.bonus ? `<div style="font-size: 0.75rem; color: #7c3aed; margin-left: 2rem; margin-top: 0.25rem;">⚡ ${esc(item.bonus)}</div>` : ''}
                             </div>
                             <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                ${isUsable ? `<button class="btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;" onclick="GameState.useItem('${item.id}')">Use</button>` : ''}
-                                <span class="remove-item" onclick="GameState.removeItem('${item.id}')" title="Remove item">✕</span>
+                                ${isUsable ? `<button class="button button-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;" onclick="GameState.useItem(${item.uid})">Use</button>` : ''}
+                                <span class="remove-item" onclick="GameState.removeItemByUid(${item.uid})" title="Remove item">✕</span>
                             </div>
                         </div>
                     `;
@@ -2034,8 +2304,18 @@
                 matches.push({
                     id: sectionId,
                     start: match.index,
-                    headerEnd: match.index + match[0].length
+                    headerEnd: match.index + match[0].length,
+                    weak: !!match[4]
                 });
+            }
+
+            // A bare "1." / "1:" line is ambiguous: it is also how numbered lists inside a
+            // section are written. If the text uses explicit "Section N" headers, ignore the
+            // bare form so list items don't become duplicate sections.
+            if (matches.some(m => /^section/i.test(text.substr(m.start, 7)))) {
+                for (let k = matches.length - 1; k >= 0; k--) {
+                    if (matches[k].weak) matches.splice(k, 1);
+                }
             }
 
             // Extract section content
@@ -2236,7 +2516,7 @@
         function showError(message) {
             const errorDiv = document.getElementById('error-message');
             if (errorDiv) {
-                errorDiv.innerHTML = `<div class="alert-error">${message}</div>`;
+                errorDiv.innerHTML = `<div class="alert-error">${esc(message)}</div>`;
                 setTimeout(() => {
                     errorDiv.innerHTML = '';
                 }, 5000);
@@ -2258,11 +2538,42 @@
                 });
         }
 
+        // "Brass Key" from the item id "brass-key"
+        function prettyItemId(id) {
+            return String(id).split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        }
+
+        // "If you don't have X" style conditions: the choice is hidden rather than shown locked
+        function hasNegativeCondition(c) {
+            return !!(c.requiresNoItem || c.requiresMissingAny);
+        }
+        function stripPositive(c) {
+            return { requiresNoItem: c.requiresNoItem, requiresMissingAny: c.requiresMissingAny };
+        }
+
+        function describeConditions(c) {
+            const parts = [];
+            const names = v => [].concat(v).map(prettyItemId).join(' and ');
+            if (c.requiresItem) parts.push(`requires ${names(c.requiresItem)}`);
+            if (c.requiresNoItem) parts.push(`only without ${names(c.requiresNoItem)}`);
+            if (c.requiresMissingAny) parts.push(`only if you lack ${[].concat(c.requiresMissingAny).map(prettyItemId).join(' or ')}`);
+            if (c.requiresMinSkill) parts.push(`requires SKILL ${c.requiresMinSkill}+`);
+            if (c.requiresMinStamina) parts.push(`requires STAMINA ${c.requiresMinStamina}+`);
+            if (c.requiresMinLuck) parts.push(`requires LUCK ${c.requiresMinLuck}+`);
+            return parts.join(', ') || 'requires conditions';
+        }
+
         function canMakeChoice(choice) {
             if (!choice.conditions) return true;
 
             const c = choice.conditions;
-            if (c.requiresItem && !GameState.hasItem(c.requiresItem)) return false;
+            if (!GameState.stats) return false;
+            // requiresItem: one id or a list - you need all of them
+            if ([].concat(c.requiresItem || []).some(id => !GameState.hasItem(id))) return false;
+            // requiresNoItem: one id or a list - you must own none of them
+            if ([].concat(c.requiresNoItem || []).some(id => GameState.hasItem(id))) return false;
+            // requiresMissingAny: a list - you must be missing at least one ("if you lack either")
+            if (c.requiresMissingAny && !c.requiresMissingAny.some(id => !GameState.hasItem(id))) return false;
             if (c.requiresMinSkill && GameState.stats.skill < c.requiresMinSkill) return false;
             if (c.requiresMinStamina && GameState.stats.stamina < c.requiresMinStamina) return false;
             if (c.requiresMinLuck && GameState.stats.luck < c.requiresMinLuck) return false;
@@ -2279,41 +2590,70 @@
                 return;
             }
 
-            // Apply section effects before moving
-            const nextSection = GameState.currentBook.sections.find(s => s.id === targetSection);
-            if (nextSection) {
-                if (nextSection.modifyStats) {
-                    GameState.modifyStats(nextSection.modifyStats);
-                }
-                // Only give items if this section hasn't been visited before
-                if (nextSection.addItems && !GameState.visitedSections.has(targetSection)) {
-                    nextSection.addItems.forEach(item => GameState.addItem(item));
-                }
-                if (nextSection.removeItems) {
-                    nextSection.removeItems.forEach(itemId => GameState.removeItem(itemId));
-                }
-            }
+            // Effects of the choice itself (drinking a vial, taking an item...)
+            if (choice.effects) GameState.applyEffects(choice.effects);
+            if (choice.once) GameState.usedOnce.add(section.id);
+            if (GameState.isGameOver) return;
 
+            // Section effects are applied by goToSection (first visit only)
             GameState.goToSection(targetSection);
+        }
+
+        // "-5 STAMINA, +1 LUCK" for the message after a Luck test or dice roll
+        function describeEffects(e) {
+            if (!e) return '';
+            const parts = [];
+            const add = (obj, suffix) => Object.entries(obj || {}).forEach(([stat, v]) =>
+                parts.push(v === 'max' ? `${stat.toUpperCase()} restored${suffix}` : `${v > 0 ? '+' : ''}${v} ${stat.toUpperCase()}${suffix}`));
+            add(e.modifyStats, '');
+            add(e.permanentStats, ' (permanent)');
+            add(e.maxStats, ' (maximum)');
+            return parts.length ? ` [${parts.join(', ')}]` : '';
         }
 
         function handleLuckTest(sectionId) {
             const section = GameState.currentBook.sections.find(s => s.id === sectionId);
             if (!section || !section.testLuck) return;
+            if (GameState.isGameOver || GameState.rollResolved) return;
+            GameState.rollResolved = true;
 
+            const tl = section.testLuck;
             const result = GameState.testLuck();
-            const message = result.success ?
-                `Lucky! You rolled successfully. ${section.testLuck.successText || ''}` :
-                `Unlucky! You failed the luck test. ${section.testLuck.failureText || ''}`;
+            const effects = result.success ? tl.successEffects : tl.failureEffects;
+            const message = (result.success ?
+                `Lucky! (rolled ${result.roll}) ${tl.successText || ''}` :
+                `Unlucky! (rolled ${result.roll}) ${tl.failureText || ''}`) + describeEffects(effects);
 
             alert(message);
+            GameState.applyEffects(effects);
+            if (GameState.isGameOver) return; // died from the outcome
 
-            const nextSection = result.success ?
-                section.testLuck.successSection :
-                section.testLuck.failureSection;
-
+            const nextSection = result.success ? tl.successSection : tl.failureSection;
             if (nextSection) {
-                setTimeout(() => GameState.goToSection(nextSection), 500);
+                GameState.schedule(() => GameState.goToSection(nextSection), 500);
+            } else {
+                render();
+            }
+        }
+
+        // One die decides which outcome happens: section.diceRoll.outcomes = [{ min, max, text, targetSection,
+        // modifyStats / permanentStats / maxStats }]
+        function handleDiceRoll(sectionId) {
+            const section = GameState.currentBook.sections.find(s => s.id === sectionId);
+            if (!section || !section.diceRoll) return;
+            if (GameState.isGameOver || GameState.rollResolved) return;
+            GameState.rollResolved = true;
+
+            const roll = GameState.rollDice();
+            const outcome = section.diceRoll.outcomes.find(o => roll >= o.min && roll <= o.max);
+            if (!outcome) { render(); return; }
+
+            alert(`You rolled ${roll}. ${outcome.text || ''}${describeEffects(outcome)}`);
+            GameState.applyEffects(outcome);
+            if (GameState.isGameOver) return;
+
+            if (outcome.targetSection) {
+                GameState.schedule(() => GameState.goToSection(outcome.targetSection), 500);
             } else {
                 render();
             }
@@ -2322,6 +2662,8 @@
         function startCombat(enemyStamina) {
             const section = GameState.currentBook.sections.find(s => s.id === GameState.currentSection);
             GameState.inCombat = true;
+            GameState.tempSkillPenalty = 0;
+            GameState.lastWielded = null;
             GameState.currentCombatIndex = 0;
             GameState.enemyCurrentStamina = enemyStamina;
 
@@ -2337,13 +2679,14 @@
             if (combats.length > 1) {
                 GameState.combatLog.push(`⚠️ Warning: ${combats.length} enemies detected! You must defeat them all.`);
             }
+            applyCombatStart(firstCombat);
 
             render();
         }
 
         function fightRound() {
             const section = GameState.currentBook.sections.find(s => s.id === GameState.currentSection);
-            if (!section || !section.combat || !GameState.stats) return;
+            if (!section || !section.combat || !GameState.stats || GameState.isGameOver) return;
 
             // Handle both single combat and arrays of combats
             const combats = Array.isArray(section.combat) ? section.combat : [section.combat];
@@ -2351,8 +2694,10 @@
 
             // Roll for player
             const playerDice = GameState.rollTwoDice();
-            const attackBonus = GameState.calculateAttackBonus();
-            const playerAttackStrength = playerDice + GameState.stats.skill + attackBonus;
+            const wield = GameState.chooseWeapon(combat);
+            const attackBonus = wield.bonus;
+            const effectiveSkill = Math.max(0, GameState.stats.skill - GameState.tempSkillPenalty);
+            const playerAttackStrength = playerDice + effectiveSkill + attackBonus;
 
             // Roll for enemy
             const enemyDice = GameState.rollTwoDice();
@@ -2360,20 +2705,45 @@
 
             const roundNum = GameState.combatLog.filter(l => l.includes('Round')).length + 1;
             GameState.combatLog.push(`\nRound ${roundNum}:`);
+            const wieldName = wield.weapon ? wield.weapon.name : 'bare hands';
+            if (GameState.lastWielded !== wieldName) {
+                GameState.lastWielded = wieldName;
+                GameState.combatLog.push(`🗡️ You fight with: ${wieldName}`);
+            }
 
             // Show attack bonus in combat log if present
             if (attackBonus !== 0) {
-                GameState.combatLog.push(`You rolled ${playerDice} + ${GameState.stats.skill} SKILL + ${attackBonus} (weapon bonus) = ${playerAttackStrength}`);
+                GameState.combatLog.push(`You rolled ${playerDice} + ${effectiveSkill} SKILL + ${attackBonus} (weapon bonus) = ${playerAttackStrength}`);
             } else {
-                GameState.combatLog.push(`You rolled ${playerDice} + ${GameState.stats.skill} SKILL = ${playerAttackStrength}`);
+                GameState.combatLog.push(`You rolled ${playerDice} + ${effectiveSkill} SKILL = ${playerAttackStrength}`);
             }
 
             GameState.combatLog.push(`${combat.enemyName} rolled ${enemyDice} + ${combat.enemySkill} SKILL = ${enemyAttackStrength}`);
 
             if (playerAttackStrength > enemyAttackStrength) {
                 // Player wins
-                GameState.enemyCurrentStamina -= 2;
-                GameState.combatLog.push(`💥 You hit ${combat.enemyName} for 2 damage! (${GameState.enemyCurrentStamina} STAMINA remaining)`);
+                const hitDamage = wield.damage;
+                if (hitDamage === 0) {
+                    const need = (combat.effectiveWeapons || []).join(' or ');
+                    GameState.combatLog.push(`👻 Your blow passes harmlessly through ${combat.enemyName}! Only a ${need} weapon can hurt it.`);
+                    render();
+                    return;
+                }
+                GameState.enemyCurrentStamina -= hitDamage;
+                const weaponNote = (hitDamage !== 2 && wield.weapon)
+                    ? ` (${wield.weapon.name})` : (hitDamage !== 2 ? ' (no suitable weapon)' : '');
+                GameState.combatLog.push(`💥 You hit ${combat.enemyName} for ${hitDamage} damage${weaponNote}! (${GameState.enemyCurrentStamina} STAMINA remaining)`);
+
+                // Special rule: some enemies refuse to stay down (e.g. Undead Fortitude)
+                if (GameState.enemyCurrentStamina <= 0 && Array.isArray(combat.reviveOn)) {
+                    const reviveRoll = GameState.rollDice();
+                    if (combat.reviveOn.includes(reviveRoll)) {
+                        GameState.enemyCurrentStamina = 1;
+                        GameState.combatLog.push(`🧟 You roll a ${reviveRoll}: ${combat.enemyName} refuses to stay down! It survives with 1 STAMINA.`);
+                    } else {
+                        GameState.combatLog.push(`🎲 You roll a ${reviveRoll}: ${combat.enemyName} stays down.`);
+                    }
+                }
 
                 if (GameState.enemyCurrentStamina <= 0) {
                     GameState.combatLog.push(`\n🎉 You defeated ${combat.enemyName}!`);
@@ -2385,16 +2755,23 @@
                         const nextEnemy = combats[GameState.currentCombatIndex];
                         GameState.combatLog.push(`\n⚠️ Another enemy approaches: ${nextEnemy.enemyName}!`);
                         GameState.enemyCurrentStamina = nextEnemy.enemyStamina;
-                        setTimeout(() => render(), 1500);
+                        applyCombatStart(nextEnemy);
+                        GameState.schedule(() => render(), 1500);
                     } else {
                         // All enemies defeated
                         GameState.inCombat = false;
                         GameState.currentCombatIndex = 0;
-                        setTimeout(() => {
-                            if (combat.onVictorySection) {
-                                GameState.goToSection(combat.onVictorySection);
-                            }
-                        }, 2000);
+                        // Hide the Fight button right away; if the book defines no victory
+                        // section the section's own choices appear instead
+                        GameState.combatDone = true;
+                        if (combat.onVictoryEffects) {
+                            GameState.applyEffects(combat.onVictoryEffects);
+                            GameState.combatLog.push(`😮‍💨 Victory has a price:${describeEffects(combat.onVictoryEffects)}`);
+                        }
+                        if (GameState.isGameOver) { render(); return; }
+                        if (GameState.currentBook.sections.some(sec => sec.id === combat.onVictorySection)) {
+                            GameState.schedule(() => GameState.goToSection(combat.onVictorySection), 2000);
+                        }
                     }
                 }
             } else if (enemyAttackStrength > playerAttackStrength) {
@@ -2412,15 +2789,37 @@
                     GameState.combatLog.push(`💔 ${combat.enemyName} hits you for ${actualDamage} damage!`);
                 }
 
+                // Special rule: wounds from some enemies drain SKILL
+                if (combat.onWound && GameState.stats.stamina > 0) {
+                    const loss = combat.onWound.skillLoss || 1;
+                    if (combat.onWound.luckTest) {
+                        const lt = GameState.testLuck();
+                        if (lt.success) {
+                            GameState.combatLog.push(`🍀 Test your Luck (rolled ${lt.roll}): Lucky! The toxins have no effect.`);
+                        } else {
+                            GameState.tempSkillPenalty += loss;
+                            GameState.combatLog.push(`☠️ Test your Luck (rolled ${lt.roll}): Unlucky! You lose ${loss} SKILL for the rest of this combat. (SKILL now ${Math.max(0, GameState.stats.skill - GameState.tempSkillPenalty)})`);
+                        }
+                    } else if (combat.onWound.permanent) {
+                        GameState.stats.skill = Math.max(0, GameState.stats.skill - loss);
+                        GameState.stats.initialSkill = Math.max(0, GameState.stats.initialSkill - loss);
+                        GameState.combatLog.push(`🩸 ${combat.enemyName}'s wound permanently drains ${loss} SKILL! (SKILL now ${GameState.stats.skill})`);
+                    }
+                }
+
                 if (GameState.stats.stamina <= 0) {
                     GameState.combatLog.push(`\n💀 You have been defeated...`);
                     GameState.inCombat = false;
                     GameState.currentCombatIndex = 0;
-                    setTimeout(() => {
-                        if (combat.onDefeatSection) {
-                            GameState.goToSection(combat.onDefeatSection);
-                        }
-                    }, 2000);
+                    const defeatTarget = GameState.currentBook.sections.some(sec => sec.id === combat.onDefeatSection);
+                    if (defeatTarget) {
+                        // modifyStats already flagged game over; the book's defeat section takes over
+                        GameState.isGameOver = false;
+                        GameState.gameOverType = null;
+                        GameState.goToSection(combat.onDefeatSection);
+                    } else {
+                        render();
+                    }
                     return;
                 }
             } else {
@@ -2433,9 +2832,22 @@
 
         function fleeCombat(fleeSection) {
             const section = GameState.currentBook.sections.find(s => s.id === GameState.currentSection);
-            GameState.combatLog.push(`\n🏃 You flee from ${section.combat.enemyName}!`);
+            const combats = Array.isArray(section.combat) ? section.combat : [section.combat];
+            const enemy = combats[GameState.currentCombatIndex] || combats[0];
+            if (!canFleeNow(enemy)) return;
+            if (enemy.fleeTestLuck) {
+                const lt = GameState.testLuck();
+                if (!lt.success) {
+                    GameState.combatLog.push(`\n🎲 Test your Luck (rolled ${lt.roll}): Unlucky! They catch you before you can flee. You must keep fighting.`);
+                    render();
+                    return;
+                }
+                GameState.combatLog.push(`\n🍀 Test your Luck (rolled ${lt.roll}): Lucky! You escape.`);
+            }
+            GameState.combatLog.push(`\n🏃 You flee from ${enemy.enemyName}!`);
             GameState.inCombat = false;
-            setTimeout(() => GameState.goToSection(fleeSection), 1000);
+            render();
+            GameState.schedule(() => GameState.goToSection(fleeSection), 1000);
         }
 
         // Initialize

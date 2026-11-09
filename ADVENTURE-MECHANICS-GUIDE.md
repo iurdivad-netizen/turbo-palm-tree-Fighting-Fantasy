@@ -176,6 +176,78 @@ The app automatically determines item type based on keywords:
 - `canFlee`: true/false - whether you can flee
 - `fleeSection`: Section to go to if you flee
 
+**Special combat rules (JSON only, set on each enemy in the `combat` entry or list):**
+- `fleeMaxStamina`: Flee is only offered while your STAMINA is at or below this value
+- `fleeTestLuck`: true - fleeing requires a Test Luck; if unlucky you stay in the fight
+- `onWound`: `{ "skillLoss": 1, "permanent": true }` - each time this enemy wounds you, lose SKILL
+  permanently (also lowers your Initial SKILL)
+- `onWound`: `{ "skillLoss": 1, "luckTest": true }` - each wound triggers a Test Luck; if unlucky, lose
+  SKILL for the rest of the combat only (restored afterwards)
+- `reviveOn`: `[5, 6]` - when reduced to 0 STAMINA, roll one die; on a listed result the enemy
+  survives with 1 STAMINA
+
+**Stat effects of entering a section (JSON only):**
+Applied once, the first time the section is entered - by any route (choice, Luck test, combat result, flee).
+- `"modifyStats": { "stamina": -3, "luck": 1 }` - add or subtract (clamped between 0 and the Initial value).
+  Use `"stamina": "max"` to restore a stat to its Initial value.
+- `"permanentStats": { "skill": -1, "stamina": -2 }` - permanent losses: lowers the current score AND the Initial value.
+- `"maxStats": { "stamina": -1 }` - lowers only the Initial maximum (current is capped to it).
+- Reaching 0 STAMINA from any effect ends the game.
+- `removeItems` / `addItems` use the same first-visit rule, so "eat a Provision" sections can consume an item.
+
+**Luck tests and dice rolls with effects (JSON only):**
+- `testLuck` outcomes may carry effects, applied before moving on:
+  `"testLuck": { "successSection": 155, "failureSection": 221, "failureEffects": { "modifyStats": { "stamina": -3 } } }`
+  (`successEffects` too; effects may use `modifyStats`, `permanentStats` and `maxStats`).
+- `"diceRoll": { "outcomes": [ { "min": 1, "max": 3, "text": "...", "targetSection": 4 }, { "min": 4, "max": 6,
+  "modifyStats": { "stamina": -4 }, "targetSection": 221 } ] }` - one die decides the outcome.
+- Put the outcomes here instead of listing them as plain choices, otherwise the player can simply pick the good one.
+- A Luck test or dice roll can be made only once per visit to a section.
+
+**Choices with effects, and items with an effect (JSON only):**
+- A choice may carry `"effects": { "permanentStats": {...}, "modifyStats": {...}, "addItems": [...], "removeItems": [...] }`,
+  applied when the player picks it.
+- `"once": true` on a choice marks a one-time decision: after any `once` choice in that section is taken, all
+  `once` choices there disappear on later visits (so a vial can't be drunk twice).
+- An item with `"onUse": { ...effects... }` gets a Use button; using it applies the effects and consumes the item.
+- Combat: `"onVictoryEffects": { "modifyStats": { "stamina": -2 } }` is applied when you win;
+  `"onStart": { "skillLoss": 2, "text": "Fighting underwater" }` (without `luckTest`) is an unconditional SKILL
+  penalty for that fight.
+
+**Item conditions on choices (JSON only):**
+- `"conditions": { "requiresItem": "brass-key" }` - the choice is shown but locked until you own that item id.
+- `"conditions": { "requiresNoItem": "brass-key" }` - the choice only appears while you do NOT own the item
+  (use for "if you don't have it" branches).
+- `testLuck` may also carry `"conditions"` and a `"label"`, e.g. a forced-door luck test that only appears
+  without the key. `validate_adventure.py` reports items that a condition needs but no section gives.
+- `requiresItem` and `requiresNoItem` also accept a list: `requiresItem: ["silver-key", "true-name"]` needs
+  all of them; `requiresNoItem: [...]` needs none of them.
+- `"conditions": { "requiresMissingAny": ["silver-key", "true-name"] }` - the choice only appears if you lack at
+  least one of the items ("if you are missing either").
+- Items with `"unique": true`, or with a `bonus` (cloaks, magic weapons), are not collected twice.
+
+**Weapon properties (JSON only):**
+- Items of `type: "weapon"` may list `"properties": ["magical", "silver", "crushing"]`. If omitted, they are
+  guessed from the item name (silver / magic, blessed, enchanted, holy / mace, club, hammer, flail, maul).
+- Only one weapon is wielded at a time. The game picks the weapon that does the most damage to the current
+  enemy, then the largest SKILL `bonus`. Bonuses from several weapons do not stack.
+- `effectiveWeapons: ["magical", "silver"]` with `normalWeaponDamage: 1` on an enemy: weapons without one of
+  those properties deal 1 damage per hit instead of 2 (Incorporeal).
+- `weakTo: { "property": "crushing", "damage": 3 }` on an enemy: weapons with that property deal 3 damage.
+- `normalWeaponDamage: 0` with `effectiveWeapons` makes the enemy fully immune to other weapons (your blows pass
+  through harmlessly). Make sure the book gives the player a way to obtain a qualifying weapon.
+- `onStart: { "luckTest": true, "skillLoss": 2 }`: when the fight with this enemy begins, Test Luck; if unlucky,
+  lose SKILL for the whole battle.
+- `note`: optional free text shown in the combat panel. Every special rule above is also listed there automatically.
+
+Example (a Zombie that may refuse to stay down, with a luck-tested escape):
+```json
+{ "enemyName": "ZOMBIE 1", "enemySkill": 5, "enemyStamina": 6,
+  "reviveOn": [5, 6], "canFlee": true, "fleeSection": 346,
+  "fleeMaxStamina": 4, "fleeTestLuck": true,
+  "onVictorySection": 259, "onDefeatSection": 999 }
+```
+
 **Example:**
 ```json
 {
