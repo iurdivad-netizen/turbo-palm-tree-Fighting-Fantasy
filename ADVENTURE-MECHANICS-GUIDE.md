@@ -192,6 +192,10 @@ The app automatically determines item type based on keywords:
   (use for "if you don't have it" branches).
 - `testLuck` may also carry `"conditions"` and a `"label"`, e.g. a forced-door luck test that only appears
   without the key. `validate_adventure.py` reports items that a condition needs but no section gives.
+- `requiresItem` and `requiresNoItem` also accept a list: `requiresItem: ["silver-key", "true-name"]` needs
+  all of them; `requiresNoItem: [...]` needs none of them.
+- `"conditions": { "requiresMissingAny": ["silver-key", "true-name"] }` - the choice only appears if you lack at
+  least one of the items ("if you are missing either").
 - Items with `"unique": true`, or with a `bonus` (cloaks, magic weapons), are not collected twice.
 
 **Weapon properties (JSON only):**

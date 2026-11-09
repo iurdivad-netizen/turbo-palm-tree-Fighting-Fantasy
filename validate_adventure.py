@@ -46,11 +46,15 @@ def validate(path):
     obtainable = {i.get("id") for s in sections for i in s.get("addItems") or []}
     obtainable |= {i.get("id") for i in book.get("startingItems") or []}
     for s in sections:
-        for c in s.get("choices") or []:
+        gated = list(s.get("choices") or [])
+        if s.get("testLuck"):
+            gated.append(s["testLuck"])
+        for c in gated:
             cond = c.get("conditions") or {}
-            for key in ("requiresItem", "requiresNoItem"):
-                if cond.get(key) and cond[key] not in obtainable:
-                    errors.append(f"section {s.get('id')} needs item '{cond[key]}' which no section gives")
+            for key in ("requiresItem", "requiresNoItem", "requiresMissingAny"):
+                for item_id in ([cond[key]] if isinstance(cond.get(key), str) else cond.get(key) or []):
+                    if item_id not in obtainable:
+                        errors.append(f"section {s.get('id')} needs item '{item_id}' which no section gives")
     return errors
 
 

@@ -256,6 +256,13 @@
           "id": "scroll",
           "name": "Scroll",
           "type": "other"
+        },
+        {
+          "id": "true-name",
+          "name": "The Widow's True Name",
+          "type": "other",
+          "description": "Eliza Hollow",
+          "unique": true
         }
       ],
       "isEnding": true,
@@ -504,12 +511,18 @@
       "text": "You remember something you read in a journal or heard from a frightened villager—something about silver being the key to binding the dead. The memory surfaces clearly now, urgent and vital: \"Silver binds the dead. Only silver can seal the Widow's power forever.\" \r\n\r\n\r\nThe knowledge burns in your mind with the certainty of truth. But knowledge alone isn't enough—you need the actual implement. Do you have the SILVER KEY that Mayor Aldric promised to give you if you rescued his daughter? \r\n\r\n\r\nIf you have the SILVER KEY: Excellent! You clutch the key tightly, feeling its weight in your hand, its cold metal warming slightly against your skin. This is one of the three critical items needed for victory. With the key, the Widow's true name, and proper timing, you might actually succeed in binding her spirit. Turn to 395. \r\n\r\n\r\nIf you don't have the SILVER KEY: Your heart sinks. The knowledge is useless without the tool. You cannot bind the Widow without silver, and without binding her, you cannot end the curse. You're missing one of the three critical items needed for victory. The final confrontation will be far more difficult, perhaps impossible. Turn to 362.",
       "choices": [
         {
-          "text": "Turn to 395",
-          "targetSection": 395
+          "text": "Carry the Silver Key to the final confrontation",
+          "targetSection": 395,
+          "conditions": {
+            "requiresItem": "silver-key"
+          }
         },
         {
-          "text": "Turn to 362",
-          "targetSection": 362
+          "text": "Without the Silver Key, press on regardless",
+          "targetSection": 362,
+          "conditions": {
+            "requiresNoItem": "silver-key"
+          }
         }
       ],
       "addItems": [
@@ -1340,6 +1353,15 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "true-name",
+          "name": "The Widow's True Name",
+          "type": "other",
+          "description": "Eliza Hollow",
+          "unique": true
+        }
       ]
     },
     {
@@ -1543,12 +1565,24 @@
       "title": "The Widow appears before you without warning!",
       "choices": [
         {
-          "text": "Turn to 395",
-          "targetSection": 395
+          "text": "Bind her with the Silver Key and her true name",
+          "targetSection": 395,
+          "conditions": {
+            "requiresItem": [
+              "silver-key",
+              "true-name"
+            ]
+          }
         },
         {
-          "text": "Turn to 362",
-          "targetSection": 362
+          "text": "Fight or flee: you are missing the key or her name",
+          "targetSection": 362,
+          "conditions": {
+            "requiresMissingAny": [
+              "silver-key",
+              "true-name"
+            ]
+          }
         }
       ]
     },
@@ -2630,6 +2664,13 @@
           "id": "alchemists-journal",
           "name": "Alchemist's Journal",
           "type": "other",
+          "unique": true
+        },
+        {
+          "id": "true-name",
+          "name": "The Widow's True Name",
+          "type": "other",
+          "description": "Eliza Hollow",
           "unique": true
         }
       ]
@@ -3838,6 +3879,13 @@
           "id": "alchemists-journal",
           "name": "Alchemist's Journal",
           "type": "other",
+          "unique": true
+        },
+        {
+          "id": "true-name",
+          "name": "The Widow's True Name",
+          "type": "other",
+          "description": "Eliza Hollow",
           "unique": true
         }
       ]
@@ -5120,12 +5168,11 @@
       "title": "The door ahead is locked with a complex mechanism.",
       "choices": [
         {
-          "text": "Turn to 355",
-          "targetSection": 355
-        },
-        {
-          "text": "Turn to 301",
-          "targetSection": 301
+          "text": "Unlock the door with the Silver Key",
+          "targetSection": 355,
+          "conditions": {
+            "requiresItem": "silver-key"
+          }
         }
       ],
       "addItems": [
@@ -5134,7 +5181,17 @@
           "name": "Key",
           "type": "key"
         }
-      ]
+      ],
+      "testLuck": {
+        "label": "Force the door (Test Your Luck)",
+        "conditions": {
+          "requiresNoItem": "silver-key"
+        },
+        "successSection": 355,
+        "failureSection": 301,
+        "successText": "The lock gives way.",
+        "failureText": "The door will not budge."
+      }
     },
     {
       "id": 266,
@@ -8229,14 +8286,20 @@
           "text": "You are missing the Silver Key or her true name",
           "targetSection": 362,
           "conditions": {
-            "requiresNoItem": "silver-key"
+            "requiresMissingAny": [
+              "silver-key",
+              "true-name"
+            ]
           }
         }
       ],
       "testLuck": {
         "label": "Test your Luck: complete the binding ritual",
         "conditions": {
-          "requiresItem": "silver-key"
+          "requiresItem": [
+            "silver-key",
+            "true-name"
+          ]
         },
         "successSection": 400,
         "failureSection": 394,

@@ -918,8 +918,8 @@
                 html += `<div class="mt-2"><h4 style="font-weight: 600; margin-bottom: 1rem;">What do you do?</h4>`;
                 section.choices.forEach((choice, index) => {
                     // "If you don't have X" branches only appear when they apply
-                    if (choice.conditions && choice.conditions.requiresNoItem &&
-                        GameState.hasItem(choice.conditions.requiresNoItem)) return;
+                    if (choice.conditions && hasNegativeCondition(choice.conditions) &&
+                        !canMakeChoice({ conditions: stripPositive(choice.conditions) })) return;
                     const disabled = !canMakeChoice(choice);
                     html += `
                         <button class="choice-button" onclick="handleChoice(${Number(choice.targetSection)}, ${index})" ${disabled ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>
@@ -2469,10 +2469,20 @@
             return String(id).split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
         }
 
+        // "If you don't have X" style conditions: the choice is hidden rather than shown locked
+        function hasNegativeCondition(c) {
+            return !!(c.requiresNoItem || c.requiresMissingAny);
+        }
+        function stripPositive(c) {
+            return { requiresNoItem: c.requiresNoItem, requiresMissingAny: c.requiresMissingAny };
+        }
+
         function describeConditions(c) {
             const parts = [];
-            if (c.requiresItem) parts.push(`requires ${prettyItemId(c.requiresItem)}`);
-            if (c.requiresNoItem) parts.push(`only without ${prettyItemId(c.requiresNoItem)}`);
+            const names = v => [].concat(v).map(prettyItemId).join(' and ');
+            if (c.requiresItem) parts.push(`requires ${names(c.requiresItem)}`);
+            if (c.requiresNoItem) parts.push(`only without ${names(c.requiresNoItem)}`);
+            if (c.requiresMissingAny) parts.push(`only if you lack ${[].concat(c.requiresMissingAny).map(prettyItemId).join(' or ')}`);
             if (c.requiresMinSkill) parts.push(`requires SKILL ${c.requiresMinSkill}+`);
             if (c.requiresMinStamina) parts.push(`requires STAMINA ${c.requiresMinStamina}+`);
             if (c.requiresMinLuck) parts.push(`requires LUCK ${c.requiresMinLuck}+`);
@@ -2484,8 +2494,12 @@
 
             const c = choice.conditions;
             if (!GameState.stats) return false;
-            if (c.requiresNoItem && GameState.hasItem(c.requiresNoItem)) return false;
-            if (c.requiresItem && !GameState.hasItem(c.requiresItem)) return false;
+            // requiresItem: one id or a list - you need all of them
+            if ([].concat(c.requiresItem || []).some(id => !GameState.hasItem(id))) return false;
+            // requiresNoItem: one id or a list - you must own none of them
+            if ([].concat(c.requiresNoItem || []).some(id => GameState.hasItem(id))) return false;
+            // requiresMissingAny: a list - you must be missing at least one ("if you lack either")
+            if (c.requiresMissingAny && !c.requiresMissingAny.some(id => !GameState.hasItem(id))) return false;
             if (c.requiresMinSkill && GameState.stats.skill < c.requiresMinSkill) return false;
             if (c.requiresMinStamina && GameState.stats.stamina < c.requiresMinStamina) return false;
             if (c.requiresMinLuck && GameState.stats.luck < c.requiresMinLuck) return false;
