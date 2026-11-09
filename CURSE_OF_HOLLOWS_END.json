@@ -48,6 +48,13 @@
           "text": "Turn to 78",
           "targetSection": 78
         }
+      ],
+      "modifyStats": {
+        "skill": -2,
+        "stamina": -4
+      },
+      "removeItems": [
+        "mysterious-potion"
       ]
     },
     {
@@ -202,17 +209,11 @@
           "targetSection": 234
         }
       ],
-      "addItems": [
-        {
-          "id": "healing-potion",
-          "name": "Healing Potion",
-          "type": "potion"
-        },
-        {
-          "id": "potion",
-          "name": "Potion",
-          "type": "potion"
-        }
+      "modifyStats": {
+        "stamina": 4
+      },
+      "removeItems": [
+        "healing-potion"
       ]
     },
     {
@@ -317,7 +318,11 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "permanentStats": {
+        "stamina": -3,
+        "skill": -1
+      }
     },
     {
       "id": 19,
@@ -368,6 +373,12 @@
           "text": "Turn to 127",
           "targetSection": 127
         }
+      ],
+      "modifyStats": {
+        "stamina": 4
+      },
+      "removeItems": [
+        "rations"
       ]
     },
     {
@@ -388,7 +399,10 @@
           "text": "Turn to 155",
           "targetSection": 155
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 1
+      }
     },
     {
       "id": 24,
@@ -504,7 +518,10 @@
           "text": "Turn to 111",
           "targetSection": 111
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -1
+      }
     },
     {
       "id": 29,
@@ -766,7 +783,10 @@
           "name": "Map",
           "type": "other"
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 1
+      }
     },
     {
       "id": 43,
@@ -1032,7 +1052,10 @@
           "text": "Turn to 111",
           "targetSection": 111
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -2
+      }
     },
     {
       "id": 54,
@@ -1063,7 +1086,11 @@
           "text": "Turn to 355",
           "targetSection": 355
         }
-      ]
+      ],
+      "permanentStats": {
+        "skill": -1,
+        "stamina": -2
+      }
     },
     {
       "id": 56,
@@ -1095,7 +1122,10 @@
           "text": "Turn to 155",
           "targetSection": 155
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -4
+      }
     },
     {
       "id": 59,
@@ -1141,7 +1171,10 @@
           "text": "Turn to 378",
           "targetSection": 378
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -1
+      }
     },
     {
       "id": 62,
@@ -1189,7 +1222,10 @@
           "text": "Turn to 335",
           "targetSection": 335
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 1
+      }
     },
     {
       "id": 65,
@@ -1302,7 +1338,10 @@
           "name": "Potion",
           "type": "potion"
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -3
+      }
     },
     {
       "id": 73,
@@ -1343,7 +1382,10 @@
           "text": "Turn to 221",
           "targetSection": 221
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -2
+      }
     },
     {
       "id": 76,
@@ -1482,7 +1524,10 @@
           "text": "Turn to 355",
           "targetSection": 355
         }
-      ]
+      ],
+      "permanentStats": {
+        "skill": -1
+      }
     },
     {
       "id": 86,
@@ -1665,7 +1710,11 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": "max",
+        "luck": 1
+      }
     },
     {
       "id": 98,
@@ -1818,7 +1867,13 @@
           "text": "Turn to 298",
           "targetSection": 298
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -3
+      },
+      "maxStats": {
+        "stamina": -1
+      }
     },
     {
       "id": 106,
@@ -1828,7 +1883,10 @@
           "text": "Turn to 355",
           "targetSection": 355
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 2
+      }
     },
     {
       "id": 107,
@@ -2057,7 +2115,10 @@
           "name": "Map",
           "type": "other"
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 1
+      }
     },
     {
       "id": 116,
@@ -2067,7 +2128,13 @@
           "text": "Turn to 355",
           "targetSection": 355
         }
-      ]
+      ],
+      "permanentStats": {
+        "skill": -1
+      },
+      "maxStats": {
+        "stamina": -2
+      }
     },
     {
       "id": 117,
@@ -2213,8 +2280,11 @@
           "targetSection": 298
         },
         {
-          "text": "Turn to 21",
-          "targetSection": 21
+          "text": "Eat a Provision and rest",
+          "targetSection": 21,
+          "conditions": {
+            "requiresItem": "rations"
+          }
         },
         {
           "text": "Turn to 46",
@@ -2316,7 +2386,10 @@
           "text": "Turn to 221",
           "targetSection": 221
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -2
+      }
     },
     {
       "id": 130,
@@ -2391,7 +2464,10 @@
           "text": "Turn to 355",
           "targetSection": 355
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 1
+      }
     },
     {
       "id": 134,
@@ -2485,7 +2561,10 @@
           "text": "Turn to 355",
           "targetSection": 355
         }
-      ]
+      ],
+      "permanentStats": {
+        "skill": -1
+      }
     },
     {
       "id": 141,
@@ -2969,7 +3048,13 @@
           "text": "Turn to 355",
           "targetSection": 355
         }
-      ]
+      ],
+      "permanentStats": {
+        "skill": -1
+      },
+      "maxStats": {
+        "stamina": -1
+      }
     },
     {
       "id": 164,
@@ -3126,7 +3211,11 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": 4,
+        "luck": 1
+      }
     },
     {
       "id": 174,
@@ -3137,7 +3226,10 @@
           "text": "Turn to 221",
           "targetSection": 221
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -2
+      }
     },
     {
       "id": 175,
@@ -3189,7 +3281,10 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 1
+      }
     },
     {
       "id": 179,
@@ -3622,7 +3717,10 @@
           "text": "Turn to 221",
           "targetSection": 221
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -1
+      }
     },
     {
       "id": 192,
@@ -3633,7 +3731,11 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": 3,
+        "luck": 1
+      }
     },
     {
       "id": 193,
@@ -3837,8 +3939,11 @@
       "title": "You search the tavern carefully, finding a journal with a chilling entry:",
       "choices": [
         {
-          "text": "Turn to 2",
-          "targetSection": 2
+          "text": "Drink the Mysterious Potion",
+          "targetSection": 2,
+          "conditions": {
+            "requiresItem": "mysterious-potion"
+          }
         },
         {
           "text": "Turn to 388",
@@ -3876,7 +3981,10 @@
           "text": "Turn to 245",
           "targetSection": 245
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 1
+      }
     },
     {
       "id": 206,
@@ -3911,7 +4019,10 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": "max"
+      }
     },
     {
       "id": 208,
@@ -3975,7 +4086,10 @@
           "text": "Turn to 298",
           "targetSection": 298
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -3
+      }
     },
     {
       "id": 212,
@@ -4410,8 +4524,11 @@
           "targetSection": 10
         },
         {
-          "text": "Turn to 12",
-          "targetSection": 12
+          "text": "Drink a Healing Potion",
+          "targetSection": 12,
+          "conditions": {
+            "requiresItem": "healing-potion"
+          }
         },
         {
           "text": "Turn to 13",
@@ -4883,7 +5000,10 @@
           "text": "Turn to 245",
           "targetSection": 245
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 1
+      }
     },
     {
       "id": 250,
@@ -5126,7 +5246,10 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": "max"
+      }
     },
     {
       "id": 262,
@@ -5565,7 +5688,11 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": 4,
+        "luck": 1
+      }
     },
     {
       "id": 284,
@@ -6138,7 +6265,11 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": 4,
+        "luck": 2
+      }
     },
     {
       "id": 306,
@@ -6191,7 +6322,10 @@
           "text": "Turn to 378",
           "targetSection": 378
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": -1
+      }
     },
     {
       "id": 309,
@@ -6476,7 +6610,10 @@
           "text": "Turn to 355",
           "targetSection": 355
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 1
+      }
     },
     {
       "id": 319,
@@ -6576,7 +6713,10 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": "max"
+      }
     },
     {
       "id": 324,
@@ -6646,7 +6786,11 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": 6,
+        "luck": 2
+      }
     },
     {
       "id": 329,
@@ -7150,7 +7294,11 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": 4,
+        "luck": 1
+      }
     },
     {
       "id": 344,
@@ -7282,7 +7430,10 @@
           "text": "Turn to 388",
           "targetSection": 388
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 2
+      }
     },
     {
       "id": 352,
@@ -7311,7 +7462,10 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": "max"
+      }
     },
     {
       "id": 354,
@@ -7561,7 +7715,11 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": 6,
+        "luck": 2
+      }
     },
     {
       "id": 362,
@@ -7741,7 +7899,10 @@
           "text": "Turn to 355",
           "targetSection": 355
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 1
+      }
     },
     {
       "id": 371,
@@ -7978,7 +8139,11 @@
           "text": "Turn to 395",
           "targetSection": 395
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": "max",
+        "luck": 2
+      }
     },
     {
       "id": 381,
@@ -8007,7 +8172,10 @@
           "text": "Turn to 395",
           "targetSection": 395
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 1
+      }
     },
     {
       "id": 383,
@@ -8073,7 +8241,10 @@
           "text": "Turn to 395",
           "targetSection": 395
         }
-      ]
+      ],
+      "modifyStats": {
+        "luck": 2
+      }
     },
     {
       "id": 387,
@@ -8278,7 +8449,11 @@
           "text": "Turn to 395",
           "targetSection": 395
         }
-      ]
+      ],
+      "modifyStats": {
+        "stamina": "max",
+        "luck": "max"
+      }
     },
     {
       "id": 394,

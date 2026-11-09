@@ -589,27 +589,65 @@
                 this.cancelPending();
                 this.combatDone = false;
                 this.tempSkillPenalty = 0;
+                const firstVisit = !this.visitedSections.has(sectionId);
                 this.currentSection = sectionId;
                 this.visitedSections.add(sectionId);
                 this.inCombat = false;
                 this.combatLog = [];
                 this.currentCombatIndex = 0;
+                // Effects apply only the first time a section is entered, so revisits can't
+                // re-apply a trap, a healing room, or item pickups/removals
+                if (firstVisit) this.applySectionEffects(sectionId);
                 render();
             },
 
+            // changes: { skill, stamina, luck } - numbers add (clamped 0..Initial); 'max' restores to Initial
             modifyStats(changes) {
                 if (!this.stats) return;
-                if (changes.skill) this.stats.skill = Math.max(0, Math.min(this.stats.initialSkill, this.stats.skill + changes.skill));
-                if (changes.stamina) this.stats.stamina = Math.max(0, Math.min(this.stats.initialStamina, this.stats.stamina + changes.stamina));
-                if (changes.luck) this.stats.luck = Math.max(0, Math.min(this.stats.initialLuck, this.stats.luck + changes.luck));
-                // Death from any source (traps, poison, etc.), not only combat
-                if (this.stats.stamina <= 0 && !this.isGameOver) {
+                const apply = (cur, init, v) => v === 'max' ? init : Math.max(0, Math.min(init, cur + v));
+                if (changes.skill) this.stats.skill = apply(this.stats.skill, this.stats.initialSkill, changes.skill);
+                if (changes.stamina) this.stats.stamina = apply(this.stats.stamina, this.stats.initialStamina, changes.stamina);
+                if (changes.luck) this.stats.luck = apply(this.stats.luck, this.stats.initialLuck, changes.luck);
+                this.checkDeath();
+                render();
+            },
+
+            // Lasting losses. permanent=true lowers current AND Initial (e.g. a Shadow's drain);
+            // permanent=false lowers only the Initial maximum ("reduce your maximum STAMINA by 1").
+            reduceStats(changes, permanent) {
+                if (!this.stats) return;
+                const names = { skill: 'Skill', stamina: 'Stamina', luck: 'Luck' };
+                for (const key of Object.keys(names)) {
+                    const amount = changes[key];
+                    if (!amount) continue;
+                    const init = 'initial' + names[key];
+                    this.stats[init] = Math.max(0, this.stats[init] + amount);
+                    this.stats[key] = permanent ? Math.max(0, this.stats[key] + amount) : this.stats[key];
+                    this.stats[key] = Math.min(this.stats[key], this.stats[init]);
+                }
+                this.checkDeath();
+                render();
+            },
+
+            // Death from any source (traps, poison, etc.), not only combat
+            checkDeath() {
+                if (this.stats && this.stats.stamina <= 0 && !this.isGameOver) {
                     this.cancelPending();
                     this.inCombat = false;
                     this.isGameOver = true;
                     this.gameOverType = 'defeat';
                 }
-                render();
+            },
+
+            // Effects of entering a section for the first time: stat changes, items gained and lost
+            applySectionEffects(sectionId) {
+                const section = this.currentBook.sections.find(s => s.id === sectionId);
+                if (!section) return;
+                if (section.modifyStats) this.modifyStats(section.modifyStats);
+                if (section.permanentStats) this.reduceStats(section.permanentStats, true);
+                if (section.maxStats) this.reduceStats(section.maxStats, false);
+                if (section.addItems) section.addItems.forEach(item => this.addItem(item));
+                if (section.removeItems) section.removeItems.forEach(itemId => this.removeItem(itemId));
             },
 
             addGold(amount) {
@@ -2516,26 +2554,7 @@
                 return;
             }
 
-            // Apply section effects before moving
-            const nextSection = GameState.currentBook.sections.find(s => s.id === targetSection);
-            if (nextSection) {
-                // Effects apply only the first time a section is entered, so revisits
-                // can't re-apply a trap, a healing room, or item pickups/removals
-                const firstVisit = !GameState.visitedSections.has(targetSection);
-                if (firstVisit) {
-                    if (nextSection.modifyStats) {
-                        GameState.modifyStats(nextSection.modifyStats);
-                    }
-                    if (nextSection.addItems) {
-                        nextSection.addItems.forEach(item => GameState.addItem(item));
-                    }
-                    if (nextSection.removeItems) {
-                        nextSection.removeItems.forEach(itemId => GameState.removeItem(itemId));
-                    }
-                }
-            }
-
-            if (GameState.isGameOver) return; // died from a section effect
+            // Section effects are applied by goToSection (first visit only)
             GameState.goToSection(targetSection);
         }
 

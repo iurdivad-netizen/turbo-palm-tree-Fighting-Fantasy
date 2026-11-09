@@ -186,6 +186,15 @@ The app automatically determines item type based on keywords:
 - `reviveOn`: `[5, 6]` - when reduced to 0 STAMINA, roll one die; on a listed result the enemy
   survives with 1 STAMINA
 
+**Stat effects of entering a section (JSON only):**
+Applied once, the first time the section is entered - by any route (choice, Luck test, combat result, flee).
+- `"modifyStats": { "stamina": -3, "luck": 1 }` - add or subtract (clamped between 0 and the Initial value).
+  Use `"stamina": "max"` to restore a stat to its Initial value.
+- `"permanentStats": { "skill": -1, "stamina": -2 }` - permanent losses: lowers the current score AND the Initial value.
+- `"maxStats": { "stamina": -1 }` - lowers only the Initial maximum (current is capped to it).
+- Reaching 0 STAMINA from any effect ends the game.
+- `removeItems` / `addItems` use the same first-visit rule, so "eat a Provision" sections can consume an item.
+
 **Item conditions on choices (JSON only):**
 - `"conditions": { "requiresItem": "brass-key" }` - the choice is shown but locked until you own that item id.
 - `"conditions": { "requiresNoItem": "brass-key" }` - the choice only appears while you do NOT own the item
