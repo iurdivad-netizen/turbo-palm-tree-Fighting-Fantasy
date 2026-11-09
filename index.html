@@ -419,6 +419,7 @@
             isGameOver: false,
             combatDone: false,
             lastWielded: null,
+            usedOnce: new Set(), // sections where a one-time decision (choice.once) was already made
             rollResolved: false, // a Luck test / dice roll was already made in this section
             tempSkillPenalty: 0, // SKILL lost for the rest of the current combat only
             gameOverType: null,
@@ -498,6 +499,7 @@
                 this.isGameOver = false;
                 this.gameOverType = null;
                 this.combatDone = false;
+                this.usedOnce = new Set();
                 this.inCombat = false;
                 this.combatLog = [];
                 this.currentBook = book;
@@ -526,6 +528,7 @@
                 this.isGameOver = false;
                 this.gameOverType = null;
                 this.combatDone = false;
+                this.usedOnce = new Set();
                 this.inCombat = false;
                 this.combatLog = [];
                 this.currentCombatIndex = 0;
@@ -572,6 +575,7 @@
 
             resetGame() {
                 this.cancelPending();
+                this.usedOnce = new Set();
                 this.combatDone = false;
                 this.isGameOver = false;
                 this.gameOverType = null;
@@ -641,22 +645,21 @@
                 }
             },
 
-            // Stat effects: any object with modifyStats / permanentStats / maxStats
+            // Effects: any object with modifyStats / permanentStats / maxStats / addItems / removeItems
             // (a section, or the outcome of a Luck test or dice roll)
             applyEffects(effects) {
                 if (!effects) return;
                 if (effects.modifyStats) this.modifyStats(effects.modifyStats);
                 if (effects.permanentStats) this.reduceStats(effects.permanentStats, true);
                 if (effects.maxStats) this.reduceStats(effects.maxStats, false);
+                if (effects.addItems) effects.addItems.forEach(item => this.addItem(item));
+                if (effects.removeItems) effects.removeItems.forEach(itemId => this.removeItem(itemId));
             },
 
             // Effects of entering a section for the first time: stat changes, items gained and lost
             applySectionEffects(sectionId) {
                 const section = this.currentBook.sections.find(s => s.id === sectionId);
-                if (!section) return;
-                this.applyEffects(section);
-                if (section.addItems) section.addItems.forEach(item => this.addItem(item));
-                if (section.removeItems) section.removeItems.forEach(itemId => this.removeItem(itemId));
+                if (section) this.applyEffects(section);
             },
 
             addGold(amount) {
@@ -743,6 +746,12 @@
             // Use an item from inventory (e.g., healing potion, ration)
             useItem(uid) {
                 const item = this.inventory.find(i => i.uid === uid);
+                if (item && item.onUse) {
+                    alert(`You used ${item.name}!${describeEffects(item.onUse)}`);
+                    this.removeItemByUid(uid);
+                    this.applyEffects(item.onUse);
+                    return;
+                }
                 if (!item || !item.restore) return;
 
                 // Parse the restore property (e.g., "+4 stamina", "+2 skill", "+1 luck")
@@ -780,6 +789,7 @@
                     stats: this.stats,
                     inventory: this.inventory,
                     visitedSections: Array.from(this.visitedSections),
+                    usedOnce: Array.from(this.usedOnce),
                     inCombat: this.inCombat,
                     enemyCurrentStamina: this.enemyCurrentStamina,
                     currentCombatIndex: this.currentCombatIndex
@@ -965,6 +975,8 @@
                 html += `<div class="mt-2"><h4 style="font-weight: 600; margin-bottom: 1rem;">What do you do?</h4>`;
                 section.choices.forEach((choice, index) => {
                     // "If you don't have X" branches only appear when they apply
+                    // One-time decisions (e.g. the vial in section 35) disappear once any of them was taken
+                    if (choice.once && GameState.usedOnce.has(section.id)) return;
                     if (choice.conditions && hasNegativeCondition(choice.conditions) &&
                         !canMakeChoice({ conditions: stripPositive(choice.conditions) })) return;
                     const disabled = !canMakeChoice(choice);
@@ -1037,8 +1049,14 @@
         // Effects that trigger when an enemy's fight begins (e.g. a wail: Test Luck or lose SKILL)
         function applyCombatStart(enemy) {
             const os = enemy.onStart;
-            if (!os || !os.luckTest) return;
+            if (!os) return;
             const loss = os.skillLoss || 1;
+            if (!os.luckTest) {
+                // unconditional penalty for this fight (e.g. fighting underwater)
+                GameState.tempSkillPenalty += loss;
+                GameState.combatLog.push(`🌊 ${os.text || 'Difficult conditions'}: -${loss} SKILL for this combat. (SKILL now ${Math.max(0, GameState.stats.skill - GameState.tempSkillPenalty)})`);
+                return;
+            }
             const lt = GameState.testLuck();
             if (lt.success) {
                 GameState.combatLog.push(`🍀 Test your Luck (rolled ${lt.roll}): Lucky! ${enemy.enemyName}'s power does not touch you.`);
@@ -1060,6 +1078,8 @@
             }
             if (c.weakTo) notes.push(`${c.weakTo.property} weapons deal ${c.weakTo.damage} damage`);
             if (c.onStart && c.onStart.luckTest) notes.push(`At the start of the fight, Test Luck or lose ${c.onStart.skillLoss || 1} SKILL for the battle`);
+            if (c.onStart && !c.onStart.luckTest) notes.push(`You fight at -${c.onStart.skillLoss || 1} SKILL${c.onStart.text ? ' (' + c.onStart.text.toLowerCase() + ')' : ''}`);
+            if (c.onVictoryEffects) notes.push(`Winning costs you:${describeEffects(c.onVictoryEffects)}`);
             if (c.onWound) {
                 notes.push(c.onWound.luckTest ? `Each wound: Test Luck or lose ${c.onWound.skillLoss || 1} SKILL for the battle`
                     : `Each wound permanently drains ${c.onWound.skillLoss || 1} SKILL`);
@@ -1186,7 +1206,7 @@
             } else {
                 GameState.inventory.forEach((item, index) => {
                     const itemClass = `item-${item.type || 'other'}`;
-                    const isUsable = item.restore ? true : false;
+                    const isUsable = !!(item.restore || item.onUse);
 
                     html += `
                         <div class="inventory-item ${itemClass}">
@@ -2570,6 +2590,11 @@
                 return;
             }
 
+            // Effects of the choice itself (drinking a vial, taking an item...)
+            if (choice.effects) GameState.applyEffects(choice.effects);
+            if (choice.once) GameState.usedOnce.add(section.id);
+            if (GameState.isGameOver) return;
+
             // Section effects are applied by goToSection (first visit only)
             GameState.goToSection(targetSection);
         }
@@ -2739,6 +2764,11 @@
                         // Hide the Fight button right away; if the book defines no victory
                         // section the section's own choices appear instead
                         GameState.combatDone = true;
+                        if (combat.onVictoryEffects) {
+                            GameState.applyEffects(combat.onVictoryEffects);
+                            GameState.combatLog.push(`😮‍💨 Victory has a price:${describeEffects(combat.onVictoryEffects)}`);
+                        }
+                        if (GameState.isGameOver) { render(); return; }
                         if (GameState.currentBook.sections.some(sec => sec.id === combat.onVictorySection)) {
                             GameState.schedule(() => GameState.goToSection(combat.onVictorySection), 2000);
                         }

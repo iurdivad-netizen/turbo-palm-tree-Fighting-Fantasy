@@ -204,6 +204,16 @@ Applied once, the first time the section is entered - by any route (choice, Luck
 - Put the outcomes here instead of listing them as plain choices, otherwise the player can simply pick the good one.
 - A Luck test or dice roll can be made only once per visit to a section.
 
+**Choices with effects, and items with an effect (JSON only):**
+- A choice may carry `"effects": { "permanentStats": {...}, "modifyStats": {...}, "addItems": [...], "removeItems": [...] }`,
+  applied when the player picks it.
+- `"once": true` on a choice marks a one-time decision: after any `once` choice in that section is taken, all
+  `once` choices there disappear on later visits (so a vial can't be drunk twice).
+- An item with `"onUse": { ...effects... }` gets a Use button; using it applies the effects and consumes the item.
+- Combat: `"onVictoryEffects": { "modifyStats": { "stamina": -2 } }` is applied when you win;
+  `"onStart": { "skillLoss": 2, "text": "Fighting underwater" }` (without `luckTest`) is an unconditional SKILL
+  penalty for that fight.
+
 **Item conditions on choices (JSON only):**
 - `"conditions": { "requiresItem": "brass-key" }` - the choice is shown but locked until you own that item id.
 - `"conditions": { "requiresNoItem": "brass-key" }` - the choice only appears while you do NOT own the item

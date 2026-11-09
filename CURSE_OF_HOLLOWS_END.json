@@ -681,7 +681,43 @@
       "text": "You discover a storage room that has somehow escaped the general looting and decay that plagues this place. On dusty shelves, you find: \r\n\r\n\r\n3 Provisions - Dried food that's still edible, if not exactly appetizing. Water in sealed containers. Food that could mean the difference between life and death. \r\n\r\n\r\nA mysterious vial containing thick, luminous blue liquid that seems to glow from within. The liquid swirls slowly, responding to the warmth of your hand as you pick it up. \r\n\r\n\r\nThis vial presents a choice. You could drink it immediately, taking a chance on its effects. According to faded writing on the label (in a language you barely recognize), this potion will permanently increase your SKILL by 1 (maximum Initial +1). However, there's a cost: drinking it will reduce your LUCK by 1 as the fates demand balance for such a gift. \r\n\r\n\r\nThe decision is yours: \r\n\r\n\r\nDrink the vial to gain +1 SKILL but lose 1 LUCK \r\n\r\n\r\nSave it for later (add it to your inventory) \r\n\r\n\r\nLeave it behind\r\n\r\n\r\nAdd the 3 Provisions to your Adventure Sheet. \r\n\r\n\r\nOnce you've made your decision about the vial, you continue exploring. \r\n\r\n\r\nTurn to 111.",
       "choices": [
         {
-          "text": "Turn to 111",
+          "text": "Drink the vial now (+1 SKILL permanently, -1 LUCK)",
+          "targetSection": 111,
+          "once": true,
+          "effects": {
+            "permanentStats": {
+              "skill": 1
+            },
+            "modifyStats": {
+              "luck": -1
+            }
+          }
+        },
+        {
+          "text": "Take the vial with you to drink later",
+          "targetSection": 111,
+          "once": true,
+          "effects": {
+            "addItems": [
+              {
+                "id": "luminous-vial",
+                "name": "Luminous Blue Vial",
+                "type": "potion",
+                "description": "Permanently +1 SKILL, but costs 1 LUCK when drunk.",
+                "onUse": {
+                  "permanentStats": {
+                    "skill": 1
+                  },
+                  "modifyStats": {
+                    "luck": -1
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "text": "Leave the vial behind and continue",
           "targetSection": 111
         }
       ],
@@ -5475,7 +5511,16 @@
         "enemySkill": 4,
         "enemyStamina": 5,
         "onVictorySection": 221,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "onStart": {
+          "skillLoss": 2,
+          "text": "Fighting underwater"
+        },
+        "onVictoryEffects": {
+          "modifyStats": {
+            "stamina": -2
+          }
+        }
       }
     },
     {
