@@ -628,6 +628,9 @@
                     const match = item.name.match(/(\d+)/);
                     const amount = match ? parseInt(match[1]) : 1;
                     this.addGold(amount);
+                } else if ((item.unique || (item.bonus && item.type !== 'potion')) && this.hasItem(item.id)) {
+                    // Don't collect a second copy of a unique item or of bonus equipment
+                    // (e.g. another Cloak of Protection): it would just stack its bonus.
                 } else {
                     this.inventory.push(this.makeItem(item));
                 }

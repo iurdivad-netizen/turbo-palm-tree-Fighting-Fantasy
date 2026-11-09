@@ -65,6 +65,13 @@
           "text": "Turn to 180",
           "targetSection": 180
         }
+      ],
+      "addItems": [
+        {
+          "id": "brass-key",
+          "name": "Brass Key",
+          "type": "key"
+        }
       ]
     },
     {
@@ -135,6 +142,30 @@
         {
           "text": "Turn to 111",
           "targetSection": 111
+        }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "30 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "iron-key",
+          "name": "Iron Key",
+          "type": "key"
         }
       ]
     },
@@ -293,6 +324,19 @@
         {
           "text": "Turn to 127",
           "targetSection": 127
+        }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "50 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+4 stamina"
         }
       ]
     },
@@ -588,6 +632,26 @@
           "text": "Turn to 111",
           "targetSection": 111
         }
+      ],
+      "addItems": [
+        {
+          "id": "provisions",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "provisions",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "provisions",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        }
       ]
     },
     {
@@ -724,6 +788,17 @@
           "id": "dagger",
           "name": "Dagger",
           "type": "weapon"
+        },
+        {
+          "id": "gold",
+          "name": "40 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "cloak-of-protection",
+          "name": "Cloak of Protection",
+          "type": "armor",
+          "bonus": "+1 defense"
         }
       ]
     },
@@ -1225,6 +1300,13 @@
           "text": "Turn to 127",
           "targetSection": 127
         }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "20 Gold Pieces",
+          "type": "treasure"
+        }
       ]
     },
     {
@@ -1563,6 +1645,13 @@
           "text": "Turn to 180",
           "targetSection": 180
         }
+      ],
+      "addItems": [
+        {
+          "id": "cult-medallion",
+          "name": "Cult Medallion",
+          "type": "other"
+        }
       ]
     },
     {
@@ -1637,6 +1726,11 @@
         {
           "id": "treasure",
           "name": "Treasure",
+          "type": "treasure"
+        },
+        {
+          "id": "gold",
+          "name": "40 Gold Pieces",
           "type": "treasure"
         }
       ]
@@ -1743,6 +1837,11 @@
           "id": "silver-key",
           "name": "Silver Key",
           "type": "key"
+        },
+        {
+          "id": "alchemists-journal",
+          "name": "Alchemist's Journal",
+          "type": "other"
         }
       ]
     },
@@ -1888,9 +1987,10 @@
           "type": "potion"
         },
         {
-          "id": "potion",
-          "name": "Potion",
-          "type": "potion"
+          "id": "potion-of-luck",
+          "name": "Potion of Luck",
+          "type": "potion",
+          "restore": "+3 luck"
         }
       ]
     },
@@ -2223,6 +2323,19 @@
           "text": "Turn to 127",
           "targetSection": 127
         }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "50 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+4 stamina"
+        }
       ]
     },
     {
@@ -2256,8 +2369,8 @@
       ],
       "addItems": [
         {
-          "id": "map",
-          "name": "Map",
+          "id": "manor-map",
+          "name": "Manor Map",
           "type": "other"
         }
       ]
@@ -2362,6 +2475,13 @@
         {
           "text": "Turn to 127",
           "targetSection": 127
+        }
+      ],
+      "addItems": [
+        {
+          "id": "holy-symbol",
+          "name": "Holy Symbol",
+          "type": "other"
         }
       ]
     },
@@ -2484,6 +2604,13 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "rope",
+          "name": "Rope",
+          "type": "other"
+        }
       ]
     },
     {
@@ -2496,7 +2623,14 @@
         }
       ],
       "isEnding": true,
-      "endingType": "victory"
+      "endingType": "victory",
+      "addItems": [
+        {
+          "id": "alchemists-journal",
+          "name": "Alchemist's Journal",
+          "type": "other"
+        }
+      ]
     },
     {
       "id": 153,
@@ -2523,8 +2657,8 @@
       ],
       "addItems": [
         {
-          "id": "potion",
-          "name": "Potion",
+          "id": "potion-of-invisibility",
+          "name": "Potion of Invisibility",
           "type": "potion"
         }
       ]
@@ -2743,6 +2877,25 @@
         {
           "text": "Turn to 111",
           "targetSection": 111
+        }
+      ],
+      "addItems": [
+        {
+          "id": "provisions",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "provisions",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "gold",
+          "name": "20 Gold Pieces",
+          "type": "treasure"
         }
       ]
     },
@@ -3201,6 +3354,19 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "40 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+6 stamina"
+        }
       ]
     },
     {
@@ -3424,6 +3590,13 @@
           "text": "Turn to 180",
           "targetSection": 180
         }
+      ],
+      "addItems": [
+        {
+          "id": "cult-medallion",
+          "name": "Cult Medallion",
+          "type": "other"
+        }
       ]
     },
     {
@@ -3446,6 +3619,11 @@
         {
           "id": "book",
           "name": "Book",
+          "type": "other"
+        },
+        {
+          "id": "mayors-ledger",
+          "name": "Mayor's Ledger",
           "type": "other"
         }
       ]
@@ -3512,6 +3690,13 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
+        }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "50 Gold Pieces",
+          "type": "treasure"
         }
       ]
     },
@@ -3703,6 +3888,14 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "cloak-of-protection",
+          "name": "Cloak of Protection",
+          "type": "armor",
+          "bonus": "+1 defense"
+        }
       ]
     },
     {
@@ -3827,6 +4020,13 @@
         {
           "text": "Turn to 127",
           "targetSection": 127
+        }
+      ],
+      "addItems": [
+        {
+          "id": "holy-symbol",
+          "name": "Holy Symbol",
+          "type": "other"
         }
       ]
     },
@@ -3960,8 +4160,8 @@
       ],
       "addItems": [
         {
-          "id": "map",
-          "name": "Map",
+          "id": "manor-map",
+          "name": "Manor Map",
           "type": "other"
         }
       ]
@@ -3999,6 +4199,25 @@
         {
           "text": "Turn to 111",
           "targetSection": 111
+        }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "30 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "provisions",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "provisions",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
         }
       ]
     },
@@ -4282,6 +4501,35 @@
           "properties": [
             "silver"
           ]
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "gold",
+          "name": "50 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "mayors-ledger",
+          "name": "Mayor's Ledger",
+          "type": "other",
+          "unique": true
         }
       ]
     },
@@ -4567,6 +4815,25 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "provisions",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "provisions",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "gold",
+          "name": "20 Gold Pieces",
+          "type": "treasure"
+        }
       ]
     },
     {
@@ -4650,6 +4917,19 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "40 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+6 stamina"
+        }
       ]
     },
     {
@@ -4725,8 +5005,8 @@
       ],
       "addItems": [
         {
-          "id": "map",
-          "name": "Map",
+          "id": "manor-map",
+          "name": "Manor Map",
           "type": "other"
         }
       ]
@@ -4804,6 +5084,13 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
+        }
+      ],
+      "addItems": [
+        {
+          "id": "cloak-of-shadows",
+          "name": "Cloak of Shadows",
+          "type": "other"
         }
       ]
     },
@@ -5003,6 +5290,13 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "manor-map",
+          "name": "Manor Map",
+          "type": "other"
+        }
       ]
     },
     {
@@ -5084,6 +5378,25 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "50 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+4 stamina"
+        }
       ]
     },
     {
@@ -5095,6 +5408,26 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "provisions",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "provisions",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "provisions",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        }
       ]
     },
     {
@@ -5104,6 +5437,13 @@
         {
           "text": "Turn to 111",
           "targetSection": 111
+        }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "15 Gold Pieces",
+          "type": "treasure"
         }
       ]
     },
@@ -5298,8 +5638,8 @@
       ],
       "addItems": [
         {
-          "id": "potion",
-          "name": "Potion",
+          "id": "potion-of-invisibility",
+          "name": "Potion of Invisibility",
           "type": "potion"
         }
       ]
@@ -5366,6 +5706,13 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
+        }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "50 Gold Pieces",
+          "type": "treasure"
         }
       ]
     },
@@ -5669,6 +6016,12 @@
           "id": "amulet",
           "name": "Amulet",
           "type": "other"
+        },
+        {
+          "id": "alchemists-journal",
+          "name": "Alchemist's Journal",
+          "type": "other",
+          "unique": true
         }
       ]
     },
@@ -5913,6 +6266,22 @@
           "id": "silver-amulet",
           "name": "Silver Amulet",
           "type": "other"
+        },
+        {
+          "id": "gold",
+          "name": "20 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "healing-potion",
+          "name": "Healing Potion",
+          "type": "potion",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "holy-symbol",
+          "name": "Holy Symbol",
+          "type": "other"
         }
       ]
     },
@@ -5924,6 +6293,25 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
+        }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "30 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "provisions",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "provisions",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
         }
       ]
     },
@@ -6007,6 +6395,31 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
+        }
+      ],
+      "addItems": [
+        {
+          "id": "provisions",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "provisions",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "provisions",
+          "name": "Provisions",
+          "type": "food",
+          "restore": "+4 stamina"
+        },
+        {
+          "id": "gold",
+          "name": "40 Gold Pieces",
+          "type": "treasure"
         }
       ]
     },
@@ -6210,6 +6623,18 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "50 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "silver-ring",
+          "name": "Silver Ring",
+          "type": "treasure"
+        }
       ]
     },
     {
@@ -6350,6 +6775,12 @@
           "id": "mysterious-potion",
           "name": "Mysterious Potion",
           "type": "potion"
+        },
+        {
+          "id": "cloak-of-protection",
+          "name": "Cloak of Protection",
+          "type": "armor",
+          "bonus": "+1 defense"
         }
       ]
     },
@@ -6415,6 +6846,19 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
+        }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "100 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "cloak-of-protection",
+          "name": "Cloak of Protection",
+          "type": "armor",
+          "bonus": "+1 defense"
         }
       ]
     },
@@ -6649,6 +7093,13 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
+        }
+      ],
+      "addItems": [
+        {
+          "id": "amulet-of-the-grave",
+          "name": "Amulet of the Grave",
+          "type": "other"
         }
       ]
     },
@@ -6961,6 +7412,13 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "50 Gold Pieces",
+          "type": "treasure"
+        }
       ]
     },
     {
@@ -7242,6 +7700,13 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "gold",
+          "name": "75 Gold Pieces",
+          "type": "treasure"
+        }
       ]
     },
     {
@@ -7281,6 +7746,13 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "holy-symbol",
+          "name": "Holy Symbol",
+          "type": "other"
+        }
       ]
     },
     {
@@ -7309,6 +7781,14 @@
         {
           "text": "Turn to 395",
           "targetSection": 395
+        }
+      ],
+      "addItems": [
+        {
+          "id": "potion-of-strength",
+          "name": "Potion of Strength",
+          "type": "potion",
+          "restore": "+2 skill"
         }
       ]
     },
@@ -7496,9 +7976,10 @@
       ],
       "addItems": [
         {
-          "id": "potion",
-          "name": "Potion",
-          "type": "potion"
+          "id": "potion-of-luck",
+          "name": "Potion of Luck",
+          "type": "potion",
+          "restore": "+3 luck"
         }
       ]
     },
@@ -7698,6 +8179,13 @@
           "text": "Turn to 395",
           "targetSection": 395
         }
+      ],
+      "addItems": [
+        {
+          "id": "cloak-of-shadows",
+          "name": "Cloak of Shadows",
+          "type": "other"
+        }
       ]
     },
     {
@@ -7776,6 +8264,21 @@
           "id": "silver-key",
           "name": "Silver Key",
           "type": "key"
+        },
+        {
+          "id": "gold",
+          "name": "500 Gold Pieces",
+          "type": "treasure"
+        },
+        {
+          "id": "magic-longsword",
+          "name": "+1 Longsword",
+          "type": "weapon",
+          "bonus": "+1 skill",
+          "properties": [
+            "magical"
+          ],
+          "unique": true
         }
       ],
       "isEnding": true,
