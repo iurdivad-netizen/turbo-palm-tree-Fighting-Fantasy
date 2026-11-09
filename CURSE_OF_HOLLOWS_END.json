@@ -379,13 +379,29 @@
           "targetSection": 395
         }
       ],
-      "combat": {
-        "enemyName": "",
-        "enemySkill": 6,
-        "enemyStamina": 4,
-        "onVictorySection": 395,
-        "onDefeatSection": 999
-      }
+      "combat": [
+        {
+          "enemyName": "SHADOW 1",
+          "enemySkill": 6,
+          "enemyStamina": 4,
+          "onVictorySection": 395,
+          "onDefeatSection": 999
+        },
+        {
+          "enemyName": "SHADOW 2",
+          "enemySkill": 6,
+          "enemyStamina": 4,
+          "onVictorySection": 395,
+          "onDefeatSection": 999
+        },
+        {
+          "enemyName": "SHADOW 3",
+          "enemySkill": 5,
+          "enemyStamina": 3,
+          "onVictorySection": 395,
+          "onDefeatSection": 999
+        }
+      ]
     },
     {
       "id": 26,
@@ -3016,13 +3032,29 @@
           "targetSection": 346
         }
       ],
-      "combat": {
-        "enemyName": "",
-        "enemySkill": 5,
-        "enemyStamina": 6,
-        "onVictorySection": 259,
-        "onDefeatSection": 999
-      },
+      "combat": [
+        {
+          "enemyName": "ZOMBIE 1",
+          "enemySkill": 5,
+          "enemyStamina": 6,
+          "onVictorySection": 259,
+          "onDefeatSection": 999
+        },
+        {
+          "enemyName": "ZOMBIE 2",
+          "enemySkill": 5,
+          "enemyStamina": 6,
+          "onVictorySection": 259,
+          "onDefeatSection": 999
+        },
+        {
+          "enemyName": "ZOMBIE 3",
+          "enemySkill": 4,
+          "enemyStamina": 5,
+          "onVictorySection": 259,
+          "onDefeatSection": 999
+        }
+      ],
       "addItems": [
         {
           "id": "silver-dagger",
@@ -4984,13 +5016,36 @@
           "targetSection": 346
         }
       ],
-      "combat": {
-        "enemyName": "",
-        "enemySkill": 5,
-        "enemyStamina": 6,
-        "onVictorySection": 312,
-        "onDefeatSection": 999
-      }
+      "combat": [
+        {
+          "enemyName": "ZOMBIE 1",
+          "enemySkill": 5,
+          "enemyStamina": 6,
+          "onVictorySection": 312,
+          "onDefeatSection": 999
+        },
+        {
+          "enemyName": "ZOMBIE 2",
+          "enemySkill": 5,
+          "enemyStamina": 6,
+          "onVictorySection": 312,
+          "onDefeatSection": 999
+        },
+        {
+          "enemyName": "ZOMBIE 3",
+          "enemySkill": 4,
+          "enemyStamina": 5,
+          "onVictorySection": 312,
+          "onDefeatSection": 999
+        },
+        {
+          "enemyName": "GHOUL",
+          "enemySkill": 6,
+          "enemyStamina": 6,
+          "onVictorySection": 312,
+          "onDefeatSection": 999
+        }
+      ]
     },
     {
       "id": 290,
@@ -6682,13 +6737,36 @@
       "id": 362,
       "text": "You stand before the Widow without the necessary items to bind her properly! \r\n\r\n\r\nWithout the SILVER KEY, without knowing her TRUE NAME, or without proper understanding of the binding ritual, you're attempting to face one of the most powerful vengeful spirits in existence with no way to permanently defeat her. \r\n\r\n\r\nThe Widow materializes before you in all her terrible glory—a tall figure in a blood-stained wedding dress, her face hidden beneath a torn veil, her hands ending in spectral claws. The temperature plummets. Your breath forms ice crystals in the air. \r\n\r\n\r\n\"You DARE face me?\" her voice echoes from everywhere, filled with rage and anguish. \"You come to stop my vengeance with nothing but courage and steel? Foolish mortal. Join my army of the dead!\" \r\n\r\n\r\nShe raises her hands, and three Shadows tear themselves from the darkness to attack you. You must fight them all while she watches, gathering her power for the killing blow. \r\n\r\n\r\nSHADOW 1: SKILL 6 | STAMINA 4 \r\n\r\n\r\nSHADOW 2: SKILL 6 | STAMINA 4 \r\n\r\n\r\nSHADOW 3: SKILL 5 | STAMINA 3 \r\n\r\n\r\nEach Shadow's wound permanently reduces your SKILL by 1. \r\n\r\n\r\nIf you somehow defeat all three Shadows: \r\n\r\n\r\nThe Widow herself attacks! But without the proper binding tools, you cannot truly defeat her—only delay her. \r\n\r\n\r\nTHE WIDOW (Weakened by missing tools) \r\n\r\n\r\nSKILL 10 STAMINA 12 \r\n\r\n\r\nIf you reduce her to 0 STAMINA: She dissipates with a scream of rage... but you know it's temporary. Without proper binding, she'll reform. The curse continues. The village remains doomed. \r\n\r\n\r\nYou've achieved a temporary victory at best. The Widow will return, perhaps stronger than before. \r\n\r\n\r\nINCOMPLETE VICTORY \r\n\r\n\r\nYou've driven back the Widow temporarily, but without the Silver Key and her true name, you couldn't bind her spirit permanently. The curse will return, perhaps within days, certainly within weeks. \r\n\r\n\r\nHollow's End remains doomed to eventual destruction. \r\n\r\n\r\nTHE END (Partial Victory)",
       "title": "You stand before the Widow without the necessary items to bind her properly!",
-      "combat": {
-        "enemyName": "",
-        "enemySkill": 10,
-        "enemyStamina": 12,
-        "onVictorySection": 363,
-        "onDefeatSection": 999
-      },
+      "combat": [
+        {
+          "enemyName": "SHADOW 1",
+          "enemySkill": 6,
+          "enemyStamina": 4,
+          "onVictorySection": 363,
+          "onDefeatSection": 999
+        },
+        {
+          "enemyName": "SHADOW 2",
+          "enemySkill": 6,
+          "enemyStamina": 4,
+          "onVictorySection": 363,
+          "onDefeatSection": 999
+        },
+        {
+          "enemyName": "SHADOW 3",
+          "enemySkill": 5,
+          "enemyStamina": 3,
+          "onVictorySection": 363,
+          "onDefeatSection": 999
+        },
+        {
+          "enemyName": "THE WIDOW (WEAKENED)",
+          "enemySkill": 10,
+          "enemyStamina": 12,
+          "onVictorySection": 363,
+          "onDefeatSection": 999
+        }
+      ],
       "addItems": [
         {
           "id": "silver-key",
