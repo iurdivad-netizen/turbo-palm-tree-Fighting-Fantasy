@@ -6695,9 +6695,7 @@
           "name": "Silver Key",
           "type": "key"
         }
-      ],
-      "isEnding": true,
-      "endingType": "victory"
+      ]
     },
     {
       "id": 363,
@@ -7335,17 +7333,6 @@
       ]
     },
     {
-      "id": 391,
-      "text": "-394 \r\n\r\n\r\n[Reserved for additional encounters or paths] \r\n\r\n\r\nTurn to 395 for the final confrontation.",
-      "title": "-394",
-      "choices": [
-        {
-          "text": "Turn to 395",
-          "targetSection": 395
-        }
-      ]
-    },
-    {
       "id": 395,
       "text": "You push open the massive doors to the Widow's lair, and the temperature plummets instantly. Your breath forms ice crystals that fall like snow. The chamber beyond is vast—the manor's grand ballroom, now transformed into the heart of darkness itself. \r\n\r\n\r\nThe Widow stands in the center of the room, waiting for you. She's terrible and beautiful in equal measure—a tall figure in a wedding dress stained with 242 years of blood. Her face is hidden beneath a torn veil, but you can feel her hollow eyes fixed upon you with recognition and rage. \r\n\r\n\r\n\"So,\" her voice echoes from everywhere and nowhere, layered with the screams of the dead, \"another fool comes to stop me. Another hero seeking to prevent my righteous vengeance. Do you know what they did to me? Do you know what I suffered?\" \r\n\r\n\r\nYou can see the pain beneath the rage, the human woman trapped inside the monster. \r\n\r\n\r\n\"I was going to be HAPPY!\" she shrieks, her form expanding, becoming more terrible. \"I was going to have a LIFE! They murdered my husband! They CHAINED my spirit! They left me in darkness for TWO HUNDRED AND FORTY-TWO YEARS! And you... you dare try to imprison me again?\" \r\n\r\n\r\nThree Shadows tear themselves from the darkness, manifestations of her rage. They rush toward you, cold and terrible. Do you have the SILVER KEY and know her TRUE NAME (Eliza Hollow)? \r\n\r\n\r\nIf YES - you have both: Continue below for the proper binding ritual. \r\n\r\n\r\nIf NO - you're missing one or both: Turn to 362 (incomplete confrontation). \r\n\r\n\r\nTHE PROPER BINDING RITUAL: \r\n\r\n\r\nYou hold up the SILVER KEY with one hand while your other hand clutches whatever protective amulets you carry to your chest. Drawing upon every ounce of courage and strength you possess, you shout with absolute authority: \r\n\r\n\r\n\"ELIZA HOLLOW! I bind you by your true name, by this silver seal forged for spirit-binding, and by the ancient laws that govern the dead! Your curse ends TONIGHT!\" \r\n\r\n\r\nThe effect is immediate and dramatic. \r\n\r\n\r\nThe Widow freezes in mid-air, her spectral form rippling as if struck by invisible force. Her hollow eyes widen with shock, recognition, and—could it be?—hope. The SILVER KEY blazes with brilliant white light so bright you must squint. \r\n\r\n\r\nChains of pure silver energy materialize from the very air, wrapping around the Widow's form like ethereal rope. Each chain blazes with the same white light as the key. \r\n\r\n\r\n\"NO!\" she wails, but her voice is different now—less rage, more desperation. \"Not again! I will have my REVENGE!\" But her power is failing. The three Shadows dissipate like smoke. The temperature begins to rise. \r\n\r\n\r\nTest your LUCK:   \r\nIf Lucky: Turn to 400 (COMPLETE VICTORY!) \r\n\r\n\r\nIf Unlucky: The binding wavers! You must fight the Widow herself before the ritual can complete. \r\n\r\n\r\nTHE WIDOW SKILL 11 STAMINA 15 \r\n\r\n\r\nSpecial: Wail of the Forsaken - At combat start, Test Luck or reduce SKILL by 2 for entire battle. Spectral Form - Immune to normal weapons (must have magical weapon). \r\n\r\n\r\nIf you win: Turn to 400 (VICTORY!)",
       "choices": [
@@ -7362,7 +7349,7 @@
         "enemyName": "THE WIDOW",
         "enemySkill": 11,
         "enemyStamina": 15,
-        "onVictorySection": 362,
+        "onVictorySection": 400,
         "onDefeatSection": 999
       },
       "addItems": [
@@ -7375,19 +7362,6 @@
           "id": "key",
           "name": "Key",
           "type": "key"
-        }
-      ],
-      "isEnding": true,
-      "endingType": "victory"
-    },
-    {
-      "id": 396,
-      "text": "-399 \r\n\r\n\r\n[These sections can lead to various outcomes or alternative paths to Section 400] \r\n\r\n\r\nThe paths converge. All roads lead to the final moment. \r\n\r\n\r\nTurn to 400.",
-      "title": "-399",
-      "choices": [
-        {
-          "text": "Turn to 400",
-          "targetSection": 400
         }
       ]
     },
