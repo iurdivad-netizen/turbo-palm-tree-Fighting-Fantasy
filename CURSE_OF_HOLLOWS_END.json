@@ -81,10 +81,6 @@
         {
           "text": "Turn to 94",
           "targetSection": 94
-        },
-        {
-          "text": "Turn to 221",
-          "targetSection": 221
         }
       ],
       "combat": {
@@ -92,7 +88,9 @@
         "enemySkill": 8,
         "enemyStamina": 12,
         "onVictorySection": 94,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "canFlee": true,
+        "fleeSection": 221
       }
     },
     {
@@ -532,10 +530,6 @@
         {
           "text": "Turn to 3",
           "targetSection": 3
-        },
-        {
-          "text": "Turn to 221",
-          "targetSection": 221
         }
       ],
       "combat": {
@@ -543,7 +537,9 @@
         "enemySkill": 5,
         "enemyStamina": 4,
         "onVictorySection": 3,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "canFlee": true,
+        "fleeSection": 221
       }
     },
     {
