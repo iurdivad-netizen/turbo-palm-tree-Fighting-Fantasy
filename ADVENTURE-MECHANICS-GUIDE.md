@@ -202,6 +202,11 @@ The app automatically determines item type based on keywords:
 - `effectiveWeapons: ["magical", "silver"]` with `normalWeaponDamage: 1` on an enemy: weapons without one of
   those properties deal 1 damage per hit instead of 2 (Incorporeal).
 - `weakTo: { "property": "crushing", "damage": 3 }` on an enemy: weapons with that property deal 3 damage.
+- `normalWeaponDamage: 0` with `effectiveWeapons` makes the enemy fully immune to other weapons (your blows pass
+  through harmlessly). Make sure the book gives the player a way to obtain a qualifying weapon.
+- `onStart: { "luckTest": true, "skillLoss": 2 }`: when the fight with this enemy begins, Test Luck; if unlucky,
+  lose SKILL for the whole battle.
+- `note`: optional free text shown in the combat panel. Every special rule above is also listed there automatically.
 
 Example (a Zombie that may refuse to stay down, with a luck-tested escape):
 ```json

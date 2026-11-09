@@ -969,6 +969,7 @@
                     ${esc(currentCombat.enemyName)} - SKILL ${currentCombat.enemySkill}, STAMINA ${currentCombat.enemyStamina}
                 </p>`;
             }
+            html += renderCombatNotes(currentCombat);
 
             html += `
                     <button class="button button-danger" style="width: 100%;" onclick="startCombat(${Number(currentCombat.enemyStamina)})">
@@ -977,6 +978,47 @@
                 </div>
             `;
             return html;
+        }
+
+        // Effects that trigger when an enemy's fight begins (e.g. a wail: Test Luck or lose SKILL)
+        function applyCombatStart(enemy) {
+            const os = enemy.onStart;
+            if (!os || !os.luckTest) return;
+            const loss = os.skillLoss || 1;
+            const lt = GameState.testLuck();
+            if (lt.success) {
+                GameState.combatLog.push(`🍀 Test your Luck (rolled ${lt.roll}): Lucky! ${enemy.enemyName}'s power does not touch you.`);
+            } else {
+                GameState.tempSkillPenalty += loss;
+                GameState.combatLog.push(`😱 Test your Luck (rolled ${lt.roll}): Unlucky! You lose ${loss} SKILL for the entire battle. (SKILL now ${Math.max(0, GameState.stats.skill - GameState.tempSkillPenalty)})`);
+            }
+        }
+
+        // One line per special rule so the player knows what they are up against
+        function combatNotes(c) {
+            const notes = [];
+            if (c.note) notes.push(c.note);
+            if (Array.isArray(c.effectiveWeapons)) {
+                const list = c.effectiveWeapons.join(' or ');
+                notes.push(c.normalWeaponDamage === 0
+                    ? `Immune to any weapon that is not ${list}`
+                    : `Weapons that are not ${list} deal only ${c.normalWeaponDamage ?? 2} damage`);
+            }
+            if (c.weakTo) notes.push(`${c.weakTo.property} weapons deal ${c.weakTo.damage} damage`);
+            if (c.onStart && c.onStart.luckTest) notes.push(`At the start of the fight, Test Luck or lose ${c.onStart.skillLoss || 1} SKILL for the battle`);
+            if (c.onWound) {
+                notes.push(c.onWound.luckTest ? `Each wound: Test Luck or lose ${c.onWound.skillLoss || 1} SKILL for the battle`
+                    : `Each wound permanently drains ${c.onWound.skillLoss || 1} SKILL`);
+            }
+            if (Array.isArray(c.reviveOn)) notes.push(`When reduced to 0 STAMINA, roll a die: on ${c.reviveOn.join(' or ')} it survives with 1 STAMINA`);
+            return notes;
+        }
+
+        function renderCombatNotes(c) {
+            const notes = combatNotes(c);
+            if (!notes.length) return '';
+            return `<ul style="margin: 0.5rem auto 1rem; max-width: 32rem; font-size: 0.875rem; color: #7f1d1d; list-style: none; text-align: center;">
+                ${notes.map(n => `<li>⚠️ ${esc(n)}</li>`).join('')}</ul>`;
         }
 
         // Flee is offered if the combat allows it and any STAMINA threshold is met
@@ -1013,6 +1055,7 @@
                         </div>
                     </div>
 
+                    ${renderCombatNotes(currentCombat)}
                     <div class="combat-log">
                         ${GameState.combatLog.map(log => `<div>${esc(log)}</div>`).join('')}
                     </div>
@@ -2525,6 +2568,7 @@
             if (combats.length > 1) {
                 GameState.combatLog.push(`⚠️ Warning: ${combats.length} enemies detected! You must defeat them all.`);
             }
+            applyCombatStart(firstCombat);
 
             render();
         }
@@ -2568,6 +2612,12 @@
             if (playerAttackStrength > enemyAttackStrength) {
                 // Player wins
                 const hitDamage = wield.damage;
+                if (hitDamage === 0) {
+                    const need = (combat.effectiveWeapons || []).join(' or ');
+                    GameState.combatLog.push(`👻 Your blow passes harmlessly through ${combat.enemyName}! Only a ${need} weapon can hurt it.`);
+                    render();
+                    return;
+                }
                 GameState.enemyCurrentStamina -= hitDamage;
                 const weaponNote = (hitDamage !== 2 && wield.weapon)
                     ? ` (${wield.weapon.name})` : (hitDamage !== 2 ? ' (no suitable weapon)' : '');
@@ -2594,6 +2644,7 @@
                         const nextEnemy = combats[GameState.currentCombatIndex];
                         GameState.combatLog.push(`\n⚠️ Another enemy approaches: ${nextEnemy.enemyName}!`);
                         GameState.enemyCurrentStamina = nextEnemy.enemyStamina;
+                        applyCombatStart(nextEnemy);
                         GameState.schedule(() => render(), 1500);
                     } else {
                         // All enemies defeated
