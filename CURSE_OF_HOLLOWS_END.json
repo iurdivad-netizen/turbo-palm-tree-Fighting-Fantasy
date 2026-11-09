@@ -13,14 +13,7 @@
     {
       "id": 0,
       "text": "Background\r\n\r\n\r\nTwo hundred and forty-two years ago, on what should have been the happiest day of her life, Eliza Hollow was betrayed by her own family. Her father, Mordecai Hollow, murdered her beloved Thomas Ashford during their wedding ceremony and used forbidden necromancy to bind Eliza's spirit in eternal torment.\r\n\r\n\r\nFor generations, the Hollow family lived in fear as the curse grew stronger. Now the binding has finally broken, and the Widow has risen with an army of undead. The village of Hollow's End stands on the brink of destruction.\r\n\r\n\r\nYou are an adventurer who has answered Mayor Aldric Hollow's desperate call for help. Can you discover the Widow's true name, obtain the silver key, and bind her spirit before midnight strikes? The fate of Hollow's End rests in your hands.",
-      "title": "Background",
-      "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
-        }
-      ]
+      "title": "Background"
     },
     {
       "id": 1,
@@ -408,11 +401,6 @@
           "id": "book",
           "name": "Book",
           "type": "other"
-        },
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
         }
       ],
       "isEnding": true,
@@ -528,11 +516,6 @@
         {
           "id": "key",
           "name": "Key",
-          "type": "key"
-        },
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
           "type": "key"
         }
       ],
@@ -1078,13 +1061,6 @@
           "targetSection": 127
         }
       ],
-      "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
-        }
-      ],
       "isEnding": true,
       "endingType": "victory"
     },
@@ -1574,13 +1550,6 @@
           "text": "Turn to 362",
           "targetSection": 362
         }
-      ],
-      "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
-        }
       ]
     },
     {
@@ -1635,13 +1604,6 @@
         {
           "text": "Turn to 335",
           "targetSection": 335
-        }
-      ],
-      "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
         }
       ]
     },
@@ -1866,11 +1828,6 @@
         }
       ],
       "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
-        },
         {
           "id": "alchemists-journal",
           "name": "Alchemist's Journal",
@@ -3062,13 +3019,6 @@
         {
           "text": "Turn to 111",
           "targetSection": 111
-        }
-      ],
-      "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
         }
       ]
     },
@@ -4537,11 +4487,6 @@
       ],
       "addItems": [
         {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
-        },
-        {
           "id": "old-rope",
           "name": "Old Rope",
           "type": "other"
@@ -5184,11 +5129,6 @@
         }
       ],
       "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
-        },
         {
           "id": "key",
           "name": "Key",
@@ -5834,13 +5774,6 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
-        }
-      ],
-      "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
         }
       ],
       "isEnding": true,
@@ -6742,13 +6675,6 @@
           "text": "Turn to 378",
           "targetSection": 378
         }
-      ],
-      "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
-        }
       ]
     },
     {
@@ -7526,13 +7452,6 @@
           "text": "Turn to 378",
           "targetSection": 378
         }
-      ],
-      "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
-        }
       ]
     },
     {
@@ -7608,13 +7527,6 @@
           "enemyStamina": 12,
           "onVictorySection": 363,
           "onDefeatSection": 999
-        }
-      ],
-      "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
         }
       ]
     },
@@ -8015,13 +7927,6 @@
           "text": "Turn to 395",
           "targetSection": 395
         }
-      ],
-      "addItems": [
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
-        }
       ]
     },
     {
@@ -8348,11 +8253,6 @@
           "id": "amulet",
           "name": "Amulet",
           "type": "other"
-        },
-        {
-          "id": "silver-key",
-          "name": "Silver Key",
-          "type": "key"
         },
         {
           "id": "gold",
