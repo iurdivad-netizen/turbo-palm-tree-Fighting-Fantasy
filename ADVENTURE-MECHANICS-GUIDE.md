@@ -176,6 +176,24 @@ The app automatically determines item type based on keywords:
 - `canFlee`: true/false - whether you can flee
 - `fleeSection`: Section to go to if you flee
 
+**Special combat rules (JSON only, set on each enemy in the `combat` entry or list):**
+- `fleeMaxStamina`: Flee is only offered while your STAMINA is at or below this value
+- `fleeTestLuck`: true - fleeing requires a Test Luck; if unlucky you stay in the fight
+- `onWound`: `{ "skillLoss": 1, "permanent": true }` - each time this enemy wounds you, lose SKILL
+  permanently (also lowers your Initial SKILL)
+- `onWound`: `{ "skillLoss": 1, "luckTest": true }` - each wound triggers a Test Luck; if unlucky, lose
+  SKILL for the rest of the combat only (restored afterwards)
+- `reviveOn`: `[5, 6]` - when reduced to 0 STAMINA, roll one die; on a listed result the enemy
+  survives with 1 STAMINA
+
+Example (a Zombie that may refuse to stay down, with a luck-tested escape):
+```json
+{ "enemyName": "ZOMBIE 1", "enemySkill": 5, "enemyStamina": 6,
+  "reviveOn": [5, 6], "canFlee": true, "fleeSection": 346,
+  "fleeMaxStamina": 4, "fleeTestLuck": true,
+  "onVictorySection": 259, "onDefeatSection": 999 }
+```
+
 **Example:**
 ```json
 {

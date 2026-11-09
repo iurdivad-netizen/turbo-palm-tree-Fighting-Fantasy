@@ -385,21 +385,33 @@
           "enemySkill": 6,
           "enemyStamina": 4,
           "onVictorySection": 395,
-          "onDefeatSection": 999
+          "onDefeatSection": 999,
+          "onWound": {
+            "skillLoss": 1,
+            "permanent": true
+          }
         },
         {
           "enemyName": "SHADOW 2",
           "enemySkill": 6,
           "enemyStamina": 4,
           "onVictorySection": 395,
-          "onDefeatSection": 999
+          "onDefeatSection": 999,
+          "onWound": {
+            "skillLoss": 1,
+            "permanent": true
+          }
         },
         {
           "enemyName": "SHADOW 3",
           "enemySkill": 5,
           "enemyStamina": 3,
           "onVictorySection": 395,
-          "onDefeatSection": 999
+          "onDefeatSection": 999,
+          "onWound": {
+            "skillLoss": 1,
+            "permanent": true
+          }
         }
       ]
     },
@@ -3038,21 +3050,45 @@
           "enemySkill": 5,
           "enemyStamina": 6,
           "onVictorySection": 259,
-          "onDefeatSection": 999
+          "onDefeatSection": 999,
+          "reviveOn": [
+            5,
+            6
+          ],
+          "canFlee": true,
+          "fleeSection": 346,
+          "fleeMaxStamina": 4,
+          "fleeTestLuck": true
         },
         {
           "enemyName": "ZOMBIE 2",
           "enemySkill": 5,
           "enemyStamina": 6,
           "onVictorySection": 259,
-          "onDefeatSection": 999
+          "onDefeatSection": 999,
+          "reviveOn": [
+            5,
+            6
+          ],
+          "canFlee": true,
+          "fleeSection": 346,
+          "fleeMaxStamina": 4,
+          "fleeTestLuck": true
         },
         {
           "enemyName": "ZOMBIE 3",
           "enemySkill": 4,
           "enemyStamina": 5,
           "onVictorySection": 259,
-          "onDefeatSection": 999
+          "onDefeatSection": 999,
+          "reviveOn": [
+            5,
+            6
+          ],
+          "canFlee": true,
+          "fleeSection": 346,
+          "fleeMaxStamina": 4,
+          "fleeTestLuck": true
         }
       ],
       "addItems": [
@@ -5022,28 +5058,60 @@
           "enemySkill": 5,
           "enemyStamina": 6,
           "onVictorySection": 312,
-          "onDefeatSection": 999
+          "onDefeatSection": 999,
+          "reviveOn": [
+            5,
+            6
+          ],
+          "canFlee": true,
+          "fleeSection": 346,
+          "fleeMaxStamina": 4,
+          "fleeTestLuck": true
         },
         {
           "enemyName": "ZOMBIE 2",
           "enemySkill": 5,
           "enemyStamina": 6,
           "onVictorySection": 312,
-          "onDefeatSection": 999
+          "onDefeatSection": 999,
+          "reviveOn": [
+            5,
+            6
+          ],
+          "canFlee": true,
+          "fleeSection": 346,
+          "fleeMaxStamina": 4,
+          "fleeTestLuck": true
         },
         {
           "enemyName": "ZOMBIE 3",
           "enemySkill": 4,
           "enemyStamina": 5,
           "onVictorySection": 312,
-          "onDefeatSection": 999
+          "onDefeatSection": 999,
+          "reviveOn": [
+            5,
+            6
+          ],
+          "canFlee": true,
+          "fleeSection": 346,
+          "fleeMaxStamina": 4,
+          "fleeTestLuck": true
         },
         {
           "enemyName": "GHOUL",
           "enemySkill": 6,
           "enemyStamina": 6,
           "onVictorySection": 312,
-          "onDefeatSection": 999
+          "onDefeatSection": 999,
+          "canFlee": true,
+          "fleeSection": 346,
+          "fleeMaxStamina": 4,
+          "fleeTestLuck": true,
+          "onWound": {
+            "skillLoss": 1,
+            "luckTest": true
+          }
         }
       ]
     },
@@ -6743,21 +6811,33 @@
           "enemySkill": 6,
           "enemyStamina": 4,
           "onVictorySection": 363,
-          "onDefeatSection": 999
+          "onDefeatSection": 999,
+          "onWound": {
+            "skillLoss": 1,
+            "permanent": true
+          }
         },
         {
           "enemyName": "SHADOW 2",
           "enemySkill": 6,
           "enemyStamina": 4,
           "onVictorySection": 363,
-          "onDefeatSection": 999
+          "onDefeatSection": 999,
+          "onWound": {
+            "skillLoss": 1,
+            "permanent": true
+          }
         },
         {
           "enemyName": "SHADOW 3",
           "enemySkill": 5,
           "enemyStamina": 3,
           "onVictorySection": 363,
-          "onDefeatSection": 999
+          "onDefeatSection": 999,
+          "onWound": {
+            "skillLoss": 1,
+            "permanent": true
+          }
         },
         {
           "enemyName": "THE WIDOW (WEAKENED)",

@@ -418,6 +418,7 @@
             currentCombatIndex: 0,
             isGameOver: false,
             combatDone: false,
+            tempSkillPenalty: 0, // SKILL lost for the rest of the current combat only
             gameOverType: null,
             pendingTimer: null,
             nextUid: 1,
@@ -533,6 +534,7 @@
             goToSection(sectionId) {
                 this.cancelPending();
                 this.combatDone = false;
+                this.tempSkillPenalty = 0;
                 this.currentSection = sectionId;
                 this.visitedSections.add(sectionId);
                 this.inCombat = false;
@@ -611,7 +613,7 @@
                 const roll = this.rollTwoDice();
                 const success = roll <= this.stats.luck;
                 this.stats.luck = Math.max(0, this.stats.luck - 1);
-                return { success, newLuck: this.stats.luck };
+                return { success, newLuck: this.stats.luck, roll };
             },
 
             // Calculate total attack bonus from weapons in inventory
@@ -925,6 +927,13 @@
             return html;
         }
 
+        // Flee is offered if the combat allows it and any STAMINA threshold is met
+        function canFleeNow(c) {
+            if (!c.canFlee) return false;
+            if (c.fleeMaxStamina != null && GameState.stats.stamina > c.fleeMaxStamina) return false;
+            return true;
+        }
+
         function renderCombat(combat) {
             // Handle both single combat and arrays of combats
             const combats = Array.isArray(combat) ? combat : [combat];
@@ -960,7 +969,7 @@
                         <button class="button button-danger" style="flex: 1;" onclick="fightRound()">
                             Fight Round
                         </button>
-                        ${currentCombat.canFlee ? `<button class="button button-warning" onclick="fleeCombat(${Number(currentCombat.fleeSection)})">Flee</button>` : ''}
+                        ${canFleeNow(currentCombat) ? `<button class="button button-warning" onclick="fleeCombat(${Number(currentCombat.fleeSection)})">${currentCombat.fleeTestLuck ? 'Flee (Test Luck)' : 'Flee'}</button>` : ''}
                     </div>
                 </div>
             `;
@@ -988,7 +997,7 @@
         }
 
         function renderStatBar(label, current, initial) {
-            const percentage = Math.min(100, Math.max(0, (current / initial) * 100));
+            const percentage = initial > 0 ? Math.min(100, Math.max(0, (current / initial) * 100)) : 0;
             const colorClass = percentage > 66 ? 'high' : percentage > 33 ? 'medium' : 'low';
             const color = percentage > 66 ? '#10b981' : percentage > 33 ? '#f59e0b' : '#ef4444';
 
@@ -2430,6 +2439,7 @@
         function startCombat(enemyStamina) {
             const section = GameState.currentBook.sections.find(s => s.id === GameState.currentSection);
             GameState.inCombat = true;
+            GameState.tempSkillPenalty = 0;
             GameState.currentCombatIndex = 0;
             GameState.enemyCurrentStamina = enemyStamina;
 
@@ -2460,7 +2470,8 @@
             // Roll for player
             const playerDice = GameState.rollTwoDice();
             const attackBonus = GameState.calculateAttackBonus();
-            const playerAttackStrength = playerDice + GameState.stats.skill + attackBonus;
+            const effectiveSkill = Math.max(0, GameState.stats.skill - GameState.tempSkillPenalty);
+            const playerAttackStrength = playerDice + effectiveSkill + attackBonus;
 
             // Roll for enemy
             const enemyDice = GameState.rollTwoDice();
@@ -2471,9 +2482,9 @@
 
             // Show attack bonus in combat log if present
             if (attackBonus !== 0) {
-                GameState.combatLog.push(`You rolled ${playerDice} + ${GameState.stats.skill} SKILL + ${attackBonus} (weapon bonus) = ${playerAttackStrength}`);
+                GameState.combatLog.push(`You rolled ${playerDice} + ${effectiveSkill} SKILL + ${attackBonus} (weapon bonus) = ${playerAttackStrength}`);
             } else {
-                GameState.combatLog.push(`You rolled ${playerDice} + ${GameState.stats.skill} SKILL = ${playerAttackStrength}`);
+                GameState.combatLog.push(`You rolled ${playerDice} + ${effectiveSkill} SKILL = ${playerAttackStrength}`);
             }
 
             GameState.combatLog.push(`${combat.enemyName} rolled ${enemyDice} + ${combat.enemySkill} SKILL = ${enemyAttackStrength}`);
@@ -2482,6 +2493,17 @@
                 // Player wins
                 GameState.enemyCurrentStamina -= 2;
                 GameState.combatLog.push(`💥 You hit ${combat.enemyName} for 2 damage! (${GameState.enemyCurrentStamina} STAMINA remaining)`);
+
+                // Special rule: some enemies refuse to stay down (e.g. Undead Fortitude)
+                if (GameState.enemyCurrentStamina <= 0 && Array.isArray(combat.reviveOn)) {
+                    const reviveRoll = GameState.rollDice();
+                    if (combat.reviveOn.includes(reviveRoll)) {
+                        GameState.enemyCurrentStamina = 1;
+                        GameState.combatLog.push(`🧟 You roll a ${reviveRoll}: ${combat.enemyName} refuses to stay down! It survives with 1 STAMINA.`);
+                    } else {
+                        GameState.combatLog.push(`🎲 You roll a ${reviveRoll}: ${combat.enemyName} stays down.`);
+                    }
+                }
 
                 if (GameState.enemyCurrentStamina <= 0) {
                     GameState.combatLog.push(`\n🎉 You defeated ${combat.enemyName}!`);
@@ -2521,6 +2543,24 @@
                     GameState.combatLog.push(`💔 ${combat.enemyName} hits you for ${actualDamage} damage!`);
                 }
 
+                // Special rule: wounds from some enemies drain SKILL
+                if (combat.onWound && GameState.stats.stamina > 0) {
+                    const loss = combat.onWound.skillLoss || 1;
+                    if (combat.onWound.luckTest) {
+                        const lt = GameState.testLuck();
+                        if (lt.success) {
+                            GameState.combatLog.push(`🍀 Test your Luck (rolled ${lt.roll}): Lucky! The toxins have no effect.`);
+                        } else {
+                            GameState.tempSkillPenalty += loss;
+                            GameState.combatLog.push(`☠️ Test your Luck (rolled ${lt.roll}): Unlucky! You lose ${loss} SKILL for the rest of this combat. (SKILL now ${Math.max(0, GameState.stats.skill - GameState.tempSkillPenalty)})`);
+                        }
+                    } else if (combat.onWound.permanent) {
+                        GameState.stats.skill = Math.max(0, GameState.stats.skill - loss);
+                        GameState.stats.initialSkill = Math.max(0, GameState.stats.initialSkill - loss);
+                        GameState.combatLog.push(`🩸 ${combat.enemyName}'s wound permanently drains ${loss} SKILL! (SKILL now ${GameState.stats.skill})`);
+                    }
+                }
+
                 if (GameState.stats.stamina <= 0) {
                     GameState.combatLog.push(`\n💀 You have been defeated...`);
                     GameState.inCombat = false;
@@ -2548,6 +2588,16 @@
             const section = GameState.currentBook.sections.find(s => s.id === GameState.currentSection);
             const combats = Array.isArray(section.combat) ? section.combat : [section.combat];
             const enemy = combats[GameState.currentCombatIndex] || combats[0];
+            if (!canFleeNow(enemy)) return;
+            if (enemy.fleeTestLuck) {
+                const lt = GameState.testLuck();
+                if (!lt.success) {
+                    GameState.combatLog.push(`\n🎲 Test your Luck (rolled ${lt.roll}): Unlucky! They catch you before you can flee. You must keep fighting.`);
+                    render();
+                    return;
+                }
+                GameState.combatLog.push(`\n🍀 Test your Luck (rolled ${lt.roll}): Lucky! You escape.`);
+            }
             GameState.combatLog.push(`\n🏃 You flee from ${enemy.enemyName}!`);
             GameState.inCombat = false;
             render();
