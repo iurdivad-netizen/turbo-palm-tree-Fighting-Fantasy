@@ -1867,6 +1867,13 @@
           "name": "Alchemist's Journal",
           "type": "other",
           "unique": true
+        },
+        {
+          "id": "true-name",
+          "name": "The Widow's True Name",
+          "type": "other",
+          "description": "Eliza Hollow",
+          "unique": true
         }
       ]
     },
@@ -6089,6 +6096,13 @@
           "id": "alchemists-journal",
           "name": "Alchemist's Journal",
           "type": "other",
+          "unique": true
+        },
+        {
+          "id": "true-name",
+          "name": "The Widow's True Name",
+          "type": "other",
+          "description": "Eliza Hollow",
           "unique": true
         }
       ]
