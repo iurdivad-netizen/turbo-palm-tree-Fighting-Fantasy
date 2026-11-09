@@ -643,19 +643,19 @@
       ],
       "addItems": [
         {
-          "id": "provisions",
+          "id": "rations",
           "name": "Provisions",
           "type": "food",
           "restore": "+4 stamina"
         },
         {
-          "id": "provisions",
+          "id": "rations",
           "name": "Provisions",
           "type": "food",
           "restore": "+4 stamina"
         },
         {
-          "id": "provisions",
+          "id": "rations",
           "name": "Provisions",
           "type": "food",
           "restore": "+4 stamina"
@@ -1594,6 +1594,12 @@
           "text": "Turn to 155",
           "targetSection": 155
         }
+      ],
+      "modifyStats": {
+        "stamina": 4
+      },
+      "removeItems": [
+        "rations"
       ]
     },
     {
@@ -2936,13 +2942,13 @@
       ],
       "addItems": [
         {
-          "id": "provisions",
+          "id": "rations",
           "name": "Provisions",
           "type": "food",
           "restore": "+4 stamina"
         },
         {
-          "id": "provisions",
+          "id": "rations",
           "name": "Provisions",
           "type": "food",
           "restore": "+4 stamina"
@@ -4271,13 +4277,13 @@
           "type": "treasure"
         },
         {
-          "id": "provisions",
+          "id": "rations",
           "name": "Provisions",
           "type": "food",
           "restore": "+4 stamina"
         },
         {
-          "id": "provisions",
+          "id": "rations",
           "name": "Provisions",
           "type": "food",
           "restore": "+4 stamina"
@@ -4492,8 +4498,11 @@
           "targetSection": 87
         },
         {
-          "text": "Turn to 92",
-          "targetSection": 92
+          "text": "Eat a Provision and rest",
+          "targetSection": 92,
+          "conditions": {
+            "requiresItem": "rations"
+          }
         },
         {
           "text": "Turn to 94",
@@ -4888,13 +4897,13 @@
       ],
       "addItems": [
         {
-          "id": "provisions",
+          "id": "rations",
           "name": "Provisions",
           "type": "food",
           "restore": "+4 stamina"
         },
         {
-          "id": "provisions",
+          "id": "rations",
           "name": "Provisions",
           "type": "food",
           "restore": "+4 stamina"
@@ -5493,19 +5502,19 @@
       ],
       "addItems": [
         {
-          "id": "provisions",
+          "id": "rations",
           "name": "Provisions",
           "type": "food",
           "restore": "+4 stamina"
         },
         {
-          "id": "provisions",
+          "id": "rations",
           "name": "Provisions",
           "type": "food",
           "restore": "+4 stamina"
         },
         {
-          "id": "provisions",
+          "id": "rations",
           "name": "Provisions",
           "type": "food",
           "restore": "+4 stamina"
@@ -6384,13 +6393,13 @@
           "type": "treasure"
         },
         {
-          "id": "provisions",
+          "id": "rations",
           "name": "Provisions",
           "type": "food",
           "restore": "+4 stamina"
         },
         {
-          "id": "provisions",
+          "id": "rations",
           "name": "Provisions",
           "type": "food",
           "restore": "+4 stamina"
@@ -6481,19 +6490,19 @@
       ],
       "addItems": [
         {
-          "id": "provisions",
+          "id": "rations",
           "name": "Provisions",
           "type": "food",
           "restore": "+4 stamina"
         },
         {
-          "id": "provisions",
+          "id": "rations",
           "name": "Provisions",
           "type": "food",
           "restore": "+4 stamina"
         },
         {
-          "id": "provisions",
+          "id": "rations",
           "name": "Provisions",
           "type": "food",
           "restore": "+4 stamina"
@@ -8344,6 +8353,13 @@
           "properties": [
             "magical"
           ],
+          "unique": true
+        },
+        {
+          "id": "cloak-of-protection",
+          "name": "Cloak of Protection",
+          "type": "armor",
+          "bonus": "+1 defense",
           "unique": true
         }
       ],
