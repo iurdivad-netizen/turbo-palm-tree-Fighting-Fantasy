@@ -186,6 +186,14 @@ The app automatically determines item type based on keywords:
 - `reviveOn`: `[5, 6]` - when reduced to 0 STAMINA, roll one die; on a listed result the enemy
   survives with 1 STAMINA
 
+**Item conditions on choices (JSON only):**
+- `"conditions": { "requiresItem": "brass-key" }` - the choice is shown but locked until you own that item id.
+- `"conditions": { "requiresNoItem": "brass-key" }` - the choice only appears while you do NOT own the item
+  (use for "if you don't have it" branches).
+- `testLuck` may also carry `"conditions"` and a `"label"`, e.g. a forced-door luck test that only appears
+  without the key. `validate_adventure.py` reports items that a condition needs but no section gives.
+- Items with `"unique": true`, or with a `bonus` (cloaks, magic weapons), are not collected twice.
+
 **Weapon properties (JSON only):**
 - Items of `type: "weapon"` may list `"properties": ["magical", "silver", "crushing"]`. If omitted, they are
   guessed from the item name (silver / magic, blessed, enchanted, holy / mace, club, hammer, flail, maul).

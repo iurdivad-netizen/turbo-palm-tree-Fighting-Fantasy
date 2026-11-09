@@ -42,6 +42,15 @@ def validate(path):
         for t in targets(s):
             if t not in ids:
                 errors.append(f"section {s.get('id')} links to missing section {t}")
+    # Every item a choice requires must be obtainable somewhere (or be a starting item)
+    obtainable = {i.get("id") for s in sections for i in s.get("addItems") or []}
+    obtainable |= {i.get("id") for i in book.get("startingItems") or []}
+    for s in sections:
+        for c in s.get("choices") or []:
+            cond = c.get("conditions") or {}
+            for key in ("requiresItem", "requiresNoItem"):
+                if cond.get(key) and cond[key] not in obtainable:
+                    errors.append(f"section {s.get('id')} needs item '{cond[key]}' which no section gives")
     return errors
 
 

@@ -227,12 +227,18 @@
       "text": "The door before you is heavily reinforced with iron bands, and you can hear something moving on the other side—a shuffling, scraping sound that makes your skin crawl. The wood is scored with what look like claw marks from the inside, as if whatever is imprisoned here has spent years, perhaps decades, trying to escape. \r\n\r\n\r\nThe scratches are deep, gouged into the thick oak by something with immense strength and even greater desperation. Some of the marks look recent, the wood pale where it's been torn. Others are old, darkened with age and possibly blood. \r\n\r\n\r\nDo you have the BRASS KEY inscribed with strange symbols? \r\n\r\n\r\nIf yes: The key fits the lock perfectly. You hear a satisfying click, and with effort, you push the heavy door open. Beyond lies a chamber that makes your blood run cold. Turn to 5. \r\n\r\n\r\nIf no: The door remains sealed, and you have no means of opening it. Whatever lurks behind it will have to remain a mystery—or perhaps a blessing. Turn to 221.",
       "choices": [
         {
-          "text": "Turn to 5",
-          "targetSection": 5
+          "text": "Unlock the door with the Brass Key",
+          "targetSection": 5,
+          "conditions": {
+            "requiresItem": "brass-key"
+          }
         },
         {
-          "text": "Turn to 221",
-          "targetSection": 221
+          "text": "Leave the door sealed",
+          "targetSection": 221,
+          "conditions": {
+            "requiresNoItem": "brass-key"
+          }
         }
       ],
       "addItems": [
@@ -598,12 +604,18 @@
       "text": "You examine the strange symbols carved into the walls around you—occult signs and sigils that seem to writhe and shift in the torchlight. Some you recognize from old books on dark magic: binding circles, summoning glyphs, marks of protection (or is it imprisonment?). Others are completely alien, their meanings lost to time or knowledge you've never acquired. \r\n\r\n\r\nDo you have the MAYOR'S LEDGER—the book that contains information about the \"Hollow Faith\" cult and its symbols? \r\n\r\n\r\nIf you have the MAYOR'S LEDGER: You pull out the ledger and flip through its pages, comparing the symbols on the walls to the sketches and notes within. Yes! These match! The ledger explains that these symbols are part of the original binding ritual used to imprison the Widow's spirit. Understanding them gives you insight into how the binding works and potentially how to renew it—or how to avoid breaking it further. This knowledge will prove valuable. Turn to 155. \r\n\r\n\r\nIf you don't have the ledger: The symbols remain meaningless to you—pretty pictures carved by hands long dead, serving purposes you can't fathom. Without context, they're just decorations on stone, mysteries you have neither the time nor the knowledge to solve. Turn to 111.",
       "choices": [
         {
-          "text": "Turn to 155",
-          "targetSection": 155
+          "text": "Use the Mayor's Ledger to read the symbols",
+          "targetSection": 155,
+          "conditions": {
+            "requiresItem": "mayors-ledger"
+          }
         },
         {
-          "text": "Turn to 111",
-          "targetSection": 111
+          "text": "Move on",
+          "targetSection": 111,
+          "conditions": {
+            "requiresNoItem": "mayors-ledger"
+          }
         }
       ],
       "addItems": [
@@ -1211,6 +1223,11 @@
           "id": "scroll",
           "name": "Scroll",
           "type": "other"
+        },
+        {
+          "id": "gold",
+          "name": "50 Gold Pieces",
+          "type": "treasure"
         }
       ]
     },
@@ -1256,12 +1273,18 @@
       "text": "The door is magically sealed, its surface covered in glowing runes that pulse with eldritch energy. You can feel the power emanating from it— ancient magic, strong magic, dangerous magic. \r\n\r\n\r\nDo you have the ALCHEMIST'S JOURNAL in your possession? \r\n\r\n\r\nIf yes: You flip through the journal and find a section on magical barriers and counter-spells. Yes! The journal contains the exact counter-spell needed to break this particular seal. You speak the words carefully, pronouncing each syllable exactly as written, and the runes flare brightly before fading entirely. The door is now unsealed. Turn to 355. \r\n\r\n\r\nIf no: Without knowledge of the counter-spell, you have no way to break this magical seal. The door remains closed, its secrets beyond your reach. You'll need to find another way forward. Turn to 301.",
       "choices": [
         {
-          "text": "Turn to 355",
-          "targetSection": 355
+          "text": "Speak the counter-spell from the Alchemist's Journal",
+          "targetSection": 355,
+          "conditions": {
+            "requiresItem": "alchemists-journal"
+          }
         },
         {
-          "text": "Turn to 301",
-          "targetSection": 301
+          "text": "Find another way forward",
+          "targetSection": 301,
+          "conditions": {
+            "requiresNoItem": "alchemists-journal"
+          }
         }
       ]
     },
@@ -1576,18 +1599,23 @@
       "title": "The door ahead is locked tight, secured with a heavy iron lock that looks formidable.",
       "choices": [
         {
-          "text": "Turn to 267",
-          "targetSection": 267
-        },
-        {
-          "text": "Turn to 27",
-          "targetSection": 27
-        },
-        {
-          "text": "Turn to 28",
-          "targetSection": 28
+          "text": "Unlock the door with the Brass Key",
+          "targetSection": 267,
+          "conditions": {
+            "requiresItem": "brass-key"
+          }
         }
-      ]
+      ],
+      "testLuck": {
+        "successSection": 27,
+        "failureSection": 28,
+        "label": "Force the door (Test Your Luck)",
+        "conditions": {
+          "requiresNoItem": "brass-key"
+        },
+        "successText": "The lock gives way.",
+        "failureText": "The door will not budge."
+      }
     },
     {
       "id": 94,
@@ -1668,6 +1696,11 @@
           "id": "rope",
           "name": "Rope",
           "type": "other"
+        },
+        {
+          "id": "gold",
+          "name": "30 Gold Pieces",
+          "type": "treasure"
         }
       ]
     },
@@ -2070,6 +2103,13 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "cloak-of-shadows",
+          "name": "Cloak of Shadows",
+          "type": "other"
+        }
       ]
     },
     {
@@ -2295,11 +2335,6 @@
       ],
       "addItems": [
         {
-          "id": "key",
-          "name": "Key",
-          "type": "key"
-        },
-        {
           "id": "iron-key",
           "name": "Iron Key",
           "type": "key"
@@ -2307,6 +2342,11 @@
         {
           "id": "silver-key",
           "name": "Silver Key",
+          "type": "key"
+        },
+        {
+          "id": "brass-key",
+          "name": "Brass Key",
           "type": "key"
         }
       ]
@@ -2511,26 +2551,29 @@
       "text": "You follow the passage toward the sound of chanting. The voices grow louder as you approach—ancient words spoken in unison, rhythmic and hypnotic. The very air seems to vibrate with dark power. \r\n\r\n\r\nThe passage opens into a large chamber, and what you see makes your blood run cold: \r\n\r\n\r\nRobed cultists kneel in a circle around a massive summoning circle drawn in fresh blood. In the center of the circle, chained to a stone pillar, is a girl —pale, unconscious, but alive. This must be Lydia, the Mayor's daughter. \r\n\r\n\r\nThe cultists are so focused on their ritual that they haven't noticed you yet. You have the element of surprise—but what will you do with it? Do you have a CULT MEDALLION that might allow you to bluff your way in? \r\n\r\n\r\nIf yes, try bluffing: Turn to 16. \r\n\r\n\r\nIf no medallion but you want to attack immediately: Turn to 67. \r\n\r\n\r\nIf you want to sneak closer and assess the situation: Test your Luck. \r\n\r\n\r\nLucky: Turn to 71 \r\n\r\n\r\nUnlucky: Turn to 89 \r\n\r\n\r\nIf you want to retreat and find another way: Turn to 111.",
       "choices": [
         {
-          "text": "Turn to 16",
-          "targetSection": 16
+          "text": "Bluff your way in with the Cult Medallion",
+          "targetSection": 16,
+          "conditions": {
+            "requiresItem": "cult-medallion"
+          }
         },
         {
-          "text": "Turn to 67",
-          "targetSection": 67
-        },
-        {
-          "text": "Turn to 71",
-          "targetSection": 71
-        },
-        {
-          "text": "Turn to 89",
-          "targetSection": 89
+          "text": "Attack immediately",
+          "targetSection": 67,
+          "conditions": {
+            "requiresNoItem": "cult-medallion"
+          }
         },
         {
           "text": "Turn to 111",
           "targetSection": 111
         }
-      ]
+      ],
+      "testLuck": {
+        "successSection": 71,
+        "failureSection": 89,
+        "label": "Sneak closer (Test Your Luck)"
+      }
     },
     {
       "id": 146,
@@ -2807,16 +2850,11 @@
       "text": "The door ahead is locked with a heavy mechanism. Do you have the BRASS KEY inscribed with strange symbols? If yes: The key fits perfectly. Turn to 267. \r\n\r\n\r\nIf no: You'll have to try forcing it. Test your Luck. \r\n\r\n\r\nLucky: You manage to break the lock. Turn to 27. \r\n\r\n\r\nUnlucky: The door won't budge. Turn to 28.",
       "choices": [
         {
-          "text": "Turn to 267",
-          "targetSection": 267
-        },
-        {
-          "text": "Turn to 27",
-          "targetSection": 27
-        },
-        {
-          "text": "Turn to 28",
-          "targetSection": 28
+          "text": "Unlock the door with the Brass Key",
+          "targetSection": 267,
+          "conditions": {
+            "requiresItem": "brass-key"
+          }
         }
       ],
       "addItems": [
@@ -2825,7 +2863,17 @@
           "name": "Key",
           "type": "key"
         }
-      ]
+      ],
+      "testLuck": {
+        "successSection": 27,
+        "failureSection": 28,
+        "label": "Force the door (Test Your Luck)",
+        "conditions": {
+          "requiresNoItem": "brass-key"
+        },
+        "successText": "The lock gives way.",
+        "failureText": "The door will not budge."
+      }
     },
     {
       "id": 158,
@@ -4539,12 +4587,18 @@
       "title": "The door ahead is magically sealed, covered in glowing runes that pulse with power.",
       "choices": [
         {
-          "text": "Turn to 355",
-          "targetSection": 355
+          "text": "Speak the counter-spell from the Alchemist's Journal",
+          "targetSection": 355,
+          "conditions": {
+            "requiresItem": "alchemists-journal"
+          }
         },
         {
-          "text": "Turn to 301",
-          "targetSection": 301
+          "text": "Find another way forward",
+          "targetSection": 301,
+          "conditions": {
+            "requiresNoItem": "alchemists-journal"
+          }
         }
       ]
     },
@@ -4553,12 +4607,18 @@
       "text": "You proceed toward the candlelight ahead. The passage opens into a ritual chamber, and what you see makes your blood run cold: \r\n\r\n\r\nBlack candles arranged in a circle cast flickering shadows across the walls. In the center sits an ancient altar stained with blood—centuries of blood, layer upon layer. Strange symbols pulse with dark energy around the altar's perimeter, and the air itself seems thick with malevolence. \r\n\r\n\r\nOn the altar lie ritual implements: a bone dagger, silver chalices, and a book written in an ancient language that hurts your eyes to look at. This is clearly where cultists perform their dark ceremonies. \r\n\r\n\r\nDo you have the MAYOR'S LEDGER with information about cult symbols? \r\n\r\n\r\nIf you have the ledger: You recognize these symbols from the ledger! They're part of the original binding ritual. Understanding them gives you insight into how the Widow was first imprisoned. Turn to 14 (you gain important knowledge). \r\n\r\n\r\nIf you don't have the ledger: The symbols are meaningless to you—just mysterious markings on ancient stone. Turn to 104 (examine the ritual book). \r\n\r\n\r\nYou could also: \r\n\r\n\r\nDestroy the altar to weaken the curse (Turn to 80) \r\n\r\n\r\nContinue deeper into the catacombs: west passage (Turn to 155) or east passage (Turn to 267)",
       "choices": [
         {
-          "text": "Turn to 14",
-          "targetSection": 14
+          "text": "Read the symbols using the Mayor's Ledger",
+          "targetSection": 14,
+          "conditions": {
+            "requiresItem": "mayors-ledger"
+          }
         },
         {
-          "text": "Turn to 104",
-          "targetSection": 104
+          "text": "Examine the ritual book",
+          "targetSection": 104,
+          "conditions": {
+            "requiresNoItem": "mayors-ledger"
+          }
         },
         {
           "text": "Turn to 80",
@@ -4970,16 +5030,11 @@
       "text": "You take the eastern passage deeper into the catacombs. The air grows colder with each step, your breath misting in the frigid atmosphere. Frost forms on the walls—impossible this deep underground, yet there it is, glittering in your lantern light. \r\n\r\n\r\nWarning symbols carved into the stone line the passage: skulls and crossed bones, ancient warnings in languages you don't recognize, protective wards that have clearly failed. \r\n\r\n\r\nThe passage ends at a massive iron door bearing the Hollow family crest. The door is sealed with a heavy lock covered in occult symbols. Do you have the BRASS KEY inscribed with strange symbols? \r\n\r\n\r\nIf yes, you have the brass key: The symbols on the key match those on the lock perfectly. This is what the key was made for. Turn to 5. If no, you don't have the brass key: You'll have to try forcing the door. Test your Luck. \r\n\r\n\r\nLucky: Through sheer strength and determination, you manage to break the lock. Turn to 27. \r\n\r\n\r\nUnlucky: The door won't budge. It's too well made, too heavily reinforced. Turn to 28. \r\n\r\n\r\nOr you could go back and explore elsewhere: Turn to 111.",
       "choices": [
         {
-          "text": "Turn to 5",
-          "targetSection": 5
-        },
-        {
-          "text": "Turn to 27",
-          "targetSection": 27
-        },
-        {
-          "text": "Turn to 28",
-          "targetSection": 28
+          "text": "Unlock the door with the Brass Key",
+          "targetSection": 5,
+          "conditions": {
+            "requiresItem": "brass-key"
+          }
         },
         {
           "text": "Turn to 111",
@@ -4992,7 +5047,17 @@
           "name": "Key",
           "type": "key"
         }
-      ]
+      ],
+      "testLuck": {
+        "successSection": 27,
+        "failureSection": 28,
+        "label": "Force the door (Test Your Luck)",
+        "conditions": {
+          "requiresNoItem": "brass-key"
+        },
+        "successText": "The lock gives way.",
+        "failureText": "The door will not budge."
+      }
     },
     {
       "id": 259,
@@ -5159,8 +5224,11 @@
           "targetSection": 200
         },
         {
-          "text": "Turn to 5",
-          "targetSection": 5
+          "text": "Approach the sealed eastern door",
+          "targetSection": 5,
+          "conditions": {
+            "requiresItem": "brass-key"
+          }
         },
         {
           "text": "Turn to 180",

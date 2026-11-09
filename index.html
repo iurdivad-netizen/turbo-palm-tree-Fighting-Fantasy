@@ -917,20 +917,23 @@
             if (section.choices && section.choices.length > 0 && (!section.combat || GameState.combatDone)) {
                 html += `<div class="mt-2"><h4 style="font-weight: 600; margin-bottom: 1rem;">What do you do?</h4>`;
                 section.choices.forEach((choice, index) => {
+                    // "If you don't have X" branches only appear when they apply
+                    if (choice.conditions && choice.conditions.requiresNoItem &&
+                        GameState.hasItem(choice.conditions.requiresNoItem)) return;
                     const disabled = !canMakeChoice(choice);
                     html += `
                         <button class="choice-button" onclick="handleChoice(${Number(choice.targetSection)}, ${index})" ${disabled ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>
                             ${esc(choice.text)}
-                            ${choice.conditions ? `<span style="font-size: 0.875rem; color: #6b7280;"> (requires conditions)</span>` : ''}
+                            ${choice.conditions && disabled ? `<span style="font-size: 0.875rem; color: #6b7280;"> (${esc(describeConditions(choice.conditions))})</span>` : ''}
                         </button>
                     `;
                 });
                 html += `</div>`;
             }
 
-            if (section.testLuck) {
+            if (section.testLuck && canMakeChoice({ conditions: section.testLuck.conditions })) {
                 html += `<div style="background: #f3e8ff; padding: 1rem; border-radius: 0.5rem; margin-top: 1rem;">
-                    <h4 style="font-weight: bold; margin-bottom: 0.5rem;">Test Your Luck!</h4>
+                    <h4 style="font-weight: bold; margin-bottom: 0.5rem;">${esc(section.testLuck.label || 'Test Your Luck!')}</h4>
                     <button class="button button-warning" onclick="handleLuckTest(${Number(section.id)})">Roll the Dice</button>
                 </div>`;
             }
@@ -2418,11 +2421,27 @@
                 });
         }
 
+        // "Brass Key" from the item id "brass-key"
+        function prettyItemId(id) {
+            return String(id).split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        }
+
+        function describeConditions(c) {
+            const parts = [];
+            if (c.requiresItem) parts.push(`requires ${prettyItemId(c.requiresItem)}`);
+            if (c.requiresNoItem) parts.push(`only without ${prettyItemId(c.requiresNoItem)}`);
+            if (c.requiresMinSkill) parts.push(`requires SKILL ${c.requiresMinSkill}+`);
+            if (c.requiresMinStamina) parts.push(`requires STAMINA ${c.requiresMinStamina}+`);
+            if (c.requiresMinLuck) parts.push(`requires LUCK ${c.requiresMinLuck}+`);
+            return parts.join(', ') || 'requires conditions';
+        }
+
         function canMakeChoice(choice) {
             if (!choice.conditions) return true;
 
             const c = choice.conditions;
             if (!GameState.stats) return false;
+            if (c.requiresNoItem && GameState.hasItem(c.requiresNoItem)) return false;
             if (c.requiresItem && !GameState.hasItem(c.requiresItem)) return false;
             if (c.requiresMinSkill && GameState.stats.skill < c.requiresMinSkill) return false;
             if (c.requiresMinStamina && GameState.stats.stamina < c.requiresMinStamina) return false;
