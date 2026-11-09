@@ -7409,6 +7409,14 @@
       ],
       "isEnding": true,
       "endingType": "victory"
+    },
+    {
+      "id": 999,
+      "title": "Your Adventure Ends",
+      "text": "Your strength fails, and the darkness of Hollow's End closes around you. The last thing you hear is the Widow's laughter, cold and patient, echoing through the halls as your lantern gutters out.\r\n\r\n\r\nLydia will not be saved, and the curse of Hollow's End will claim another generation. Your adventure ends here.\r\n\r\n\r\nTo try again, restart the adventure and make different choices.",
+      "choices": [],
+      "isEnding": true,
+      "endingType": "defeat"
     }
   ]
 }
