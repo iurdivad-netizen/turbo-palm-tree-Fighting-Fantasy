@@ -418,6 +418,7 @@
             currentCombatIndex: 0,
             isGameOver: false,
             combatDone: false,
+            lastWielded: null,
             tempSkillPenalty: 0, // SKILL lost for the rest of the current combat only
             gameOverType: null,
             pendingTimer: null,
@@ -435,7 +436,60 @@
 
             // Give every inventory item a unique instance id (uid); `id` stays the book's item id
             makeItem(item) {
-                return { ...item, uid: this.nextUid++ };
+                const made = { ...item, uid: this.nextUid++ };
+                if (made.type === 'weapon' && !Array.isArray(made.properties)) {
+                    made.properties = this.inferWeaponProperties(made.name);
+                }
+                return made;
+            },
+
+            // Weapon properties: 'magical', 'silver', 'crushing'. Books can set them explicitly
+            // with "properties"; otherwise they are guessed from the item name.
+            inferWeaponProperties(name) {
+                const n = String(name || '').toLowerCase();
+                const props = [];
+                if (/silver/.test(n)) props.push('silver');
+                if (/magic|enchanted|blessed|holy/.test(n)) props.push('magical');
+                if (/\b(mace|club|hammer|flail|maul)\b/.test(n)) props.push('crushing');
+                return props;
+            },
+
+            // Numeric bonus from strings like "+1 skill", "+2 attack"
+            weaponBonus(item) {
+                const match = item && item.bonus ? String(item.bonus).match(/([+-]\d+)/) : null;
+                return match ? parseInt(match[1]) : 0;
+            },
+
+            // Damage the player deals per hit with a given weapon (or null = no weapon) against an enemy.
+            // Base damage is 2. Enemy fields (all optional):
+            //   effectiveWeapons: ['magical','silver'] + normalWeaponDamage: n  -> weapons without one of
+            //     those properties deal n damage instead of 2 (e.g. Incorporeal)
+            //   weakTo: { property: 'crushing', damage: 3 } -> weapons with the property deal more
+            damageAgainst(weapon, enemy) {
+                const props = (weapon && weapon.properties) || [];
+                let damage = 2;
+                if (Array.isArray(enemy.effectiveWeapons) && !enemy.effectiveWeapons.some(p => props.includes(p))) {
+                    damage = enemy.normalWeaponDamage != null ? enemy.normalWeaponDamage : 2;
+                }
+                if (enemy.weakTo && props.includes(enemy.weakTo.property)) {
+                    damage = enemy.weakTo.damage;
+                }
+                return damage;
+            },
+
+            // Only one weapon is wielded at a time: use whichever does the most damage to this
+            // enemy, then gives the biggest SKILL bonus.
+            chooseWeapon(enemy) {
+                let best = null, bestDamage = this.damageAgainst(null, enemy), bestBonus = 0;
+                for (const item of this.inventory) {
+                    if (item.type !== 'weapon') continue;
+                    const damage = this.damageAgainst(item, enemy);
+                    const bonus = this.weaponBonus(item);
+                    if (!best || damage > bestDamage || (damage === bestDamage && bonus > bestBonus)) {
+                        best = item; bestDamage = damage; bestBonus = bonus;
+                    }
+                }
+                return { weapon: best, damage: bestDamage, bonus: bestBonus };
             },
 
             loadBook(book) {
@@ -616,18 +670,10 @@
                 return { success, newLuck: this.stats.luck, roll };
             },
 
-            // Calculate total attack bonus from weapons in inventory
+            // Attack bonus from the best single weapon (weapon bonuses do not stack)
             calculateAttackBonus() {
-                return this.inventory.reduce((total, item) => {
-                    if (item.type === 'weapon' && item.bonus) {
-                        // Extract numeric bonus from strings like "+1 skill", "+2 attack", etc.
-                        const match = item.bonus.match(/([+-]\d+)/);
-                        if (match) {
-                            return total + parseInt(match[1]);
-                        }
-                    }
-                    return total;
-                }, 0);
+                return this.inventory.reduce((best, item) =>
+                    item.type === 'weapon' ? Math.max(best, this.weaponBonus(item)) : best, 0);
             },
 
             // Calculate total defense bonus from armor in inventory
@@ -1048,6 +1094,7 @@
                                 </div>
                                 ${item.description ? `<div style="font-size: 0.875rem; color: #6b7280; margin-left: 2rem;">${esc(item.description)}</div>` : ''}
                                 ${item.restore ? `<div style="font-size: 0.75rem; color: #059669; margin-left: 2rem; margin-top: 0.25rem;">✨ ${esc(item.restore)}</div>` : ''}
+                                ${item.properties && item.properties.length ? `<div style="font-size: 0.75rem; color: #b45309; margin-left: 2rem; margin-top: 0.25rem;">🏷️ ${item.properties.map(esc).join(', ')}</div>` : ''}
                                 ${item.bonus ? `<div style="font-size: 0.75rem; color: #7c3aed; margin-left: 2rem; margin-top: 0.25rem;">⚡ ${esc(item.bonus)}</div>` : ''}
                             </div>
                             <div style="display: flex; gap: 0.5rem; align-items: center;">
@@ -2440,6 +2487,7 @@
             const section = GameState.currentBook.sections.find(s => s.id === GameState.currentSection);
             GameState.inCombat = true;
             GameState.tempSkillPenalty = 0;
+            GameState.lastWielded = null;
             GameState.currentCombatIndex = 0;
             GameState.enemyCurrentStamina = enemyStamina;
 
@@ -2469,7 +2517,8 @@
 
             // Roll for player
             const playerDice = GameState.rollTwoDice();
-            const attackBonus = GameState.calculateAttackBonus();
+            const wield = GameState.chooseWeapon(combat);
+            const attackBonus = wield.bonus;
             const effectiveSkill = Math.max(0, GameState.stats.skill - GameState.tempSkillPenalty);
             const playerAttackStrength = playerDice + effectiveSkill + attackBonus;
 
@@ -2479,6 +2528,11 @@
 
             const roundNum = GameState.combatLog.filter(l => l.includes('Round')).length + 1;
             GameState.combatLog.push(`\nRound ${roundNum}:`);
+            const wieldName = wield.weapon ? wield.weapon.name : 'bare hands';
+            if (GameState.lastWielded !== wieldName) {
+                GameState.lastWielded = wieldName;
+                GameState.combatLog.push(`🗡️ You fight with: ${wieldName}`);
+            }
 
             // Show attack bonus in combat log if present
             if (attackBonus !== 0) {
@@ -2491,8 +2545,11 @@
 
             if (playerAttackStrength > enemyAttackStrength) {
                 // Player wins
-                GameState.enemyCurrentStamina -= 2;
-                GameState.combatLog.push(`💥 You hit ${combat.enemyName} for 2 damage! (${GameState.enemyCurrentStamina} STAMINA remaining)`);
+                const hitDamage = wield.damage;
+                GameState.enemyCurrentStamina -= hitDamage;
+                const weaponNote = (hitDamage !== 2 && wield.weapon)
+                    ? ` (${wield.weapon.name})` : (hitDamage !== 2 ? ' (no suitable weapon)' : '');
+                GameState.combatLog.push(`💥 You hit ${combat.enemyName} for ${hitDamage} damage${weaponNote}! (${GameState.enemyCurrentStamina} STAMINA remaining)`);
 
                 // Special rule: some enemies refuse to stay down (e.g. Undead Fortitude)
                 if (GameState.enemyCurrentStamina <= 0 && Array.isArray(combat.reviveOn)) {

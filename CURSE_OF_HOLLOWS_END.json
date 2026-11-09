@@ -503,13 +503,20 @@
         "enemySkill": 6,
         "enemyStamina": 5,
         "onVictorySection": 155,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "weakTo": {
+          "property": "crushing",
+          "damage": 3
+        }
       },
       "addItems": [
         {
           "id": "mace",
           "name": "Mace",
-          "type": "weapon"
+          "type": "weapon",
+          "properties": [
+            "crushing"
+          ]
         }
       ]
     },
@@ -597,7 +604,12 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 301,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "effectiveWeapons": [
+          "magical",
+          "silver"
+        ],
+        "normalWeaponDamage": 1
       },
       "isEnding": true,
       "endingType": "neutral"
@@ -1025,14 +1037,13 @@
           "type": "armor"
         },
         {
-          "id": "blade",
-          "name": "Blade",
-          "type": "weapon"
-        },
-        {
-          "id": "sword",
-          "name": "Sword",
-          "type": "weapon"
+          "id": "magic-longsword",
+          "name": "+1 Longsword",
+          "type": "weapon",
+          "bonus": "+1 skill",
+          "properties": [
+            "magical"
+          ]
         }
       ]
     },
@@ -1658,7 +1669,10 @@
           "id": "silver-dagger",
           "name": "Silver Dagger",
           "type": "weapon",
-          "bonus": "+1"
+          "bonus": "+1",
+          "properties": [
+            "silver"
+          ]
         },
         {
           "id": "blade",
@@ -1986,7 +2000,12 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "effectiveWeapons": [
+          "magical",
+          "silver"
+        ],
+        "normalWeaponDamage": 1
       }
     },
     {
@@ -2257,7 +2276,12 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "effectiveWeapons": [
+          "magical",
+          "silver"
+        ],
+        "normalWeaponDamage": 1
       }
     },
     {
@@ -2355,7 +2379,11 @@
         "enemySkill": 6,
         "enemyStamina": 5,
         "onVictorySection": 155,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "weakTo": {
+          "property": "crushing",
+          "damage": 3
+        }
       }
     },
     {
@@ -2630,9 +2658,13 @@
       ],
       "addItems": [
         {
-          "id": "blade",
-          "name": "Blade",
-          "type": "weapon"
+          "id": "magic-longsword",
+          "name": "+1 Longsword",
+          "type": "weapon",
+          "bonus": "+1 skill",
+          "properties": [
+            "magical"
+          ]
         }
       ]
     },
@@ -2851,7 +2883,10 @@
           "id": "silver-dagger",
           "name": "Silver Dagger",
           "type": "weapon",
-          "bonus": "+1"
+          "bonus": "+1",
+          "properties": [
+            "silver"
+          ]
         },
         {
           "id": "blade",
@@ -2964,7 +2999,12 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "effectiveWeapons": [
+          "magical",
+          "silver"
+        ],
+        "normalWeaponDamage": 1
       }
     },
     {
@@ -3108,7 +3148,10 @@
           "id": "silver-dagger",
           "name": "Silver Dagger",
           "type": "weapon",
-          "bonus": "+1"
+          "bonus": "+1",
+          "properties": [
+            "silver"
+          ]
         }
       ]
     },
@@ -3337,6 +3380,18 @@
           "text": "Turn to 155",
           "targetSection": 155
         }
+      ],
+      "addItems": [
+        {
+          "id": "magic-mace",
+          "name": "+1 Mace",
+          "type": "weapon",
+          "bonus": "+1 skill",
+          "properties": [
+            "magical",
+            "crushing"
+          ]
+        }
       ]
     },
     {
@@ -3442,7 +3497,11 @@
         "enemySkill": 6,
         "enemyStamina": 5,
         "onVictorySection": 155,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "weakTo": {
+          "property": "crushing",
+          "damage": 3
+        }
       }
     },
     {
@@ -3614,7 +3673,12 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "effectiveWeapons": [
+          "magical",
+          "silver"
+        ],
+        "normalWeaponDamage": 1
       }
     },
     {
@@ -3676,9 +3740,13 @@
       ],
       "addItems": [
         {
-          "id": "sword",
-          "name": "Sword",
-          "type": "weapon"
+          "id": "magic-longsword",
+          "name": "+1 Longsword",
+          "type": "weapon",
+          "bonus": "+1 skill",
+          "properties": [
+            "magical"
+          ]
         }
       ]
     },
@@ -3745,7 +3813,11 @@
         "enemySkill": 6,
         "enemyStamina": 5,
         "onVictorySection": 155,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "weakTo": {
+          "property": "crushing",
+          "damage": 3
+        }
       }
     },
     {
@@ -3944,7 +4016,12 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "effectiveWeapons": [
+          "magical",
+          "silver"
+        ],
+        "normalWeaponDamage": 1
       }
     },
     {
@@ -4196,6 +4273,15 @@
           "id": "old-map",
           "name": "Old Map",
           "type": "other"
+        },
+        {
+          "id": "silver-dagger",
+          "name": "Silver Dagger",
+          "type": "weapon",
+          "bonus": "+2 attack",
+          "properties": [
+            "silver"
+          ]
         }
       ]
     },
@@ -4284,6 +4370,18 @@
         {
           "text": "Turn to 155",
           "targetSection": 155
+        }
+      ],
+      "addItems": [
+        {
+          "id": "magic-mace",
+          "name": "+1 Mace",
+          "type": "weapon",
+          "bonus": "+1 skill",
+          "properties": [
+            "magical",
+            "crushing"
+          ]
         }
       ]
     },
@@ -4408,7 +4506,12 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "effectiveWeapons": [
+          "magical",
+          "silver"
+        ],
+        "normalWeaponDamage": 1
       }
     },
     {
@@ -4686,7 +4789,12 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "effectiveWeapons": [
+          "magical",
+          "silver"
+        ],
+        "normalWeaponDamage": 1
       }
     },
     {
@@ -4811,6 +4919,17 @@
         {
           "text": "Turn to 355",
           "targetSection": 355
+        }
+      ],
+      "addItems": [
+        {
+          "id": "magic-longsword",
+          "name": "+1 Longsword",
+          "type": "weapon",
+          "bonus": "+1 skill",
+          "properties": [
+            "magical"
+          ]
         }
       ]
     },
@@ -4948,7 +5067,12 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "effectiveWeapons": [
+          "magical",
+          "silver"
+        ],
+        "normalWeaponDamage": 1
       }
     },
     {
@@ -5518,7 +5642,12 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "effectiveWeapons": [
+          "magical",
+          "silver"
+        ],
+        "normalWeaponDamage": 1
       }
     },
     {
@@ -5596,6 +5725,17 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
+        }
+      ],
+      "addItems": [
+        {
+          "id": "magic-longsword",
+          "name": "+1 Longsword",
+          "type": "weapon",
+          "bonus": "+1 skill",
+          "properties": [
+            "magical"
+          ]
         }
       ]
     },
@@ -5759,7 +5899,10 @@
           "id": "silver-dagger",
           "name": "Silver Dagger",
           "type": "weapon",
-          "bonus": "+1"
+          "bonus": "+1",
+          "properties": [
+            "silver"
+          ]
         },
         {
           "id": "silver-ring",
@@ -5799,7 +5942,12 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "effectiveWeapons": [
+          "magical",
+          "silver"
+        ],
+        "normalWeaponDamage": 1
       }
     },
     {
@@ -6022,6 +6170,17 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
+        }
+      ],
+      "addItems": [
+        {
+          "id": "silver-dagger",
+          "name": "Silver Dagger",
+          "type": "weapon",
+          "bonus": "+2 attack",
+          "properties": [
+            "silver"
+          ]
         }
       ]
     },
@@ -6566,6 +6725,18 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
+      ],
+      "addItems": [
+        {
+          "id": "blessed-silver-sword",
+          "name": "Blessed Silver Sword",
+          "type": "weapon",
+          "bonus": "+2 skill",
+          "properties": [
+            "silver",
+            "magical"
+          ]
+        }
       ]
     },
     {
@@ -6937,6 +7108,18 @@
         {
           "text": "Turn to 301",
           "targetSection": 301
+        }
+      ],
+      "addItems": [
+        {
+          "id": "magic-mace",
+          "name": "+1 Mace",
+          "type": "weapon",
+          "bonus": "+1 skill",
+          "properties": [
+            "magical",
+            "crushing"
+          ]
         }
       ]
     },

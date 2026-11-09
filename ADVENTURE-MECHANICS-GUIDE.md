@@ -186,6 +186,15 @@ The app automatically determines item type based on keywords:
 - `reviveOn`: `[5, 6]` - when reduced to 0 STAMINA, roll one die; on a listed result the enemy
   survives with 1 STAMINA
 
+**Weapon properties (JSON only):**
+- Items of `type: "weapon"` may list `"properties": ["magical", "silver", "crushing"]`. If omitted, they are
+  guessed from the item name (silver / magic, blessed, enchanted, holy / mace, club, hammer, flail, maul).
+- Only one weapon is wielded at a time. The game picks the weapon that does the most damage to the current
+  enemy, then the largest SKILL `bonus`. Bonuses from several weapons do not stack.
+- `effectiveWeapons: ["magical", "silver"]` with `normalWeaponDamage: 1` on an enemy: weapons without one of
+  those properties deal 1 damage per hit instead of 2 (Incorporeal).
+- `weakTo: { "property": "crushing", "damage": 3 }` on an enemy: weapons with that property deal 3 damage.
+
 Example (a Zombie that may refuse to stay down, with a luck-tested escape):
 ```json
 { "enemyName": "ZOMBIE 1", "enemySkill": 5, "enemyStamina": 6,
