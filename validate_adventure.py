@@ -16,6 +16,9 @@ def targets(section):
     for k in ("successSection", "failureSection"):
         if tl.get(k) is not None:
             yield tl[k]
+    for o in (section.get("diceRoll") or {}).get("outcomes", []):
+        if o.get("targetSection") is not None:
+            yield o["targetSection"]
     combat = section.get("combat") or []
     for c in combat if isinstance(combat, list) else [combat]:
         for k in ("onVictorySection", "onDefeatSection", "fleeSection"):

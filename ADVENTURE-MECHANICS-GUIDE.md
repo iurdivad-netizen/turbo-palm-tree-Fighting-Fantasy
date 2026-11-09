@@ -195,6 +195,15 @@ Applied once, the first time the section is entered - by any route (choice, Luck
 - Reaching 0 STAMINA from any effect ends the game.
 - `removeItems` / `addItems` use the same first-visit rule, so "eat a Provision" sections can consume an item.
 
+**Luck tests and dice rolls with effects (JSON only):**
+- `testLuck` outcomes may carry effects, applied before moving on:
+  `"testLuck": { "successSection": 155, "failureSection": 221, "failureEffects": { "modifyStats": { "stamina": -3 } } }`
+  (`successEffects` too; effects may use `modifyStats`, `permanentStats` and `maxStats`).
+- `"diceRoll": { "outcomes": [ { "min": 1, "max": 3, "text": "...", "targetSection": 4 }, { "min": 4, "max": 6,
+  "modifyStats": { "stamina": -4 }, "targetSection": 221 } ] }` - one die decides the outcome.
+- Put the outcomes here instead of listing them as plain choices, otherwise the player can simply pick the good one.
+- A Luck test or dice roll can be made only once per visit to a section.
+
 **Item conditions on choices (JSON only):**
 - `"conditions": { "requiresItem": "brass-key" }` - the choice is shown but locked until you own that item id.
 - `"conditions": { "requiresNoItem": "brass-key" }` - the choice only appears while you do NOT own the item

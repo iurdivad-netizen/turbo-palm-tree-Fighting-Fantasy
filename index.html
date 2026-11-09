@@ -419,6 +419,7 @@
             isGameOver: false,
             combatDone: false,
             lastWielded: null,
+            rollResolved: false, // a Luck test / dice roll was already made in this section
             tempSkillPenalty: 0, // SKILL lost for the rest of the current combat only
             gameOverType: null,
             pendingTimer: null,
@@ -588,6 +589,7 @@
             goToSection(sectionId) {
                 this.cancelPending();
                 this.combatDone = false;
+                this.rollResolved = false;
                 this.tempSkillPenalty = 0;
                 const firstVisit = !this.visitedSections.has(sectionId);
                 this.currentSection = sectionId;
@@ -639,13 +641,20 @@
                 }
             },
 
+            // Stat effects: any object with modifyStats / permanentStats / maxStats
+            // (a section, or the outcome of a Luck test or dice roll)
+            applyEffects(effects) {
+                if (!effects) return;
+                if (effects.modifyStats) this.modifyStats(effects.modifyStats);
+                if (effects.permanentStats) this.reduceStats(effects.permanentStats, true);
+                if (effects.maxStats) this.reduceStats(effects.maxStats, false);
+            },
+
             // Effects of entering a section for the first time: stat changes, items gained and lost
             applySectionEffects(sectionId) {
                 const section = this.currentBook.sections.find(s => s.id === sectionId);
                 if (!section) return;
-                if (section.modifyStats) this.modifyStats(section.modifyStats);
-                if (section.permanentStats) this.reduceStats(section.permanentStats, true);
-                if (section.maxStats) this.reduceStats(section.maxStats, false);
+                this.applyEffects(section);
                 if (section.addItems) section.addItems.forEach(item => this.addItem(item));
                 if (section.removeItems) section.removeItems.forEach(itemId => this.removeItem(itemId));
             },
@@ -967,6 +976,13 @@
                     `;
                 });
                 html += `</div>`;
+            }
+
+            if (section.diceRoll) {
+                html += `<div style="background: #e0f2fe; padding: 1rem; border-radius: 0.5rem; margin-top: 1rem;">
+                    <h4 style="font-weight: bold; margin-bottom: 0.5rem;">${esc(section.diceRoll.label || 'Roll one die')}</h4>
+                    <button class="button button-primary" onclick="handleDiceRoll(${Number(section.id)})">🎲 Roll the Die</button>
+                </div>`;
             }
 
             if (section.testLuck && canMakeChoice({ conditions: section.testLuck.conditions })) {
@@ -2558,24 +2574,61 @@
             GameState.goToSection(targetSection);
         }
 
+        // "-5 STAMINA, +1 LUCK" for the message after a Luck test or dice roll
+        function describeEffects(e) {
+            if (!e) return '';
+            const parts = [];
+            const add = (obj, suffix) => Object.entries(obj || {}).forEach(([stat, v]) =>
+                parts.push(v === 'max' ? `${stat.toUpperCase()} restored${suffix}` : `${v > 0 ? '+' : ''}${v} ${stat.toUpperCase()}${suffix}`));
+            add(e.modifyStats, '');
+            add(e.permanentStats, ' (permanent)');
+            add(e.maxStats, ' (maximum)');
+            return parts.length ? ` [${parts.join(', ')}]` : '';
+        }
+
         function handleLuckTest(sectionId) {
             const section = GameState.currentBook.sections.find(s => s.id === sectionId);
             if (!section || !section.testLuck) return;
+            if (GameState.isGameOver || GameState.rollResolved) return;
+            GameState.rollResolved = true;
 
-            if (GameState.isGameOver) return;
+            const tl = section.testLuck;
             const result = GameState.testLuck();
-            const message = result.success ?
-                `Lucky! You rolled successfully. ${section.testLuck.successText || ''}` :
-                `Unlucky! You failed the luck test. ${section.testLuck.failureText || ''}`;
+            const effects = result.success ? tl.successEffects : tl.failureEffects;
+            const message = (result.success ?
+                `Lucky! (rolled ${result.roll}) ${tl.successText || ''}` :
+                `Unlucky! (rolled ${result.roll}) ${tl.failureText || ''}`) + describeEffects(effects);
 
             alert(message);
+            GameState.applyEffects(effects);
+            if (GameState.isGameOver) return; // died from the outcome
 
-            const nextSection = result.success ?
-                section.testLuck.successSection :
-                section.testLuck.failureSection;
-
+            const nextSection = result.success ? tl.successSection : tl.failureSection;
             if (nextSection) {
                 GameState.schedule(() => GameState.goToSection(nextSection), 500);
+            } else {
+                render();
+            }
+        }
+
+        // One die decides which outcome happens: section.diceRoll.outcomes = [{ min, max, text, targetSection,
+        // modifyStats / permanentStats / maxStats }]
+        function handleDiceRoll(sectionId) {
+            const section = GameState.currentBook.sections.find(s => s.id === sectionId);
+            if (!section || !section.diceRoll) return;
+            if (GameState.isGameOver || GameState.rollResolved) return;
+            GameState.rollResolved = true;
+
+            const roll = GameState.rollDice();
+            const outcome = section.diceRoll.outcomes.find(o => roll >= o.min && roll <= o.max);
+            if (!outcome) { render(); return; }
+
+            alert(`You rolled ${roll}. ${outcome.text || ''}${describeEffects(outcome)}`);
+            GameState.applyEffects(outcome);
+            if (GameState.isGameOver) return;
+
+            if (outcome.targetSection) {
+                GameState.schedule(() => GameState.goToSection(outcome.targetSection), 500);
             } else {
                 render();
             }

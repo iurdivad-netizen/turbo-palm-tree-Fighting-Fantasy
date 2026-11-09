@@ -117,23 +117,34 @@
     {
       "id": 7,
       "text": "The rope snaps with a sharp crack that echoes through the chamber! For a heart-stopping moment, you're suspended in mid-air. Then gravity takes hold, and you plummet into the darkness below. \r\n\r\n\r\nYour stomach lurches. Your arms windmill desperately. A scream tears from your throat—primal and terrified. \r\n\r\n\r\nRoll one die: \r\n\r\n\r\nOn 1-3: You hit the stone floor hard, the impact driving the breath from your lungs. At the last instant, you catch a narrow ledge that breaks your fall just enough to save your life. Lose 6 STAMINA. Bruised and bleeding, you drag yourself to safety. Turn to 156. \r\n\r\n\r\nOn 4-6: Your fall ends in disaster. Turn to 4.",
-      "choices": [
-        {
-          "text": "Turn to 156",
-          "targetSection": 156
-        },
-        {
-          "text": "Turn to 4",
-          "targetSection": 4
-        }
-      ],
+      "choices": [],
       "addItems": [
         {
           "id": "rope",
           "name": "Rope",
           "type": "other"
         }
-      ]
+      ],
+      "diceRoll": {
+        "label": "Roll one die",
+        "outcomes": [
+          {
+            "min": 1,
+            "max": 3,
+            "text": "You catch a narrow ledge and survive the fall.",
+            "targetSection": 156,
+            "modifyStats": {
+              "stamina": -6
+            }
+          },
+          {
+            "min": 4,
+            "max": 6,
+            "text": "Your fall ends in disaster.",
+            "targetSection": 4
+          }
+        ]
+      }
     },
     {
       "id": 8,
@@ -173,12 +184,20 @@
       "id": 9,
       "text": "The Ghost's wail pierces your skull like a spike of ice! \r\n\r\n\r\nThe sound is inhuman, impossible, fundamentally wrong. It's the sound of pure anguish given voice, of rage and despair mixed into something that shouldn't exist. The frequency resonates with your bones, making your teeth ache. You can feel it in your chest, vibrating through your body. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: The wail fades after what feels like an eternity. Your ears ring but you're fundamentally intact. Turn to 335.   \r\nIf Unlucky: The Ghost's wail tears at your very essence. Permanently reduce your SKILL by 2 and your STAMINA by 4. You collapse, feeling as though part of your soul has been devoured. Turn to 335.",
       "title": "The Ghost's wail pierces your skull like a spike of ice!",
-      "choices": [
-        {
-          "text": "Turn to 335",
-          "targetSection": 335
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successSection": 335,
+        "failureSection": 335,
+        "successText": "The wail fades; your ears ring but you are intact.",
+        "failureText": "The wail tears at your very essence.",
+        "failureEffects": {
+          "permanentStats": {
+            "skill": -2,
+            "stamina": -4
+          }
         }
-      ]
+      }
     },
     {
       "id": 10,
@@ -299,16 +318,19 @@
     {
       "id": 17,
       "text": "The passage ahead narrows dramatically, the walls pressing in from both sides until you can barely fit through. The ceiling lowers as well, forcing you to hunch forward, then to crouch, then finally to crawl on hands and knees. The air grows thick and stale, heavy with the weight of earth and stone pressing down from above. \r\n\r\n\r\nClaustrophobia claws at your mind. What if you get stuck? What if the walls close in further? What if the ceiling collapses? You can feel the weight of the entire cemetery, perhaps the entire village, pressing down on this fragile tunnel. \r\n\r\n\r\nYour armor scrapes against the stone walls with sounds that seem impossibly loud in the confined space. Each inch forward requires effort, your shoulders barely fitting through gaps that seem to shrink with every passing moment. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: You manage to squeeze through the tight space, though it takes several minutes of careful maneuvering and more than a few moments of panic. Your armor scrapes against stone with sounds that set your teeth on edge, but you emerge on the other side, gasping with relief. Turn to 155. \r\n\r\n\r\nIf Unlucky: You become stuck halfway through! Panic rises in your throat as you realize you can't move forward or backward. The walls seem to press in, the ceiling seems to lower. You struggle desperately, using precious energy, injuring yourself against the unforgiving stone. Lose 2 STAMINA from scrapes, bruises, and exhaustion. Finally, after what feels like hours but is probably only minutes, you manage to work yourself free and continue, your confidence shaken. Turn to 221.",
-      "choices": [
-        {
-          "text": "Turn to 155",
-          "targetSection": 155
-        },
-        {
-          "text": "Turn to 221",
-          "targetSection": 221
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successSection": 155,
+        "failureSection": 221,
+        "successText": "You squeeze through the tight space.",
+        "failureText": "You become stuck and scrape yourself free.",
+        "failureEffects": {
+          "modifyStats": {
+            "stamina": -2
+          }
         }
-      ]
+      }
     },
     {
       "id": 18,
@@ -475,28 +497,26 @@
     {
       "id": 26,
       "text": "You drink the mysterious potion without hesitation, tipping the vial back and letting the thick liquid flow down your throat. For a moment, nothing happens. Then you feel it—warmth spreading through your body, but it's different from a healing potion. This is something else entirely. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: The potion is a powerful healing draft! The warmth intensifies, flowing into every injury, every bruised muscle, every strained tendon. Restore 6 STAMINA points (maximum of your Initial STAMINA). You feel rejuvenated, stronger, ready to face whatever challenges lie ahead. Turn to 156. \r\n\r\n\r\nIf Unlucky: The warmth turns to burning. Your stomach convulses, and you realize too late that the potion was poisoned—or perhaps simply went bad decades ago. Lose 4 STAMINA as your body tries to expel the toxins. You double over, retching and gasping, feeling weaker than before. The potion was a trap, or perhaps just bad luck. Turn to 156.",
-      "choices": [
-        {
-          "text": "Turn to 156",
-          "targetSection": 156
-        }
-      ],
-      "addItems": [
-        {
-          "id": "mysterious-potion",
-          "name": "Mysterious Potion",
-          "type": "potion"
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck: the potion",
+        "successSection": 156,
+        "failureSection": 156,
+        "successText": "The potion is a powerful healing draft!",
+        "failureText": "The potion was poisoned!",
+        "successEffects": {
+          "modifyStats": {
+            "stamina": 6
+          }
         },
-        {
-          "id": "healing-potion",
-          "name": "Healing Potion",
-          "type": "potion"
-        },
-        {
-          "id": "potion",
-          "name": "Potion",
-          "type": "potion"
+        "failureEffects": {
+          "modifyStats": {
+            "stamina": -4
+          }
         }
+      },
+      "removeItems": [
+        "mysterious-potion"
       ]
     },
     {
@@ -642,12 +662,19 @@
     {
       "id": 34,
       "text": "The floor ahead looks solid enough, but your instincts—honed by years of adventure and countless brushes with death—scream warning. Something about the stones ahead looks wrong. The mortar between them is a slightly different color. The stones themselves sit at a subtly different height. It's a trap. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: Your instincts prove correct! You carefully examine the floor and spot the pressure plate hidden beneath a thin layer of dust and debris. One wrong step would have triggered it. You mark its location mentally and step carefully around it, avoiding the trap entirely. Turn to 155. \r\n\r\n\r\nIf Unlucky: You see the trap too late! Your foot comes down on the pressure plate, and you hear a click that makes your blood run cold. Immediately, darts shoot from hidden slots in the walls, whistling through the air with deadly precision. Most miss, but several strike home, piercing exposed flesh and injecting their ancient venom. Lose 5 STAMINA from the dart wounds and the poison they carry. You stagger forward, pulling the darts from your flesh, grateful that the ancient poison has weakened over time—otherwise, you'd already be dead. Turn to 155.",
-      "choices": [
-        {
-          "text": "Turn to 155",
-          "targetSection": 155
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successSection": 155,
+        "failureSection": 155,
+        "successText": "You spot the pressure plate and step around it.",
+        "failureText": "Darts shoot from the walls!",
+        "failureEffects": {
+          "modifyStats": {
+            "stamina": -5
+          }
         }
-      ]
+      }
     },
     {
       "id": 35,
@@ -759,14 +786,38 @@
     {
       "id": 41,
       "text": "The ceiling above you suddenly gives way without warning! Centuries of moisture and slow decay finally claim victory, and tons of earth and stone come crashing down. \r\n\r\n\r\nRoll one die: \r\n\r\n\r\nOn 1-2: The collapse is catastrophic. You're directly beneath the worst of it. Lose 6 STAMINA from the brutal impact of falling stone. You're battered, bruised, possibly suffering broken ribs or worse. If you survive, you dig yourself out from under the rubble, spitting blood and dust. If you're still alive, turn to 221. \r\n\r\n\r\nOn 3-4: You're caught by the edge of the collapse. Lose 3 STAMINA as smaller rocks and debris rain down on you. You manage to shield your head with your arms, but you don't escape unscathed. Once the dust settles, turn to 221. \r\n\r\n\r\nOn 5-6: Your reflexes save you! You see a crack form in the ceiling and dive aside just as tons of earth come crashing down where you were standing a second before. You avoid the collapse entirely, though your heart races and your hands shake from the close call. Turn to 221.",
-      "choices": [
-        {
-          "text": "turn to 221",
-          "targetSection": 221
-        }
-      ],
+      "choices": [],
       "isEnding": true,
-      "endingType": "victory"
+      "endingType": "victory",
+      "diceRoll": {
+        "label": "Roll one die",
+        "outcomes": [
+          {
+            "min": 1,
+            "max": 2,
+            "text": "The collapse is catastrophic!",
+            "targetSection": 221,
+            "modifyStats": {
+              "stamina": -6
+            }
+          },
+          {
+            "min": 3,
+            "max": 4,
+            "text": "You are caught by the edge of the collapse.",
+            "targetSection": 221,
+            "modifyStats": {
+              "stamina": -3
+            }
+          },
+          {
+            "min": 5,
+            "max": 6,
+            "text": "Your reflexes save you!",
+            "targetSection": 221
+          }
+        ]
+      }
     },
     {
       "id": 42,
@@ -1012,12 +1063,19 @@
     {
       "id": 50,
       "text": "The water is deeper than you expected, the current stronger, the cold more intense. You try to swim, but your armor weighs you down, the current pulls at you, and the water's icy grip saps your strength with terrifying speed. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: You manage to swim through the flooded section, though it's exhausting and terrifying. You emerge on the other side gasping and shivering but alive. Turn to 221. \r\n\r\n\r\nIf Unlucky: The current pulls you under! You fight desperately, lungs burning, limbs growing numb from the cold. Water fills your mouth and nose. You're drowning... but at the last moment, your foot finds purchase on the bottom, and you push yourself up, breaking the surface and gasping for air. Lose 3 STAMINA from near-drowning and hypothermia. You drag yourself out of the water, coughing and trembling. Turn to 221.",
-      "choices": [
-        {
-          "text": "Turn to 221",
-          "targetSection": 221
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successSection": 221,
+        "failureSection": 221,
+        "successText": "You swim through, exhausted but alive.",
+        "failureText": "The current pulls you under!",
+        "failureEffects": {
+          "modifyStats": {
+            "stamina": -3
+          }
         }
-      ]
+      }
     },
     {
       "id": 51,
@@ -1156,12 +1214,19 @@
     {
       "id": 60,
       "text": "The floor beneath you is slick with blood—so much blood that it's pooled in the depressions between the stones, creating sticky, viscous puddles that squelch beneath your boots. The coppery smell is overwhelming, making your stomach churn. \r\n\r\n\r\nWhose blood is this? How many people died here? The questions flash through your mind, but you don't have time to ponder them. Test your Luck. \r\n\r\n\r\nIf Lucky: You manage to keep your footing despite the treacherous surface, moving carefully across the blood-slicked floor without incident. Turn to 301. \r\n\r\n\r\nIf Unlucky: Your foot slips in the blood! You go down hard, hitting the stone floor with painful force. Lose 2 STAMINA from the impact and from cutting your hands on the rough stone as you try to catch yourself. You rise slowly, covered in blood (not all of it yours), and continue more carefully. Turn to 301.",
-      "choices": [
-        {
-          "text": "Turn to 301",
-          "targetSection": 301
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successSection": 301,
+        "failureSection": 301,
+        "successText": "You keep your footing.",
+        "failureText": "Your foot slips in the blood!",
+        "failureEffects": {
+          "modifyStats": {
+            "stamina": -2
+          }
         }
-      ]
+      }
     },
     {
       "id": 61,
@@ -1451,12 +1516,25 @@
     {
       "id": 80,
       "text": "You drink from the ancient fountain, hoping the water might be blessed or possess healing properties. The water is cold and clear, tasting faintly metallic but not unpleasant. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: The water IS blessed! You feel warmth spreading through your body, healing your wounds and strengthening your spirit. Restore 4 STAMINA and 1 LUCK (maximum of your Initial scores). This fountain was once sacred ground, and some of that holiness remains. Turn to 301. \r\n\r\n\r\nIf Unlucky: The water is cursed! It burns as it goes down, and you feel your strength ebbing. Lose 3 STAMINA as the corruption of this place has tainted even the water that once flowed pure. You stumble away from the fountain, retching. Turn to 301.",
-      "choices": [
-        {
-          "text": "Turn to 301",
-          "targetSection": 301
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck: the water",
+        "successSection": 301,
+        "failureSection": 301,
+        "successText": "The water is blessed!",
+        "failureText": "The water is cursed!",
+        "successEffects": {
+          "modifyStats": {
+            "stamina": 4,
+            "luck": 1
+          }
+        },
+        "failureEffects": {
+          "modifyStats": {
+            "stamina": -3
+          }
         }
-      ]
+      }
     },
     {
       "id": 81,
@@ -1542,19 +1620,26 @@
     {
       "id": 87,
       "text": "A trap activates as you step on a hidden pressure plate! Spears shoot from slots in the walls, whistling through the air with deadly precision. Test your Luck. \r\n\r\n\r\nIf Lucky: Your reflexes save you! You see the spears coming and manage to dodge aside at the last instant. One grazes your arm, drawing blood but not doing serious damage. Turn to 155. \r\n\r\n\r\nIf Unlucky: A spear catches you! It grazes along your side, tearing through armor and flesh alike. Lose 4 STAMINA from the spear wound. You press your hand against the injury, feeling warm blood flowing between your fingers. The wound isn't fatal, but it's painful and debilitating. Turn to 155.",
-      "choices": [
-        {
-          "text": "Turn to 155",
-          "targetSection": 155
-        }
-      ],
+      "choices": [],
       "addItems": [
         {
           "id": "spear",
           "name": "Spear",
           "type": "weapon"
         }
-      ]
+      ],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successSection": 155,
+        "failureSection": 155,
+        "successText": "You dodge the spears.",
+        "failureText": "A spear catches you!",
+        "failureEffects": {
+          "modifyStats": {
+            "stamina": -4
+          }
+        }
+      }
     },
     {
       "id": 88,
@@ -1822,16 +1907,19 @@
     {
       "id": 103,
       "text": "The passage ahead narrows dramatically, forcing you to turn sideways and shuffle through. The walls press in from both sides, and the ceiling lowers until you're hunched over. Your armor scrapes against stone with sounds that seem impossibly loud in the confined space. \r\n\r\n\r\nClaustrophobia begins to claw at your mind. What if you get stuck? What if the passage gets even narrower? What if the ceiling collapses? Test your Luck. \r\n\r\n\r\nIf Lucky: You manage to squeeze through the tight crawl space, though it takes several uncomfortable minutes. Your armor picks up new scratches and dents, and your muscles ache from the awkward positioning, but you emerge on the other side intact. Turn to 155. \r\n\r\n\r\nIf Unlucky: You become stuck halfway through! Panic floods your system as you realize you can't move forward or backward. Your breath comes in short gasps. Lose 2 STAMINA as you struggle desperately, scraping skin against rough stone, using precious energy to work yourself free. After what feels like an eternity, you manage to wiggle loose and continue, shaken and bruised. Turn to 111.",
-      "choices": [
-        {
-          "text": "Turn to 155",
-          "targetSection": 155
-        },
-        {
-          "text": "Turn to 111",
-          "targetSection": 111
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successSection": 155,
+        "failureSection": 111,
+        "successText": "You squeeze through the crawl space.",
+        "failureText": "You become stuck, and work yourself free.",
+        "failureEffects": {
+          "modifyStats": {
+            "stamina": -2
+          }
         }
-      ]
+      }
     },
     {
       "id": 104,
@@ -1891,20 +1979,33 @@
     {
       "id": 107,
       "text": "The floor suddenly collapses beneath you! Ancient wood and rotted supports finally give way after centuries of bearing weight. Roll one die: \r\n\r\n\r\nOn 1-2: The collapse is catastrophic. Turn to 4 (instant death in the spike pit below). \r\n\r\n\r\nOn 3-4: You partially fall through but catch yourself at the last moment. Lose 5 STAMINA from the impact and from the effort of pulling yourself back up. Turn to 221. \r\n\r\n\r\nOn 5-6: Your reflexes save you! You see the floor beginning to give way and leap backward just in time. The section where you were standing collapses into darkness below, but you're safe on solid ground. Turn to 156.",
-      "choices": [
-        {
-          "text": "Turn to 4",
-          "targetSection": 4
-        },
-        {
-          "text": "Turn to 221",
-          "targetSection": 221
-        },
-        {
-          "text": "Turn to 156",
-          "targetSection": 156
-        }
-      ]
+      "choices": [],
+      "diceRoll": {
+        "label": "Roll one die",
+        "outcomes": [
+          {
+            "min": 1,
+            "max": 2,
+            "text": "The collapse is catastrophic: the spike pit below!",
+            "targetSection": 4
+          },
+          {
+            "min": 3,
+            "max": 4,
+            "text": "You catch yourself at the last moment.",
+            "targetSection": 221,
+            "modifyStats": {
+              "stamina": -5
+            }
+          },
+          {
+            "min": 5,
+            "max": 6,
+            "text": "You leap back just in time.",
+            "targetSection": 156
+          }
+        ]
+      }
     },
     {
       "id": 108,
@@ -2472,12 +2573,19 @@
     {
       "id": 134,
       "text": "The water level rises rapidly without warning! What was ankle-deep suddenly becomes waist-deep, then chest-deep. The cold water rushes in from somewhere, filling the passage with terrifying speed. \r\n\r\n\r\nYou must swim for your life! \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: You manage to swim to higher ground before the passage floods completely. Your lungs burn and your limbs ache, but you escape the worst of it. Turn to 221. \r\n\r\n\r\nIf Unlucky: The rising water catches you! You go under, tumbling in the current, unable to tell which way is up. Lose 5 STAMINA from near drowning and hypothermia. Just when you think your lungs will burst, you break the surface, gasping and choking. Turn to 221.",
-      "choices": [
-        {
-          "text": "Turn to 221",
-          "targetSection": 221
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successSection": 221,
+        "failureSection": 221,
+        "successText": "You swim to higher ground.",
+        "failureText": "The rising water catches you!",
+        "failureEffects": {
+          "modifyStats": {
+            "stamina": -5
+          }
         }
-      ]
+      }
     },
     {
       "id": 135,
@@ -3099,16 +3207,27 @@
       "id": 167,
       "text": "The floor suddenly gives way beneath you, revealing a spike pit below! \r\n\r\n\r\nRoll one die: \r\n\r\n\r\nOn 1-3: Turn to 4 (instant death). \r\n\r\n\r\nOn 4-6: You catch the edge! Lose 4 STAMINA from the effort of pulling yourself up. Turn to 221.",
       "title": "The floor suddenly gives way beneath you, revealing a spike pit below!",
-      "choices": [
-        {
-          "text": "Turn to 4",
-          "targetSection": 4
-        },
-        {
-          "text": "Turn to 221",
-          "targetSection": 221
-        }
-      ]
+      "choices": [],
+      "diceRoll": {
+        "label": "Roll one die",
+        "outcomes": [
+          {
+            "min": 1,
+            "max": 3,
+            "text": "You fall into the spike pit!",
+            "targetSection": 4
+          },
+          {
+            "min": 4,
+            "max": 6,
+            "text": "You catch the edge and pull yourself up.",
+            "targetSection": 221,
+            "modifyStats": {
+              "stamina": -4
+            }
+          }
+        ]
+      }
     },
     {
       "id": 168,
@@ -4158,12 +4277,19 @@
       "id": 216,
       "text": "A trap activates! Darts shoot from hidden slots in the walls. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: You see them coming and dodge aside. Turn to 155. \r\n\r\n\r\nIf Unlucky: Several darts strike home. Lose 4 STAMINA from the wounds and poison. Turn to 155.",
       "title": "A trap activates! Darts shoot from hidden slots in the walls.",
-      "choices": [
-        {
-          "text": "Turn to 155",
-          "targetSection": 155
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successSection": 155,
+        "failureSection": 155,
+        "successText": "You dodge the darts.",
+        "failureText": "Several darts strike home.",
+        "failureEffects": {
+          "modifyStats": {
+            "stamina": -4
+          }
         }
-      ]
+      }
     },
     {
       "id": 217,
@@ -4547,8 +4673,11 @@
           "targetSection": 20
         },
         {
-          "text": "Turn to 26",
-          "targetSection": 26
+          "text": "Drink the Mysterious Potion",
+          "targetSection": 26,
+          "conditions": {
+            "requiresItem": "mysterious-potion"
+          }
         },
         {
           "text": "Turn to 27",
@@ -6566,12 +6695,20 @@
     {
       "id": 315,
       "text": "You discover a room filled with mirrors, each one reflecting not your current appearance but different versions of you—some showing you as you were when you entered Hollow's End, some showing you wounded and dying, some showing you victorious, some showing you as an undead servant of the Widow. \r\n\r\n\r\nThe mirrors are disorienting, perhaps even dangerous. One mirror in particular seems to pull at your consciousness, trying to trap you in its reflection. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: You resist the pull and leave the mirror room unharmed. Turn to 301. \r\n\r\n\r\nIf Unlucky: The mirror's magic affects you! Lose 2 STAMINA and 1 LUCK as part of your vitality is briefly trapped in the reflection. You manage to break free, but you're weakened. Turn to 301.",
-      "choices": [
-        {
-          "text": "Turn to 301",
-          "targetSection": 301
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successSection": 301,
+        "failureSection": 301,
+        "successText": "You resist the mirror's pull.",
+        "failureText": "The mirror traps part of your vitality!",
+        "failureEffects": {
+          "modifyStats": {
+            "stamina": -2,
+            "luck": -1
+          }
         }
-      ]
+      }
     },
     {
       "id": 316,
