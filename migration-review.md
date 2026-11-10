@@ -63,25 +63,69 @@ Items for a human to check. The conversion changed no game logic (every destinat
 - 266 | You surface, gasping and coughing. Lose 2 STAMINA from near-drowning
 - 362 | She dissipates with a scream of rage... but you know it's temporary. Without pro
 
-## 'Turn to N' fragments and stray stat blocks removed: 17
+## 'Turn to N' fragments and stray stat blocks removed: 109
 
 - 5 | Turn to 221 ...
+- 5 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 15 | 1 stat-block line(s) of the fight (the combat panel shows them)
 - 22 | Turn to 298 ...
+- 25 | 6 stat-block line(s) of the fight (the combat panel shows them)
+- 30 | 1 stat-block line(s) of the fight (the combat panel shows them)
 - 32 | Turn to 221 ...
+- 32 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 36 | 1 stat-block line(s) of the fight (the combat panel shows them)
 - 44 | Turn to 44 ...
 - 44 | Turn to 301 ...
+- 46 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 62 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 67 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 78 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 83 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 122 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 136 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 144 | 1 stat-block line(s) of the fight (the combat panel shows them)
 - 147 | Turn to 44 ...
-- 335 | Turn to 192 ...
-- 335 | Turn to 207 ...
-- 377 | Turn to 395 ...
-- 378 | Turn to 175 ...
-- 380 | Turn to 395 ...
-- 382 | Turn to 395 ...
-- 384 | Turn to 395 ...
-- 386 | Turn to 395 ...
-- 390 | Turn to 395 ...
-- 395 | stat block of a fight held elsewhere: THE WIDOW SKILL 11 STAMINA 15
-- 395 | Turn to 400 ...
+- 169 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 177 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 179 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 180 | 6 stat-block line(s) of the fight (the combat panel shows them)
+- 185 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 194 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 197 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 201 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 204 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 208 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 218 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 222 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 227 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 230 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 233 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 238 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 243 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 246 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 248 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 251 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 254 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 257 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 260 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 263 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 266 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 268 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 271 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 273 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 276 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 278 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 282 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 284 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 286 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 288 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 289 | 7 stat-block line(s) of the fight (the combat panel shows them)
+- 291 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 293 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 296 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 302 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- 306 | 1 stat-block line(s) of the fight (the combat panel shows them)
+- ... and 49 more
 
 ## Sections whose v1 ending flag was dropped (they are not endings): 9
 

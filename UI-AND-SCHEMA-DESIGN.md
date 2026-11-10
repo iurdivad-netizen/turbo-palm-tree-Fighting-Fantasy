@@ -1,6 +1,6 @@
 # Reader redesign: decisions, book format v2, build order
 
-Status: **steps 1 and 2 are done** (book format v2; the engine split from the screen). Steps 3 (the real interface) and 4 (author docs) are not started. The reader (`index.html`) now plays the v2 book through `engine.js`, with a basic inline-option layout and optional player-rolled dice; step 3 is the proper design.
+Status: **steps 1, 2 and 3 are done** (book format v2; the engine split from the screen; the new reader). Step 4 (author docs and a sidecar file for hand-written labels) is not started.
 
 ## Why
 
@@ -139,13 +139,31 @@ game.serialize();  game.restore(data);
 
 ### Left for step 3
 
-Visual design and layout (a section still ends with the stat block text the old converter left in combat sections), a dice animation, auto-fight, a Load Game screen (the engine can restore, the screen only saves), mobile layout, accessibility pass.
+Done: see "Step 3 result".
+
+## Step 3 result (done)
+
+The page is now four small files and no build step: `index.html` (shell), `reader.css`, `reader.js` (the screen), `importers.js` (JSON/TXT/PDF import, moved unchanged), plus `engine.js`.
+
+**Reading.** A serif story column (about 42 characters wide); menu lines are tiles in a grid (the 36-option menu at 388 is 18 rows on a desktop, not 36), options in a sentence are pills; locked options say why. Text size A-/A+ (remembered). Light and dark themes follow the system. The engine's converter now also strips the stat-block lines ("SKILL 6 STAMINA 4", enemy name headers) from fight sections, because the fight panel shows them.
+
+**Dice.** A dice tray shows what is being asked ("Test your Luck - roll two dice"), then the thrown dice as drawn faces with the total; they tumble unless the system asks for reduced motion. Player-rolled by default, an "Auto-roll dice" checkbox (remembered), and the R key rolls. In a fight, each round shows both fighters with STAMINA bars; "Auto-fight" plays rounds by itself (it stops and hands back the decision when you may flee at low STAMINA, and gives the dice choice back afterwards). The engine now emits a `rolled` event with the dice values.
+
+**Saving.** Autosave on every move, shown as "Continue" on the book card; manual saves (Save) are listed with Load and Delete.
+
+**Phones.** A pinned strip shows SKILL, STAMINA and LUCK; the pack is a drawer opened from the strip. No sideways scrolling, 44 px touch targets.
+
+**Accessibility.** The accessibility checker axe-core (WCAG 2.0/2.1 A and AA plus best practices) reports no violations on the first screen, the book card, a section, a 36-option menu, a roll being asked for, a rolled result, a fight, and the phone's pack drawer, in light and dark, at desktop and phone size (34 audits). It found and I fixed: missing landmarks and skip link, and a 2.4:1 contrast on a button in dark mode. Also: focus moves to the section heading on every new page and to the Roll button when dice are asked for; the fight log and results are announced politely; stat bars are `progressbar`s.
+
+**Tests.** `node tests/ui-smoke.js` drives all of this in a real browser, including an axe audit if `axe-core` is installed. Run it on its own (the simulation test is memory-hungry).
+
+**Not done / not verified.** Checked in an emulated phone only, not on a real device or with a screen reader. No dice sound. Saves are per browser (localStorage). Importing TXT/PDF still guesses structure and produces old-format books; use `migrate_to_v2.py` for a proper conversion.
 
 ## Build order
 
 1. **Schema + converter + validator (v2). DONE (see above).** Write `book.schema.json`; extend `validate_adventure.py` to check it; write a v1 to v2 migration that takes labels from `CURSE_OF_HOLLOWS_END_FORMATTED.txt` (its `{choice: N | label}` markers and "Turn to N for ..." prose) and strips the option lines from the text. Acceptance: every option has a real label, no `Turn to N` left in any section text, validator passes.
 2. **Engine/UI split. DONE (see "Step 2 result").** Move game logic out of `index.html` into an engine module with the `requestRoll` hook; keep a thin adapter so the simulator runs unchanged. Acceptance: all browser tests and the 3,000-game simulation give the same results.
-3. **New reader UI.** Inline buttons, dice and auto-roll, readable layout on desktop and phone, saved preferences. Acceptance: a long section (388, 234) reads top to bottom with no scrolling back; phone width works.
+3. **New reader UI. DONE (see "Step 3 result").** Inline buttons, dice and auto-roll, readable layout on desktop and phone, saved preferences. Acceptance: a long section (388, 234) reads top to bottom with no scrolling back; phone width works.
 4. **Docs for authors:** how to convert a new book to v2 and validate it.
 
 ## Open questions (for later)

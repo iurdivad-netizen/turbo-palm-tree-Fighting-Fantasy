@@ -265,6 +265,20 @@ def convert_section(x, book_info):
             merged.append(p)
     cleaned = merged
 
+    # combat sections: the stat block ("ZOMBIE SKILL 5 STAMINA 6", enemy name headers) repeats what the combat panel shows
+    if x.get("combat"):
+        names = {e["enemyName"] for e in (x["combat"] if isinstance(x["combat"], list) else [x["combat"]])}
+        stat = re.compile(r"^(?:[A-Z][A-Z0-9' ()-]*?\s+)?SKILL\s*:?\s*\d+\s*[|,]?\s*STAMINA\s*:?\s*\d+\s*$")
+        kept, removed = [], 0
+        for p in cleaned:
+            lines = [ln for ln in p.split("\n") if not (stat.match(ln.strip()) or ln.strip() in names)]
+            removed += len(p.split("\n")) - len(lines)
+            if lines and "".join(lines).strip():
+                kept.append("\n".join(lines))
+        if removed:
+            review["stripped_fragment"].append((sid, f"{removed} stat-block line(s) of the fight (the combat panel shows them)"))
+        cleaned = kept
+
     # leftovers that never appeared in the text still need a real label
     for o in unplaced:
         review["unreferenced"].append((sid, o["id"], o["label"]))

@@ -16,7 +16,8 @@
  *                    game.resolveRoll() (or resolveRoll([3, 5]) with chosen values). Nothing else is accepted meanwhile.
  *
  * Events (options.onEvent): { type: 'message', text } for things the player should be told (replaces alert()),
- * { type: 'roll-needed', request } and { type: 'change' } after every state change.
+ * { type: 'roll-needed', request }, { type: 'rolled', request, dice } (every die that was thrown, by the engine or by the player)
+ * and { type: 'change' } after every state change.
  *
  * Navigation after a fight or a flee waits for game.advanceNow() when autoAdvance is false (so the UI can show the log),
  * and happens at once when it is true (the simulator).
@@ -503,8 +504,11 @@
 
         _drive(gen, step) {
             while (!step.done) {
-                if (this.autoRoll) step = gen.next(this._autoDice(step.value));
-                else {
+                if (this.autoRoll) {
+                    const dice = this._autoDice(step.value);
+                    this._emit({ type: 'rolled', request: step.value, dice });
+                    step = gen.next(dice);
+                } else {
                     this.pending = { request: step.value, gen };
                     this._emit({ type: 'roll-needed', request: step.value });
                     this._changed();
@@ -521,6 +525,7 @@
             this.pending = null;
             const n = request.dice === '2d6' ? 2 : 1;
             const dice = isArr(values) && values.length === n && values.every(v => Number.isInteger(v) && v >= 1 && v <= 6) ? values : this._autoDice(request);
+            this._emit({ type: 'rolled', request, dice });
             this._drive(gen, gen.next(dice));
         }
 

@@ -96,7 +96,7 @@
     },
     {
       "id": 5,
-      "text": "The door opens with a shriek of tortured metal that echoes through the chamber like the cry of a damned soul. The sound sets your teeth on edge and sends shivers racing down your spine. Rust rains down from the hinges as they move for the first time in decades—perhaps centuries.\n\nInside, the chamber is dominated by a massive stone sarcophagus covered in warning runes carved deep into the ancient stone. Heavy iron chains, now rusted through, lie scattered on the floor, their links broken and useless.\n\nYou approach cautiously, every instinct screaming at you to turn back. But you came here for answers.\n\nAs your shadow falls across the sarcophagus, the massive stone lid suddenly explodes outward with tremendous force!\n\nChunks of ancient stone fly past your head. Through the debris and dust, you see a figure rising from within—a Cursed Wight, its flesh dried and mummified but animated by dark magic. Its eyes burn with unholy red fire. This is not a mindless zombie—this is an undead creature of immense power and malevolent cunning.\n\nThe Wight opens its desiccated mouth in a soundless scream of eternal rage and lunges forward!\n\nCURSED WIGHT SKILL 8 STAMINA 12   \nSpecial Ability - Life Drain: Each time this creature wounds you, it permanently reduces your maximum STAMINA by 1. This damage cannot be healed by any means—your life essence is literally being drained away.",
+      "text": "The door opens with a shriek of tortured metal that echoes through the chamber like the cry of a damned soul. The sound sets your teeth on edge and sends shivers racing down your spine. Rust rains down from the hinges as they move for the first time in decades—perhaps centuries.\n\nInside, the chamber is dominated by a massive stone sarcophagus covered in warning runes carved deep into the ancient stone. Heavy iron chains, now rusted through, lie scattered on the floor, their links broken and useless.\n\nYou approach cautiously, every instinct screaming at you to turn back. But you came here for answers.\n\nAs your shadow falls across the sarcophagus, the massive stone lid suddenly explodes outward with tremendous force!\n\nChunks of ancient stone fly past your head. Through the debris and dust, you see a figure rising from within—a Cursed Wight, its flesh dried and mummified but animated by dark magic. Its eyes burn with unholy red fire. This is not a mindless zombie—this is an undead creature of immense power and malevolent cunning.\n\nThe Wight opens its desiccated mouth in a soundless scream of eternal rage and lunges forward!\n\nSpecial Ability - Life Drain: Each time this creature wounds you, it permanently reduces your maximum STAMINA by 1. This damage cannot be healed by any means—your life essence is literally being drained away.",
       "options": [
         {
           "id": "to-94",
@@ -343,7 +343,7 @@
     },
     {
       "id": 15,
-      "text": "A Zombie lurches from the shadows without warning, its rotting hand clamping around your ankle with surprising strength! The flesh is cold and slimy, already beginning to slough off the bone, but the grip is like iron. You can feel the unnatural power animating this corpse—it's far stronger than any dead thing has a right to be.\n\nThe Zombie's face is a nightmare of decay—skin hanging in strips, one eye missing from its socket, jaw hanging askew where the tendons have rotted through. Yet it moves with terrible purpose, dragging itself toward you with single-minded hunger.\n\nThe stench is overwhelming—rot and death and something worse, something unnatural. Your stomach heaves, but there's no time for weakness. This creature means to drag you down, to tear you apart with teeth and broken fingernails, to add you to the army of the undead.\n\nThere's no time to flee, no room to maneuver. You must fight!\n\nZOMBIE SKILL 5 STAMINA 6\n\nSpecial Rule: You cannot flee from this combat once it begins. The Zombie has hold of your ankle and won't release until one of you is destroyed. Fight for your life!",
+      "text": "A Zombie lurches from the shadows without warning, its rotting hand clamping around your ankle with surprising strength! The flesh is cold and slimy, already beginning to slough off the bone, but the grip is like iron. You can feel the unnatural power animating this corpse—it's far stronger than any dead thing has a right to be.\n\nThe Zombie's face is a nightmare of decay—skin hanging in strips, one eye missing from its socket, jaw hanging askew where the tendons have rotted through. Yet it moves with terrible purpose, dragging itself toward you with single-minded hunger.\n\nThe stench is overwhelming—rot and death and something worse, something unnatural. Your stomach heaves, but there's no time for weakness. This creature means to drag you down, to tear you apart with teeth and broken fingernails, to add you to the army of the undead.\n\nThere's no time to flee, no room to maneuver. You must fight!\n\nSpecial Rule: You cannot flee from this combat once it begins. The Zombie has hold of your ankle and won't release until one of you is destroyed. Fight for your life!",
       "options": [
         {
           "id": "to-189",
@@ -528,7 +528,7 @@
     },
     {
       "id": 25,
-      "text": "You try reasoning with the Widow, stepping forward with your hands raised in a gesture of peace. Perhaps there's some way to reach the human being she once was, some spark of Eliza Hollow that remains beneath the rage and darkness.\n\n\"Eliza,\" you begin, using her true name carefully. \"What was done to you was terrible. Unforgivable. But this—raising the dead, terrorizing the innocent—this isn't justice. This is—\"\n\n\"SILENCE!\"\n\nHer scream is so loud, so filled with rage and anguish, that it physically pushes you backward. The temperature in the room plummets. The walls themselves seem to shake with the force of her fury.\n\n\"You DARE speak to me of justice? You, who live and breathe and walk in sunlight while I rotted in chains for TWO HUNDRED AND FORTY-TWO YEARS? You know NOTHING of suffering! NOTHING of injustice! I will teach you! I will teach ALL the living what I endured!\"\n\nHer form expands, growing larger, more terrible. Her face twists into something barely human. And from the shadows around her, three dark shapes detach and rush toward you—Shadows, creatures of pure darkness and hatred, manifestations of the Widow's rage given semi-solid form.\n\nYou must fight all three!\n\nSHADOW 1\n\nSKILL 6 STAMINA 4   \nSHADOW 2\n\nSKILL 6 STAMINA 4\n\nSHADOW 3\n\nSKILL 5 STAMINA 3\n\nSpecial Ability - Strength Drain: Each time a Shadow successfully wounds you, it permanently reduces your SKILL by 1. The Shadows literally drain your combat ability, making each subsequent round harder.\n\nFight the Shadows one at a time in the order listed.",
+      "text": "You try reasoning with the Widow, stepping forward with your hands raised in a gesture of peace. Perhaps there's some way to reach the human being she once was, some spark of Eliza Hollow that remains beneath the rage and darkness.\n\n\"Eliza,\" you begin, using her true name carefully. \"What was done to you was terrible. Unforgivable. But this—raising the dead, terrorizing the innocent—this isn't justice. This is—\"\n\n\"SILENCE!\"\n\nHer scream is so loud, so filled with rage and anguish, that it physically pushes you backward. The temperature in the room plummets. The walls themselves seem to shake with the force of her fury.\n\n\"You DARE speak to me of justice? You, who live and breathe and walk in sunlight while I rotted in chains for TWO HUNDRED AND FORTY-TWO YEARS? You know NOTHING of suffering! NOTHING of injustice! I will teach you! I will teach ALL the living what I endured!\"\n\nHer form expands, growing larger, more terrible. Her face twists into something barely human. And from the shadows around her, three dark shapes detach and rush toward you—Shadows, creatures of pure darkness and hatred, manifestations of the Widow's rage given semi-solid form.\n\nYou must fight all three!\n\nSpecial Ability - Strength Drain: Each time a Shadow successfully wounds you, it permanently reduces your SKILL by 1. The Shadows literally drain your combat ability, making each subsequent round harder.\n\nFight the Shadows one at a time in the order listed.",
       "options": [
         {
           "id": "to-395",
@@ -672,7 +672,7 @@
     },
     {
       "id": 30,
-      "text": "A Skeleton Warrior blocks your path, its bones held together by dark magic and rusty wire. Unlike the shambling zombies or mindless skeletons you've faced before, this one moves with purpose and intelligence. It wears the remnants of ancient armor and grips a corroded but still-deadly sword in its bony hands.\n\nAs you approach, its skull turns toward you, empty eye sockets somehow still conveying malevolence. The jaw opens and closes in a parody of speech, though no sound emerges—just the click-clack of bone on bone.\n\nIt assumes a combat stance, sword raised, ready to defend this passage to the death—or whatever passes for death when you're already dead.\n\nSKELETON WARRIOR SKILL 6 STAMINA 5\n\nSpecial Weakness: If you're wielding a mace or club (crushing weapons), you deal 3 damage instead of the normal 2. Bones shatter more easily under blunt force trauma than they break from cuts.\n\nFight the Skeleton Warrior!",
+      "text": "A Skeleton Warrior blocks your path, its bones held together by dark magic and rusty wire. Unlike the shambling zombies or mindless skeletons you've faced before, this one moves with purpose and intelligence. It wears the remnants of ancient armor and grips a corroded but still-deadly sword in its bony hands.\n\nAs you approach, its skull turns toward you, empty eye sockets somehow still conveying malevolence. The jaw opens and closes in a parody of speech, though no sound emerges—just the click-clack of bone on bone.\n\nIt assumes a combat stance, sword raised, ready to defend this passage to the death—or whatever passes for death when you're already dead.\n\nSpecial Weakness: If you're wielding a mace or club (crushing weapons), you deal 3 damage instead of the normal 2. Bones shatter more easily under blunt force trauma than they break from cuts.\n\nFight the Skeleton Warrior!",
       "options": [
         {
           "id": "to-155",
@@ -717,7 +717,7 @@
     },
     {
       "id": 32,
-      "text": "A cultist materializes from the shadows without warning, his approach so silent you don't detect him until he's almost upon you. His face is hidden beneath a deep hood, but his eyes gleam with fanatical fervor in the darkness—the eyes of a true believer, someone who has surrendered all reason and mercy to a dark cause.\n\nHe spots you immediately, and his hand flies to the ceremonial dagger at his belt.\n\n\"Intruder!\" he hisses, his voice dripping with hatred. \"You dare defile our sacred space! The Widow will feast on your soul!\"   \nHe attacks without hesitation, without any attempt at negotiation or flight. Cultists like this are perhaps more dangerous than the undead—they have intelligence, skill, and the willingness to die for their cause.\n\nCULTIST SKILL 5 STAMINA 4\n\nFight for your life!",
+      "text": "A cultist materializes from the shadows without warning, his approach so silent you don't detect him until he's almost upon you. His face is hidden beneath a deep hood, but his eyes gleam with fanatical fervor in the darkness—the eyes of a true believer, someone who has surrendered all reason and mercy to a dark cause.\n\nHe spots you immediately, and his hand flies to the ceremonial dagger at his belt.\n\n\"Intruder!\" he hisses, his voice dripping with hatred. \"You dare defile our sacred space! The Widow will feast on your soul!\"   \nHe attacks without hesitation, without any attempt at negotiation or flight. Cultists like this are perhaps more dangerous than the undead—they have intelligence, skill, and the willingness to die for their cause.\n\nFight for your life!",
       "options": [
         {
           "id": "to-3",
@@ -860,7 +860,7 @@
     },
     {
       "id": 36,
-      "text": "A translucent figure materializes before you, blocking your path completely. The Phantom Servant wears the tattered remains of what was once fine livery—the uniform of a servant in the Hollow household, now little more than ethereal rags hanging from its ghostly form.\n\nIts face is twisted in eternal anguish, mouth open in a silent scream that you can somehow still hear in your mind. This was once a person— someone who served the Hollow family, someone who died (or was killed) and whose spirit was bound to serve even in death.\n\nThe ghost doesn't attack out of malice but out of compulsion. It's following orders given long ago: \"Let no one pass.\" It doesn't matter that those who gave the orders are long dead, that the entity it serves is now an evil thing. The Phantom Servant knows only duty, and it will fight to the end to fulfill it.\n\nPHANTOM SERVANT SKILL 7 STAMINA 6\n\nSpecial Ability - Incorporeal: As a ghostly entity, it exists partially outside normal reality. Normal weapons deal only 1 damage instead of the usual 2 when they strike it. Magical weapons or silver weapons deal normal damage.\n\nFight the Phantom Servant!",
+      "text": "A translucent figure materializes before you, blocking your path completely. The Phantom Servant wears the tattered remains of what was once fine livery—the uniform of a servant in the Hollow household, now little more than ethereal rags hanging from its ghostly form.\n\nIts face is twisted in eternal anguish, mouth open in a silent scream that you can somehow still hear in your mind. This was once a person— someone who served the Hollow family, someone who died (or was killed) and whose spirit was bound to serve even in death.\n\nThe ghost doesn't attack out of malice but out of compulsion. It's following orders given long ago: \"Let no one pass.\" It doesn't matter that those who gave the orders are long dead, that the entity it serves is now an evil thing. The Phantom Servant knows only duty, and it will fight to the end to fulfill it.\n\nSpecial Ability - Incorporeal: As a ghostly entity, it exists partially outside normal reality. Normal weapons deal only 1 damage instead of the usual 2 when they strike it. Magical weapons or silver weapons deal normal damage.\n\nFight the Phantom Servant!",
       "options": [
         {
           "id": "to-301",
@@ -1204,7 +1204,7 @@
     },
     {
       "id": 46,
-      "text": "A Ghoul leaps from the shadows with terrifying speed! Unlike the slow, shambling zombies, Ghouls are fast, intelligent, and horrifyingly effective predators. This one's eyes glow with an unholy light, and its claws—long, curved, and sharp as razors—reach for your throat.\n\nGHOUL SKILL 6 STAMINA 6\n\nSpecial Ability - Paralyzing Touch: Each time the Ghoul successfully wounds you, you must Test your Luck. If you are Unlucky, the paralytic toxins in its claws take effect, and you lose 1 SKILL point for the remainder of this combat (cumulative—each failed test reduces your SKILL further). The paralysis makes you slower, clumsier, less effective in battle.\n\nFight the Ghoul!",
+      "text": "A Ghoul leaps from the shadows with terrifying speed! Unlike the slow, shambling zombies, Ghouls are fast, intelligent, and horrifyingly effective predators. This one's eyes glow with an unholy light, and its claws—long, curved, and sharp as razors—reach for your throat.\n\nSpecial Ability - Paralyzing Touch: Each time the Ghoul successfully wounds you, you must Test your Luck. If you are Unlucky, the paralytic toxins in its claws take effect, and you lose 1 SKILL point for the remainder of this combat (cumulative—each failed test reduces your SKILL further). The paralysis makes you slower, clumsier, less effective in battle.\n\nFight the Ghoul!",
       "options": [
         {
           "id": "to-312",
@@ -1479,7 +1479,7 @@
     },
     {
       "id": 62,
-      "text": "The Zombie's grip tightens around your ankle like an iron shackle, its fingers digging into your flesh with supernatural strength. You look down and see its face—a nightmare of rot and decay, with teeth visible through holes in its cheeks and one eye hanging loose from its socket.\n\nBut it's still dangerous. Very dangerous.\n\nZOMBIE SKILL 5 STAMINA 6\n\nSpecial Ability - Undead Fortitude: If you reduce this Zombie to 0 STAMINA, it may not be truly destroyed! Roll one die immediately. On a result of 5-6, the Zombie survives with 1 STAMINA and continues fighting. Its unnatural tenacity makes it refuse to stay down.\n\nFight the Zombie!",
+      "text": "The Zombie's grip tightens around your ankle like an iron shackle, its fingers digging into your flesh with supernatural strength. You look down and see its face—a nightmare of rot and decay, with teeth visible through holes in its cheeks and one eye hanging loose from its socket.\n\nBut it's still dangerous. Very dangerous.\n\nSpecial Ability - Undead Fortitude: If you reduce this Zombie to 0 STAMINA, it may not be truly destroyed! Roll one die immediately. On a result of 5-6, the Zombie survives with 1 STAMINA and continues fighting. Its unnatural tenacity makes it refuse to stay down.\n\nFight the Zombie!",
       "options": [
         {
           "id": "to-189",
@@ -1570,7 +1570,7 @@
     },
     {
       "id": 67,
-      "text": "The cultist leader rises to his feet, raising his ceremonial dagger high above his head. His eyes burn with fanatical fervor as he begins chanting in a dark tongue. The other cultists turn toward you, their numbers suddenly seeming far more threatening.\n\nYou've triggered an alarm, and now you must face their leader!\n\nCULT FANATIC SKILL 7 STAMINA 8\n\nSpecial Ability - Dark Magic: Once per combat, the Cult Fanatic may attempt to cast a Command spell. Roll one die. On a result of 5-6, the spell succeeds, and you are magically compelled to stand still for one Attack Round. You lose your entire attack for that round (the Fanatic still gets to attack you normally).\n\nThis enemy is dangerous—both skilled with his blade and capable of dark magic.\n\nFight for your life!",
+      "text": "The cultist leader rises to his feet, raising his ceremonial dagger high above his head. His eyes burn with fanatical fervor as he begins chanting in a dark tongue. The other cultists turn toward you, their numbers suddenly seeming far more threatening.\n\nYou've triggered an alarm, and now you must face their leader!\n\nSpecial Ability - Dark Magic: Once per combat, the Cult Fanatic may attempt to cast a Command spell. Roll one die. On a result of 5-6, the spell succeeds, and you are magically compelled to stand still for one Attack Round. You lose your entire attack for that round (the Fanatic still gets to attack you normally).\n\nThis enemy is dangerous—both skilled with his blade and capable of dark magic.\n\nFight for your life!",
       "options": [
         {
           "id": "to-180",
@@ -1752,7 +1752,7 @@
     },
     {
       "id": 78,
-      "text": "\"I've heard rumors of undead plaguing this village,\" you say carefully, watching the bartender's reaction. \"What can you tell me about it?\"\n\nThe bartender's smile widens—impossibly wide, far wider than any human mouth should stretch. It keeps widening until you can see rows and rows of teeth, far too many teeth, teeth that are suddenly sharp as needles.\n\n\"The dead walk,\" he says, and now his voice is layered, multiple voices speaking in unison. \"Very unfortunate for the living. Perhaps you should speak with the Mayor before you—\"\n\nHe stops mid-sentence. His head tilts at an unnatural angle, like a puppet whose strings have been jerked wrong. His eyes go completely black, the pupils expanding to swallow the whites, swallow the iris, swallow everything until they're like looking into two pools of absolute darkness.\n\n\"Before you JOIN them!\" he snarls, and his form begins to ripple and shift. Skin flows like water, bones crack and reform, height changes, proportions distort.\n\nThis is no human bartender. It's a Doppelganger—a shapeshifting creature that kills and replaces its victims, wearing their faces like masks. The real bartender is probably dead... or imprisoned somewhere.\n\nThe Doppelganger lunges at you with inhuman speed!\n\nDOPPELGANGER SKILL 7 STAMINA 6\n\nSpecial Ability - Shapechanger: After the Doppelganger takes damage, it may Test its Luck (you roll for it). If Lucky, it shifts forms rapidly, confusing you. Reduce your Attack Strength by 2 for the next Attack Round only as you struggle to track which form is real and which is illusion.\n\nFight for your life!",
+      "text": "\"I've heard rumors of undead plaguing this village,\" you say carefully, watching the bartender's reaction. \"What can you tell me about it?\"\n\nThe bartender's smile widens—impossibly wide, far wider than any human mouth should stretch. It keeps widening until you can see rows and rows of teeth, far too many teeth, teeth that are suddenly sharp as needles.\n\n\"The dead walk,\" he says, and now his voice is layered, multiple voices speaking in unison. \"Very unfortunate for the living. Perhaps you should speak with the Mayor before you—\"\n\nHe stops mid-sentence. His head tilts at an unnatural angle, like a puppet whose strings have been jerked wrong. His eyes go completely black, the pupils expanding to swallow the whites, swallow the iris, swallow everything until they're like looking into two pools of absolute darkness.\n\n\"Before you JOIN them!\" he snarls, and his form begins to ripple and shift. Skin flows like water, bones crack and reform, height changes, proportions distort.\n\nThis is no human bartender. It's a Doppelganger—a shapeshifting creature that kills and replaces its victims, wearing their faces like masks. The real bartender is probably dead... or imprisoned somewhere.\n\nThe Doppelganger lunges at you with inhuman speed!\n\nSpecial Ability - Shapechanger: After the Doppelganger takes damage, it may Test its Luck (you roll for it). If Lucky, it shifts forms rapidly, confusing you. Reduce your Attack Strength by 2 for the next Attack Round only as you struggle to track which form is real and which is illusion.\n\nFight for your life!",
       "options": [
         {
           "id": "to-132",
@@ -1849,7 +1849,7 @@
     },
     {
       "id": 83,
-      "text": "A cultist emerges from the shadows, drawing a wicked-looking ceremonial dagger from beneath his robes. His face is hidden beneath a deep hood, but you can see his lips moving in silent prayer—or perhaps a curse aimed at you.\n\nCULTIST SKILL 5 STAMINA 4   \nSpecial Quality - Fanatic: This cultist fights to the death with no thought of surrender or self-preservation. He cannot be intimidated or reasoned with.\n\nFight the cultist!",
+      "text": "A cultist emerges from the shadows, drawing a wicked-looking ceremonial dagger from beneath his robes. His face is hidden beneath a deep hood, but you can see his lips moving in silent prayer—or perhaps a curse aimed at you.\n\nSpecial Quality - Fanatic: This cultist fights to the death with no thought of surrender or self-preservation. He cannot be intimidated or reasoned with.\n\nFight the cultist!",
       "options": [
         {
           "id": "to-3",
@@ -2715,7 +2715,7 @@
     },
     {
       "id": 122,
-      "text": "A Specter materializes without warning, its form translucent and glowing with pale blue light! Unlike the Phantom Servants you've encountered, this spirit seems more powerful, more malevolent, more independent.\n\nIt fixes its hollow eyes upon you and opens its mouth in a silent scream that you somehow still hear in your mind.\n\nPHANTOM SERVANT SKILL 7 STAMINA 6\n\nSpecial Ability - Incorporeal: As a ghostly entity, normal weapons deal only 1 damage instead of 2. Magical or silver weapons deal normal damage.\n\nFight the Phantom Servant!",
+      "text": "A Specter materializes without warning, its form translucent and glowing with pale blue light! Unlike the Phantom Servants you've encountered, this spirit seems more powerful, more malevolent, more independent.\n\nIt fixes its hollow eyes upon you and opens its mouth in a silent scream that you somehow still hear in your mind.\n\nSpecial Ability - Incorporeal: As a ghostly entity, normal weapons deal only 1 damage instead of 2. Magical or silver weapons deal normal damage.\n\nFight the Phantom Servant!",
       "options": [
         {
           "id": "to-335",
@@ -3076,7 +3076,7 @@
     },
     {
       "id": 136,
-      "text": "A ghost attacks without warning! The Phantom Servant materializes from the very air itself, its translucent form glowing with cold blue light.\n\nPHANTOM SERVANT SKILL 7 STAMINA 6\n\nSpecial Ability - Incorporeal: Normal weapons deal only 1 damage instead of 2. Magical or silver weapons deal normal damage. Fight!",
+      "text": "A ghost attacks without warning! The Phantom Servant materializes from the very air itself, its translucent form glowing with cold blue light.\n\nSpecial Ability - Incorporeal: Normal weapons deal only 1 damage instead of 2. Magical or silver weapons deal normal damage. Fight!",
       "options": [
         {
           "id": "to-335",
@@ -3203,7 +3203,7 @@
     },
     {
       "id": 144,
-      "text": "A Skeleton Warrior emerges from an alcove, animated by dark magic! Its empty eye sockets burn with green fire, and it grips a rusty but still dangerous sword.\n\nSKELETON WARRIOR SKILL 6 STAMINA 5\n\nSpecial Weakness: Crushing weapons (maces, clubs) deal 3 damage instead of 2 against skeletons.\n\nFight!",
+      "text": "A Skeleton Warrior emerges from an alcove, animated by dark magic! Its empty eye sockets burn with green fire, and it grips a rusty but still dangerous sword.\n\nSpecial Weakness: Crushing weapons (maces, clubs) deal 3 damage instead of 2 against skeletons.\n\nFight!",
       "options": [
         {
           "id": "to-155",
@@ -3887,7 +3887,7 @@
     {
       "id": 169,
       "title": "A Ghoul leaps from the shadows without warning!",
-      "text": "A Ghoul leaps from the shadows without warning!\n\nGHOUL SKILL 6 STAMINA 6\n\nSpecial Ability - Paralyzing Touch: Each wound requires a Luck test or lose 1 SKILL for the combat.\n\nFight!",
+      "text": "A Ghoul leaps from the shadows without warning!\n\nSpecial Ability - Paralyzing Touch: Each wound requires a Luck test or lose 1 SKILL for the combat.\n\nFight!",
       "options": [
         {
           "id": "to-155",
@@ -4035,7 +4035,7 @@
     },
     {
       "id": 177,
-      "text": "A Zombie suddenly grabs you from behind! Its rotting hands close around your arm with surprising strength.\n\nZOMBIE SKILL 5 STAMINA 6\n\nSpecial Ability - Undead Fortitude: If reduced to 0 STAMINA, roll one die. On 5-6, it survives with 1 STAMINA. You must fight!",
+      "text": "A Zombie suddenly grabs you from behind! Its rotting hands close around your arm with surprising strength.\n\nSpecial Ability - Undead Fortitude: If reduced to 0 STAMINA, roll one die. On 5-6, it survives with 1 STAMINA. You must fight!",
       "options": [
         {
           "id": "to-189",
@@ -4074,7 +4074,7 @@
     {
       "id": 179,
       "title": "A Phantom Servant materializes from thin air, its translucent form glowing with cold blue light!",
-      "text": "A Phantom Servant materializes from thin air, its translucent form glowing with cold blue light!\n\nPHANTOM SERVANT SKILL 7 STAMINA 6\n\nSpecial Ability - Incorporeal: Normal weapons deal 1 damage instead of 2. Magical or silver weapons deal normal damage. Fight the ghost!",
+      "text": "A Phantom Servant materializes from thin air, its translucent form glowing with cold blue light!\n\nSpecial Ability - Incorporeal: Normal weapons deal 1 damage instead of 2. Magical or silver weapons deal normal damage. Fight the ghost!",
       "options": [
         {
           "id": "to-335",
@@ -4097,7 +4097,7 @@
     },
     {
       "id": 180,
-      "text": "Your keen senses and quick reflexes alert you just in time. You sidestep behind a massive gravestone as three Zombies emerge from the swirling mist, their burial clothes hanging in tatters, their flesh gray and rotting. They moan hungrily, shuffling toward where you were standing just moments ago.\n\nThe element of surprise is yours. You have the advantage—but you still face three undead creatures animated by dark magic and insatiable hunger. You must fight them one at a time:\n\nZOMBIE 1\n\nSKILL 5 STAMINA 6\n\nZOMBIE 2\n\nSKILL 5 STAMINA 6\n\nZOMBIE 3\n\nSKILL 4 STAMINA 5\n\nSpecial Ability - Undead Fortitude: When a Zombie is reduced to 0 STAMINA, immediately roll one die. On a result of 5-6, the Zombie refuses to stay down! It survives with 1 STAMINA and continues fighting.\n\nFight all three Zombies in sequence!\n\n{{opt:to-259}}\n{{opt:to-260}}\n{{opt:to-261}}\n{{opt:to-262}}\n{{opt:to-263}}\n{{opt:to-264}}\n{{opt:to-265}}\n{{opt:to-268}}\n{{opt:to-269}}\n{{opt:to-270}}\n{{opt:to-271}}\n{{opt:to-273}}\n{{opt:to-274}}\n{{opt:to-276}}\n{{opt:to-277}}\n{{opt:to-278}}\n{{opt:to-279}}\n{{opt:to-280}}\n\nOr proceed to main areas:\n\n{{opt:to-312}}\n{{opt:to-127}}\n\nIf your STAMINA drops to 4 or less during the battle: You may attempt to flee. Test your Luck.",
+      "text": "Your keen senses and quick reflexes alert you just in time. You sidestep behind a massive gravestone as three Zombies emerge from the swirling mist, their burial clothes hanging in tatters, their flesh gray and rotting. They moan hungrily, shuffling toward where you were standing just moments ago.\n\nThe element of surprise is yours. You have the advantage—but you still face three undead creatures animated by dark magic and insatiable hunger. You must fight them one at a time:\n\nSpecial Ability - Undead Fortitude: When a Zombie is reduced to 0 STAMINA, immediately roll one die. On a result of 5-6, the Zombie refuses to stay down! It survives with 1 STAMINA and continues fighting.\n\nFight all three Zombies in sequence!\n\n{{opt:to-259}}\n{{opt:to-260}}\n{{opt:to-261}}\n{{opt:to-262}}\n{{opt:to-263}}\n{{opt:to-264}}\n{{opt:to-265}}\n{{opt:to-268}}\n{{opt:to-269}}\n{{opt:to-270}}\n{{opt:to-271}}\n{{opt:to-273}}\n{{opt:to-274}}\n{{opt:to-276}}\n{{opt:to-277}}\n{{opt:to-278}}\n{{opt:to-279}}\n{{opt:to-280}}\n\nOr proceed to main areas:\n\n{{opt:to-312}}\n{{opt:to-127}}\n\nIf your STAMINA drops to 4 or less during the battle: You may attempt to flee. Test your Luck.",
       "options": [
         {
           "id": "to-259",
@@ -4337,7 +4337,7 @@
     },
     {
       "id": 185,
-      "text": "A Shadow emerges from the darkness itself, its form barely visible even in direct light—more an absence of light than a physical presence.\n\nSHADOW SKILL 6 STAMINA 4\n\nSpecial Ability - Strength Drain: Each time this Shadow successfully wounds you, it permanently reduces your SKILL by 1. The Shadow literally drains your combat capability, making each subsequent round harder.\n\nFight the Shadow!",
+      "text": "A Shadow emerges from the darkness itself, its form barely visible even in direct light—more an absence of light than a physical presence.\n\nSpecial Ability - Strength Drain: Each time this Shadow successfully wounds you, it permanently reduces your SKILL by 1. The Shadow literally drains your combat capability, making each subsequent round harder.\n\nFight the Shadow!",
       "options": [
         {
           "id": "to-355",
@@ -4644,7 +4644,7 @@
     },
     {
       "id": 194,
-      "text": "You carefully scan the tavern while pretending to drink. Behind the bar, partially hidden beneath dishes and glasses, you spot a leather-bound ledger. When the bartender's attention is elsewhere (if such a thing can even be distracted), you quickly snatch it.\n\nMAYOR'S LEDGER!\n\nFlipping through the pages, you find entries that make your blood run cold:\n\nPayments to \"Hollow Faith\" cult dating back decades\n\nStrange symbols and ritual diagrams\n\nReferences to \"binding ritual\" and \"widow's revenge\"\n\nAccounts of family members who died mysteriously\n\nThis ledger is damning evidence of the Hollow family's involvement in dark activities—and it contains information that could help you understand and defeat the curse.\n\nAdd MAYOR'S LEDGER to your Adventure Sheet.\n\nAs you close the book, the bartender's head snaps toward you with inhuman speed. His smile vanishes, replaced by a snarl that reveals far too many teeth.\n\n\"That doesn't belong to you,\" he hisses, his voice now layered and wrong. His form begins to ripple and shift—you've been discovered!\n\nDOPPELGANGER SKILL 7 STAMINA 6\n\nSpecial Ability - Shapechanger: After taking damage, may confuse you (reduce your Attack Strength by 2 for one round). Fight for your life!",
+      "text": "You carefully scan the tavern while pretending to drink. Behind the bar, partially hidden beneath dishes and glasses, you spot a leather-bound ledger. When the bartender's attention is elsewhere (if such a thing can even be distracted), you quickly snatch it.\n\nMAYOR'S LEDGER!\n\nFlipping through the pages, you find entries that make your blood run cold:\n\nPayments to \"Hollow Faith\" cult dating back decades\n\nStrange symbols and ritual diagrams\n\nReferences to \"binding ritual\" and \"widow's revenge\"\n\nAccounts of family members who died mysteriously\n\nThis ledger is damning evidence of the Hollow family's involvement in dark activities—and it contains information that could help you understand and defeat the curse.\n\nAdd MAYOR'S LEDGER to your Adventure Sheet.\n\nAs you close the book, the bartender's head snaps toward you with inhuman speed. His smile vanishes, replaced by a snarl that reveals far too many teeth.\n\n\"That doesn't belong to you,\" he hisses, his voice now layered and wrong. His form begins to ripple and shift—you've been discovered!\n\nSpecial Ability - Shapechanger: After taking damage, may confuse you (reduce your Attack Strength by 2 for one round). Fight for your life!",
       "options": [
         {
           "id": "to-142",
@@ -4713,7 +4713,7 @@
     {
       "id": 197,
       "title": "A Skeleton Warrior attacks from the shadows!",
-      "text": "A Skeleton Warrior attacks from the shadows!\n\nSKELETON WARRIOR SKILL 6 STAMINA 5\n\nSpecial Weakness: Crushing weapons deal 3 damage instead of 2.\n\nFight!",
+      "text": "A Skeleton Warrior attacks from the shadows!\n\nSpecial Weakness: Crushing weapons deal 3 damage instead of 2.\n\nFight!",
       "options": [
         {
           "id": "to-155",
@@ -4785,7 +4785,7 @@
     },
     {
       "id": 201,
-      "text": "A Ghoul attacks from the shadows with terrifying speed! Its eyes glow with unholy hunger, and its claws are stained with the blood of previous victims.\n\nGHOUL SKILL 6 STAMINA 6\n\nSpecial Ability - Paralyzing Touch: Each time the Ghoul successfully wounds you, you must Test your Luck. If Unlucky, the paralytic toxins in its claws take effect, and you permanently lose 1 SKILL point for the remainder of this combat (cumulative).\n\nThe Ghoul is fast, intelligent, and deadly—far more dangerous than the shambling zombies.\n\nFight for your life!",
+      "text": "A Ghoul attacks from the shadows with terrifying speed! Its eyes glow with unholy hunger, and its claws are stained with the blood of previous victims.\n\nSpecial Ability - Paralyzing Touch: Each time the Ghoul successfully wounds you, you must Test your Luck. If Unlucky, the paralytic toxins in its claws take effect, and you permanently lose 1 SKILL point for the remainder of this combat (cumulative).\n\nThe Ghoul is fast, intelligent, and deadly—far more dangerous than the shambling zombies.\n\nFight for your life!",
       "options": [
         {
           "id": "to-312",
@@ -4857,7 +4857,7 @@
     {
       "id": 204,
       "title": "A Shadow emerges from the darkness—a creature of living darkness and malevolence!",
-      "text": "A Shadow emerges from the darkness—a creature of living darkness and malevolence!\n\nSHADOW SKILL 6 STAMINA 4\n\nSpecial Ability - Strength Drain: Each successful attack by the Shadow permanently reduces your SKILL by 1. It literally drains your combat capability with every touch.\n\nFight the Shadow!",
+      "text": "A Shadow emerges from the darkness—a creature of living darkness and malevolence!\n\nSpecial Ability - Strength Drain: Each successful attack by the Shadow permanently reduces your SKILL by 1. It literally drains your combat capability with every touch.\n\nFight the Shadow!",
       "options": [
         {
           "id": "to-355",
@@ -4939,7 +4939,7 @@
     },
     {
       "id": 208,
-      "text": "A Phantom Servant blocks your path! The ghostly figure wears the tattered remains of servant's livery and wields a spectral blade that glows with cold light.\n\nPHANTOM SERVANT SKILL 7 STAMINA 6\n\nSpecial Ability - Incorporeal: Normal weapons deal only 1 damage instead of 2. Magical or silver weapons deal normal damage. Fight!",
+      "text": "A Phantom Servant blocks your path! The ghostly figure wears the tattered remains of servant's livery and wields a spectral blade that glows with cold light.\n\nSpecial Ability - Incorporeal: Normal weapons deal only 1 damage instead of 2. Magical or silver weapons deal normal damage. Fight!",
       "options": [
         {
           "id": "to-335",
@@ -5120,7 +5120,7 @@
     },
     {
       "id": 218,
-      "text": "A Skeleton Warrior guards this passage! It stands at attention, animated by dark magic, wielding a corroded but still-deadly blade.\n\nSKELETON WARRIOR SKILL 6 STAMINA 5\n\nSpecial Weakness: Crushing weapons (maces, clubs) deal 3 damage instead of 2.\n\nFight!",
+      "text": "A Skeleton Warrior guards this passage! It stands at attention, animated by dark magic, wielding a corroded but still-deadly blade.\n\nSpecial Weakness: Crushing weapons (maces, clubs) deal 3 damage instead of 2.\n\nFight!",
       "options": [
         {
           "id": "to-155",
@@ -5313,7 +5313,7 @@
     {
       "id": 222,
       "title": "A cultist spots you and attacks immediately!",
-      "text": "A cultist spots you and attacks immediately!\n\nCULTIST SKILL 5 STAMINA 4\n\nSpecial Quality - Fanatic: Fights to the death with no thought of surrender.\n\nFight!",
+      "text": "A cultist spots you and attacks immediately!\n\nSpecial Quality - Fanatic: Fights to the death with no thought of surrender.\n\nFight!",
       "options": [
         {
           "id": "to-3",
@@ -5412,7 +5412,7 @@
     },
     {
       "id": 227,
-      "text": "A Phantom Servant materializes before you, blocking the passage! Its translucent form glows with cold blue light, and it wields a spectral weapon.\n\nPHANTOM SERVANT SKILL 7 STAMINA 6\n\nSpecial Ability - Incorporeal: Normal weapons deal 1 damage instead of 2. Magical or silver weapons deal normal damage. Fight!",
+      "text": "A Phantom Servant materializes before you, blocking the passage! Its translucent form glows with cold blue light, and it wields a spectral weapon.\n\nSpecial Ability - Incorporeal: Normal weapons deal 1 damage instead of 2. Magical or silver weapons deal normal damage. Fight!",
       "options": [
         {
           "id": "to-335",
@@ -5464,7 +5464,7 @@
     },
     {
       "id": 230,
-      "text": "A Shadow emerges from your own shadow! The creature is part of the darkness itself, and it reaches for you with cold, insubstantial fingers.\n\nSHADOW SKILL 6 STAMINA 4\n\nSpecial Ability - Strength Drain: Each wound permanently reduces SKILL by 1.\n\nFight!",
+      "text": "A Shadow emerges from your own shadow! The creature is part of the darkness itself, and it reaches for you with cold, insubstantial fingers.\n\nSpecial Ability - Strength Drain: Each wound permanently reduces SKILL by 1.\n\nFight!",
       "options": [
         {
           "id": "to-355",
@@ -5509,7 +5509,7 @@
     {
       "id": 233,
       "title": "A Ghoul leaps from a hidden alcove!",
-      "text": "A Ghoul leaps from a hidden alcove!\n\nGHOUL SKILL 6 STAMINA 6\n\nSpecial Ability - Paralyzing Touch: Each wound requires a Luck test or lose 1 SKILL for combat.\n\nFight!",
+      "text": "A Ghoul leaps from a hidden alcove!\n\nSpecial Ability - Paralyzing Touch: Each wound requires a Luck test or lose 1 SKILL for combat.\n\nFight!",
       "options": [
         {
           "id": "to-312",
@@ -5855,7 +5855,7 @@
     {
       "id": 238,
       "title": "A Skeleton Warrior blocks the passage ahead!",
-      "text": "A Skeleton Warrior blocks the passage ahead!\n\nSKELETON WARRIOR SKILL 6 STAMINA 5\n\nFight!",
+      "text": "A Skeleton Warrior blocks the passage ahead!\n\nFight!",
       "options": [
         {
           "id": "to-155",
@@ -5967,7 +5967,7 @@
     {
       "id": 243,
       "title": "A cultist guards this passage!",
-      "text": "A cultist guards this passage!\n\nCULTIST SKILL 5 STAMINA 4\n\nFight!",
+      "text": "A cultist guards this passage!\n\nFight!",
       "options": [
         {
           "id": "to-180",
@@ -6042,7 +6042,7 @@
     {
       "id": 246,
       "title": "A Phantom Servant materializes without warning!",
-      "text": "A Phantom Servant materializes without warning!\n\nPHANTOM SERVANT SKILL 7 STAMINA 6\n\nIncorporeal: Normal weapons deal 1 damage.\n\nFight!",
+      "text": "A Phantom Servant materializes without warning!\n\nIncorporeal: Normal weapons deal 1 damage.\n\nFight!",
       "options": [
         {
           "id": "to-335",
@@ -6078,7 +6078,7 @@
     {
       "id": 248,
       "title": "A Shadow attacks from the darkness!",
-      "text": "A Shadow attacks from the darkness!\n\nSHADOW SKILL 6 STAMINA 4\n\nStrength Drain: Each wound permanently reduces SKILL by 1.\n\nFight!",
+      "text": "A Shadow attacks from the darkness!\n\nStrength Drain: Each wound permanently reduces SKILL by 1.\n\nFight!",
       "options": [
         {
           "id": "to-355",
@@ -6151,7 +6151,7 @@
     {
       "id": 251,
       "title": "A Ghoul attacks from hiding!",
-      "text": "A Ghoul attacks from hiding!\n\nGHOUL SKILL 6 STAMINA 6\n\nParalyzing Touch: Each wound requires Luck test or lose 1 SKILL.\n\nFight!",
+      "text": "A Ghoul attacks from hiding!\n\nParalyzing Touch: Each wound requires Luck test or lose 1 SKILL.\n\nFight!",
       "options": [
         {
           "id": "to-312",
@@ -6210,7 +6210,7 @@
     {
       "id": 254,
       "title": "A Skeleton Warrior guards this section!",
-      "text": "A Skeleton Warrior guards this section!\n\nSKELETON WARRIOR SKILL 6 STAMINA 5\n\nFight!",
+      "text": "A Skeleton Warrior guards this section!\n\nFight!",
       "options": [
         {
           "id": "to-155",
@@ -6273,7 +6273,7 @@
     {
       "id": 257,
       "title": "A cultist attacks!",
-      "text": "A cultist attacks!\n\nCULTIST SKILL 5 STAMINA 4\n\nFight!",
+      "text": "A cultist attacks!\n\nFight!",
       "options": [
         {
           "id": "to-180",
@@ -6355,7 +6355,7 @@
     {
       "id": 260,
       "title": "A Shadow emerges from the darkness!",
-      "text": "A Shadow emerges from the darkness!\n\nSHADOW SKILL 6 STAMINA 4\n\nStrength Drain: Each wound permanently reduces SKILL by 1.\n\nFight!",
+      "text": "A Shadow emerges from the darkness!\n\nStrength Drain: Each wound permanently reduces SKILL by 1.\n\nFight!",
       "options": [
         {
           "id": "to-355",
@@ -6406,7 +6406,7 @@
     {
       "id": 263,
       "title": "A Phantom Servant blocks your path!",
-      "text": "A Phantom Servant blocks your path!\n\nPHANTOM SERVANT SKILL 7 STAMINA 6\n\nIncorporeal: Normal weapons deal 1 damage.\n\nFight!",
+      "text": "A Phantom Servant blocks your path!\n\nIncorporeal: Normal weapons deal 1 damage.\n\nFight!",
       "options": [
         {
           "id": "to-335",
@@ -6488,7 +6488,7 @@
     },
     {
       "id": 266,
-      "text": "A submerged Zombie grabs your leg and pulls you under the black water! You must fight while drowning!\n\nDROWNED ZOMBIE SKILL 4 STAMINA 5\n\nSpecial Rule: Fight this combat with -2 SKILL due to fighting underwater. You cannot breathe, cannot see clearly, and your movements are sluggish in the water.",
+      "text": "A submerged Zombie grabs your leg and pulls you under the black water! You must fight while drowning!\n\nSpecial Rule: Fight this combat with -2 SKILL due to fighting underwater. You cannot breathe, cannot see clearly, and your movements are sluggish in the water.",
       "options": [
         {
           "id": "to-221",
@@ -6571,7 +6571,7 @@
     {
       "id": 268,
       "title": "A Skeleton Warrior attacks!",
-      "text": "A Skeleton Warrior attacks!\n\nSKELETON WARRIOR SKILL 6 STAMINA 5\n\nFight!",
+      "text": "A Skeleton Warrior attacks!\n\nFight!",
       "options": [
         {
           "id": "to-155",
@@ -6632,7 +6632,7 @@
     {
       "id": 271,
       "title": "A cultist guards the way!",
-      "text": "A cultist guards the way!\n\nCULTIST SKILL 5 STAMINA 4\n\nFight!",
+      "text": "A cultist guards the way!\n\nFight!",
       "options": [
         {
           "id": "to-180",
@@ -6663,7 +6663,7 @@
     {
       "id": 273,
       "title": "A Ghoul leaps from the shadows!",
-      "text": "A Ghoul leaps from the shadows!\n\nGHOUL SKILL 6 STAMINA 6\n\nFight!",
+      "text": "A Ghoul leaps from the shadows!\n\nFight!",
       "options": [
         {
           "id": "to-312",
@@ -6747,7 +6747,7 @@
     {
       "id": 276,
       "title": "A Shadow materializes!",
-      "text": "A Shadow materializes!\n\nSHADOW SKILL 6 STAMINA 4\n\nStrength Drain: Each wound permanently reduces SKILL by 1.\n\nFight!",
+      "text": "A Shadow materializes!\n\nStrength Drain: Each wound permanently reduces SKILL by 1.\n\nFight!",
       "options": [
         {
           "id": "to-355",
@@ -6781,7 +6781,7 @@
     {
       "id": 278,
       "title": "A Phantom Servant attacks!",
-      "text": "A Phantom Servant attacks!\n\nPHANTOM SERVANT SKILL 7 STAMINA 6\n\nIncorporeal: Normal weapons deal 1 damage.\n\nFight!",
+      "text": "A Phantom Servant attacks!\n\nIncorporeal: Normal weapons deal 1 damage.\n\nFight!",
       "options": [
         {
           "id": "to-335",
@@ -6892,7 +6892,7 @@
     {
       "id": 282,
       "title": "A Skeleton Warrior blocks the passage!",
-      "text": "A Skeleton Warrior blocks the passage!\n\nSKELETON WARRIOR SKILL 6 STAMINA 5\n\nFight!",
+      "text": "A Skeleton Warrior blocks the passage!\n\nFight!",
       "options": [
         {
           "id": "to-155",
@@ -6929,7 +6929,7 @@
     {
       "id": 284,
       "title": "A cultist attacks from ambush!",
-      "text": "A cultist attacks from ambush!\n\nCULTIST SKILL 5 STAMINA 4\n\nFight!",
+      "text": "A cultist attacks from ambush!\n\nFight!",
       "options": [
         {
           "id": "to-180",
@@ -6960,7 +6960,7 @@
     {
       "id": 286,
       "title": "A Shadow emerges!",
-      "text": "A Shadow emerges!\n\nSHADOW SKILL 6 STAMINA 4\n\nFight!",
+      "text": "A Shadow emerges!\n\nFight!",
       "options": [
         {
           "id": "to-355",
@@ -6990,7 +6990,7 @@
     {
       "id": 288,
       "title": "A Phantom Servant materializes!",
-      "text": "A Phantom Servant materializes!\n\nPHANTOM SERVANT SKILL 7 STAMINA 6\n\nFight!",
+      "text": "A Phantom Servant materializes!\n\nFight!",
       "options": [
         {
           "id": "to-335",
@@ -7008,7 +7008,7 @@
     },
     {
       "id": 289,
-      "text": "You step into the cemetery, and the mist immediately swirls up around your ankles like grasping fingers made of cold vapor. As the mist clears slightly, your worst fears are realized—you're surrounded!\n\nThree Zombies emerge from freshly opened graves, their moaning filling the air with sounds of hunger and mindless rage. But these aren't the only threats. Perched on a gravestone like some grotesque gargoyle sits a Ghoul, its eyes glowing with unholy intelligence, its long claws clicking together in anticipation. This creature is far more dangerous than the Zombies—faster, smarter, and equipped with paralytic toxins in its claws.\n\nYou must fight them all! The Zombies first, one at a time, and then the cunning Ghoul.\n\nZOMBIE 1\n\nSKILL 5 STAMINA 6\n\nZOMBIE 2\n\nSKILL 5 STAMINA 6\n\nZOMBIE 3\n\nSKILL 4 STAMINA 5\n\nAll Zombies have Undead Fortitude: When reduced to 0 STAMINA, roll one die. On 5-6, they survive with 1 STAMINA. After defeating all three Zombies, you must immediately fight:\n\nGHOUL SKILL 6 STAMINA 6\n\nGhoul's Paralyzing Touch: Each time the Ghoul wounds you, Test your Luck. If Unlucky, the toxins take effect and you lose 1 SKILL for the remainder of this combat (cumulative—each failed test makes you weaker).\n\nIf your STAMINA drops to 4 or less during battle: You may attempt to flee. Test your Luck.",
+      "text": "You step into the cemetery, and the mist immediately swirls up around your ankles like grasping fingers made of cold vapor. As the mist clears slightly, your worst fears are realized—you're surrounded!\n\nThree Zombies emerge from freshly opened graves, their moaning filling the air with sounds of hunger and mindless rage. But these aren't the only threats. Perched on a gravestone like some grotesque gargoyle sits a Ghoul, its eyes glowing with unholy intelligence, its long claws clicking together in anticipation. This creature is far more dangerous than the Zombies—faster, smarter, and equipped with paralytic toxins in its claws.\n\nYou must fight them all! The Zombies first, one at a time, and then the cunning Ghoul.\n\nAll Zombies have Undead Fortitude: When reduced to 0 STAMINA, roll one die. On 5-6, they survive with 1 STAMINA. After defeating all three Zombies, you must immediately fight:\n\nGhoul's Paralyzing Touch: Each time the Ghoul wounds you, Test your Luck. If Unlucky, the toxins take effect and you lose 1 SKILL for the remainder of this combat (cumulative—each failed test makes you weaker).\n\nIf your STAMINA drops to 4 or less during battle: You may attempt to flee. Test your Luck.",
       "options": [
         {
           "id": "to-312",
@@ -7107,7 +7107,7 @@
     {
       "id": 291,
       "title": "A Ghoul attacks!",
-      "text": "A Ghoul attacks!\n\nGHOUL SKILL 6 STAMINA 6\n\nFight!",
+      "text": "A Ghoul attacks!\n\nFight!",
       "options": [
         {
           "id": "to-312",
@@ -7147,7 +7147,7 @@
     {
       "id": 293,
       "title": "A Skeleton Warrior guards the entrance!",
-      "text": "A Skeleton Warrior guards the entrance!\n\nSKELETON WARRIOR SKILL 6 STAMINA 5\n\nFight!",
+      "text": "A Skeleton Warrior guards the entrance!\n\nFight!",
       "options": [
         {
           "id": "to-155",
@@ -7204,7 +7204,7 @@
     {
       "id": 296,
       "title": "A cultist attacks!",
-      "text": "A cultist attacks!\n\nCULTIST SKILL 5 STAMINA 4\n\nFight!",
+      "text": "A cultist attacks!\n\nFight!",
       "options": [
         {
           "id": "to-180",
@@ -7501,7 +7501,7 @@
     },
     {
       "id": 302,
-      "text": "A Phantom Servant materializes in your path! This ghost wears the tattered remains of butler's livery and moves with eerie grace.\n\nPHANTOM SERVANT SKILL 7 STAMINA 6\n\nSpecial Ability - Incorporeal: Normal weapons deal only 1 damage instead of 2. Magical or silver weapons deal normal damage. Fight!",
+      "text": "A Phantom Servant materializes in your path! This ghost wears the tattered remains of butler's livery and moves with eerie grace.\n\nSpecial Ability - Incorporeal: Normal weapons deal only 1 damage instead of 2. Magical or silver weapons deal normal damage. Fight!",
       "options": [
         {
           "id": "to-335",
@@ -7596,7 +7596,7 @@
     {
       "id": 306,
       "title": "A Shadow emerges from the darkness of the manor itself!",
-      "text": "A Shadow emerges from the darkness of the manor itself!\n\nSHADOW SKILL 6 STAMINA 4\n\nSpecial Ability - Strength Drain: Each wound permanently reduces your SKILL by 1.\n\nFight!",
+      "text": "A Shadow emerges from the darkness of the manor itself!\n\nSpecial Ability - Strength Drain: Each wound permanently reduces your SKILL by 1.\n\nFight!",
       "options": [
         {
           "id": "to-355",
@@ -7659,7 +7659,7 @@
     {
       "id": 309,
       "title": "A Skeleton Warrior guards this section of the manor!",
-      "text": "A Skeleton Warrior guards this section of the manor!\n\nSKELETON WARRIOR SKILL 6 STAMINA 5\n\nFight!",
+      "text": "A Skeleton Warrior guards this section of the manor!\n\nFight!",
       "options": [
         {
           "id": "to-355",
@@ -7690,7 +7690,7 @@
     {
       "id": 311,
       "title": "A Ghoul leaps from the shadows!",
-      "text": "A Ghoul leaps from the shadows!\n\nGHOUL SKILL 6 STAMINA 6\n\nParalyzing Touch: Each wound requires a Luck test or lose 1 SKILL for combat.\n\nFight!",
+      "text": "A Ghoul leaps from the shadows!\n\nParalyzing Touch: Each wound requires a Luck test or lose 1 SKILL for combat.\n\nFight!",
       "options": [
         {
           "id": "to-312",
@@ -7901,7 +7901,7 @@
     {
       "id": 314,
       "title": "A Phantom Servant blocks your path!",
-      "text": "A Phantom Servant blocks your path!\n\nPHANTOM SERVANT SKILL 7 STAMINA 6\n\nIncorporeal: Normal weapons deal 1 damage.\n\nFight!   \nIf you win: {{opt:to-335}}",
+      "text": "A Phantom Servant blocks your path!\n\nIncorporeal: Normal weapons deal 1 damage.\n\nFight!   \nIf you win: {{opt:to-335}}",
       "options": [
         {
           "id": "to-335",
@@ -7959,7 +7959,7 @@
     {
       "id": 317,
       "title": "A Shadow attacks from the manor's darkness!",
-      "text": "A Shadow attacks from the manor's darkness!\n\nSHADOW SKILL 6 STAMINA 4\n\nFight!",
+      "text": "A Shadow attacks from the manor's darkness!\n\nFight!",
       "options": [
         {
           "id": "to-355",
@@ -8033,7 +8033,7 @@
     {
       "id": 320,
       "title": "A Skeleton Warrior guards the stairwell!",
-      "text": "A Skeleton Warrior guards the stairwell!\n\nSKELETON WARRIOR SKILL 6 STAMINA 5\n\nFight!",
+      "text": "A Skeleton Warrior guards the stairwell!\n\nFight!",
       "options": [
         {
           "id": "to-355",
@@ -8072,7 +8072,7 @@
     {
       "id": 322,
       "title": "A Phantom Servant materializes!",
-      "text": "A Phantom Servant materializes!\n\nPHANTOM SERVANT SKILL 7 STAMINA 6\n\nFight!",
+      "text": "A Phantom Servant materializes!\n\nFight!",
       "options": [
         {
           "id": "to-335",
@@ -8108,7 +8108,7 @@
     {
       "id": 324,
       "title": "A Ghoul attacks from a hidden alcove!",
-      "text": "A Ghoul attacks from a hidden alcove!\n\nGHOUL SKILL 6 STAMINA 6\n\nFight!",
+      "text": "A Ghoul attacks from a hidden alcove!\n\nFight!",
       "options": [
         {
           "id": "to-312",
@@ -8154,7 +8154,7 @@
     {
       "id": 327,
       "title": "A Shadow emerges!",
-      "text": "A Shadow emerges!\n\nSHADOW SKILL 6 STAMINA 4\n\nFight!",
+      "text": "A Shadow emerges!\n\nFight!",
       "options": [
         {
           "id": "to-355",
@@ -8190,7 +8190,7 @@
     {
       "id": 329,
       "title": "A Phantom Servant bars your way!",
-      "text": "A Phantom Servant bars your way!\n\nPHANTOM SERVANT SKILL 7 STAMINA 6\n\nFight!",
+      "text": "A Phantom Servant bars your way!\n\nFight!",
       "options": [
         {
           "id": "to-335",
@@ -8234,7 +8234,7 @@
     {
       "id": 331,
       "title": "A Skeleton Warrior attacks!",
-      "text": "A Skeleton Warrior attacks!\n\nSKELETON WARRIOR SKILL 6 STAMINA 5\n\nFight!",
+      "text": "A Skeleton Warrior attacks!\n\nFight!",
       "options": [
         {
           "id": "to-355",
@@ -8278,7 +8278,7 @@
     {
       "id": 333,
       "title": "A Ghoul leaps from hiding!",
-      "text": "A Ghoul leaps from hiding!\n\nGHOUL SKILL 6 STAMINA 6\n\nFight!",
+      "text": "A Ghoul leaps from hiding!\n\nFight!",
       "options": [
         {
           "id": "to-312",
@@ -8464,7 +8464,7 @@
     {
       "id": 336,
       "title": "A Shadow attacks!",
-      "text": "A Shadow attacks!\n\nSHADOW SKILL 6 STAMINA 4\n\nFight!",
+      "text": "A Shadow attacks!\n\nFight!",
       "options": [
         {
           "id": "to-355",
@@ -8504,7 +8504,7 @@
     {
       "id": 338,
       "title": "A Phantom Servant blocks the way!",
-      "text": "A Phantom Servant blocks the way!\n\nPHANTOM SERVANT SKILL 7 STAMINA 6\n\nFight!",
+      "text": "A Phantom Servant blocks the way!\n\nFight!",
       "options": [
         {
           "id": "to-335",
@@ -8550,7 +8550,7 @@
     {
       "id": 340,
       "title": "A Skeleton Warrior guards the passage!",
-      "text": "A Skeleton Warrior guards the passage!\n\nSKELETON WARRIOR SKILL 6 STAMINA 5\n\nFight!",
+      "text": "A Skeleton Warrior guards the passage!\n\nFight!",
       "options": [
         {
           "id": "to-355",
@@ -8764,7 +8764,7 @@
     {
       "id": 342,
       "title": "A Ghoul attacks from the shadows!",
-      "text": "A Ghoul attacks from the shadows!\n\nGHOUL SKILL 6 STAMINA 6\n\nFight!",
+      "text": "A Ghoul attacks from the shadows!\n\nFight!",
       "options": [
         {
           "id": "to-312",
@@ -8801,7 +8801,7 @@
     {
       "id": 344,
       "title": "A Shadow emerges!",
-      "text": "A Shadow emerges!\n\nSHADOW SKILL 6 STAMINA 4\n\nFight!",
+      "text": "A Shadow emerges!\n\nFight!",
       "options": [
         {
           "id": "to-355",
@@ -8861,7 +8861,7 @@
     {
       "id": 347,
       "title": "A Phantom Servant materializes!",
-      "text": "A Phantom Servant materializes!\n\nPHANTOM SERVANT SKILL 7 STAMINA 6\n\nFight!",
+      "text": "A Phantom Servant materializes!\n\nFight!",
       "options": [
         {
           "id": "to-335",
@@ -8892,7 +8892,7 @@
     {
       "id": 349,
       "title": "A Skeleton Warrior attacks!",
-      "text": "A Skeleton Warrior attacks!\n\nSKELETON WARRIOR SKILL 6 STAMINA 5\n\nFight!",
+      "text": "A Skeleton Warrior attacks!\n\nFight!",
       "options": [
         {
           "id": "to-355",
@@ -8952,7 +8952,7 @@
     {
       "id": 352,
       "title": "A Shadow attacks!",
-      "text": "A Shadow attacks!\n\nSHADOW SKILL 6 STAMINA 4\n\nFight!",
+      "text": "A Shadow attacks!\n\nFight!",
       "options": [
         {
           "id": "to-355",
@@ -8988,7 +8988,7 @@
     {
       "id": 354,
       "title": "A Phantom Servant blocks your path!",
-      "text": "A Phantom Servant blocks your path!\n\nPHANTOM SERVANT SKILL 7 STAMINA 6\n\nFight!",
+      "text": "A Phantom Servant blocks your path!\n\nFight!",
       "options": [
         {
           "id": "to-335",
@@ -9196,7 +9196,7 @@
     {
       "id": 356,
       "title": "A Skeleton Warrior guards the upper hall!",
-      "text": "A Skeleton Warrior guards the upper hall!\n\nSKELETON WARRIOR SKILL 6 STAMINA 5\n\nFight!",
+      "text": "A Skeleton Warrior guards the upper hall!\n\nFight!",
       "options": [
         {
           "id": "to-355",
@@ -9236,7 +9236,7 @@
     {
       "id": 358,
       "title": "A Ghoul attacks!",
-      "text": "A Ghoul attacks!\n\nGHOUL SKILL 6 STAMINA 6\n\nFight!",
+      "text": "A Ghoul attacks!\n\nFight!",
       "options": [
         {
           "id": "to-312",
@@ -9267,7 +9267,7 @@
     {
       "id": 360,
       "title": "A Shadow emerges!",
-      "text": "A Shadow emerges!\n\nSHADOW SKILL 6 STAMINA 4\n\nFight!",
+      "text": "A Shadow emerges!\n\nFight!",
       "options": [
         {
           "id": "to-355",
@@ -9304,7 +9304,7 @@
     {
       "id": 362,
       "title": "You stand before the Widow without the necessary items to bind her properly!",
-      "text": "You stand before the Widow without the necessary items to bind her properly!\n\nWithout the SILVER KEY, without knowing her TRUE NAME, or without proper understanding of the binding ritual, you're attempting to face one of the most powerful vengeful spirits in existence with no way to permanently defeat her.\n\nThe Widow materializes before you in all her terrible glory—a tall figure in a blood-stained wedding dress, her face hidden beneath a torn veil, her hands ending in spectral claws. The temperature plummets. Your breath forms ice crystals in the air.\n\n\"You DARE face me?\" her voice echoes from everywhere, filled with rage and anguish. \"You come to stop my vengeance with nothing but courage and steel? Foolish mortal. Join my army of the dead!\"\n\nShe raises her hands, and three Shadows tear themselves from the darkness to attack you. You must fight them all while she watches, gathering her power for the killing blow.\n\nSHADOW 1: SKILL 6 | STAMINA 4\n\nSHADOW 2: SKILL 6 | STAMINA 4\n\nSHADOW 3: SKILL 5 | STAMINA 3\n\nEach Shadow's wound permanently reduces your SKILL by 1.\n\nIf you somehow defeat all three Shadows:\n\nThe Widow herself attacks! But without the proper binding tools, you cannot truly defeat her—only delay her.\n\nTHE WIDOW (Weakened by missing tools)\n\nSKILL 10 STAMINA 12\n\nYou've achieved a temporary victory at best. The Widow will return, perhaps stronger than before.\n\nINCOMPLETE VICTORY\n\nYou've driven back the Widow temporarily, but without the Silver Key and her true name, you couldn't bind her spirit permanently. The curse will return, perhaps within days, certainly within weeks.\n\nHollow's End remains doomed to eventual destruction.\n\nTHE END (Partial Victory)",
+      "text": "You stand before the Widow without the necessary items to bind her properly!\n\nWithout the SILVER KEY, without knowing her TRUE NAME, or without proper understanding of the binding ritual, you're attempting to face one of the most powerful vengeful spirits in existence with no way to permanently defeat her.\n\nThe Widow materializes before you in all her terrible glory—a tall figure in a blood-stained wedding dress, her face hidden beneath a torn veil, her hands ending in spectral claws. The temperature plummets. Your breath forms ice crystals in the air.\n\n\"You DARE face me?\" her voice echoes from everywhere, filled with rage and anguish. \"You come to stop my vengeance with nothing but courage and steel? Foolish mortal. Join my army of the dead!\"\n\nShe raises her hands, and three Shadows tear themselves from the darkness to attack you. You must fight them all while she watches, gathering her power for the killing blow.\n\nSHADOW 1: SKILL 6 | STAMINA 4\n\nSHADOW 2: SKILL 6 | STAMINA 4\n\nSHADOW 3: SKILL 5 | STAMINA 3\n\nEach Shadow's wound permanently reduces your SKILL by 1.\n\nIf you somehow defeat all three Shadows:\n\nThe Widow herself attacks! But without the proper binding tools, you cannot truly defeat her—only delay her.\n\nTHE WIDOW (Weakened by missing tools)\n\nYou've achieved a temporary victory at best. The Widow will return, perhaps stronger than before.\n\nINCOMPLETE VICTORY\n\nYou've driven back the Widow temporarily, but without the Silver Key and her true name, you couldn't bind her spirit permanently. The curse will return, perhaps within days, certainly within weeks.\n\nHollow's End remains doomed to eventual destruction.\n\nTHE END (Partial Victory)",
       "combat": [
         {
           "enemyName": "SHADOW 1",
@@ -9352,7 +9352,7 @@
     {
       "id": 363,
       "title": "A Phantom Servant attacks!",
-      "text": "A Phantom Servant attacks!\n\nPHANTOM SERVANT SKILL 7 STAMINA 6\n\nFight!   \nIf you win: {{opt:to-335}}",
+      "text": "A Phantom Servant attacks!\n\nFight!   \nIf you win: {{opt:to-335}}",
       "options": [
         {
           "id": "to-335",
@@ -9397,7 +9397,7 @@
     {
       "id": 365,
       "title": "A Skeleton Warrior blocks the way!",
-      "text": "A Skeleton Warrior blocks the way!\n\nSKELETON WARRIOR SKILL 6 STAMINA 5\n\nFight!",
+      "text": "A Skeleton Warrior blocks the way!\n\nFight!",
       "options": [
         {
           "id": "to-355",
@@ -9427,7 +9427,7 @@
     {
       "id": 367,
       "title": "A Ghoul leaps from hiding!",
-      "text": "A Ghoul leaps from hiding!\n\nGHOUL SKILL 6 STAMINA 6\n\nFight!",
+      "text": "A Ghoul leaps from hiding!\n\nFight!",
       "options": [
         {
           "id": "to-312",
@@ -9467,7 +9467,7 @@
     {
       "id": 369,
       "title": "A Shadow attacks!",
-      "text": "A Shadow attacks!\n\nSHADOW SKILL 6 STAMINA 4\n\nFight!",
+      "text": "A Shadow attacks!\n\nFight!",
       "options": [
         {
           "id": "to-355",
@@ -9502,7 +9502,7 @@
     {
       "id": 371,
       "title": "A Phantom Servant materializes!",
-      "text": "A Phantom Servant materializes!\n\nPHANTOM SERVANT SKILL 7 STAMINA 6\n\nFight!",
+      "text": "A Phantom Servant materializes!\n\nFight!",
       "options": [
         {
           "id": "to-335",
@@ -9542,7 +9542,7 @@
     {
       "id": 373,
       "title": "A Skeleton Warrior attacks!",
-      "text": "A Skeleton Warrior attacks!\n\nSKELETON WARRIOR SKILL 6 STAMINA 5\n\nFight!",
+      "text": "A Skeleton Warrior attacks!\n\nFight!",
       "options": [
         {
           "id": "to-355",
@@ -9593,7 +9593,7 @@
     {
       "id": 376,
       "title": "A Ghoul attacks from the darkness!",
-      "text": "A Ghoul attacks from the darkness!\n\nGHOUL SKILL 6 STAMINA 6\n\nFight!",
+      "text": "A Ghoul attacks from the darkness!\n\nFight!",
       "options": [
         {
           "id": "to-312",
@@ -9744,7 +9744,7 @@
     {
       "id": 379,
       "title": "A Shadow emerges!",
-      "text": "A Shadow emerges!\n\nSHADOW SKILL 6 STAMINA 4\n\nFight!",
+      "text": "A Shadow emerges!\n\nFight!",
       "options": [
         {
           "id": "to-355",
@@ -9781,7 +9781,7 @@
     {
       "id": 381,
       "title": "A Phantom Servant blocks the final passage!",
-      "text": "A Phantom Servant blocks the final passage!\n\nPHANTOM SERVANT SKILL 7 STAMINA 6\n\nFight!",
+      "text": "A Phantom Servant blocks the final passage!\n\nFight!",
       "options": [
         {
           "id": "to-388",
@@ -9817,7 +9817,7 @@
     {
       "id": 383,
       "title": "A Skeleton Warrior guards the entrance to the Widow's lair!",
-      "text": "A Skeleton Warrior guards the entrance to the Widow's lair!\n\nSKELETON WARRIOR SKILL 6 STAMINA 5\n\nFight!",
+      "text": "A Skeleton Warrior guards the entrance to the Widow's lair!\n\nFight!",
       "options": [
         {
           "id": "to-388",
@@ -9858,7 +9858,7 @@
     {
       "id": 385,
       "title": "A Ghoul attacks—one final guardian before the Widow!",
-      "text": "A Ghoul attacks—one final guardian before the Widow!\n\nGHOUL SKILL 6 STAMINA 6\n\nFight!",
+      "text": "A Ghoul attacks—one final guardian before the Widow!\n\nFight!",
       "options": [
         {
           "id": "to-388",
@@ -9894,7 +9894,7 @@
     {
       "id": 387,
       "title": "A Shadow attacks!",
-      "text": "A Shadow attacks!\n\nSHADOW SKILL 6 STAMINA 4\n\nFight!",
+      "text": "A Shadow attacks!\n\nFight!",
       "options": [
         {
           "id": "to-388",
@@ -10109,7 +10109,7 @@
     {
       "id": 389,
       "title": "A Phantom Servant materializes!",
-      "text": "A Phantom Servant materializes!\n\nPHANTOM SERVANT SKILL 7 STAMINA 6\n\nFight!",
+      "text": "A Phantom Servant materializes!\n\nFight!",
       "options": [
         {
           "id": "to-388",
@@ -10146,7 +10146,7 @@
     {
       "id": 394,
       "title": "The Binding Wavers",
-      "text": "The binding wavers! You must fight the Widow herself before the ritual can complete.\n\nTHE WIDOW SKILL 11 STAMINA 15\n\nSpecial: Wail of the Forsaken - At combat start, Test Luck or reduce SKILL by 2 for entire battle. Spectral Form - Immune to normal weapons (must have magical weapon).",
+      "text": "The binding wavers! You must fight the Widow herself before the ritual can complete.\n\nSpecial: Wail of the Forsaken - At combat start, Test Luck or reduce SKILL by 2 for entire battle. Spectral Form - Immune to normal weapons (must have magical weapon).",
       "combat": {
         "enemyName": "THE WIDOW",
         "enemySkill": 11,
