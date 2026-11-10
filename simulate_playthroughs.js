@@ -243,6 +243,7 @@ function runInPage(book, policy, N, seed, opts) {
         const k = has('silver-key'), n = has('true-name');
         if (!agg.gate._count) agg.gate._count = 0;
         agg.gate.arrivals = (agg.gate.arrivals || 0) + 1;
+        inc(agg.gate.via395 = agg.gate.via395 || {}, before + (k && n ? ' (prepared)' : ' (unprepared)'));
         if (k && n) agg.gate.withKeyAndName++; else { agg.gate.missingEither = (agg.gate.missingEither || 0) + 1; if (!k) agg.gate.missingKey++; if (!n) agg.gate.missingName++; }
       }
       {
@@ -252,6 +253,7 @@ function runInPage(book, policy, N, seed, opts) {
         d.n++; d.net += delta; if (delta < 0) d.lost += -delta; if (GameState.isGameOver) d.deaths++;
       }
       prevSec = before;
+      if (GameState.currentSection === 362 && before !== 362) inc(agg.via362 = agg.via362 || {}, before);
       GameState.inventory.forEach(i => { if (!seenItems.has(i.id)) { seenItems.add(i.id); inc(agg.itemsFound, i.name); } });
       if (before === GameState.currentSection && !GameState.isGameOver && act.t === 'choice') { /* effect-only loop (e.g. same section) */ }
       if (GameState.currentSection !== before || true) { visited.add(GameState.currentSection); }
