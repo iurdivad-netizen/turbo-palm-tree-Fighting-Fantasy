@@ -138,8 +138,20 @@
           {
             "min": 4,
             "max": 6,
-            "text": "Your fall ends in disaster.",
-            "targetSection": 4
+            "text": "Your fall ends in disaster. Test your Luck to catch a ledge.",
+            "luckTest": {
+              "success": {
+                "text": "At the last instant you snatch a ledge and break your fall, badly hurt.",
+                "modifyStats": {
+                  "stamina": -8
+                },
+                "targetSection": 156
+              },
+              "failure": {
+                "text": "You hit the stone floor and the darkness takes you!",
+                "targetSection": 4
+              }
+            }
           }
         ]
       }
@@ -2026,8 +2038,20 @@
           {
             "min": 1,
             "max": 2,
-            "text": "The collapse is catastrophic: the spike pit below!",
-            "targetSection": 4
+            "text": "The collapse is catastrophic! Test your Luck to catch the edge.",
+            "luckTest": {
+              "success": {
+                "text": "You catch the edge as the floor falls away, badly hurt.",
+                "modifyStats": {
+                  "stamina": -7
+                },
+                "targetSection": 221
+              },
+              "failure": {
+                "text": "You fall into the spike pit below!",
+                "targetSection": 4
+              }
+            }
           },
           {
             "min": 3,
@@ -2881,8 +2905,19 @@
           {
             "min": 1,
             "max": 2,
-            "text": "It is a pit trap!",
-            "targetSection": 4
+            "text": "It is a pit trap! Test your Luck to catch the edge.",
+            "luckTest": {
+              "success": {
+                "text": "You catch the edge and haul yourself out.",
+                "modifyStats": {
+                  "stamina": -4
+                }
+              },
+              "failure": {
+                "text": "You fall into the pit!",
+                "targetSection": 4
+              }
+            }
           },
           {
             "min": 3,
@@ -3299,8 +3334,20 @@
           {
             "min": 1,
             "max": 3,
-            "text": "You fall into the spike pit!",
-            "targetSection": 4
+            "text": "You fall into the spike pit! Test your Luck to catch the edge.",
+            "luckTest": {
+              "success": {
+                "text": "You catch the edge and drag yourself out, badly hurt.",
+                "modifyStats": {
+                  "stamina": -6
+                },
+                "targetSection": 221
+              },
+              "failure": {
+                "text": "You fall into the spike pit!",
+                "targetSection": 4
+              }
+            }
           },
           {
             "min": 4,
@@ -5802,8 +5849,19 @@
           {
             "min": 1,
             "max": 2,
-            "text": "The floor collapses!",
-            "targetSection": 4
+            "text": "The floor collapses! Test your Luck to catch the edge.",
+            "luckTest": {
+              "success": {
+                "text": "You throw yourself aside and catch the edge.",
+                "modifyStats": {
+                  "stamina": -4
+                }
+              },
+              "failure": {
+                "text": "The floor gives way beneath you!",
+                "targetSection": 4
+              }
+            }
           },
           {
             "min": 3,
