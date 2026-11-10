@@ -86,7 +86,7 @@ function runInPage(book, policy, N, seed, opts) {
 
   // ----- helpers mirroring what the page shows the player -----
   function visibleChoices(s) {
-    if (!(s.choices && s.choices.length && (!s.combat || GameState.combatDone))) return [];
+    if (!(s.choices && s.choices.length && (!s.combat || GameState.combatDone) && choicesUnlocked(s))) return [];
     const out = [];
     s.choices.forEach((c, i) => {
       if (c.once && GameState.usedOnce.has(s.id)) return;
@@ -97,8 +97,8 @@ function runInPage(book, policy, N, seed, opts) {
   }
   function actionsFor(s) {
     const a = [];
-    if (s.diceRoll && !GameState.rollResolved) a.push({ t: 'dice' });
-    if (s.testLuck && !GameState.rollResolved && canMakeChoice({ conditions: s.testLuck.conditions })) a.push({ t: 'luck' });
+    if (rollPending(s, 'diceRoll')) a.push({ t: 'dice' });
+    if (rollPending(s, 'testLuck')) a.push({ t: 'luck' });
     return a.concat(visibleChoices(s));
   }
   function actionTargets(s, act) {

@@ -419,6 +419,7 @@
             isGameOver: false,
             combatDone: false,
             lastWielded: null,
+            rolledOnce: new Set(), // sections whose roll-once die / Luck test was already made
             usedOnce: new Set(), // sections where a one-time decision (choice.once) was already made
             rollResolved: false, // a Luck test / dice roll was already made in this section
             tempSkillPenalty: 0, // SKILL lost for the rest of the current combat only
@@ -500,6 +501,7 @@
                 this.gameOverType = null;
                 this.combatDone = false;
                 this.usedOnce = new Set();
+                this.rolledOnce = new Set();
                 this.inCombat = false;
                 this.combatLog = [];
                 this.currentBook = book;
@@ -529,6 +531,7 @@
                 this.gameOverType = null;
                 this.combatDone = false;
                 this.usedOnce = new Set();
+                this.rolledOnce = new Set();
                 this.inCombat = false;
                 this.combatLog = [];
                 this.currentCombatIndex = 0;
@@ -576,6 +579,7 @@
             resetGame() {
                 this.cancelPending();
                 this.usedOnce = new Set();
+                this.rolledOnce = new Set();
                 this.combatDone = false;
                 this.isGameOver = false;
                 this.gameOverType = null;
@@ -790,6 +794,7 @@
                     inventory: this.inventory,
                     visitedSections: Array.from(this.visitedSections),
                     usedOnce: Array.from(this.usedOnce),
+                    rolledOnce: Array.from(this.rolledOnce),
                     inCombat: this.inCombat,
                     enemyCurrentStamina: this.enemyCurrentStamina,
                     currentCombatIndex: this.currentCombatIndex
@@ -971,7 +976,7 @@
                 html += renderCombat(section.combat);
             }
 
-            if (section.choices && section.choices.length > 0 && (!section.combat || GameState.combatDone)) {
+            if (section.choices && section.choices.length > 0 && (!section.combat || GameState.combatDone) && choicesUnlocked(section)) {
                 html += `<div class="mt-2"><h4 style="font-weight: 600; margin-bottom: 1rem;">What do you do?</h4>`;
                 section.choices.forEach((choice, index) => {
                     // "If you don't have X" branches only appear when they apply
@@ -990,14 +995,14 @@
                 html += `</div>`;
             }
 
-            if (section.diceRoll) {
+            if (rollPending(section, 'diceRoll')) {
                 html += `<div style="background: #e0f2fe; padding: 1rem; border-radius: 0.5rem; margin-top: 1rem;">
                     <h4 style="font-weight: bold; margin-bottom: 0.5rem;">${esc(section.diceRoll.label || 'Roll one die')}</h4>
                     <button class="button button-primary" onclick="handleDiceRoll(${Number(section.id)})">🎲 Roll the Die</button>
                 </div>`;
             }
 
-            if (section.testLuck && canMakeChoice({ conditions: section.testLuck.conditions })) {
+            if (rollPending(section, 'testLuck')) {
                 html += `<div style="background: #f3e8ff; padding: 1rem; border-radius: 0.5rem; margin-top: 1rem;">
                     <h4 style="font-weight: bold; margin-bottom: 0.5rem;">${esc(section.testLuck.label || 'Test Your Luck!')}</h4>
                     <button class="button button-warning" onclick="handleLuckTest(${Number(section.id)})">Roll the Dice</button>
@@ -2599,6 +2604,21 @@
             GameState.goToSection(targetSection);
         }
 
+        // Is a roll still to be made in this section? kind: 'diceRoll' or 'testLuck'.
+        // Not once it was made on this visit, nor (for "once" rolls) on an earlier visit this game.
+        function rollPending(section, kind) {
+            const r = section[kind];
+            if (!r || GameState.rollResolved) return false;
+            if (r.once && GameState.rolledOnce.has(section.id)) return false;
+            if (kind === 'testLuck' && !canMakeChoice({ conditions: r.conditions })) return false;
+            return true;
+        }
+
+        // Choices of a section whose roll "gatesChoices" appear only after that roll was made
+        function choicesUnlocked(section) {
+            return !['diceRoll', 'testLuck'].some(kind => section[kind] && section[kind].gatesChoices && rollPending(section, kind));
+        }
+
         // "-5 STAMINA, +1 LUCK" for the message after a Luck test or dice roll
         function describeEffects(e) {
             if (!e) return '';
@@ -2614,8 +2634,9 @@
         function handleLuckTest(sectionId) {
             const section = GameState.currentBook.sections.find(s => s.id === sectionId);
             if (!section || !section.testLuck) return;
-            if (GameState.isGameOver || GameState.rollResolved) return;
+            if (GameState.isGameOver || !rollPending(section, 'testLuck')) return;
             GameState.rollResolved = true;
+            if (section.testLuck.once) GameState.rolledOnce.add(sectionId);
 
             const tl = section.testLuck;
             const result = GameState.testLuck();
@@ -2641,8 +2662,9 @@
         function handleDiceRoll(sectionId) {
             const section = GameState.currentBook.sections.find(s => s.id === sectionId);
             if (!section || !section.diceRoll) return;
-            if (GameState.isGameOver || GameState.rollResolved) return;
+            if (GameState.isGameOver || !rollPending(section, 'diceRoll')) return;
             GameState.rollResolved = true;
+            if (section.diceRoll.once) GameState.rolledOnce.add(sectionId);
 
             const roll = GameState.rollDice();
             const outcome = section.diceRoll.outcomes.find(o => roll >= o.min && roll <= o.max);
@@ -2652,8 +2674,18 @@
             GameState.applyEffects(outcome);
             if (GameState.isGameOver) return;
 
-            if (outcome.targetSection) {
-                GameState.schedule(() => GameState.goToSection(outcome.targetSection), 500);
+            let target = outcome.targetSection;
+            // an outcome may itself ask for a Luck test ("You slip! Test your Luck. Unlucky: turn to 50")
+            if (outcome.luckTest) {
+                const lt = GameState.testLuck();
+                const res = lt.success ? outcome.luckTest.success : outcome.luckTest.failure;
+                alert(`${lt.success ? 'Lucky' : 'Unlucky'}! (rolled ${lt.roll}) ${(res && res.text) || ''}${describeEffects(res)}`);
+                if (res) { GameState.applyEffects(res); if (res.targetSection) target = res.targetSection; }
+                if (GameState.isGameOver) return;
+            }
+
+            if (target) {
+                GameState.schedule(() => GameState.goToSection(target), 500);
             } else {
                 render();
             }

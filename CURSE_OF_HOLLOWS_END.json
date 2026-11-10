@@ -103,16 +103,14 @@
     {
       "id": 6,
       "text": "Your survival instincts scream at you to hide, and you quickly duck into a shadowed alcove, pressing yourself flat against the cold stone wall and trying to quiet your breathing. Your heart hammers in your chest so loudly you're certain it will give you away. \r\n\r\n\r\nThe darkness embraces you like a cold shroud as you watch and wait. \r\n\r\n\r\nMoments later, two robed cultists pass by your hiding spot. They're discussing something in low, urgent tones: \r\n\r\n\r\n\"The ritual proceeds according to plan,\" one says. \"By midnight tonight, the Widow will have her sacrifice. Her chains will be broken completely, and her full power will be unleashed.\" \r\n\r\n\r\n\"The master grows impatient,\" the other responds nervously. \"We must not fail. If the binding is not broken completely by midnight...\" \"It will be broken,\" the first interrupts. \"We have the girl. We have the ritual components. Nothing can stop us now.\" Their voices fade as they move past. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf you are Lucky: They don't sense your presence. Once their footsteps fade, you emerge undetected. Turn to 155. If you are Unlucky: The second cultist pauses. \"Did you hear something?\" They begin to turn back. You've been detected! Turn to 89.",
-      "choices": [
-        {
-          "text": "Turn to 155",
-          "targetSection": 155
-        },
-        {
-          "text": "Turn to 89",
-          "targetSection": 89
-        }
-      ]
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successText": "They do not sense your presence.",
+        "failureText": "You have been detected!",
+        "successSection": 155,
+        "failureSection": 89
+      }
     },
     {
       "id": 7,
@@ -376,16 +374,14 @@
     {
       "id": 20,
       "text": "The ancient bridge before you is a death trap waiting to spring. The wood is rotten and treacherous, its planks slick with moss and moisture that never fully dries in this lightless place. The ropes that once held it secure have frayed to the point where individual fibers are visible, ready to snap at the slightest stress. \r\n\r\n\r\nBelow, you can't see the bottom—just darkness that seems to go down forever, with the faint sound of water running far, far below. How far would you fall? Twenty feet? Fifty? A hundred? And what waits at the bottom—water to break your fall, or rocks to break your body? \r\n\r\n\r\nThe bridge groans ominously as you step onto it, the sound like an old man crying out in pain. Each plank bends under your weight, and you can feel the structure shifting, settling, threatening to collapse entirely. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: The bridge holds, though every step is a prayer and every sound makes your heart skip a beat. The wood creaks and complains but maintains its integrity just long enough for you to cross to the other side. You step onto solid ground with weak knees and a racing heart, grateful to have survived. Turn to 155. \r\n\r\n\r\nIf Unlucky: Turn to 7.",
-      "choices": [
-        {
-          "text": "Turn to 155",
-          "targetSection": 155
-        },
-        {
-          "text": "Turn to 7",
-          "targetSection": 7
-        }
-      ]
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successText": "The bridge holds.",
+        "failureText": "The bridge collapses!",
+        "successSection": 155,
+        "failureSection": 7
+      }
     },
     {
       "id": 21,
@@ -890,32 +886,33 @@
       "text": "You attempt to pick the lock on the chest, using whatever tools you have at hand—a dagger tip, a piece of wire, your own fingernails if necessary. The lock is old and corroded, which works in your favor—the mechanism is stiff but also degraded. \r\n\r\n\r\nDo you have THIEVES' TOOLS or specific lockpicking equipment? \r\n\r\n\r\nIf yes: The lock opens smoothly under your skilled manipulation. Turn to 44 (continue below). \r\n\r\n\r\nIf no: You'll have to try forcing it. Test your Luck. \r\n\r\n\r\nIf Lucky: Despite your lack of proper tools, you manage to coax the lock open through patience and improvisation. Turn to 44 (continue below). \r\n\r\n\r\nIf Unlucky: The lock refuses to yield, and after several minutes of futile attempts, you're forced to admit defeat. The chest remains sealed, its contents a mystery. Turn to 301. \r\n\r\n\r\nIf you successfully opened the chest: \r\n\r\n\r\nInside, carefully wrapped in oil cloth to protect against moisture, you find: \r\n\r\n\r\n40 Gold Pieces \r\n\r\n\r\nCLOAK OF PROTECTION - A fine garment woven with subtle protective enchantments. When worn, it adds +1 to your Armor Class and +1 to all saving throws against magical effects. The cloak is dark blue, almost black, and surprisingly light despite its apparent thickness. \r\n\r\n\r\nAdd these items to your Adventure Sheet. \r\n\r\n\r\nThe cloak fits perfectly, settling over your shoulders like it was made for you. You immediately feel slightly safer, slightly more protected against the supernatural horrors that plague this place. \r\n\r\n\r\nTurn to 301.",
       "choices": [
         {
-          "text": "Turn to 44",
-          "targetSection": 44
-        },
-        {
-          "text": "Turn to 301",
+          "text": "Close the chest and move on",
           "targetSection": 301
         }
       ],
-      "addItems": [
-        {
-          "id": "dagger",
-          "name": "Dagger",
-          "type": "weapon"
-        },
-        {
-          "id": "gold",
-          "name": "40 Gold Pieces",
-          "type": "treasure"
-        },
-        {
-          "id": "cloak-of-protection",
-          "name": "Cloak of Protection",
-          "type": "armor",
-          "bonus": "+1 defense"
+      "testLuck": {
+        "label": "Force the lock (Test your Luck)",
+        "successText": "The lock opens! Inside you find 40 gold pieces and a Cloak of Protection.",
+        "failureText": "The lock refuses to yield.",
+        "failureSection": 301,
+        "gatesChoices": true,
+        "successEffects": {
+          "addItems": [
+            {
+              "id": "gold",
+              "name": "40 Gold Pieces",
+              "type": "treasure"
+            },
+            {
+              "id": "cloak-of-protection",
+              "name": "Cloak of Protection",
+              "type": "armor",
+              "bonus": "+1 defense",
+              "unique": true
+            }
+          ]
         }
-      ]
+      }
     },
     {
       "id": 45,
@@ -1538,16 +1535,14 @@
     {
       "id": 79,
       "text": "You attempt to flee before combat begins, your survival instincts overriding your courage. Sometimes, discretion truly is the better part of valor. Test your Luck. \r\n\r\n\r\nIf Lucky: You manage to escape before the creature can engage you, dodging away and losing yourself in the maze of passages. Your heart pounds, but you're safe—for now. Turn to 189. \r\n\r\n\r\nIf Unlucky: You're not fast enough! The creature catches you before you can escape, forcing you into combat. Turn to 298 (you must fight).",
-      "choices": [
-        {
-          "text": "Turn to 189",
-          "targetSection": 189
-        },
-        {
-          "text": "Turn to 298",
-          "targetSection": 298
-        }
-      ]
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successText": "You escape before it can engage you.",
+        "failureText": "It catches you and forces a fight.",
+        "successSection": 189,
+        "failureSection": 298
+      }
     },
     {
       "id": 80,
@@ -1699,21 +1694,23 @@
       "text": "The water ahead is far deeper than you expected—rising from ankle-deep to waist-deep to chest-deep in just a few steps. The cold is shocking, like being plunged into ice water. Your armor weighs you down, making swimming difficult or impossible. \r\n\r\n\r\nDo you have ROPE in your inventory? \r\n\r\n\r\nIf yes, you have rope: You quickly tie the rope around your waist, securing the other end to a solid pillar. This makeshift safety line will keep you from being swept away by any current. Turn to 221 (but with the confidence that you have a safety measure). \r\n\r\n\r\nIf no rope: You'll have to risk it. Test your Luck. \r\n\r\n\r\nIf Lucky: You manage to wade through the deep water without incident, though it's exhausting and cold. Turn to 221. If Unlucky: The current is stronger than you realized! Turn to 50.",
       "choices": [
         {
-          "text": "Turn to 221",
-          "targetSection": 221
-        },
-        {
-          "text": "Turn to 50",
-          "targetSection": 50
+          "text": "Wade across, secured by the Rope",
+          "targetSection": 221,
+          "conditions": {
+            "requiresItem": "rope"
+          }
         }
       ],
-      "addItems": [
-        {
-          "id": "rope",
-          "name": "Rope",
-          "type": "other"
+      "testLuck": {
+        "label": "Wade across without a rope (Test your Luck)",
+        "successText": "You wade through without incident.",
+        "failureText": "The current is stronger than you realized!",
+        "successSection": 221,
+        "failureSection": 50,
+        "conditions": {
+          "requiresNoItem": "rope"
         }
-      ]
+      }
     },
     {
       "id": 90,
@@ -2409,14 +2406,6 @@
       "text": "You enter the cemetery through the twisted gates, and immediately the mist swirls up around your ankles like grasping fingers. The crooked gravestones lean at odd angles, as if the earth itself is rejecting them, trying to push them up and out. \r\n\r\n\r\nFresh earth marks three recently opened graves. The coffins have been torn open from the inside, their occupants missing—risen and walking, no doubt. Everywhere you look, you see signs of desecration and unnatural activity. \r\n\r\n\r\nThen you hear it—a low moaning that makes your skin crawl. The sound of the hungry dead. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: Your keen senses alert you just in time to prepare yourself for what's coming. Turn to 189. \r\n\r\n\r\nIf Unlucky: You're caught off-guard by the speed of the undead attack! Turn to 298.\r\n\r\n\r\nAfter dealing with the immediate threat, you can explore the cemetery:\r\n\r\n\r\nTurn to 21 to rest and eat provisions\r\n\r\n\r\nTurn to 46 to investigate a Ghoul sighting\r\n\r\n\r\nTurn to 54 to discover a well shaft\r\n\r\n\r\nTurn to 69 to search a collapsed crypt\r\n\r\n\r\nTurn to 73 to find a wounded villager\r\n\r\n\r\nTurn to 77 to explore the village edge\r\n\r\n\r\nTurn to 82 to find a skeleton with a diary\r\n\r\n\r\nTurn to 88 to find a prayer book\r\n\r\n\r\nTurn to 117 to discover a journal about the curse\r\n\r\n\r\nTurn to 128 to climb stairs toward the manor\r\n\r\n\r\nTurn to 129 to disturb a bat swarm\r\n\r\n\r\nTurn to 130 to find an ancient tome\r\n\r\n\r\nTurn to 131 to search for supplies\r\n\r\n\r\nTurn to 132 to encounter more undead\r\n\r\n\r\nTurn to 133 to find a secret entrance\r\n\r\n\r\nTurn to 144 to fight a skeleton warrior\r\n\r\n\r\nTurn to 237 to find a carved warning\r\n\r\n\r\nTurn to 272 to find a temporary blessing\r\n\r\n\r\nMain destinations:\r\n\r\n\r\nTurn to 155 to enter the catacombs below\r\n\r\n\r\nTurn to 234 to return to the Mayor's manor\r\n\r\n\r\nTurn to 45 to go back to the tavern",
       "choices": [
         {
-          "text": "Turn to 189",
-          "targetSection": 189
-        },
-        {
-          "text": "Turn to 298",
-          "targetSection": 298
-        },
-        {
           "text": "Eat a Provision and rest",
           "targetSection": 21,
           "conditions": {
@@ -2503,7 +2492,16 @@
           "text": "Turn to 45",
           "targetSection": 45
         }
-      ]
+      ],
+      "testLuck": {
+        "label": "Test your Luck (the moaning)",
+        "successText": "You are ready for what is coming.",
+        "failureText": "You are caught off guard by the undead!",
+        "successSection": 189,
+        "failureSection": 298,
+        "once": true,
+        "gatesChoices": true
+      }
     },
     {
       "id": 128,
@@ -2675,16 +2673,14 @@
     {
       "id": 138,
       "text": "The passage is trapped with nearly invisible tripwires stretched across the floor at ankle height. One wrong step could trigger... what? Arrows? Falling blocks? Poison gas? \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: Your keen eyes spot the tripwires just in time. You step carefully over them, avoiding the trap entirely. Turn to 155. If Unlucky: Your foot catches a wire! Turn to 97 (trap activates).",
-      "choices": [
-        {
-          "text": "Turn to 155",
-          "targetSection": 155
-        },
-        {
-          "text": "Turn to 97",
-          "targetSection": 97
-        }
-      ]
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successText": "You step over the tripwires.",
+        "failureText": "Your foot catches a wire!",
+        "successSection": 155,
+        "failureSection": 97
+      }
     },
     {
       "id": 139,
@@ -2725,16 +2721,14 @@
       "id": 142,
       "text": "The floor feels weak beneath your feet, the wood flexing ominously with each step. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: You step carefully, distributing your weight evenly, and cross the weak section without incident. Turn to 301. If Unlucky: Turn to 117 (the floor collapses).",
       "title": "The floor feels weak beneath your feet, the wood flexing ominously with each step.",
-      "choices": [
-        {
-          "text": "Turn to 301",
-          "targetSection": 301
-        },
-        {
-          "text": "Turn to 117",
-          "targetSection": 117
-        }
-      ]
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successText": "You cross the weak floor safely.",
+        "failureText": "The floor collapses!",
+        "successSection": 301,
+        "failureSection": 117
+      }
     },
     {
       "id": 143,
@@ -2806,31 +2800,43 @@
     {
       "id": 146,
       "text": "\"Just an ale, please,\" you say casually, sitting down at the bar and trying to appear relaxed. The bartender pours you a drink with those too-smooth, too-mechanical movements. \r\n\r\n\r\nYou pretend to drink while watching him carefully. After several minutes of observation, you notice disturbing details: \r\n\r\n\r\nHe doesn't blink. Not once. \r\n\r\n\r\nHe doesn't breathe. His chest never rises or falls. \r\n\r\n\r\nHis reflection in the mirror behind the bar is delayed by a fraction of a second, as if the reflection is copying him rather than truly reflecting him. When he thinks you're not looking, his smile drops entirely, replaced by an expressionless mask. \r\n\r\n\r\nThis is no human. This is something wearing a human face. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: You've observed enough without tipping him off to your suspicions. You can now search the tavern more carefully. Turn to 203. \r\n\r\n\r\nIf Unlucky: The creature realizes you're studying it too closely. Its head snaps toward you with inhuman speed, eyes going completely black. \"You DARE spy on me?\" it snarls, form beginning to shift and ripple. The Doppelganger attacks! Turn to 78.",
-      "choices": [
-        {
-          "text": "Turn to 203",
-          "targetSection": 203
-        },
-        {
-          "text": "Turn to 78",
-          "targetSection": 78
-        }
-      ]
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successText": "You learn enough without tipping him off.",
+        "failureText": "The creature realizes you are studying it!",
+        "successSection": 203,
+        "failureSection": 78
+      }
     },
     {
       "id": 147,
       "text": "You discover a locked chest. Do you have THIEVES' TOOLS or lockpicking equipment? \r\n\r\n\r\nIf yes: Turn to 44 (you open it successfully). \r\n\r\n\r\nIf no: You'll have to force it. Test your Luck. \r\n\r\n\r\nLucky: Turn to 44 \r\n\r\n\r\nUnlucky: The chest remains locked. Turn to 301.",
       "title": "You discover a locked chest. Do you have THIEVES' TOOLS or lockpicking equipment?",
-      "choices": [
-        {
-          "text": "Turn to 44",
-          "targetSection": 44
-        },
-        {
-          "text": "Turn to 301",
-          "targetSection": 301
+      "choices": [],
+      "testLuck": {
+        "label": "Force the lock (Test your Luck)",
+        "successText": "The chest opens!",
+        "failureText": "The chest remains locked.",
+        "successSection": 301,
+        "failureSection": 301,
+        "successEffects": {
+          "addItems": [
+            {
+              "id": "gold",
+              "name": "40 Gold Pieces",
+              "type": "treasure"
+            },
+            {
+              "id": "cloak-of-protection",
+              "name": "Cloak of Protection",
+              "type": "armor",
+              "bonus": "+1 defense",
+              "unique": true
+            }
+          ]
         }
-      ]
+      }
     },
     {
       "id": 148,
@@ -2858,14 +2864,28 @@
       "title": "The floor ahead looks solid, but your instincts warn you of danger.",
       "choices": [
         {
-          "text": "Turn to 4",
-          "targetSection": 4
-        },
-        {
-          "text": "Turn to 155",
+          "text": "Edge around the trap and continue",
           "targetSection": 155
         }
-      ]
+      ],
+      "diceRoll": {
+        "label": "Roll one die",
+        "outcomes": [
+          {
+            "min": 1,
+            "max": 2,
+            "text": "It is a pit trap!",
+            "targetSection": 4
+          },
+          {
+            "min": 3,
+            "max": 6,
+            "text": "Your instincts are right: you jump back in time."
+          }
+        ],
+        "once": true,
+        "gatesChoices": true
+      }
     },
     {
       "id": 151,
@@ -2946,26 +2966,6 @@
       "id": 155,
       "text": "You've successfully navigated past the danger and find yourself in a section of the catacombs that branches in multiple directions. The passages here are older, the stonework more weathered, the air thick with dust and the musty scent of ages past. \r\n\r\n\r\nFaded torches flicker in rusted sconces, casting dancing shadows on walls covered with ancient carvings—warnings, blessings, or perhaps directions for those who knew how to read them. The silence is oppressive, broken only by the occasional drip of water from somewhere deeper in the darkness.\r\n\r\n\r\nRoll one die to see what you encounter first:\r\n\r\n\r\nOn 1: A Zombie lurches from the shadows! Turn to 15.\r\n\r\n\r\nOn 2: A Skeleton Warrior blocks your path! Turn to 30.\r\n\r\n\r\nOn 3: You spot a hidden cache! Turn to 8.\r\n\r\n\r\nOn 4: A cultist spots you! Turn to 32.\r\n\r\n\r\nOn 5: You find ancient inscriptions! Turn to 51.\r\n\r\n\r\nOn 6: The passage is clear. Continue exploring.\r\n\r\n\r\nMain Passages:\r\n\r\n\r\nTurn to 236 for the left passage (toward candlelight and ritual chambers)\r\n\r\n\r\nTurn to 258 for the center passage (toward the manor)\r\n\r\n\r\nTurn to 212 for the right passage (flooded section)\r\n\r\n\r\nSide Passages to Explore:\r\n\r\n\r\nTurn to 23 to search for secret doors\r\n\r\n\r\nTurn to 49 to investigate a hidden shrine\r\n\r\n\r\nTurn to 54 to examine an old well shaft\r\n\r\n\r\nTurn to 59 to search behind a bookshelf\r\n\r\n\r\nTurn to 74 to follow a sloping passage\r\n\r\n\r\nTurn to 81 to investigate a ritual chamber\r\n\r\n\r\nTurn to 86 to climb a wall section\r\n\r\n\r\nTurn to 90 to follow fresh boot prints\r\n\r\n\r\nTurn to 103 to squeeze through a tight crawlspace\r\n\r\n\r\nTurn to 106 to search for a hidden library\r\n\r\n\r\nTurn to 115 to examine wall carvings (map)\r\n\r\n\r\nTurn to 121 to investigate an underground lake\r\n\r\n\r\nTurn to 135 to search a skeleton\r\n\r\n\r\nTurn to 145 to follow the sound of chanting\r\n\r\n\r\nTurn to 149 to navigate a maze-like section\r\n\r\n\r\nTurn to 152 to search for a hidden study\r\n\r\n\r\nTurn to 158 to read journal pages\r\n\r\n\r\nTurn to 164 to investigate another well shaft\r\n\r\n\r\nTurn to 165 to follow an underground stream\r\n\r\n\r\nTurn to 176 to consolidate your findings",
       "choices": [
-        {
-          "text": "Turn to 15",
-          "targetSection": 15
-        },
-        {
-          "text": "Turn to 30",
-          "targetSection": 30
-        },
-        {
-          "text": "Turn to 8",
-          "targetSection": 8
-        },
-        {
-          "text": "Turn to 32",
-          "targetSection": 32
-        },
-        {
-          "text": "Turn to 51",
-          "targetSection": 51
-        },
         {
           "text": "Turn to 236",
           "targetSection": 236
@@ -3058,7 +3058,49 @@
           "text": "Turn to 176",
           "targetSection": 176
         }
-      ]
+      ],
+      "diceRoll": {
+        "label": "Roll one die",
+        "outcomes": [
+          {
+            "min": 1,
+            "max": 1,
+            "text": "A Zombie lurches from the shadows!",
+            "targetSection": 15
+          },
+          {
+            "min": 2,
+            "max": 2,
+            "text": "A Skeleton Warrior blocks your path!",
+            "targetSection": 30
+          },
+          {
+            "min": 3,
+            "max": 3,
+            "text": "You spot a hidden cache!",
+            "targetSection": 8
+          },
+          {
+            "min": 4,
+            "max": 4,
+            "text": "A cultist spots you!",
+            "targetSection": 32
+          },
+          {
+            "min": 5,
+            "max": 5,
+            "text": "You find ancient inscriptions!",
+            "targetSection": 51
+          },
+          {
+            "min": 6,
+            "max": 6,
+            "text": "The passage is clear."
+          }
+        ],
+        "once": true,
+        "gatesChoices": true
+      }
     },
     {
       "id": 156,
@@ -3346,16 +3388,14 @@
       "id": 172,
       "text": "The passage ahead is flooded with chest-deep water. You must swim across. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: You swim across without incident. Turn to 221. \r\n\r\n\r\nIf Unlucky: Turn to 50 (current problems).",
       "title": "The passage ahead is flooded with chest-deep water. You must swim across.",
-      "choices": [
-        {
-          "text": "Turn to 221",
-          "targetSection": 221
-        },
-        {
-          "text": "Turn to 50",
-          "targetSection": 50
-        }
-      ]
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successText": "You swim across without incident.",
+        "failureText": "The current gives you trouble.",
+        "successSection": 221,
+        "failureSection": 50
+      }
     },
     {
       "id": 173,
@@ -3708,16 +3748,14 @@
       "id": 187,
       "text": "You attempt to open a trapped door, and the mechanism triggers! \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: You notice the trap just in time and avoid it. Turn to 143. \r\n\r\n\r\nIf Unlucky: The trap activates! Turn to 58.",
       "title": "You attempt to open a trapped door, and the mechanism triggers!",
-      "choices": [
-        {
-          "text": "Turn to 143",
-          "targetSection": 143
-        },
-        {
-          "text": "Turn to 58",
-          "targetSection": 58
-        }
-      ]
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successText": "You notice the trap just in time.",
+        "failureText": "The trap activates!",
+        "successSection": 143,
+        "failureSection": 58
+      }
     },
     {
       "id": 188,
@@ -3735,10 +3773,6 @@
       "text": "You discover a pit trap, but your keen eyes spot the pressure plate before you step on it! \r\n\r\n\r\nRoll one die: \r\n\r\n\r\nOn 1-2: Despite seeing it, you accidentally trigger it. Turn to 65. \r\n\r\n\r\nOn 3-6: You successfully avoid the trap and continue exploring.\r\n\r\n\r\nAfter avoiding the trap, you can explore this section:\r\n\r\n\r\nTurn to 230 to search a hidden alcove\r\n\r\n\r\nTurn to 231 to find a forgotten armory\r\n\r\n\r\nTurn to 232 to discover a ritual chamber\r\n\r\n\r\nTurn to 233 to find a healing shrine\r\n\r\n\r\nTurn to 235 to encounter a sealed door\r\n\r\n\r\nTurn to 238 to find an alchemist's notes\r\n\r\n\r\nTurn to 239 to discover a tomb\r\n\r\n\r\nTurn to 240 to find a silver weapon\r\n\r\n\r\nTurn to 242 to encounter a ghost\r\n\r\n\r\nTurn to 243 to find a blessed amulet\r\n\r\n\r\nTurn to 244 to discover binding chains\r\n\r\n\r\nTurn to 246 to fight a phantom servant\r\n\r\n\r\nTurn to 248 to encounter a shadow\r\n\r\n\r\nTurn to 249 to find a strength potion\r\n\r\n\r\nTurn to 251 to discover a map\r\n\r\n\r\nTurn to 253 to find healing potions\r\n\r\n\r\nTurn to 254 to encounter a cultist\r\n\r\n\r\nTurn to 255 to find a journal\r\n\r\n\r\nTurn to 256 to discover a secret passage\r\n\r\n\r\nTurn to 257 to find a protective ward\r\n\r\n\r\nContinue to main areas:\r\n\r\n\r\nTurn to 155 to proceed to the junction\r\n\r\n\r\nTurn to 127 to return to the cemetery",
       "title": "You discover a pit trap, but your keen eyes spot the pressure plate before you step on it!",
       "choices": [
-        {
-          "text": "Turn to 65",
-          "targetSection": 65
-        },
         {
           "text": "Turn to 230",
           "targetSection": 230
@@ -3839,7 +3873,25 @@
           "name": "Map",
           "type": "other"
         }
-      ]
+      ],
+      "diceRoll": {
+        "label": "Roll one die",
+        "outcomes": [
+          {
+            "min": 1,
+            "max": 2,
+            "text": "You accidentally trigger the pit trap!",
+            "targetSection": 65
+          },
+          {
+            "min": 3,
+            "max": 6,
+            "text": "You avoid the trap and can explore on."
+          }
+        ],
+        "once": true,
+        "gatesChoices": true
+      }
     },
     {
       "id": 190,
@@ -4015,16 +4067,14 @@
       "id": 199,
       "text": "The floor suddenly gives way beneath you! \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: You catch yourself and scramble to safety. Turn to 221. \r\n\r\n\r\nIf Unlucky: You fall! Turn to 177.",
       "title": "The floor suddenly gives way beneath you!",
-      "choices": [
-        {
-          "text": "Turn to 221",
-          "targetSection": 221
-        },
-        {
-          "text": "Turn to 177",
-          "targetSection": 177
-        }
-      ]
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successText": "You catch yourself and scramble to safety.",
+        "failureText": "You fall!",
+        "successSection": 221,
+        "failureSection": 177
+      }
     },
     {
       "id": 200,
@@ -4063,30 +4113,23 @@
       "text": "You find a locked gate blocking your path. The gate is made of heavy iron bars, rusted with age but still sturdy. \r\n\r\n\r\nDo you have an IRON KEY in your possession? \r\n\r\n\r\nIf yes, you have an iron key: The key fits perfectly, and the gate swings open with a rusty groan. Turn to 245. If no, you don't have an iron key: You'll have to try picking the lock. Test your Luck. \r\n\r\n\r\nLucky: After several minutes of work, you manage to pick the lock. Turn to 83. \r\n\r\n\r\nUnlucky: The lock is too complex or too rusted to pick without proper tools. Turn to 111.",
       "choices": [
         {
-          "text": "Turn to 245",
-          "targetSection": 245
-        },
-        {
-          "text": "Turn to 83",
-          "targetSection": 83
-        },
-        {
-          "text": "Turn to 111",
-          "targetSection": 111
+          "text": "Unlock the gate with the Iron Key",
+          "targetSection": 245,
+          "conditions": {
+            "requiresItem": "iron-key"
+          }
         }
       ],
-      "addItems": [
-        {
-          "id": "iron-key",
-          "name": "Iron Key",
-          "type": "key"
-        },
-        {
-          "id": "key",
-          "name": "Key",
-          "type": "key"
+      "testLuck": {
+        "label": "Pick the lock (Test your Luck)",
+        "successText": "You manage to pick the lock.",
+        "failureText": "The lock is too complex to pick.",
+        "successSection": 83,
+        "failureSection": 111,
+        "conditions": {
+          "requiresNoItem": "iron-key"
         }
-      ]
+      }
     },
     {
       "id": 203,
@@ -4249,16 +4292,14 @@
     {
       "id": 212,
       "text": "You take the right passage into the flooded section. The water is black as ink, cold as death, and already waist-deep. Half-submerged coffins float in the murky liquid, some open, their occupants gone—risen to walk among the undead, no doubt. \r\n\r\n\r\nThe rot smell is overwhelming, making your stomach churn. You wade forward slowly, each step careful, trying not to think about what might be lurking beneath the surface. \r\n\r\n\r\nSuddenly, something moves beneath the water—you see ripples spreading outward from a disturbance you can't see. Something large is down there, and it's noticed you. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: You see it coming and can prepare yourself! Turn to 250 (you spot the threat). \r\n\r\n\r\nIf Unlucky: It attacks from below without warning! Turn to 275 (ambush from beneath).",
-      "choices": [
-        {
-          "text": "Turn to 250",
-          "targetSection": 250
-        },
-        {
-          "text": "Turn to 275",
-          "targetSection": 275
-        }
-      ]
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successText": "You see it coming and can prepare.",
+        "failureText": "It attacks from below without warning!",
+        "successSection": 250,
+        "failureSection": 275
+      }
     },
     {
       "id": 213,
@@ -4391,26 +4432,6 @@
       "text": "You enter the flooded section of the catacombs. Black water laps at your ankles, rising to your knees as you wade deeper. The cold is shocking, seeping through your boots and clothing to chill your very bones. Half-submerged coffins float in the murky depths, their lids long since rotted away.\r\n\r\n\r\nThe smell is overwhelming—stagnant water, decay, and something else, something that speaks of things long dead but not quite resting. Your lantern casts flickering reflections across the dark surface, and you catch glimpses of movement beneath—shapes that might be debris or might be something far worse.\r\n\r\n\r\nRoll one die to see what happens:\r\n\r\n\r\nOn 1: Something grabs your leg from below! Turn to 266.\r\n\r\n\r\nOn 2: You slip on something unseen! Test your Luck. Lucky: You recover. Unlucky: Turn to 50.\r\n\r\n\r\nOn 3: A Ghoul emerges from the water! Turn to 201.\r\n\r\n\r\nOn 4: You find something valuable floating! Turn to 184.\r\n\r\n\r\nOn 5: The water rises suddenly! Turn to 134.\r\n\r\n\r\nOn 6: You wade through safely. Continue exploring.\r\n\r\n\r\nExploration Options:\r\n\r\n\r\nTurn to 172 to swim across a deeper section\r\n\r\n\r\nTurn to 191 to follow the water to a cavern\r\n\r\n\r\nTurn to 196 to enter a large natural cavern\r\n\r\n\r\nTurn to 209 to follow a sloping passage downward\r\n\r\n\r\nTurn to 241 to investigate ripples in the water\r\n\r\n\r\nTurn to 75 to explore a rat-infested passage\r\n\r\n\r\nTurn to 107 to test a suspicious floor section\r\n\r\n\r\nTurn to 123 to search an alcove\r\n\r\n\r\nTurn to 182 to look for potions\r\n\r\n\r\nTurn to 190 to search for weapons\r\n\r\n\r\nTurn to 215 to find healing supplies\r\n\r\n\r\nTurn to 151 to find rope\r\n\r\n\r\nTurn to 162 to find a hidden cache\r\n\r\n\r\nTurn to 174 to deal with rat swarm\r\n\r\n\r\nExit the flooded section:\r\n\r\n\r\nTurn to 155 to return to the main junction\r\n\r\n\r\nTurn to 301 to proceed toward the manor",
       "choices": [
         {
-          "text": "Turn to 266",
-          "targetSection": 266
-        },
-        {
-          "text": "Turn to 50",
-          "targetSection": 50
-        },
-        {
-          "text": "Turn to 201",
-          "targetSection": 201
-        },
-        {
-          "text": "Turn to 184",
-          "targetSection": 184
-        },
-        {
-          "text": "Turn to 134",
-          "targetSection": 134
-        },
-        {
           "text": "Turn to 172",
           "targetSection": 172
         },
@@ -4474,7 +4495,57 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ]
+      ],
+      "diceRoll": {
+        "label": "Roll one die",
+        "outcomes": [
+          {
+            "min": 1,
+            "max": 1,
+            "text": "Something grabs your leg from below!",
+            "targetSection": 266
+          },
+          {
+            "min": 2,
+            "max": 2,
+            "text": "You slip on something unseen!",
+            "luckTest": {
+              "success": {
+                "text": "You recover."
+              },
+              "failure": {
+                "text": "You go under!",
+                "targetSection": 50
+              }
+            }
+          },
+          {
+            "min": 3,
+            "max": 3,
+            "text": "A Ghoul emerges from the water!",
+            "targetSection": 201
+          },
+          {
+            "min": 4,
+            "max": 4,
+            "text": "You find something valuable floating!",
+            "targetSection": 184
+          },
+          {
+            "min": 5,
+            "max": 5,
+            "text": "The water rises suddenly!",
+            "targetSection": 134
+          },
+          {
+            "min": 6,
+            "max": 6,
+            "text": "You wade through safely."
+          }
+        ],
+        "once": true,
+        "gatesChoices": true
+      }
     },
     {
       "id": 222,
@@ -4515,16 +4586,14 @@
       "id": 224,
       "text": "The passage is heavily trapped with tripwires and pressure plates. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: You spot and avoid all the traps. Turn to 245. \r\n\r\n\r\nIf Unlucky: You trigger a trap! Turn to 97.",
       "title": "The passage is heavily trapped with tripwires and pressure plates.",
-      "choices": [
-        {
-          "text": "Turn to 245",
-          "targetSection": 245
-        },
-        {
-          "text": "Turn to 97",
-          "targetSection": 97
-        }
-      ]
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successText": "You spot and avoid all the traps.",
+        "failureText": "You trigger a trap!",
+        "successSection": 245,
+        "failureSection": 97
+      }
     },
     {
       "id": 225,
@@ -4592,16 +4661,14 @@
       "id": 228,
       "text": "The floor feels unstable beneath your feet, the wood creaking ominously with each step. \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: You step carefully and cross the weak section without incident. Turn to 301. \r\n\r\n\r\nIf Unlucky: Turn to 152 (the floor gives way).",
       "title": "The floor feels unstable beneath your feet, the wood creaking ominously with each step.",
-      "choices": [
-        {
-          "text": "Turn to 301",
-          "targetSection": 301
-        },
-        {
-          "text": "Turn to 152",
-          "targetSection": 152
-        }
-      ]
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successText": "You cross the weak floor carefully.",
+        "failureText": "The floor gives way!",
+        "successSection": 301,
+        "failureSection": 152
+      }
     },
     {
       "id": 229,
@@ -5000,30 +5067,23 @@
       "title": "You find a locked iron door secured with heavy chains and a massive lock.",
       "choices": [
         {
-          "text": "Turn to 267",
-          "targetSection": 267
-        },
-        {
-          "text": "Turn to 5",
-          "targetSection": 5
-        },
-        {
-          "text": "Turn to 28",
-          "targetSection": 28
+          "text": "Unlock the iron door with the Iron Key",
+          "targetSection": 267,
+          "conditions": {
+            "requiresItem": "iron-key"
+          }
         }
       ],
-      "addItems": [
-        {
-          "id": "iron-key",
-          "name": "Iron Key",
-          "type": "key"
-        },
-        {
-          "id": "key",
-          "name": "Key",
-          "type": "key"
+      "testLuck": {
+        "label": "Force the door (Test your Luck)",
+        "successText": "You force the door.",
+        "failureText": "The door will not budge.",
+        "successSection": 5,
+        "failureSection": 28,
+        "conditions": {
+          "requiresNoItem": "iron-key"
         }
-      ]
+      }
     },
     {
       "id": 241,
@@ -5091,14 +5151,28 @@
       "title": "The floor suddenly collapses beneath you!",
       "choices": [
         {
-          "text": "Turn to 4",
-          "targetSection": 4
-        },
-        {
-          "text": "Turn to 155",
+          "text": "Edge around the collapsed floor and continue",
           "targetSection": 155
         }
-      ]
+      ],
+      "diceRoll": {
+        "label": "Roll one die",
+        "outcomes": [
+          {
+            "min": 1,
+            "max": 2,
+            "text": "The floor collapses into a spike pit!",
+            "targetSection": 4
+          },
+          {
+            "min": 3,
+            "max": 6,
+            "text": "You jump back just in time!"
+          }
+        ],
+        "once": true,
+        "gatesChoices": true
+      }
     },
     {
       "id": 246,
@@ -5300,16 +5374,14 @@
       "id": 256,
       "text": "The floor ahead is trapped! \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: You spot the trap and avoid it. Turn to 301. \r\n\r\n\r\nIf Unlucky: Turn to 97 (trap activates).",
       "title": "The floor ahead is trapped!",
-      "choices": [
-        {
-          "text": "Turn to 301",
-          "targetSection": 301
-        },
-        {
-          "text": "Turn to 97",
-          "targetSection": 97
-        }
-      ]
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successText": "You spot the trap and avoid it.",
+        "failureText": "The trap activates!",
+        "successSection": 301,
+        "failureSection": 97
+      }
     },
     {
       "id": 257,
@@ -5612,16 +5684,14 @@
       "id": 270,
       "text": "The passage is trapped! \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: Turn to 301. \r\n\r\n\r\nIf Unlucky: Turn to 58.",
       "title": "The passage is trapped!",
-      "choices": [
-        {
-          "text": "Turn to 301",
-          "targetSection": 301
-        },
-        {
-          "text": "Turn to 58",
-          "targetSection": 58
-        }
-      ]
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successText": "You avoid the trap.",
+        "failureText": "The trap springs!",
+        "successSection": 301,
+        "failureSection": 58
+      }
     },
     {
       "id": 271,
@@ -5693,14 +5763,28 @@
       "title": "The floor collapses!",
       "choices": [
         {
-          "text": "Turn to 4",
-          "targetSection": 4
-        },
-        {
-          "text": "Turn to 301",
+          "text": "Continue",
           "targetSection": 301
         }
-      ]
+      ],
+      "diceRoll": {
+        "label": "Roll one die",
+        "outcomes": [
+          {
+            "min": 1,
+            "max": 2,
+            "text": "The floor collapses!",
+            "targetSection": 4
+          },
+          {
+            "min": 3,
+            "max": 6,
+            "text": "You dodge!"
+          }
+        ],
+        "once": true,
+        "gatesChoices": true
+      }
     },
     {
       "id": 276,
@@ -6112,16 +6196,14 @@
       "id": 295,
       "text": "The floor is trapped! \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: Turn to 301. \r\n\r\n\r\nIf Unlucky: Turn to 97.",
       "title": "The floor is trapped!",
-      "choices": [
-        {
-          "text": "Turn to 301",
-          "targetSection": 301
-        },
-        {
-          "text": "Turn to 97",
-          "targetSection": 97
-        }
-      ]
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successText": "You avoid the trap.",
+        "failureText": "The trap springs!",
+        "successSection": 301,
+        "failureSection": 97
+      }
     },
     {
       "id": 296,
@@ -6275,30 +6357,6 @@
       "text": "You step into the Spectral Manor, and the atmosphere changes immediately. The air is thick, heavy, oppressive—not just physically but spiritually, as if the very essence of death and despair has saturated every stone, every beam, every inch of this cursed place. \r\n\r\n\r\nThe manor exists in a state between worlds. The walls shimmer and phase, sometimes solid stone and wood, sometimes translucent and ghostly. Through the transparent sections, you can see into other rooms, other times—memories playing out like theatrical performances trapped in amber. \r\n\r\n\r\nThe temperature fluctuates wildly. One moment, you're shivering in bone-deep cold. The next, you feel phantom warmth from fires that burned centuries ago. Shadows move independently of their sources. Sounds echo from empty rooms—footsteps, voices, crying, laughter, screaming. \r\n\r\n\r\nThis is the heart of the curse. This is where Eliza Hollow was murdered. This is where her rage has festered for 242 years. The grand entrance hall stretches before you, its once-magnificent architecture now corrupted by supernatural malevolence.\r\n\r\n\r\nRoll one die to determine what you encounter:\r\n\r\n\r\nOn 1: A Shadow emerges from the darkness! Turn to 204.\r\n\r\n\r\nOn 2: A Phantom Servant materializes! Turn to 302.\r\n\r\n\r\nOn 3: A Skeleton Warrior guards the way! Turn to 309.\r\n\r\n\r\nOn 4: You find a hidden cache! Turn to 313.\r\n\r\n\r\nOn 5: The floor feels unstable... Turn to 304.\r\n\r\n\r\nOn 6: You discover a blessed shrine! Turn to 305.\r\n\r\n\r\nAfter resolving the encounter, you may explore the manor. Several paths lie open:\r\n\r\n\r\nMain Areas:\r\n\r\n\r\nTurn to 335 for the ballroom (ghostly dancers)\r\n\r\n\r\nTurn to 355 for the grand staircase (ascending into darkness)\r\n\r\n\r\nTurn to 378 for the portrait corridor (scratched-out faces)\r\n\r\n\r\nAdditional Rooms to Search:\r\n\r\n\r\nTurn to 303 to search for a hidden study\r\n\r\n\r\nTurn to 307 to investigate the weapons room\r\n\r\n\r\nTurn to 315 to examine the mirror room\r\n\r\n\r\nTurn to 318 to look for secret passages\r\n\r\n\r\nTurn to 321 to explore the library\r\n\r\n\r\nTurn to 326 to search the family records room\r\n\r\n\r\nTurn to 332 to investigate the wedding gifts room\r\n\r\n\r\nTurn to 339 to search for treasure\r\n\r\n\r\nTurn to 345 to explore the nursery\r\n\r\n\r\nTurn to 350 to find the ceremonial weapons\r\n\r\n\r\nTurn to 366 to search the armory\r\n\r\n\r\nTurn to 375 to visit the chapel",
       "choices": [
         {
-          "text": "Turn to 204",
-          "targetSection": 204
-        },
-        {
-          "text": "Turn to 302",
-          "targetSection": 302
-        },
-        {
-          "text": "Turn to 309",
-          "targetSection": 309
-        },
-        {
-          "text": "Turn to 313",
-          "targetSection": 313
-        },
-        {
-          "text": "Turn to 304",
-          "targetSection": 304
-        },
-        {
-          "text": "Turn to 305",
-          "targetSection": 305
-        },
-        {
           "text": "Turn to 335",
           "targetSection": 335
         },
@@ -6358,7 +6416,50 @@
           "text": "Turn to 375",
           "targetSection": 375
         }
-      ]
+      ],
+      "diceRoll": {
+        "label": "Roll one die",
+        "outcomes": [
+          {
+            "min": 1,
+            "max": 1,
+            "text": "A Shadow emerges from the darkness!",
+            "targetSection": 204
+          },
+          {
+            "min": 2,
+            "max": 2,
+            "text": "A Phantom Servant materializes!",
+            "targetSection": 302
+          },
+          {
+            "min": 3,
+            "max": 3,
+            "text": "A Skeleton Warrior guards the way!",
+            "targetSection": 309
+          },
+          {
+            "min": 4,
+            "max": 4,
+            "text": "You find a hidden cache!",
+            "targetSection": 313
+          },
+          {
+            "min": 5,
+            "max": 5,
+            "text": "The floor feels unstable...",
+            "targetSection": 304
+          },
+          {
+            "min": 6,
+            "max": 6,
+            "text": "You discover a blessed shrine!",
+            "targetSection": 305
+          }
+        ],
+        "once": true,
+        "gatesChoices": true
+      }
     },
     {
       "id": 302,
@@ -6420,16 +6521,14 @@
     {
       "id": 304,
       "text": "The floor beneath you groans ominously, and you realize too late that you're standing on a weak section! \r\n\r\n\r\nTest your Luck. \r\n\r\n\r\nIf Lucky: You manage to step back before the floor collapses completely. Turn to 301. \r\n\r\n\r\nIf Unlucky: Turn to 117 (the floor gives way).",
-      "choices": [
-        {
-          "text": "Turn to 301",
-          "targetSection": 301
-        },
-        {
-          "text": "Turn to 117",
-          "targetSection": 117
-        }
-      ]
+      "choices": [],
+      "testLuck": {
+        "label": "Test your Luck",
+        "successText": "You step back before the floor collapses.",
+        "failureText": "The floor gives way!",
+        "successSection": 301,
+        "failureSection": 117
+      }
     },
     {
       "id": 305,
@@ -7088,26 +7187,6 @@
       "text": "You enter the ballroom, and the scene that greets you is both beautiful and horrifying. Dozens of ghostly figures dance across the marble floor, their movements graceful and precise, their formal attire from centuries past shimmering with spectral light. \r\n\r\n\r\nBut something is wrong. The dancers never stop, never rest, never speak. Their faces are frozen in expressions that might be joy but look more like rictus grins of terror. They're trapped here, forced to dance eternally, unable to move on to whatever awaits beyond death. \r\n\r\n\r\nThe music you couldn't hear from outside is audible here—a haunting waltz that seems to come from everywhere and nowhere, played by invisible musicians on instruments that no longer exist. \r\n\r\n\r\nRoll one die to see what happens:\r\n\r\n\r\nOn 1: A Phantom Servant attacks! Turn to 302.\r\n\r\n\r\nOn 2: A Shadow emerges! Turn to 336.\r\n\r\n\r\nOn 3: The floor feels unstable! Turn to 228.\r\n\r\n\r\nOn 4: You find a blessed fountain! Turn to 207.\r\n\r\n\r\nOn 5: You discover a healing shrine! Turn to 192.\r\n\r\n\r\nOn 6: The spirits ignore you. Continue exploring.\r\n\r\n\r\nExploration Options:\r\n\r\n\r\nTurn to 303 to search for a hidden study\r\n\r\n\r\nTurn to 64 to try communicating with the ghosts\r\n\r\n\r\nTurn to 93 to examine the musicians' gallery\r\n\r\n\r\nTurn to 108 to listen to a spectral voice\r\n\r\n\r\nTurn to 113 to drink a mysterious potion\r\n\r\n\r\nTurn to 120 to pick a locked chest\r\n\r\n\r\nTurn to 122 to confront a specter\r\n\r\n\r\nTurn to 136 to fight a ghost\r\n\r\n\r\nTurn to 154 to search for invisibility potion\r\n\r\n\r\nTurn to 159 to witness a ghostly message\r\n\r\n\r\nTurn to 166 to find a prayer altar\r\n\r\n\r\nTurn to 173 to rest at a prayer room\r\n\r\n\r\nTurn to 178 to dodge falling stones\r\n\r\n\r\nTurn to 192 to find a blessed shrine\r\n\r\n\r\nTurn to 198 to discover a hidden room\r\n\r\n\r\nTurn to 207 to drink from a healing fountain\r\n\r\n\r\nTurn to 210 to find a cloak of protection\r\n\r\n\r\nMove to other areas:\r\n\r\n\r\nTurn to 301 to return to the main hall\r\n\r\n\r\nTurn to 355 to go to the staircase\r\n\r\n\r\nTurn to 378 to go to the portrait corridor",
       "choices": [
         {
-          "text": "Turn to 302",
-          "targetSection": 302
-        },
-        {
-          "text": "Turn to 336",
-          "targetSection": 336
-        },
-        {
-          "text": "Turn to 228",
-          "targetSection": 228
-        },
-        {
-          "text": "Turn to 207",
-          "targetSection": 207
-        },
-        {
-          "text": "Turn to 192",
-          "targetSection": 192
-        },
-        {
           "text": "Turn to 303",
           "targetSection": 303
         },
@@ -7192,7 +7271,49 @@
           "type": "armor",
           "bonus": "+1 defense"
         }
-      ]
+      ],
+      "diceRoll": {
+        "label": "Roll one die",
+        "outcomes": [
+          {
+            "min": 1,
+            "max": 1,
+            "text": "A Phantom Servant attacks!",
+            "targetSection": 302
+          },
+          {
+            "min": 2,
+            "max": 2,
+            "text": "A Shadow emerges!",
+            "targetSection": 336
+          },
+          {
+            "min": 3,
+            "max": 3,
+            "text": "The floor feels unstable!",
+            "targetSection": 228
+          },
+          {
+            "min": 4,
+            "max": 4,
+            "text": "You find a blessed fountain!",
+            "targetSection": 207
+          },
+          {
+            "min": 5,
+            "max": 5,
+            "text": "You discover a healing shrine!",
+            "targetSection": 192
+          },
+          {
+            "min": 6,
+            "max": 6,
+            "text": "The spirits ignore you."
+          }
+        ],
+        "once": true,
+        "gatesChoices": true
+      }
     },
     {
       "id": 336,
@@ -7672,26 +7793,6 @@
       "text": "You climb the grand staircase, each step taking you higher into the Spectral Manor and closer to the Widow's domain. The stairs are worn smooth by centuries of use, and they creak ominously under your weight despite their apparent solidity. \r\n\r\n\r\nAs you ascend, the temperature drops dramatically. Your breath mists in the frigid air, and frost forms on the bannister beneath your hand. The walls become more translucent, more ghostly, until you can see through them into rooms that exist in multiple times simultaneously. \r\n\r\n\r\nRoll one die to see what you encounter on the stairs:\r\n\r\n\r\nOn 1: A Shadow attacks! Turn to 317.\r\n\r\n\r\nOn 2: A Skeleton Warrior blocks the way! Turn to 320.\r\n\r\n\r\nOn 3: A Phantom Servant materializes! Turn to 322.\r\n\r\n\r\nOn 4: You find a secret passage! Turn to 318.\r\n\r\n\r\nOn 5: You discover Thomas Ashford's ghost! Turn to 351.\r\n\r\n\r\nOn 6: The stairs are clear. Continue.\r\n\r\n\r\nAt the top of the stairs, you find yourself in a long hallway with multiple doors and passages.\r\n\r\n\r\nMain Destinations:\r\n\r\n\r\nTurn to 341 for the master bedroom (soft weeping)\r\n\r\n\r\nTurn to 378 for the wedding chamber (bloodstains visible)\r\n\r\n\r\nTurn to 395 for the Widow's lair (waves of cold malevolence)\r\n\r\n\r\nAdditional Rooms to Explore:\r\n\r\n\r\nTurn to 310 to read a family diary\r\n\r\n\r\nTurn to 316 to find another journal entry\r\n\r\n\r\nTurn to 319 to search a storage room\r\n\r\n\r\nTurn to 321 to explore the library\r\n\r\n\r\nTurn to 323 to find a healing fountain\r\n\r\n\r\nTurn to 325 to reach a landing where stairs split\r\n\r\n\r\nTurn to 328 to find a blessed chapel\r\n\r\n\r\nTurn to 334 to discover warning journal\r\n\r\n\r\nTurn to 337 to find a potion of strength\r\n\r\n\r\nTurn to 343 to find a healing shrine\r\n\r\n\r\nTurn to 348 to discover a secret passage to attic\r\n\r\n\r\nTurn to 353 to find another healing fountain\r\n\r\n\r\nTurn to 357 to find supply cache\r\n\r\n\r\nTurn to 361 to find a blessed shrine room\r\n\r\n\r\nTurn to 364 to find a secret armory\r\n\r\n\r\nTurn to 368 to find a healing potion\r\n\r\n\r\nTurn to 370 to discover books on spectral binding\r\n\r\n\r\nTurn to 374 to enter the room of clocks\r\n\r\n\r\nTurn to 377 to find final supplies\r\n\r\n\r\nTurn to 380 to pray at final shrine\r\n\r\n\r\nReturn to lower floors:\r\n\r\n\r\nTurn to 301 to go back to the main hall\r\n\r\n\r\nTurn to 335 to return to the ballroom",
       "choices": [
         {
-          "text": "Turn to 317",
-          "targetSection": 317
-        },
-        {
-          "text": "Turn to 320",
-          "targetSection": 320
-        },
-        {
-          "text": "Turn to 322",
-          "targetSection": 322
-        },
-        {
-          "text": "Turn to 318",
-          "targetSection": 318
-        },
-        {
-          "text": "Turn to 351",
-          "targetSection": 351
-        },
-        {
           "text": "Turn to 341",
           "targetSection": 341
         },
@@ -7803,7 +7904,49 @@
           "name": "Healing Potion",
           "type": "potion"
         }
-      ]
+      ],
+      "diceRoll": {
+        "label": "Roll one die",
+        "outcomes": [
+          {
+            "min": 1,
+            "max": 1,
+            "text": "A Shadow attacks!",
+            "targetSection": 317
+          },
+          {
+            "min": 2,
+            "max": 2,
+            "text": "A Skeleton Warrior blocks the way!",
+            "targetSection": 320
+          },
+          {
+            "min": 3,
+            "max": 3,
+            "text": "A Phantom Servant materializes!",
+            "targetSection": 322
+          },
+          {
+            "min": 4,
+            "max": 4,
+            "text": "You find a secret passage!",
+            "targetSection": 318
+          },
+          {
+            "min": 5,
+            "max": 5,
+            "text": "You discover Thomas Ashford's ghost!",
+            "targetSection": 351
+          },
+          {
+            "min": 6,
+            "max": 6,
+            "text": "The stairs are clear."
+          }
+        ],
+        "once": true,
+        "gatesChoices": true
+      }
     },
     {
       "id": 356,
