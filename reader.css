@@ -116,6 +116,9 @@ button { cursor: pointer; }
     border: 2px solid var(--pill-line); border-radius: var(--radius); font-weight: 600; line-height: 1.3;
 }
 .opt:hover:not([disabled]) { filter: brightness(0.96); }
+/* explored paths: a dashed outline, a flatter fill and a tick, so it does not rely on colour alone */
+.opt.seen, .opt-inline.seen { background: transparent; border-style: dashed; font-weight: 500; }
+.seen-mark { color: var(--muted); font-weight: 700; }
 .opt[disabled], .opt-inline[disabled] { opacity: 0.55; cursor: not-allowed; }
 .lock-hint { display: block; font-weight: 400; font-size: 0.85rem; color: var(--muted); }
 .opt-inline .lock-hint { display: inline; }

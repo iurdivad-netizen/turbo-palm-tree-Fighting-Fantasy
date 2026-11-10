@@ -95,11 +95,22 @@ try { axeSource = fs.readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8'
         assert.equal(await page.evaluate(() => game.autoRoll), false, 'auto-fight gives the dice choice back afterwards');
 
         // preferences
-        await page.check('.toggle input');
+        await page.check('.toggle:has-text("Auto-roll") input');
         await page.click('button[aria-label="Larger text"]');
         assert.equal(await page.evaluate(() => document.documentElement.className), 'ts-2');
         const prefs = await page.evaluate(() => JSON.parse(localStorage.getItem('ff_prefs')));
-        assert.deepEqual(prefs, { autoRoll: true, textSize: 2 }, 'the choices are remembered');
+        assert.deepEqual(prefs, { autoRoll: true, textSize: 2, markSeen: true }, 'the choices are remembered');
+
+        // explored paths are shaded (a tick and a dashed outline); the setting can be turned off
+        await page.evaluate(() => game.goTo(1));
+        await page.waitForTimeout(80);
+        const seenNow = await page.$$eval('[data-opt].seen', bs => bs.map(b => b.getAttribute('data-opt')));
+        assert.ok(seenNow.includes('to-45'), 'a section you have visited is marked on the way back');
+        assert.ok(await page.isVisible('.seen-mark'), 'the tick is shown');
+        await page.uncheck('#mark-seen');
+        assert.equal((await page.$$('[data-opt].seen')).length, 0, 'switched off: nothing is marked');
+        await page.check('#mark-seen');
+        await page.evaluate(() => game.goTo(155));
 
         // save, reload, continue
         await page.click('button:has-text("Save")');
