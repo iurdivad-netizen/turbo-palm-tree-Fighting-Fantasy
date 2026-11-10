@@ -1,6 +1,6 @@
 # Reader redesign: decisions, book format v2, build order
 
-Status: **step 1 (schema, converter, validator) is done.** Steps 2 to 4 are not started. The reader (`index.html`) still plays the v1 file; `CURSE_OF_HOLLOWS_END.v2.json` is not playable until step 2.
+Status: **steps 1 and 2 are done** (book format v2; the engine split from the screen). Steps 3 (the real interface) and 4 (author docs) are not started. The reader (`index.html`) now plays the v2 book through `engine.js`, with a basic inline-option layout and optional player-rolled dice; step 3 is the proper design.
 
 ## Why
 
@@ -97,10 +97,54 @@ Numbers on the Curse of Hollow's End: 767 options; 87% are referenced inline in 
 - Sections 54 and 164 ("Do you have ROPE?") and 24 ("Do you have the Mayor's Ledger?") offer both branches to everyone: the choices carry no item conditions.
 - Section 180's menu of 19 places is still skipped by the fight's victory jump (sections 260-280 unreachable).
 
+## Step 2 result (done)
+
+| File | What it is |
+|---|---|
+| `engine.js` | The rules, with no screen, no timers and no `alert()`. Plays v2 books (`Engine.upgradeBook()` upgrades old ones in memory). Works in the browser (`<script src="engine.js">` gives a global `Engine`) and in Node (`require`). |
+| `index.html` | Now only the screen: it renders the engine's state and sends it what the player does. 2,890 -> about 2,100 lines; the file-import code (JSON, TXT, PDF) is unchanged and feeds `ui.loadBook()`. |
+| `simulate_playthroughs.js` | Runs on the engine directly in Node (no browser needed). |
+| `tests/engine.test.js` | 51 tests of the rules (small hand-made books with scripted dice, plus scenarios on the real book). |
+| `tests/simulation.test.js` | The seeded 3,000-game simulation must reproduce the recorded results exactly (SHA-256 of every recorded field). |
+| `tests/ui-smoke.js` | Drives the real page in Playwright (serves the repo itself). |
+
+Run: `node --test` (about 25 seconds, the simulation test is most of it) and `node tests/ui-smoke.js` (needs Playwright).
+
+**Acceptance, as agreed:** the simulation gives identical results. The engine reproduced the results recorded from the old in-browser logic in *every* field of all 3,000 games (260 KB), on both the original book (upgraded in memory) and the converted v2 book. That also confirms the v1 -> v2 migration changed no behaviour. `tests/simulation-baseline.json` keeps that fingerprint; refresh it with `tests/make-baseline.js` only after a deliberate change to the rules or the data.
+
+### The engine API
+
+```js
+const game = Engine.create({ book, rng, autoRoll, autoAdvance, onEvent });
+game.start();  game.reset();
+game.optionStates()          // [{ option, enabled }]: what the player can see (locked shown disabled, "if you lack X" hidden)
+game.chooseOption(id);  game.doRoll();  game.startCombat();  game.fightRound();  game.flee();
+game.useItem(uid);  game.dropItem(uid);  game.advanceNow();
+game.pendingRoll             // null, or { dice: '1d6'|'2d6', reason, label, who? } while waiting for the player's die
+game.resolveRoll([3, 5]);    // the player's dice (values optional; the engine rolls if they are missing or invalid)
+game.serialize();  game.restore(data);
+// events: { type: 'message', text } (replaces alert), { type: 'roll-needed', request }, { type: 'change' }
+```
+
+- **Dice are pauses.** Every action that rolls (Luck test, dice table, each combat round, flee, revive, wound tests) is a generator that yields a roll request; a small driver resolves it at once (`autoRoll: true`, what the simulator uses) or parks it until `resolveRoll()`. A combat round asks for two rolls: yours, then the enemy's.
+- **Navigation after a fight or flee** happens at once with `autoAdvance: true` (simulator) or waits for `advanceNow()` (the screen shows the log and a Continue button).
+- **Dice order is part of the contract.** Dice are drawn in the same order as the old code, which is what makes the seeded results identical.
+
+### What the screen does now (a first pass, not the redesign)
+
+- Menu lines are buttons in the place the book listed them; `{{opt:ID}}` in a sentence is an inline button; options the text does not mention are listed under it; `{{roll}}` is where the dice box appears. Options of a rolled section wait for the roll.
+- **Dice are player-rolled by default**, with an "Auto-roll dice" checkbox (remembered). A combat round is two clicks in that mode; "auto-fight" is a step 3 item.
+- Results ("Lucky! (rolled 5) ...") appear in a notice box instead of a blocking `alert()`. Fights end with a Continue button instead of a timed jump.
+- Not tested yet: layout on a phone (only a desktop screenshot was checked); keyboard use.
+
+### Left for step 3
+
+Visual design and layout (a section still ends with the stat block text the old converter left in combat sections), a dice animation, auto-fight, a Load Game screen (the engine can restore, the screen only saves), mobile layout, accessibility pass.
+
 ## Build order
 
 1. **Schema + converter + validator (v2). DONE (see above).** Write `book.schema.json`; extend `validate_adventure.py` to check it; write a v1 to v2 migration that takes labels from `CURSE_OF_HOLLOWS_END_FORMATTED.txt` (its `{choice: N | label}` markers and "Turn to N for ..." prose) and strips the option lines from the text. Acceptance: every option has a real label, no `Turn to N` left in any section text, validator passes.
-2. **Engine/UI split.** Move game logic out of `index.html` into an engine module with the `requestRoll` hook; keep a thin adapter so the simulator runs unchanged. Acceptance: all browser tests and the 3,000-game simulation give the same results.
+2. **Engine/UI split. DONE (see "Step 2 result").** Move game logic out of `index.html` into an engine module with the `requestRoll` hook; keep a thin adapter so the simulator runs unchanged. Acceptance: all browser tests and the 3,000-game simulation give the same results.
 3. **New reader UI.** Inline buttons, dice and auto-roll, readable layout on desktop and phone, saved preferences. Acceptance: a long section (388, 234) reads top to bottom with no scrolling back; phone width works.
 4. **Docs for authors:** how to convert a new book to v2 and validate it.
 

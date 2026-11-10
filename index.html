@@ -392,6 +392,39 @@
         .remove-item:hover {
             color: #dc2626;
         }
+
+        /* ---- v2 reader: inline options, dice, notices ---- */
+        .section-text p { margin-bottom: 1rem; }
+        .choice-inline {
+            display: inline; padding: 0.1rem 0.65rem; margin: 0 0.1rem; font: inherit; line-height: inherit;
+            background: #fef3c7; border: 2px solid #fcd34d; border-radius: 0.4rem; cursor: pointer; color: #78350f;
+        }
+        .choice-inline:hover:not([disabled]) { background: #fde68a; }
+        .choice-inline[disabled], .choice-button[disabled] { opacity: 0.5; cursor: not-allowed; }
+        .opt-list { display: flex; flex-direction: column; gap: 0.35rem; margin: 0.5rem 0 1rem; }
+        .opt-list .choice-button { margin: 0; }
+        .lock-hint { font-size: 0.875rem; color: #6b7280; }
+        .roll-box {
+            display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;
+            background: #f3e8ff; padding: 1rem; border-radius: 0.5rem; margin: 1rem 0;
+        }
+        .pending-roll {
+            display: flex; align-items: center; gap: 1rem; background: #dbeafe; border: 2px solid #3b82f6;
+            padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;
+        }
+        .pending-roll .button { margin-left: auto; }
+        .pending-dice { font-size: 2.5rem; }
+        .notice { background: #ecfdf5; border: 1px solid #10b981; border-radius: 0.5rem; padding: 0.75rem 1rem; margin-bottom: 1.5rem; }
+        .notice p { margin: 0.15rem 0; }
+        .auto-roll { display: flex; align-items: center; gap: 0.4rem; font-size: 0.9rem; cursor: pointer; }
+        .small-note { font-size: 0.875rem; color: #6b7280; }
+        .combat-box { background: #fee2e2; border: 2px solid #ef4444; padding: 1.25rem; border-radius: 0.5rem; margin-top: 1rem; }
+        .combat-title { font-size: 1.5rem; font-weight: bold; color: #dc2626; text-align: center; margin-bottom: 0.5rem; }
+        .combat-sub { text-align: center; font-size: 0.875rem; color: #6b7280; margin-bottom: 0.5rem; }
+        .combat-enemy { text-align: center; margin-bottom: 0.5rem; }
+        .combat-notes { margin: 0.5rem auto 1rem; max-width: 32rem; font-size: 0.875rem; color: #7f1d1d; list-style: none; text-align: center; }
+        .combat-log div { white-space: pre-wrap; }
+
     </style>
 </head>
 <body>
@@ -403,409 +436,23 @@
         </div>
     </div>
 
+    <script src="engine.js"></script>
     <script>
-        // Game State Management
-        const GameState = {
-            currentBook: null,
-            isGameStarted: false,
-            currentSection: 1,
-            stats: null,
-            inventory: [],
-            visitedSections: new Set(),
-            inCombat: false,
-            enemyCurrentStamina: 0,
-            combatLog: [],
-            currentCombatIndex: 0,
-            isGameOver: false,
-            combatDone: false,
-            lastWielded: null,
-            rolledOnce: new Set(), // sections whose roll-once die / Luck test was already made
-            usedOnce: new Set(), // sections where a one-time decision (choice.once) was already made
-            rollResolved: false, // a Luck test / dice roll was already made in this section
-            tempSkillPenalty: 0, // SKILL lost for the rest of the current combat only
-            gameOverType: null,
-            pendingTimer: null,
-            nextUid: 1,
+        // ------------------------------------------------------------------------------------------
+        // The reader. All rules live in engine.js; this file only shows the game and sends it what the
+        // player does. Books are played in format v2 (older books are upgraded when they are loaded).
+        // ------------------------------------------------------------------------------------------
+        let game = null;       // the running game (Engine.create), null until a book is loaded
+        let notices = [];      // what the last action said ("Lucky! (rolled 5) ..."), replaces alert()
+        const prefs = loadPrefs();
 
-            // Run a delayed action that is cancelled by any other navigation/reset
-            schedule(fn, ms) {
-                this.cancelPending();
-                this.pendingTimer = setTimeout(() => { this.pendingTimer = null; fn(); }, ms);
-            },
-
-            cancelPending() {
-                if (this.pendingTimer) { clearTimeout(this.pendingTimer); this.pendingTimer = null; }
-            },
-
-            // Give every inventory item a unique instance id (uid); `id` stays the book's item id
-            makeItem(item) {
-                const made = { ...item, uid: this.nextUid++ };
-                if (made.type === 'weapon' && !Array.isArray(made.properties)) {
-                    made.properties = this.inferWeaponProperties(made.name);
-                }
-                return made;
-            },
-
-            // Weapon properties: 'magical', 'silver', 'crushing'. Books can set them explicitly
-            // with "properties"; otherwise they are guessed from the item name.
-            inferWeaponProperties(name) {
-                const n = String(name || '').toLowerCase();
-                const props = [];
-                if (/silver/.test(n)) props.push('silver');
-                if (/magic|enchanted|blessed|holy/.test(n)) props.push('magical');
-                if (/\b(mace|club|hammer|flail|maul)\b/.test(n)) props.push('crushing');
-                return props;
-            },
-
-            // Numeric bonus from strings like "+1 skill", "+2 attack"
-            weaponBonus(item) {
-                const match = item && item.bonus ? String(item.bonus).match(/([+-]\d+)/) : null;
-                return match ? parseInt(match[1]) : 0;
-            },
-
-            // Damage the player deals per hit with a given weapon (or null = no weapon) against an enemy.
-            // Base damage is 2. Enemy fields (all optional):
-            //   effectiveWeapons: ['magical','silver'] + normalWeaponDamage: n  -> weapons without one of
-            //     those properties deal n damage instead of 2 (e.g. Incorporeal)
-            //   weakTo: { property: 'crushing', damage: 3 } -> weapons with the property deal more
-            damageAgainst(weapon, enemy) {
-                const props = (weapon && weapon.properties) || [];
-                let damage = 2;
-                if (Array.isArray(enemy.effectiveWeapons) && !enemy.effectiveWeapons.some(p => props.includes(p))) {
-                    damage = enemy.normalWeaponDamage != null ? enemy.normalWeaponDamage : 2;
-                }
-                if (enemy.weakTo && props.includes(enemy.weakTo.property)) {
-                    damage = enemy.weakTo.damage;
-                }
-                return damage;
-            },
-
-            // Only one weapon is wielded at a time: use whichever does the most damage to this
-            // enemy, then gives the biggest SKILL bonus.
-            chooseWeapon(enemy) {
-                let best = null, bestDamage = this.damageAgainst(null, enemy), bestBonus = 0;
-                for (const item of this.inventory) {
-                    if (item.type !== 'weapon') continue;
-                    const damage = this.damageAgainst(item, enemy);
-                    const bonus = this.weaponBonus(item);
-                    if (!best || damage > bestDamage || (damage === bestDamage && bonus > bestBonus)) {
-                        best = item; bestDamage = damage; bestBonus = bonus;
-                    }
-                }
-                return { weapon: best, damage: bestDamage, bonus: bestBonus };
-            },
-
-            loadBook(book) {
-                this.cancelPending();
-                this.isGameOver = false;
-                this.gameOverType = null;
-                this.combatDone = false;
-                this.usedOnce = new Set();
-                this.rolledOnce = new Set();
-                this.inCombat = false;
-                this.combatLog = [];
-                this.currentBook = book;
-                this.isGameStarted = false;
-                if (!book) {
-                    this.currentSection = 1;
-                    this.stats = null;
-                    this.inventory = [];
-                    this.visitedSections = new Set();
-                    render();
-                    return;
-                }
-                // Check if section 0 exists (intro), if so show it first
-                const hasIntro = book.sections.some(s => s.id === 0);
-                this.currentSection = hasIntro ? 0 : book.startingSection;
-                this.stats = null;
-                this.inventory = [];
-                this.visitedSections = new Set();
-                render();
-            },
-
-            startGame() {
-                if (!this.currentBook) return;
-
-                this.cancelPending();
-                this.isGameOver = false;
-                this.gameOverType = null;
-                this.combatDone = false;
-                this.usedOnce = new Set();
-                this.rolledOnce = new Set();
-                this.inCombat = false;
-                this.combatLog = [];
-                this.currentCombatIndex = 0;
-                this.isGameStarted = true;
-                this.stats = {
-                    skill: this.currentBook.initialStats.skill,
-                    stamina: this.currentBook.initialStats.stamina,
-                    luck: this.currentBook.initialStats.luck,
-                    initialSkill: this.currentBook.initialStats.skill,
-                    initialStamina: this.currentBook.initialStats.stamina,
-                    initialLuck: this.currentBook.initialStats.luck,
-                    gold: 10
-                };
-
-                // Set up starting inventory - if no starting items specified, provide default equipment
-                const bookStartingItems = this.currentBook.startingItems || [];
-                if (bookStartingItems.length === 0) {
-                    // Default starting equipment: sword, shield, leather armor, backpack, and 10 rations
-                    this.inventory = ([
-                        { id: 'sword', name: 'Sword', type: 'weapon' },
-                        { id: 'shield', name: 'Shield', type: 'armor' },
-                        { id: 'leather-armor', name: 'Leather Armor', type: 'armor' },
-                        { id: 'backpack', name: 'Backpack', type: 'other' },
-                        // 10 rations, each providing +4 STAMINA (capped at maximum)
-                        { id: 'rations', name: 'Rations', type: 'food', restore: '+4 stamina' },
-                        { id: 'rations', name: 'Rations', type: 'food', restore: '+4 stamina' },
-                        { id: 'rations', name: 'Rations', type: 'food', restore: '+4 stamina' },
-                        { id: 'rations', name: 'Rations', type: 'food', restore: '+4 stamina' },
-                        { id: 'rations', name: 'Rations', type: 'food', restore: '+4 stamina' },
-                        { id: 'rations', name: 'Rations', type: 'food', restore: '+4 stamina' },
-                        { id: 'rations', name: 'Rations', type: 'food', restore: '+4 stamina' },
-                        { id: 'rations', name: 'Rations', type: 'food', restore: '+4 stamina' },
-                        { id: 'rations', name: 'Rations', type: 'food', restore: '+4 stamina' },
-                        { id: 'rations', name: 'Rations', type: 'food', restore: '+4 stamina' }
-                    ]).map(i => this.makeItem(i));
-                } else {
-                    this.inventory = bookStartingItems.map(i => this.makeItem(i));
-                }
-
-                this.currentSection = this.currentBook.startingSection;
-                this.visitedSections = new Set([this.currentBook.startingSection]);
-                render();
-            },
-
-            resetGame() {
-                this.cancelPending();
-                this.usedOnce = new Set();
-                this.rolledOnce = new Set();
-                this.combatDone = false;
-                this.isGameOver = false;
-                this.gameOverType = null;
-                this.isGameStarted = false;
-                this.currentSection = this.currentBook?.startingSection || 1;
-                this.stats = null;
-                this.inventory = [];
-                this.visitedSections = new Set();
-                this.inCombat = false;
-                this.enemyCurrentStamina = 0;
-                this.combatLog = [];
-                render();
-            },
-
-            goToSection(sectionId) {
-                this.cancelPending();
-                this.combatDone = false;
-                this.rollResolved = false;
-                this.tempSkillPenalty = 0;
-                const firstVisit = !this.visitedSections.has(sectionId);
-                this.currentSection = sectionId;
-                this.visitedSections.add(sectionId);
-                this.inCombat = false;
-                this.combatLog = [];
-                this.currentCombatIndex = 0;
-                // Effects apply only the first time a section is entered, so revisits can't
-                // re-apply a trap, a healing room, or item pickups/removals
-                if (firstVisit) this.applySectionEffects(sectionId);
-                render();
-            },
-
-            // changes: { skill, stamina, luck } - numbers add (clamped 0..Initial); 'max' restores to Initial
-            modifyStats(changes) {
-                if (!this.stats) return;
-                const apply = (cur, init, v) => v === 'max' ? init : Math.max(0, Math.min(init, cur + v));
-                if (changes.skill) this.stats.skill = apply(this.stats.skill, this.stats.initialSkill, changes.skill);
-                if (changes.stamina) this.stats.stamina = apply(this.stats.stamina, this.stats.initialStamina, changes.stamina);
-                if (changes.luck) this.stats.luck = apply(this.stats.luck, this.stats.initialLuck, changes.luck);
-                this.checkDeath();
-                render();
-            },
-
-            // Lasting losses. permanent=true lowers current AND Initial (e.g. a Shadow's drain);
-            // permanent=false lowers only the Initial maximum ("reduce your maximum STAMINA by 1").
-            reduceStats(changes, permanent) {
-                if (!this.stats) return;
-                const names = { skill: 'Skill', stamina: 'Stamina', luck: 'Luck' };
-                for (const key of Object.keys(names)) {
-                    const amount = changes[key];
-                    if (!amount) continue;
-                    const init = 'initial' + names[key];
-                    this.stats[init] = Math.max(0, this.stats[init] + amount);
-                    this.stats[key] = permanent ? Math.max(0, this.stats[key] + amount) : this.stats[key];
-                    this.stats[key] = Math.min(this.stats[key], this.stats[init]);
-                }
-                this.checkDeath();
-                render();
-            },
-
-            // Death from any source (traps, poison, etc.), not only combat
-            checkDeath() {
-                if (this.stats && this.stats.stamina <= 0 && !this.isGameOver) {
-                    this.cancelPending();
-                    this.inCombat = false;
-                    this.isGameOver = true;
-                    this.gameOverType = 'defeat';
-                }
-            },
-
-            // Effects: any object with modifyStats / permanentStats / maxStats / addItems / removeItems
-            // (a section, or the outcome of a Luck test or dice roll)
-            applyEffects(effects) {
-                if (!effects) return;
-                if (effects.modifyStats) this.modifyStats(effects.modifyStats);
-                if (effects.permanentStats) this.reduceStats(effects.permanentStats, true);
-                if (effects.maxStats) this.reduceStats(effects.maxStats, false);
-                if (effects.addItems) effects.addItems.forEach(item => this.addItem(item));
-                if (effects.removeItems) effects.removeItems.forEach(itemId => this.removeItem(itemId));
-            },
-
-            // Effects of entering a section for the first time: stat changes, items gained and lost
-            applySectionEffects(sectionId) {
-                const section = this.currentBook.sections.find(s => s.id === sectionId);
-                if (section) this.applyEffects(section);
-            },
-
-            addGold(amount) {
-                if (!this.stats) return;
-                this.stats.gold = (this.stats.gold || 0) + amount;
-                render();
-            },
-
-            addItem(item) {
-                // Check if item is gold/coins (but not golden items like "golden ring")
-                const itemName = item.name.toLowerCase();
-                const isGold = /\b(gold pieces?|coins?|gp)\b/.test(itemName);
-
-                if (isGold) {
-                    // Extract amount from name (e.g., "10 Gold Coins" -> 10, "30 Gold Pieces" -> 30)
-                    const match = item.name.match(/(\d+)/);
-                    const amount = match ? parseInt(match[1]) : 1;
-                    this.addGold(amount);
-                } else if ((item.unique || (item.bonus && item.type !== 'potion')) && this.hasItem(item.id)) {
-                    // Don't collect a second copy of a unique item or of bonus equipment
-                    // (e.g. another Cloak of Protection): it would just stack its bonus.
-                } else {
-                    this.inventory.push(this.makeItem(item));
-                }
-                render();
-            },
-
-            removeItem(itemId) {
-                const index = this.inventory.findIndex(item => item.id === itemId);
-                if (index !== -1) {
-                    this.inventory.splice(index, 1);
-                    render();
-                }
-            },
-
-            removeItemByUid(uid) {
-                const index = this.inventory.findIndex(item => item.uid === uid);
-                if (index !== -1) {
-                    this.inventory.splice(index, 1);
-                    render();
-                }
-            },
-
-            hasItem(itemId) {
-                return this.inventory.some(item => item.id === itemId);
-            },
-
-            rollDice() {
-                return Math.floor(Math.random() * 6) + 1;
-            },
-
-            rollTwoDice() {
-                return this.rollDice() + this.rollDice();
-            },
-
-            testLuck() {
-                if (!this.stats) return { success: false, newLuck: 0 };
-                const roll = this.rollTwoDice();
-                const success = roll <= this.stats.luck;
-                this.stats.luck = Math.max(0, this.stats.luck - 1);
-                return { success, newLuck: this.stats.luck, roll };
-            },
-
-            // Attack bonus from the best single weapon (weapon bonuses do not stack)
-            calculateAttackBonus() {
-                return this.inventory.reduce((best, item) =>
-                    item.type === 'weapon' ? Math.max(best, this.weaponBonus(item)) : best, 0);
-            },
-
-            // Calculate total defense bonus from armor in inventory
-            calculateDefenseBonus() {
-                return this.inventory.reduce((total, item) => {
-                    if (item.type === 'armor' && item.bonus) {
-                        // Extract numeric bonus from strings like "+1 defense", "+2 armor", etc.
-                        const match = item.bonus.match(/([+-]\d+)/);
-                        if (match) {
-                            return total + parseInt(match[1]);
-                        }
-                    }
-                    return total;
-                }, 0);
-            },
-
-            // Use an item from inventory (e.g., healing potion, ration)
-            useItem(uid) {
-                const item = this.inventory.find(i => i.uid === uid);
-                if (item && item.onUse) {
-                    alert(`You used ${item.name}!${describeEffects(item.onUse)}`);
-                    this.removeItemByUid(uid);
-                    this.applyEffects(item.onUse);
-                    return;
-                }
-                if (!item || !item.restore) return;
-
-                // Parse the restore property (e.g., "+4 stamina", "+2 skill", "+1 luck")
-                const restoreMatch = item.restore.match(/([+-]\d+)\s*(\w+)/);
-                if (restoreMatch) {
-                    const amount = parseInt(restoreMatch[1]);
-                    const stat = restoreMatch[2].toLowerCase();
-
-                    // Apply the restoration
-                    if (stat === 'stamina' || stat === 'skill' || stat === 'luck') {
-                        const changes = {};
-                        changes[stat] = amount;
-                        this.modifyStats(changes);
-
-                        // Show feedback message
-                        alert(`You used ${item.name}! ${amount >= 0 ? '+' : ''}${amount} ${stat.toUpperCase()}`);
-
-                        // Remove consumable items after use
-                        if (item.type === 'potion' || item.type === 'food') {
-                            this.removeItemByUid(uid);
-                        }
-                    }
-                }
-            },
-
-            saveGame() {
-                if (!this.currentBook || !this.stats) return;
-
-                const saveData = {
-                    id: `save_${Date.now()}`,
-                    timestamp: Date.now(),
-                    bookTitle: this.currentBook.title,
-                    bookId: this.currentBook.id,
-                    currentSection: this.currentSection,
-                    stats: this.stats,
-                    inventory: this.inventory,
-                    visitedSections: Array.from(this.visitedSections),
-                    usedOnce: Array.from(this.usedOnce),
-                    rolledOnce: Array.from(this.rolledOnce),
-                    inCombat: this.inCombat,
-                    enemyCurrentStamina: this.enemyCurrentStamina,
-                    currentCombatIndex: this.currentCombatIndex
-                };
-
-                const saves = JSON.parse(localStorage.getItem('ff_saves') || '[]');
-                saves.push(saveData);
-                localStorage.setItem('ff_saves', JSON.stringify(saves));
-                alert('Game saved!');
-            }
-        };
+        function loadPrefs() {
+            try { return Object.assign({ autoRoll: false }, JSON.parse(localStorage.getItem('ff_prefs') || '{}')); }
+            catch (e) { return { autoRoll: false }; }
+        }
+        function savePrefs() {
+            try { localStorage.setItem('ff_prefs', JSON.stringify(prefs)); } catch (e) { /* private window: ignore */ }
+        }
 
         // Escape text coming from books before putting it into innerHTML
         function esc(value) {
@@ -814,21 +461,58 @@
             }[ch]));
         }
 
-        // Render Functions
+        let renderQueued = false;
+        function scheduleRender() {
+            if (renderQueued) return;
+            renderQueued = true;
+            Promise.resolve().then(() => { renderQueued = false; render(); });
+        }
+
+        const ui = {
+            loadBook(book) {
+                notices = [];
+                if (!book) { game = null; render(); return; }
+                game = Engine.create({
+                    book, rng: Math.random, autoRoll: prefs.autoRoll, autoAdvance: false,
+                    onEvent: e => { if (e.type === 'message') notices.push(e.text); else if (e.type === 'change') scheduleRender(); }
+                });
+                render();
+            },
+            start() { notices = []; game.start(); },
+            restart() { notices = []; game.reset(); },
+            choose(id) { notices = []; game.chooseOption(id); },
+            roll() { notices = []; game.doRoll(); },
+            fight() { notices = []; game.startCombat(); },
+            round() { notices = []; game.fightRound(); },
+            flee() { notices = []; game.flee(); },
+            rollPending() { game.resolveRoll(); },
+            advance() { notices = []; game.advanceNow(); },
+            use(uid) { notices = []; game.useItem(uid); },
+            drop(uid) { game.dropItem(uid); },
+            toggleAutoRoll(on) { prefs.autoRoll = !!on; savePrefs(); if (game) game.setAutoRoll(prefs.autoRoll); },
+            save() {
+                if (!game || !game.stats) return;
+                const saves = JSON.parse(localStorage.getItem('ff_saves') || '[]');
+                saves.push({ id: `save_${Date.now()}`, timestamp: Date.now(), bookTitle: game.book.title, bookId: game.book.id, game: game.serialize() });
+                localStorage.setItem('ff_saves', JSON.stringify(saves));
+                notices = ['Game saved.'];
+                render();
+            }
+        };
+
+        // ---- screens ---------------------------------------------------------------------------------
         function render() {
             const app = document.getElementById('app');
-
-            if (!GameState.isGameStarted) {
-                app.innerHTML = renderBookUploader();
-            } else {
-                app.innerHTML = renderGameReader();
-            }
-
+            app.innerHTML = (!game || !game.started) ? renderBookUploader() : renderGameReader();
             attachEventListeners();
         }
 
+        function paragraphs(text) {
+            return String(text || '').split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
+        }
+
         function renderBookUploader() {
-            if (!GameState.currentBook) {
+            if (!game) {
                 return `
                     <div class="card">
                         <h2 class="card-title text-center">Load Adventure Book</h2>
@@ -843,71 +527,68 @@
                             </label>
                         </div>
 
-                        <div class="text-center mt-2">
-                            <button class="button button-secondary" onclick="loadExampleBook()">
-                                Load Example Adventure
-                            </button>
+                        <div class="text-center mt-2 flex flex-gap" style="justify-content: center; flex-wrap: wrap;">
+                            <button class="button button-primary" onclick="loadBookFile('CURSE_OF_HOLLOWS_END.v2.json')">The Curse of Hollow's End</button>
+                            <button class="button button-secondary" onclick="loadBookFile('example-adventure.json')">Load Example Adventure</button>
                         </div>
 
                         <div id="error-message"></div>
                     </div>
                 `;
-            } else {
-                const book = GameState.currentBook;
-                return `
-                    <div class="card">
-                        <h2 class="card-title text-center">Load Adventure Book</h2>
+            }
+            const book = game.book;
+            const intro = game.section(0);
+            return `
+                <div class="card">
+                    <h2 class="card-title text-center">Load Adventure Book</h2>
 
-                        <div class="book-info">
-                            <h3 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem;">${esc(book.title)}</h3>
-                            ${book.author ? `<p style="color: #6b7280; margin-bottom: 0.5rem;">By ${esc(book.author)}</p>` : ''}
-                            ${book.description ? `<p style="margin-bottom: 1rem;">${esc(book.description)}</p>` : ''}
-                            <div style="font-size: 0.875rem; color: #6b7280;">
-                                <p>Starting Stats:</p>
-                                <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
-                                    <li>SKILL: ${book.initialStats.skill}</li>
-                                    <li>STAMINA: ${book.initialStats.stamina}</li>
-                                    <li>LUCK: ${book.initialStats.luck}</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-gap">
-                            <button class="button button-primary" style="flex: 1;" onclick="GameState.startGame()">
-                                Start Adventure
-                            </button>
-                            <button class="button button-gray" onclick="GameState.loadBook(null); render();">
-                                Choose Different Book
-                            </button>
+                    <div class="book-info">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem;">${esc(book.title)}</h3>
+                        ${book.author ? `<p style="color: #6b7280; margin-bottom: 0.5rem;">By ${esc(book.author)}</p>` : ''}
+                        ${book.description ? `<p style="margin-bottom: 1rem;">${esc(book.description)}</p>` : ''}
+                        ${intro ? `<div class="section-text">${paragraphs(intro.text).map(p => `<p>${esc(p)}</p>`).join('')}</div>` : ''}
+                        <div style="font-size: 0.875rem; color: #6b7280;">
+                            <p>Starting Stats:</p>
+                            <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                <li>SKILL: ${book.initialStats.skill}</li>
+                                <li>STAMINA: ${book.initialStats.stamina}</li>
+                                <li>LUCK: ${book.initialStats.luck}</li>
+                            </ul>
                         </div>
                     </div>
-                `;
-            }
+
+                    <div class="flex flex-gap">
+                        <button class="button button-primary" style="flex: 1;" onclick="ui.start()">Start Adventure</button>
+                        <button class="button button-gray" onclick="ui.loadBook(null)">Choose Different Book</button>
+                    </div>
+                </div>
+            `;
         }
 
         function renderGameReader() {
-            const section = GameState.currentBook.sections.find(s => s.id === GameState.currentSection);
+            if (game.isGameOver) return renderGameOver();
+            const section = game.section();
             if (!section) {
-                return `<div class="card"><p class="text-center" style="color: #ef4444;">Error: Section ${GameState.currentSection} not found</p></div>`;
+                return `<div class="card"><p class="text-center" style="color: #ef4444;">Error: Section ${esc(game.currentSection)} not found</p></div>`;
             }
-
-            if (GameState.isGameOver) {
-                return renderGameOver();
-            }
-
             return `
                 <div class="card">
-                    <div class="flex flex-between mb-2">
-                        <h2 class="card-title" style="margin: 0;">${esc(GameState.currentBook.title)}</h2>
-                        <div class="flex flex-gap">
-                            <button class="button button-secondary" onclick="GameState.saveGame()">Save Game</button>
-                            <button class="button button-danger" onclick="if(confirm('Restart the adventure?')) GameState.resetGame()">Restart</button>
+                    <div class="flex flex-between mb-2" style="flex-wrap: wrap; gap: 0.75rem;">
+                        <h2 class="card-title" style="margin: 0;">${esc(game.book.title)}</h2>
+                        <div class="flex flex-gap" style="align-items: center; flex-wrap: wrap;">
+                            <label class="auto-roll" title="Roll the dice for me">
+                                <input type="checkbox" ${prefs.autoRoll ? 'checked' : ''} onchange="ui.toggleAutoRoll(this.checked)"> Auto-roll dice
+                            </label>
+                            <button class="button button-secondary" onclick="ui.save()">Save Game</button>
+                            <button class="button button-danger" onclick="if(confirm('Restart the adventure?')) ui.restart()">Restart</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-3">
                     <div style="grid-column: span 2;">
+                        ${renderNotices()}
+                        ${renderPendingRoll()}
                         ${renderSection(section)}
                         ${renderMapTracker()}
                     </div>
@@ -920,250 +601,184 @@
         }
 
         function renderGameOver() {
-            const won = GameState.gameOverType === 'victory';
             return `
                 <div class="card text-center">
-                    <div class="${won ? 'ending-victory' : 'ending-defeat'}">${won ? '🎉 Victory!' : '💀 You have died...'}</div>
-                    <p class="mb-2" style="color: #6b7280;">${won ? 'You completed the adventure.' : 'Your STAMINA has reached 0. Your adventure ends here.'}</p>
-                    <button class="button button-danger" onclick="GameState.resetGame()">Return to Start</button>
+                    <div class="ending-defeat">💀 You have died...</div>
+                    <p class="mb-2" style="color: #6b7280;">Your STAMINA has reached 0. Your adventure ends here.</p>
+                    <button class="button button-danger" onclick="ui.restart()">Return to Start</button>
                 </div>
                 <div class="grid grid-cols-3">
-                    <div style="grid-column: span 2;">${renderMapTracker()}</div>
+                    <div style="grid-column: span 2;">${renderNotices()}${renderMapTracker()}</div>
                     <div>${renderCharacterSheet()}</div>
                 </div>
             `;
         }
 
+        function renderNotices() {
+            if (!notices.length) return '';
+            return `<div class="notice" role="status">${notices.map(n => `<p>${esc(n)}</p>`).join('')}</div>`;
+        }
+
+        // The dice the player is asked to roll (auto-roll off)
+        function renderPendingRoll() {
+            const req = game.pendingRoll;
+            if (!req) return '';
+            const dice = req.dice === '2d6' ? '🎲🎲' : '🎲';
+            return `
+                <div class="pending-roll" role="alert">
+                    <div class="pending-dice">${dice}</div>
+                    <div>
+                        <strong>${esc(req.label || 'Roll the dice')}</strong>
+                        <div class="small-note">${req.dice === '2d6' ? 'Roll two dice' : 'Roll one die'}</div>
+                    </div>
+                    <button class="button button-primary" onclick="ui.rollPending()">Roll</button>
+                </div>`;
+        }
+
+        // ---- a section: text with the buttons where the book put them ----------------------------------
+        function optionButton(state, inline) {
+            const o = state.option;
+            const locked = !state.enabled;
+            const hint = locked ? ` <span class="lock-hint">(${esc(Engine.describeConditions(o.conditions || {}))})</span>` : '';
+            return `<button class="${inline ? 'choice-inline' : 'choice-button'}" data-opt="${esc(o.id)}" ${locked ? 'disabled' : ''}>${esc(o.label)}${hint}</button>`;
+        }
+
+        function rollWidget(section) {
+            if (!game.rollPending(section) || game.pending) return '';
+            const r = section.roll;
+            const label = r.label || (r.kind === 'luck' ? 'Test your Luck!' : 'Roll one die');
+            const go = r.kind === 'luck' ? '🍀 Test your Luck' : '🎲 Roll the die';
+            return `<div class="roll-box"><strong>${esc(label)}</strong><button class="button button-warning" onclick="ui.roll()">${go}</button></div>`;
+        }
+
+        // "{{opt:ID}}" becomes that option's button, "{{roll}}" the dice. Anything the text does not mention is listed under it.
+        function renderText(section) {
+            const states = new Map(game.optionStates(section).map(s => [s.option.id, s]));
+            const used = new Set();
+            let rollPlaced = false;
+            const TOKEN = /\{\{(opt:([a-z0-9-]+)|roll)\}\}/g;
+            const html = paragraphs(section.text).map(p => {
+                if (/^(\{\{opt:[a-z0-9-]+\}\}\s*)+$/.test(p)) {                    // a menu: one option per line
+                    const items = [...p.matchAll(/\{\{opt:([a-z0-9-]+)\}\}/g)].map(m => m[1]);
+                    items.forEach(id => used.add(id));
+                    const buttons = items.map(id => states.get(id)).filter(Boolean).map(s => optionButton(s, false)).join('');
+                    return buttons ? `<div class="opt-list">${buttons}</div>` : '';
+                }
+                let out = '', last = 0, any = false, visible = false;
+                for (const m of p.matchAll(TOKEN)) {
+                    out += esc(p.slice(last, m.index));
+                    last = m.index + m[0].length;
+                    any = true;
+                    if (m[1] === 'roll') { rollPlaced = true; const w = rollWidget(section); if (w) { out += `</p>${w}<p>`; visible = true; } }
+                    else { used.add(m[2]); const s = states.get(m[2]); if (s) { out += optionButton(s, true); visible = true; } }
+                }
+                out += esc(p.slice(last));
+                const textOnly = p.replace(TOKEN, '').trim();
+                if (any && !visible && !textOnly) return '';
+                return `<p>${out}</p>`.replace(/<p><\/p>/g, '');
+            }).join('');
+            const rest = [...states.values()].filter(s => !used.has(s.option.id));
+            const extraRoll = !rollPlaced ? rollWidget(section) : '';
+            return `<div class="section-text">${html}</div>${extraRoll}${rest.length ? `<div class="opt-list">${rest.map(s => optionButton(s, false)).join('')}</div>` : ''}`;
+        }
+
         function renderSection(section) {
             let html = `<div class="card">`;
-
-            // Section 0 is special - it's the intro
-            const isIntro = section.id === 0;
-
             html += `
                 <div class="flex flex-between mb-2">
-                    <h3 style="font-size: 1.5rem; font-weight: bold; color: #78350f;">${isIntro ? 'Introduction' : `Section ${section.id}`}</h3>
+                    <h3 style="font-size: 1.5rem; font-weight: bold; color: #78350f;">Section ${section.id}</h3>
                     ${section.title ? `<span style="font-size: 1.125rem; color: #6b7280;">${esc(section.title)}</span>` : ''}
                 </div>
-                <div class="section-text">${esc(section.text)}</div>
+                ${renderText(section)}
             `;
 
-            // If this is section 0 (intro), show "Start Adventure" button
-            if (isIntro) {
-                html += `
-                    <div style="margin-top: 2rem; padding: 1.5rem; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 0.5rem; border: 2px solid #d97706;">
-                        <h4 style="font-weight: bold; margin-bottom: 0.5rem; color: #78350f;">Ready to begin your adventure?</h4>
-                        <button class="button button-primary" onclick="GameState.startGame()" style="font-size: 1.125rem; padding: 0.75rem 1.5rem;">
-                            ⚔️ Start Adventure
-                        </button>
-                    </div>
-                `;
-                html += `</div>`;
-                return html;
+            if (section.ending) {
+                const t = section.ending.type;
+                html += `<div class="${t === 'victory' ? 'ending-victory' : t === 'defeat' ? 'ending-defeat' : 'ending-neutral'}">${t === 'victory' ? '🎉 Victory!' : t === 'defeat' ? '💀 The End' : 'The End'}</div>`;
             }
 
-            if (section.isEnding) {
-                const endingClass = section.endingType === 'victory' ? 'ending-victory' :
-                                   section.endingType === 'defeat' ? 'ending-defeat' : 'ending-neutral';
-                const endingText = section.endingType === 'victory' ? '🎉 Victory!' :
-                                  section.endingType === 'defeat' ? '💀 The End' : 'The End';
-                html += `<div class="${endingClass}">${endingText}</div>`;
+            if (section.combat) {
+                if (game.inCombat) html += renderCombat();
+                else if (game.advance || game.combatDone) html += renderCombatResult();
+                else html += renderCombatStart(section);
             }
-
-            if (section.combat && !GameState.inCombat && !GameState.combatDone) {
-                html += renderCombatStart(section.combat);
-            } else if (GameState.inCombat && section.combat) {
-                html += renderCombat(section.combat);
-            }
-
-            if (section.choices && section.choices.length > 0 && (!section.combat || GameState.combatDone) && choicesUnlocked(section)) {
-                html += `<div class="mt-2"><h4 style="font-weight: 600; margin-bottom: 1rem;">What do you do?</h4>`;
-                section.choices.forEach((choice, index) => {
-                    // "If you don't have X" branches only appear when they apply
-                    // One-time decisions (e.g. the vial in section 35) disappear once any of them was taken
-                    if (choice.once && GameState.usedOnce.has(section.id)) return;
-                    if (choice.conditions && hasNegativeCondition(choice.conditions) &&
-                        !canMakeChoice({ conditions: stripPositive(choice.conditions) })) return;
-                    const disabled = !canMakeChoice(choice);
-                    html += `
-                        <button class="choice-button" onclick="handleChoice(${Number(choice.targetSection)}, ${index})" ${disabled ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>
-                            ${esc(choice.text)}
-                            ${choice.conditions && disabled ? `<span style="font-size: 0.875rem; color: #6b7280;"> (${esc(describeConditions(choice.conditions))})</span>` : ''}
-                        </button>
-                    `;
-                });
-                html += `</div>`;
-            }
-
-            if (rollPending(section, 'diceRoll')) {
-                html += `<div style="background: #e0f2fe; padding: 1rem; border-radius: 0.5rem; margin-top: 1rem;">
-                    <h4 style="font-weight: bold; margin-bottom: 0.5rem;">${esc(section.diceRoll.label || 'Roll one die')}</h4>
-                    <button class="button button-primary" onclick="handleDiceRoll(${Number(section.id)})">🎲 Roll the Die</button>
-                </div>`;
-            }
-
-            if (rollPending(section, 'testLuck')) {
-                html += `<div style="background: #f3e8ff; padding: 1rem; border-radius: 0.5rem; margin-top: 1rem;">
-                    <h4 style="font-weight: bold; margin-bottom: 0.5rem;">${esc(section.testLuck.label || 'Test Your Luck!')}</h4>
-                    <button class="button button-warning" onclick="handleLuckTest(${Number(section.id)})">Roll the Dice</button>
-                </div>`;
-            }
-
-            html += `</div>`;
-            return html;
+            return html + `</div>`;
         }
 
-        function renderCombatStart(combat) {
-            // Handle both single combat and arrays of combats
-            const combats = Array.isArray(combat) ? combat : [combat];
-            const currentCombat = combats[GameState.currentCombatIndex] || combats[0];
+        function enemyLine(c) { return `${esc(c.enemyName)} - SKILL ${c.enemySkill}, STAMINA ${c.enemyStamina}`; }
 
+        function renderCombatStart(section) {
+            const list = Engine.enemiesOf(section);
+            const current = list[game.currentCombatIndex] || list[0];
             let html = `
-                <div style="background: #fee2e2; border: 2px solid #ef4444; padding: 1rem; border-radius: 0.5rem; margin-top: 1rem;">
-                    <h3 style="font-size: 1.5rem; font-weight: bold; color: #dc2626; text-align: center; margin-bottom: 1rem;">
-                        ⚔️ Combat Ahead!
-                    </h3>`;
-
-            // Show all enemies if multiple
-            if (combats.length > 1) {
-                html += `<p style="text-align: center; font-size: 0.875rem; color: #6b7280; margin-bottom: 0.5rem;">
-                    Multiple Enemies! Fight them one by one.
-                </p>`;
-                combats.forEach((c, idx) => {
-                    const isCurrent = idx === GameState.currentCombatIndex;
-                    html += `<p style="text-align: center; font-size: 1rem; margin-bottom: 0.5rem; ${isCurrent ? 'font-weight: bold; color: #dc2626;' : 'color: #9ca3af;'}">
-                        ${isCurrent ? '→ ' : ''}${esc(c.enemyName)} - SKILL ${c.enemySkill}, STAMINA ${c.enemyStamina}
-                    </p>`;
+                <div class="combat-box">
+                    <h3 class="combat-title">⚔️ Combat Ahead!</h3>`;
+            if (list.length > 1) {
+                html += `<p class="combat-sub">Multiple enemies! Fight them one by one.</p>`;
+                list.forEach((c, i) => {
+                    html += `<p class="combat-enemy" style="${i === game.currentCombatIndex ? 'font-weight: bold; color: #dc2626;' : 'color: #9ca3af;'}">${i === game.currentCombatIndex ? '→ ' : ''}${enemyLine(c)}</p>`;
                 });
             } else {
-                html += `<p style="text-align: center; font-size: 1.125rem; margin-bottom: 1rem;">
-                    ${esc(currentCombat.enemyName)} - SKILL ${currentCombat.enemySkill}, STAMINA ${currentCombat.enemyStamina}
-                </p>`;
+                html += `<p class="combat-enemy" style="font-size: 1.125rem;">${enemyLine(current)}</p>`;
             }
-            html += renderCombatNotes(currentCombat);
-
-            html += `
-                    <button class="button button-danger" style="width: 100%;" onclick="startCombat(${Number(currentCombat.enemyStamina)})">
-                        Fight!
-                    </button>
-                </div>
-            `;
+            html += renderCombatNotes(current);
+            html += `<button class="button button-danger" style="width: 100%;" onclick="ui.fight()">Fight!</button></div>`;
             return html;
-        }
-
-        // Effects that trigger when an enemy's fight begins (e.g. a wail: Test Luck or lose SKILL)
-        function applyCombatStart(enemy) {
-            const os = enemy.onStart;
-            if (!os) return;
-            const loss = os.skillLoss || 1;
-            if (!os.luckTest) {
-                // unconditional penalty for this fight (e.g. fighting underwater)
-                GameState.tempSkillPenalty += loss;
-                GameState.combatLog.push(`🌊 ${os.text || 'Difficult conditions'}: -${loss} SKILL for this combat. (SKILL now ${Math.max(0, GameState.stats.skill - GameState.tempSkillPenalty)})`);
-                return;
-            }
-            const lt = GameState.testLuck();
-            if (lt.success) {
-                GameState.combatLog.push(`🍀 Test your Luck (rolled ${lt.roll}): Lucky! ${enemy.enemyName}'s power does not touch you.`);
-            } else {
-                GameState.tempSkillPenalty += loss;
-                GameState.combatLog.push(`😱 Test your Luck (rolled ${lt.roll}): Unlucky! You lose ${loss} SKILL for the entire battle. (SKILL now ${Math.max(0, GameState.stats.skill - GameState.tempSkillPenalty)})`);
-            }
-        }
-
-        // One line per special rule so the player knows what they are up against
-        function combatNotes(c) {
-            const notes = [];
-            if (c.note) notes.push(c.note);
-            if (Array.isArray(c.effectiveWeapons)) {
-                const list = c.effectiveWeapons.join(' or ');
-                notes.push(c.normalWeaponDamage === 0
-                    ? `Immune to any weapon that is not ${list}`
-                    : `Weapons that are not ${list} deal only ${c.normalWeaponDamage ?? 2} damage`);
-            }
-            if (c.weakTo) notes.push(`${c.weakTo.property} weapons deal ${c.weakTo.damage} damage`);
-            if (c.onStart && c.onStart.luckTest) notes.push(`At the start of the fight, Test Luck or lose ${c.onStart.skillLoss || 1} SKILL for the battle`);
-            if (c.onStart && !c.onStart.luckTest) notes.push(`You fight at -${c.onStart.skillLoss || 1} SKILL${c.onStart.text ? ' (' + c.onStart.text.toLowerCase() + ')' : ''}`);
-            if (c.onVictoryEffects) notes.push(`Winning costs you:${describeEffects(c.onVictoryEffects)}`);
-            if (c.onWound) {
-                notes.push(c.onWound.luckTest ? `Each wound: Test Luck or lose ${c.onWound.skillLoss || 1} SKILL for the battle`
-                    : `Each wound permanently drains ${c.onWound.skillLoss || 1} SKILL`);
-            }
-            if (Array.isArray(c.reviveOn)) notes.push(`When reduced to 0 STAMINA, roll a die: on ${c.reviveOn.join(' or ')} it survives with 1 STAMINA`);
-            return notes;
         }
 
         function renderCombatNotes(c) {
-            const notes = combatNotes(c);
+            const notes = Engine.combatNotes(c);
             if (!notes.length) return '';
-            return `<ul style="margin: 0.5rem auto 1rem; max-width: 32rem; font-size: 0.875rem; color: #7f1d1d; list-style: none; text-align: center;">
-                ${notes.map(n => `<li>⚠️ ${esc(n)}</li>`).join('')}</ul>`;
+            return `<ul class="combat-notes">${notes.map(n => `<li>⚠️ ${esc(n)}</li>`).join('')}</ul>`;
         }
 
-        // Flee is offered if the combat allows it and any STAMINA threshold is met
-        function canFleeNow(c) {
-            if (!c.canFlee) return false;
-            if (c.fleeMaxStamina != null && GameState.stats.stamina > c.fleeMaxStamina) return false;
-            return true;
-        }
-
-        function renderCombat(combat) {
-            // Handle both single combat and arrays of combats
-            const combats = Array.isArray(combat) ? combat : [combat];
-            const currentCombat = combats[GameState.currentCombatIndex] || combats[0];
-
+        function renderCombat() {
+            const section = game.section();
+            const list = Engine.enemiesOf(section);
+            const c = game.currentEnemy();
+            const low = game.enemyCurrentStamina <= c.enemyStamina / 3;
             return `
-                <div style="background: #fee2e2; border: 2px solid #ef4444; padding: 1.5rem; border-radius: 0.5rem; margin-top: 1rem;">
-                    <h3 style="font-size: 1.5rem; font-weight: bold; color: #dc2626; text-align: center; margin-bottom: 0.5rem;">
-                        ⚔️ Combat!
-                    </h3>
-                    ${combats.length > 1 ? `<p style="text-align: center; font-size: 0.875rem; color: #6b7280;">Enemy ${GameState.currentCombatIndex + 1} of ${combats.length}</p>` : ''}
-                    <p style="text-align: center; font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">
-                        ${esc(currentCombat.enemyName)}
-                    </p>
+                <div class="combat-box">
+                    <h3 class="combat-title">⚔️ Combat!</h3>
+                    ${list.length > 1 ? `<p class="combat-sub">Enemy ${game.currentCombatIndex + 1} of ${list.length}</p>` : ''}
+                    <p style="text-align: center; font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">${esc(c.enemyName)}</p>
                     <div class="flex" style="justify-content: center; gap: 2rem; margin-bottom: 1rem;">
-                        <div class="text-center">
-                            <p style="font-size: 0.875rem; color: #6b7280;">SKILL</p>
-                            <p style="font-size: 1.5rem; font-weight: bold;">${currentCombat.enemySkill}</p>
-                        </div>
-                        <div class="text-center">
-                            <p style="font-size: 0.875rem; color: #6b7280;">STAMINA</p>
-                            <p style="font-size: 1.5rem; font-weight: bold; color: ${GameState.enemyCurrentStamina <= currentCombat.enemyStamina / 3 ? '#ef4444' : '#1f2937'};">
-                                ${GameState.enemyCurrentStamina}
-                            </p>
-                        </div>
+                        <div class="text-center"><p class="small-note">SKILL</p><p style="font-size: 1.5rem; font-weight: bold;">${c.enemySkill}</p></div>
+                        <div class="text-center"><p class="small-note">STAMINA</p><p style="font-size: 1.5rem; font-weight: bold; color: ${low ? '#ef4444' : '#1f2937'};">${game.enemyCurrentStamina}</p></div>
                     </div>
-
-                    ${renderCombatNotes(currentCombat)}
-                    <div class="combat-log">
-                        ${GameState.combatLog.map(log => `<div>${esc(log)}</div>`).join('')}
-                    </div>
-
+                    ${renderCombatNotes(c)}
+                    <div class="combat-log" aria-live="polite">${game.combatLog.map(l => `<div>${esc(l)}</div>`).join('')}</div>
                     <div class="flex flex-gap">
-                        <button class="button button-danger" style="flex: 1;" onclick="fightRound()">
-                            Fight Round
-                        </button>
-                        ${canFleeNow(currentCombat) ? `<button class="button button-warning" onclick="fleeCombat(${Number(currentCombat.fleeSection)})">${currentCombat.fleeTestLuck ? 'Flee (Test Luck)' : 'Flee'}</button>` : ''}
+                        <button class="button button-danger" style="flex: 1;" onclick="ui.round()" ${game.pending ? 'disabled' : ''}>Fight Round</button>
+                        ${game.canFleeNow(c) ? `<button class="button button-warning" onclick="ui.flee()" ${game.pending ? 'disabled' : ''}>${c.fleeTestLuck ? 'Flee (Test Luck)' : 'Flee'}</button>` : ''}
                     </div>
-                </div>
-            `;
+                </div>`;
         }
 
-        function renderCharacterSheet() {
-            if (!GameState.stats) return '';
+        // After the fight: what happened, then Continue (or the section's own options)
+        function renderCombatResult() {
+            return `
+                <div class="combat-box">
+                    <div class="combat-log" aria-live="polite">${game.combatLog.map(l => `<div>${esc(l)}</div>`).join('')}</div>
+                    ${game.advance ? `<button class="button button-primary" style="width: 100%; margin-top: 0.75rem;" onclick="ui.advance()">Continue</button>` : ''}
+                </div>`;
+        }
 
+        // ---- the side panels -------------------------------------------------------------------------
+        function renderCharacterSheet() {
+            if (!game.stats) return '';
+            const st = game.stats;
             return `
                 <div class="card">
-                    <h3 class="card-title" style="border-bottom: 2px solid #f59e0b; padding-bottom: 0.5rem;">
-                        Character Stats
-                    </h3>
-                    ${renderStatBar('SKILL', GameState.stats.skill, GameState.stats.initialSkill)}
-                    ${renderStatBar('STAMINA', GameState.stats.stamina, GameState.stats.initialStamina)}
-                    ${renderStatBar('LUCK', GameState.stats.luck, GameState.stats.initialLuck)}
+                    <h3 class="card-title" style="border-bottom: 2px solid #f59e0b; padding-bottom: 0.5rem;">Character Stats</h3>
+                    ${renderStatBar('SKILL', st.skill, st.initialSkill)}
+                    ${renderStatBar('STAMINA', st.stamina, st.initialStamina)}
+                    ${renderStatBar('LUCK', st.luck, st.initialLuck)}
+                    ${game.tempSkillPenalty ? `<p class="small-note" style="color: #b91c1c;">−${game.tempSkillPenalty} SKILL for this fight</p>` : ''}
                     <div style="margin-top: 1rem; padding: 0.75rem; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 0.5rem; border: 2px solid #d97706;">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <span style="font-weight: 600; color: #78350f;">💰 Gold Pieces:</span>
-                            <span style="font-size: 1.25rem; font-weight: bold; color: #d97706;">${GameState.stats.gold || 0} GP</span>
+                            <span style="font-size: 1.25rem; font-weight: bold; color: #d97706;">${st.gold || 0} GP</span>
                         </div>
                     </div>
                 </div>
@@ -1174,110 +789,69 @@
             const percentage = initial > 0 ? Math.min(100, Math.max(0, (current / initial) * 100)) : 0;
             const colorClass = percentage > 66 ? 'high' : percentage > 33 ? 'medium' : 'low';
             const color = percentage > 66 ? '#10b981' : percentage > 33 ? '#f59e0b' : '#ef4444';
-
             return `
                 <div class="stat-bar">
-                    <div class="stat-label">
-                        <span>${label}</span>
-                        <span style="color: ${color}; font-size: 1.125rem;">${current} / ${initial}</span>
-                    </div>
-                    <div class="stat-progress">
-                        <div class="stat-fill ${colorClass}" style="width: ${percentage}%"></div>
-                    </div>
+                    <div class="stat-label"><span>${label}</span><span style="color: ${color}; font-size: 1.125rem;">${current} / ${initial}</span></div>
+                    <div class="stat-progress"><div class="stat-fill ${colorClass}" style="width: ${percentage}%"></div></div>
                 </div>
             `;
         }
 
         function renderInventory() {
-            const icons = {
-                weapon: '⚔️',
-                armor: '🛡️',
-                potion: '🧪',
-                food: '🍞',
-                treasure: '💎',
-                key: '🔑',
-                other: '📦'
-            };
-
-            let html = `
-                <div class="card">
-                    <h3 class="card-title" style="border-bottom: 2px solid #f59e0b; padding-bottom: 0.5rem;">
-                        Inventory
-                    </h3>
-            `;
-
-            if (GameState.inventory.length === 0) {
+            const icons = { weapon: '⚔️', armor: '🛡️', potion: '🧪', food: '🍞', treasure: '💎', key: '🔑', other: '📦' };
+            let html = `<div class="card"><h3 class="card-title" style="border-bottom: 2px solid #f59e0b; padding-bottom: 0.5rem;">Inventory</h3>`;
+            if (game.inventory.length === 0) {
                 html += `<p class="text-center" style="color: #6b7280; padding: 2rem 0;">Your inventory is empty</p>`;
             } else {
-                GameState.inventory.forEach((item, index) => {
-                    const itemClass = `item-${item.type || 'other'}`;
-                    const isUsable = !!(item.restore || item.onUse);
-
+                game.inventory.forEach(item => {
+                    const usable = !!(item.restore || item.onUse);
                     html += `
-                        <div class="inventory-item ${itemClass}">
+                        <div class="inventory-item item-${esc(item.type || 'other')}">
                             <div style="flex: 1;">
                                 <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
                                     <span style="font-size: 1.5rem;">${icons[item.type] || icons.other}</span>
                                     <strong>${esc(item.name)}</strong>
                                 </div>
-                                ${item.description ? `<div style="font-size: 0.875rem; color: #6b7280; margin-left: 2rem;">${esc(item.description)}</div>` : ''}
+                                ${item.description ? `<div class="small-note" style="margin-left: 2rem;">${esc(item.description)}</div>` : ''}
                                 ${item.restore ? `<div style="font-size: 0.75rem; color: #059669; margin-left: 2rem; margin-top: 0.25rem;">✨ ${esc(item.restore)}</div>` : ''}
                                 ${item.properties && item.properties.length ? `<div style="font-size: 0.75rem; color: #b45309; margin-left: 2rem; margin-top: 0.25rem;">🏷️ ${item.properties.map(esc).join(', ')}</div>` : ''}
                                 ${item.bonus ? `<div style="font-size: 0.75rem; color: #7c3aed; margin-left: 2rem; margin-top: 0.25rem;">⚡ ${esc(item.bonus)}</div>` : ''}
                             </div>
                             <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                ${isUsable ? `<button class="button button-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;" onclick="GameState.useItem(${item.uid})">Use</button>` : ''}
-                                <span class="remove-item" onclick="GameState.removeItemByUid(${item.uid})" title="Remove item">✕</span>
+                                ${usable ? `<button class="button button-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;" onclick="ui.use(${Number(item.uid)})">Use</button>` : ''}
+                                <span class="remove-item" onclick="ui.drop(${Number(item.uid)})" title="Remove item">✕</span>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 });
             }
-
-            html += `
-                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb; font-size: 0.875rem; color: #6b7280;">
-                        Items: ${GameState.inventory.length}
-                    </div>
-                </div>
-            `;
-
+            html += `<div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;" class="small-note">Items: ${game.inventory.length}</div></div>`;
             return html;
         }
 
         function renderMapTracker() {
-            const sorted = Array.from(GameState.visitedSections).sort((a, b) => a - b);
+            const sorted = Array.from(game.visited).sort((a, b) => a - b);
             const recent = sorted.slice(-10);
-
             return `
                 <div class="card">
-                    <h3 class="card-title" style="border-bottom: 2px solid #f59e0b; padding-bottom: 0.5rem;">
-                        Journey Map
-                    </h3>
+                    <h3 class="card-title" style="border-bottom: 2px solid #f59e0b; padding-bottom: 0.5rem;">Journey Map</h3>
                     <div class="mb-2">
-                        <p style="font-size: 0.875rem; color: #6b7280;">Sections visited: ${GameState.visitedSections.size}</p>
-                        <p style="font-size: 0.875rem; color: #6b7280;">Current: Section ${GameState.currentSection}</p>
+                        <p class="small-note">Sections visited: ${game.visited.size}</p>
+                        <p class="small-note">Current: Section ${game.currentSection}</p>
                     </div>
                     <div style="margin-top: 1rem;">
-                        <h4 style="font-size: 0.875rem; font-weight: 600; color: #6b7280; margin-bottom: 0.5rem;">Recent Path:</h4>
+                        <h4 class="small-note" style="font-weight: 600; margin-bottom: 0.5rem;">Recent Path:</h4>
                         <div style="display: flex; flex-wrap: wrap; gap: 0.25rem; align-items: center;">
-                            ${recent.map((id, index) => `
-                                <span class="map-section ${id === GameState.currentSection ? 'current' : 'visited'}">
-                                    ${id}
-                                </span>
-                                ${index < recent.length - 1 ? '<span style="color: #9ca3af;">→</span>' : ''}
-                            `).join('')}
+                            ${recent.map((id, i) => `<span class="map-section ${id === game.currentSection ? 'current' : 'visited'}">${id}</span>${i < recent.length - 1 ? '<span style="color: #9ca3af;">→</span>' : ''}`).join('')}
                         </div>
                     </div>
                 </div>
             `;
         }
 
-        // Event Handlers
+        // ---- events ---------------------------------------------------------------------------------
         function attachEventListeners() {
             const fileInput = document.getElementById('file-input');
-            if (fileInput) {
-                fileInput.addEventListener('change', handleFileSelect);
-            }
+            if (fileInput) fileInput.addEventListener('change', handleFileSelect);
 
             const uploadArea = document.getElementById('upload-area');
             if (uploadArea) {
@@ -1286,6 +860,22 @@
                 uploadArea.addEventListener('dragleave', handleDragLeave);
                 uploadArea.addEventListener('drop', handleDrop);
             }
+        }
+
+        // option buttons carry the option id in data-opt (never in inline script)
+        document.getElementById('app').addEventListener('click', e => {
+            const b = e.target.closest('[data-opt]');
+            if (b && !b.disabled) ui.choose(b.getAttribute('data-opt'));
+        });
+
+        function loadBookFile(name) {
+            fetch(name)
+                .then(res => res.json())
+                .then(data => {
+                    if (validateBook(data)) ui.loadBook(data);
+                    else showError('Book has an invalid format');
+                })
+                .catch(() => showError(`Could not load ${name}. Make sure it is in the same directory as this HTML file.`));
         }
 
         function handleDrag(e) {
@@ -1343,7 +933,7 @@
                     try {
                         const data = JSON.parse(e.target.result);
                         if (validateBook(data)) {
-                            GameState.loadBook(data);
+                            ui.loadBook(data);
                             resolve();
                         } else {
                             showError('Invalid book format. Please check the JSON structure.');
@@ -1367,7 +957,7 @@
                         const text = e.target.result;
                         const book = parseTextAdventure(text);
                         if (validateBook(book)) {
-                            GameState.loadBook(book);
+                            ui.loadBook(book);
                             resolve();
                         } else {
                             showError('Could not parse adventure from text file. Please check the format.');
@@ -1427,7 +1017,7 @@
             try {
                 const data = JSON.parse(fullText);
                 if (validateBook(data)) {
-                    GameState.loadBook(data);
+                    ui.loadBook(data);
                     return;
                 }
             } catch (e) {
@@ -1437,7 +1027,7 @@
             // Parse as text adventure
             const book = parseTextAdventure(fullText);
             if (validateBook(book)) {
-                GameState.loadBook(book);
+                ui.loadBook(book);
             } else {
                 showError('Could not parse adventure from PDF. Please ensure it follows the text format.');
                 throw new Error('Invalid format');
@@ -2526,360 +2116,6 @@
                     errorDiv.innerHTML = '';
                 }, 5000);
             }
-        }
-
-        function loadExampleBook() {
-            fetch('example-adventure.json')
-                .then(res => res.json())
-                .then(data => {
-                    if (validateBook(data)) {
-                        GameState.loadBook(data);
-                    } else {
-                        showError('Example book has invalid format');
-                    }
-                })
-                .catch(err => {
-                    showError('Could not load example book. Make sure example-adventure.json is in the same directory as this HTML file.');
-                });
-        }
-
-        // "Brass Key" from the item id "brass-key"
-        function prettyItemId(id) {
-            return String(id).split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-        }
-
-        // "If you don't have X" style conditions: the choice is hidden rather than shown locked
-        function hasNegativeCondition(c) {
-            return !!(c.requiresNoItem || c.requiresMissingAny);
-        }
-        function stripPositive(c) {
-            return { requiresNoItem: c.requiresNoItem, requiresMissingAny: c.requiresMissingAny };
-        }
-
-        function describeConditions(c) {
-            const parts = [];
-            const names = v => [].concat(v).map(prettyItemId).join(' and ');
-            if (c.requiresItem) parts.push(`requires ${names(c.requiresItem)}`);
-            if (c.requiresNoItem) parts.push(`only without ${names(c.requiresNoItem)}`);
-            if (c.requiresMissingAny) parts.push(`only if you lack ${[].concat(c.requiresMissingAny).map(prettyItemId).join(' or ')}`);
-            if (c.requiresMinSkill) parts.push(`requires SKILL ${c.requiresMinSkill}+`);
-            if (c.requiresMinStamina) parts.push(`requires STAMINA ${c.requiresMinStamina}+`);
-            if (c.requiresMinLuck) parts.push(`requires LUCK ${c.requiresMinLuck}+`);
-            return parts.join(', ') || 'requires conditions';
-        }
-
-        function canMakeChoice(choice) {
-            if (!choice.conditions) return true;
-
-            const c = choice.conditions;
-            if (!GameState.stats) return false;
-            // requiresItem: one id or a list - you need all of them
-            if ([].concat(c.requiresItem || []).some(id => !GameState.hasItem(id))) return false;
-            // requiresNoItem: one id or a list - you must own none of them
-            if ([].concat(c.requiresNoItem || []).some(id => GameState.hasItem(id))) return false;
-            // requiresMissingAny: a list - you must be missing at least one ("if you lack either")
-            if (c.requiresMissingAny && !c.requiresMissingAny.some(id => !GameState.hasItem(id))) return false;
-            if (c.requiresMinSkill && GameState.stats.skill < c.requiresMinSkill) return false;
-            if (c.requiresMinStamina && GameState.stats.stamina < c.requiresMinStamina) return false;
-            if (c.requiresMinLuck && GameState.stats.luck < c.requiresMinLuck) return false;
-
-            return true;
-        }
-
-        function handleChoice(targetSection, choiceIndex) {
-            const section = GameState.currentBook.sections.find(s => s.id === GameState.currentSection);
-            const choice = section.choices[choiceIndex];
-
-            if (!canMakeChoice(choice)) {
-                alert('You do not meet the requirements for this choice.');
-                return;
-            }
-
-            // Effects of the choice itself (drinking a vial, taking an item...)
-            if (choice.effects) GameState.applyEffects(choice.effects);
-            if (choice.once) GameState.usedOnce.add(section.id);
-            if (GameState.isGameOver) return;
-
-            // Section effects are applied by goToSection (first visit only)
-            GameState.goToSection(targetSection);
-        }
-
-        // Is a roll still to be made in this section? kind: 'diceRoll' or 'testLuck'.
-        // Not once it was made on this visit, nor (for "once" rolls) on an earlier visit this game.
-        function rollPending(section, kind) {
-            const r = section[kind];
-            if (!r || GameState.rollResolved) return false;
-            if (r.once && GameState.rolledOnce.has(section.id)) return false;
-            if (kind === 'testLuck' && !canMakeChoice({ conditions: r.conditions })) return false;
-            return true;
-        }
-
-        // Choices of a section whose roll "gatesChoices" appear only after that roll was made
-        function choicesUnlocked(section) {
-            return !['diceRoll', 'testLuck'].some(kind => section[kind] && section[kind].gatesChoices && rollPending(section, kind));
-        }
-
-        // "-5 STAMINA, +1 LUCK" for the message after a Luck test or dice roll
-        function describeEffects(e) {
-            if (!e) return '';
-            const parts = [];
-            const add = (obj, suffix) => Object.entries(obj || {}).forEach(([stat, v]) =>
-                parts.push(v === 'max' ? `${stat.toUpperCase()} restored${suffix}` : `${v > 0 ? '+' : ''}${v} ${stat.toUpperCase()}${suffix}`));
-            add(e.modifyStats, '');
-            add(e.permanentStats, ' (permanent)');
-            add(e.maxStats, ' (maximum)');
-            return parts.length ? ` [${parts.join(', ')}]` : '';
-        }
-
-        function handleLuckTest(sectionId) {
-            const section = GameState.currentBook.sections.find(s => s.id === sectionId);
-            if (!section || !section.testLuck) return;
-            if (GameState.isGameOver || !rollPending(section, 'testLuck')) return;
-            GameState.rollResolved = true;
-            if (section.testLuck.once) GameState.rolledOnce.add(sectionId);
-
-            const tl = section.testLuck;
-            const result = GameState.testLuck();
-            const effects = result.success ? tl.successEffects : tl.failureEffects;
-            const message = (result.success ?
-                `Lucky! (rolled ${result.roll}) ${tl.successText || ''}` :
-                `Unlucky! (rolled ${result.roll}) ${tl.failureText || ''}`) + describeEffects(effects);
-
-            alert(message);
-            GameState.applyEffects(effects);
-            if (GameState.isGameOver) return; // died from the outcome
-
-            const nextSection = result.success ? tl.successSection : tl.failureSection;
-            if (nextSection) {
-                GameState.schedule(() => GameState.goToSection(nextSection), 500);
-            } else {
-                render();
-            }
-        }
-
-        // One die decides which outcome happens: section.diceRoll.outcomes = [{ min, max, text, targetSection,
-        // modifyStats / permanentStats / maxStats }]
-        function handleDiceRoll(sectionId) {
-            const section = GameState.currentBook.sections.find(s => s.id === sectionId);
-            if (!section || !section.diceRoll) return;
-            if (GameState.isGameOver || !rollPending(section, 'diceRoll')) return;
-            GameState.rollResolved = true;
-            if (section.diceRoll.once) GameState.rolledOnce.add(sectionId);
-
-            const roll = GameState.rollDice();
-            const outcome = section.diceRoll.outcomes.find(o => roll >= o.min && roll <= o.max);
-            if (!outcome) { render(); return; }
-
-            alert(`You rolled ${roll}. ${outcome.text || ''}${describeEffects(outcome)}`);
-            GameState.applyEffects(outcome);
-            if (GameState.isGameOver) return;
-
-            let target = outcome.targetSection;
-            // an outcome may itself ask for a Luck test ("You slip! Test your Luck. Unlucky: turn to 50")
-            if (outcome.luckTest) {
-                const lt = GameState.testLuck();
-                const res = lt.success ? outcome.luckTest.success : outcome.luckTest.failure;
-                alert(`${lt.success ? 'Lucky' : 'Unlucky'}! (rolled ${lt.roll}) ${(res && res.text) || ''}${describeEffects(res)}`);
-                if (res) { GameState.applyEffects(res); if (res.targetSection) target = res.targetSection; }
-                if (GameState.isGameOver) return;
-            }
-
-            if (target) {
-                GameState.schedule(() => GameState.goToSection(target), 500);
-            } else {
-                render();
-            }
-        }
-
-        function startCombat(enemyStamina) {
-            const section = GameState.currentBook.sections.find(s => s.id === GameState.currentSection);
-            GameState.inCombat = true;
-            GameState.tempSkillPenalty = 0;
-            GameState.lastWielded = null;
-            GameState.currentCombatIndex = 0;
-            GameState.enemyCurrentStamina = enemyStamina;
-
-            // Handle both single combat and arrays of combats
-            const combats = Array.isArray(section.combat) ? section.combat : [section.combat];
-            const firstCombat = combats[0];
-
-            GameState.combatLog = [
-                `⚔️ Combat begins with ${firstCombat.enemyName}!`,
-                `${firstCombat.enemyName}: SKILL ${firstCombat.enemySkill}, STAMINA ${firstCombat.enemyStamina}`
-            ];
-
-            if (combats.length > 1) {
-                GameState.combatLog.push(`⚠️ Warning: ${combats.length} enemies detected! You must defeat them all.`);
-            }
-            applyCombatStart(firstCombat);
-
-            render();
-        }
-
-        function fightRound() {
-            const section = GameState.currentBook.sections.find(s => s.id === GameState.currentSection);
-            if (!section || !section.combat || !GameState.stats || GameState.isGameOver) return;
-
-            // Handle both single combat and arrays of combats
-            const combats = Array.isArray(section.combat) ? section.combat : [section.combat];
-            const combat = combats[GameState.currentCombatIndex] || combats[0];
-
-            // Roll for player
-            const playerDice = GameState.rollTwoDice();
-            const wield = GameState.chooseWeapon(combat);
-            const attackBonus = wield.bonus;
-            const effectiveSkill = Math.max(0, GameState.stats.skill - GameState.tempSkillPenalty);
-            const playerAttackStrength = playerDice + effectiveSkill + attackBonus;
-
-            // Roll for enemy
-            const enemyDice = GameState.rollTwoDice();
-            const enemyAttackStrength = enemyDice + combat.enemySkill;
-
-            const roundNum = GameState.combatLog.filter(l => l.includes('Round')).length + 1;
-            GameState.combatLog.push(`\nRound ${roundNum}:`);
-            const wieldName = wield.weapon ? wield.weapon.name : 'bare hands';
-            if (GameState.lastWielded !== wieldName) {
-                GameState.lastWielded = wieldName;
-                GameState.combatLog.push(`🗡️ You fight with: ${wieldName}`);
-            }
-
-            // Show attack bonus in combat log if present
-            if (attackBonus !== 0) {
-                GameState.combatLog.push(`You rolled ${playerDice} + ${effectiveSkill} SKILL + ${attackBonus} (weapon bonus) = ${playerAttackStrength}`);
-            } else {
-                GameState.combatLog.push(`You rolled ${playerDice} + ${effectiveSkill} SKILL = ${playerAttackStrength}`);
-            }
-
-            GameState.combatLog.push(`${combat.enemyName} rolled ${enemyDice} + ${combat.enemySkill} SKILL = ${enemyAttackStrength}`);
-
-            if (playerAttackStrength > enemyAttackStrength) {
-                // Player wins
-                const hitDamage = wield.damage;
-                if (hitDamage === 0) {
-                    const need = (combat.effectiveWeapons || []).join(' or ');
-                    GameState.combatLog.push(`👻 Your blow passes harmlessly through ${combat.enemyName}! Only a ${need} weapon can hurt it.`);
-                    render();
-                    return;
-                }
-                GameState.enemyCurrentStamina -= hitDamage;
-                const weaponNote = (hitDamage !== 2 && wield.weapon)
-                    ? ` (${wield.weapon.name})` : (hitDamage !== 2 ? ' (no suitable weapon)' : '');
-                GameState.combatLog.push(`💥 You hit ${combat.enemyName} for ${hitDamage} damage${weaponNote}! (${GameState.enemyCurrentStamina} STAMINA remaining)`);
-
-                // Special rule: some enemies refuse to stay down (e.g. Undead Fortitude)
-                if (GameState.enemyCurrentStamina <= 0 && Array.isArray(combat.reviveOn)) {
-                    const reviveRoll = GameState.rollDice();
-                    if (combat.reviveOn.includes(reviveRoll)) {
-                        GameState.enemyCurrentStamina = 1;
-                        GameState.combatLog.push(`🧟 You roll a ${reviveRoll}: ${combat.enemyName} refuses to stay down! It survives with 1 STAMINA.`);
-                    } else {
-                        GameState.combatLog.push(`🎲 You roll a ${reviveRoll}: ${combat.enemyName} stays down.`);
-                    }
-                }
-
-                if (GameState.enemyCurrentStamina <= 0) {
-                    GameState.combatLog.push(`\n🎉 You defeated ${combat.enemyName}!`);
-
-                    // Check if there are more enemies to fight
-                    if (GameState.currentCombatIndex < combats.length - 1) {
-                        // More enemies remaining
-                        GameState.currentCombatIndex++;
-                        const nextEnemy = combats[GameState.currentCombatIndex];
-                        GameState.combatLog.push(`\n⚠️ Another enemy approaches: ${nextEnemy.enemyName}!`);
-                        GameState.enemyCurrentStamina = nextEnemy.enemyStamina;
-                        applyCombatStart(nextEnemy);
-                        GameState.schedule(() => render(), 1500);
-                    } else {
-                        // All enemies defeated
-                        GameState.inCombat = false;
-                        GameState.currentCombatIndex = 0;
-                        // Hide the Fight button right away; if the book defines no victory
-                        // section the section's own choices appear instead
-                        GameState.combatDone = true;
-                        if (combat.onVictoryEffects) {
-                            GameState.applyEffects(combat.onVictoryEffects);
-                            GameState.combatLog.push(`😮‍💨 Victory has a price:${describeEffects(combat.onVictoryEffects)}`);
-                        }
-                        if (GameState.isGameOver) { render(); return; }
-                        if (GameState.currentBook.sections.some(sec => sec.id === combat.onVictorySection)) {
-                            GameState.schedule(() => GameState.goToSection(combat.onVictorySection), 2000);
-                        }
-                    }
-                }
-            } else if (enemyAttackStrength > playerAttackStrength) {
-                // Enemy wins
-                const defenseBonus = GameState.calculateDefenseBonus();
-                const baseDamage = 2;
-                const actualDamage = Math.max(1, baseDamage - defenseBonus); // Minimum 1 damage
-
-                GameState.modifyStats({ stamina: -actualDamage });
-
-                // Show defense bonus in combat log if present
-                if (defenseBonus > 0) {
-                    GameState.combatLog.push(`💔 ${combat.enemyName} hits you for ${actualDamage} damage! (reduced from ${baseDamage} by ${defenseBonus} armor bonus)`);
-                } else {
-                    GameState.combatLog.push(`💔 ${combat.enemyName} hits you for ${actualDamage} damage!`);
-                }
-
-                // Special rule: wounds from some enemies drain SKILL
-                if (combat.onWound && GameState.stats.stamina > 0) {
-                    const loss = combat.onWound.skillLoss || 1;
-                    if (combat.onWound.luckTest) {
-                        const lt = GameState.testLuck();
-                        if (lt.success) {
-                            GameState.combatLog.push(`🍀 Test your Luck (rolled ${lt.roll}): Lucky! The toxins have no effect.`);
-                        } else {
-                            GameState.tempSkillPenalty += loss;
-                            GameState.combatLog.push(`☠️ Test your Luck (rolled ${lt.roll}): Unlucky! You lose ${loss} SKILL for the rest of this combat. (SKILL now ${Math.max(0, GameState.stats.skill - GameState.tempSkillPenalty)})`);
-                        }
-                    } else if (combat.onWound.permanent) {
-                        GameState.stats.skill = Math.max(0, GameState.stats.skill - loss);
-                        GameState.stats.initialSkill = Math.max(0, GameState.stats.initialSkill - loss);
-                        GameState.combatLog.push(`🩸 ${combat.enemyName}'s wound permanently drains ${loss} SKILL! (SKILL now ${GameState.stats.skill})`);
-                    }
-                }
-
-                if (GameState.stats.stamina <= 0) {
-                    GameState.combatLog.push(`\n💀 You have been defeated...`);
-                    GameState.inCombat = false;
-                    GameState.currentCombatIndex = 0;
-                    const defeatTarget = GameState.currentBook.sections.some(sec => sec.id === combat.onDefeatSection);
-                    if (defeatTarget) {
-                        // modifyStats already flagged game over; the book's defeat section takes over
-                        GameState.isGameOver = false;
-                        GameState.gameOverType = null;
-                        GameState.goToSection(combat.onDefeatSection);
-                    } else {
-                        render();
-                    }
-                    return;
-                }
-            } else {
-                // Tie
-                GameState.combatLog.push(`⚡ Your blows meet! No damage dealt.`);
-            }
-
-            render();
-        }
-
-        function fleeCombat(fleeSection) {
-            const section = GameState.currentBook.sections.find(s => s.id === GameState.currentSection);
-            const combats = Array.isArray(section.combat) ? section.combat : [section.combat];
-            const enemy = combats[GameState.currentCombatIndex] || combats[0];
-            if (!canFleeNow(enemy)) return;
-            if (enemy.fleeTestLuck) {
-                const lt = GameState.testLuck();
-                if (!lt.success) {
-                    GameState.combatLog.push(`\n🎲 Test your Luck (rolled ${lt.roll}): Unlucky! They catch you before you can flee. You must keep fighting.`);
-                    render();
-                    return;
-                }
-                GameState.combatLog.push(`\n🍀 Test your Luck (rolled ${lt.roll}): Lucky! You escape.`);
-            }
-            GameState.combatLog.push(`\n🏃 You flee from ${enemy.enemyName}!`);
-            GameState.inCombat = false;
-            render();
-            GameState.schedule(() => GameState.goToSection(fleeSection), 1000);
         }
 
         // Initialize
