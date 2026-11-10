@@ -121,9 +121,17 @@ try { axeSource = fs.readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8'
         await page.waitForSelector('.text');
         assert.equal(await page.evaluate(() => game.stats.stamina), 20, 'loading a manual save restores it');
 
-        // the old format still loads (upgraded in memory)
+        // a second book in the new format plays
         await page.evaluate(() => ui.loadBook(null));
         await page.click('text=Example adventure');
+        await page.waitForSelector('text=Start Adventure');
+        await page.click('text=Start Adventure');
+        await page.waitForSelector('.text');
+        assert.ok((await page.$$('[data-opt]')).length > 0, 'the second book plays');
+
+        // the old format still loads (upgraded in memory)
+        await page.evaluate(() => ui.loadBook(null));
+        await page.evaluate(() => loadBookFile('example-adventure.json'));
         await page.waitForSelector('text=Start Adventure');
         await page.click('text=Start Adventure');
         await page.waitForSelector('.text');

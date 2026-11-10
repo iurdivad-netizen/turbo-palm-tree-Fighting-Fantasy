@@ -1,3 +1,5 @@
+> **Legacy guide (format v1).** For new books use [AUTHORING.md](AUTHORING.md); this file is kept for reference only.
+
 # Adventure Marker Syntax Guide
 
 This guide describes the inline marker syntax for game elements in adventure books. Markers provide precise, reliable detection while maintaining readability in plain text.

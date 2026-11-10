@@ -1,3 +1,5 @@
+> **Legacy guide (format v1).** For new books use [AUTHORING.md](AUTHORING.md); this file is kept for reference only.
+
 # Adventure Formatting Guide
 
 Welcome to the Adventure Formatter! This guide will help you format your gamebook adventures properly for the app.

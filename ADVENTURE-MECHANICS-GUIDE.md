@@ -1,3 +1,5 @@
+> **Legacy guide (format v1).** For new books use [AUTHORING.md](AUTHORING.md); this file is kept for reference only.
+
 # Complete Adventure Mechanics Guide for Standalone HTML App
 
 This guide provides full details on how the standalone HTML app (`index.html`) processes adventures, including item detection, combat, magic weapons/armor, and item usage.

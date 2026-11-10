@@ -13,6 +13,8 @@
  *             and her true name (or gets impatient), then plays like 'guided'
  *   guided  - walks toward the items the final confrontation needs (Silver Key, her true name, a magical
  *             weapon), then to the final door; 15% of its choices are random, so it also explores
+ * What the bots know about the book (goal items, the final section, sections to avoid) comes from <book>.sim.json
+ * next to the book, if it exists; without it the informed bot heads straight for a victory ending.
  * All bots flee when STAMINA is low and drink/eat healing items when hurt. Dice and bot choices share one seeded
  * generator, so a run is reproducible.
  */
@@ -25,7 +27,15 @@ const games = parseInt(process.argv[3] || '1000', 10);
 const outFile = process.argv[4] || 'simulation-results.json';
 const seed = parseInt(process.argv[5] || '20240601', 10);
 
-function runPolicy(rawBook, policy, N, seed, opts) {
+// <book>.sim.json (also found for a <book>.v2.json): see AUTHORING.md
+function loadSimConfig(file) {
+  const stem = file.replace(/\.json$/, '').replace(/\.v2$/, '');
+  const f = stem + '.sim.json';
+  const cfg = fs.existsSync(f) ? JSON.parse(fs.readFileSync(f, 'utf8')) : {};
+  return Object.assign({ goalItems: [], wantMagicalWeapon: false, finalSection: null, avoidUntilReady: [], terminalLabels: {}, analytics: {} }, cfg);
+}
+
+function runPolicy(rawBook, policy, N, seed, opts, cfg) {
   const MAX_STEPS = opts.maxSteps;
   function mulberry32(a) {
     return function () {
@@ -40,11 +50,18 @@ function runPolicy(rawBook, policy, N, seed, opts) {
   const book = game.book;
   const GameState = game;
   const sec = new Map(book.sections.map(s => [s.id, s]));
-  const TERMINAL = { 400: 'victory', 999: 'defeat', 4: 'instant-death', 39: 'instant-death', 65: 'instant-death' };
+  // the end of a game is decided by the book: every section with an `ending` is terminal
+  const TERMINAL = {};
+  book.sections.forEach(s => {
+    if (s.ending) TERMINAL[s.id] = cfg.terminalLabels[s.ending.type] || (s.ending.type === 'neutral' ? 'ended' : s.ending.type);
+  });
+  const A = cfg.analytics || {};
+  const GOALS = cfg.goalItems;
+  const FINAL = cfg.finalSection != null ? [cfg.finalSection] : book.sections.filter(s => s.ending && s.ending.type === 'victory').map(s => s.id);
+  const AVOID = new Set(cfg.avoidUntilReady);
   const addsOf = s => (s.effects && s.effects.addItems) || [];
   const WEAPON_SOURCES = book.sections.filter(s => addsOf(s).some(i => (i.properties || []).includes('magical'))).map(s => s.id);
-  const KEY_SOURCES = book.sections.filter(s => addsOf(s).some(i => i.id === 'silver-key')).map(s => s.id);
-  const NAME_SOURCES = book.sections.filter(s => addsOf(s).some(i => i.id === 'true-name')).map(s => s.id);
+  const GOAL_SOURCES = GOALS.map(g => book.sections.filter(s => addsOf(s).some(i => i.id === g)).map(s => s.id));
 
   // ----- graph (ignoring conditions) for the guided bot -----
   function successors(s) {
@@ -58,7 +75,7 @@ function runPolicy(rawBook, policy, N, seed, opts) {
     (r.kind === 'dice' ? r.outcomes : []).forEach(o => o.target && out.push(o.target));
     const cc = s.combat ? (Array.isArray(s.combat) ? s.combat : [s.combat]) : [];
     cc.forEach(e => { if (e.onVictorySection) out.push(e.onVictorySection); if (e.fleeSection) out.push(e.fleeSection); });
-    return out.filter(t => sec.has(t) && !TERMINAL[t] || t === 400);
+    return out.filter(t => sec.has(t) && !TERMINAL[t] || TERMINAL[t] === 'victory');
   }
   const preds = new Map();
   book.sections.forEach(s => successors(s).forEach(t => { if (!preds.has(t)) preds.set(t, []); preds.get(t).push(s.id); }));
@@ -75,10 +92,9 @@ function runPolicy(rawBook, policy, N, seed, opts) {
   const has = id => GameState.hasItem(id);
   const hasMagical = () => GameState.inventory.some(i => i.type === 'weapon' && (i.properties || []).includes('magical'));
   function targetSet() {
-    if (!has('silver-key')) return KEY_SOURCES;
-    if (!has('true-name')) return NAME_SOURCES;
-    if (!hasMagical()) return WEAPON_SOURCES;
-    return [395];
+    for (let i = 0; i < GOALS.length; i++) if (!has(GOALS[i])) return GOAL_SOURCES[i];
+    if (cfg.wantMagicalWeapon && !hasMagical()) return WEAPON_SOURCES;
+    return FINAL;
   }
 
   // ----- helpers mirroring what the page shows the player -----
@@ -124,17 +140,17 @@ function runPolicy(rawBook, policy, N, seed, opts) {
     const randomPick = list => list[Math.floor(rng() * list.length)];
     if (policy === 'random') return randomPick(acts);
     if (rng() < opts.exploreRate) return randomPick(acts);
-    const ready = has('silver-key') && has('true-name');
+    const ready = GOALS.length > 0 && GOALS.every(has);
     if (policy === 'explorer' && steps < opts.explorerPatience && !ready) {
-      const avoid = t => t === 395 || t === 362;
+      const avoid = t => AVOID.has(t);
       let pool = acts.filter(a => !actionTargets(s, a).some(avoid)); if (!pool.length) pool = acts;
       const fresh = pool.filter(a => actionTargets(s, a).some(t => !visited.has(t)));
       if (fresh.length) return randomPick(fresh);
-      const unvisited = book.sections.map(x => x.id).filter(id => !visited.has(id) && !TERMINAL[id] && id !== 0 && id !== 395 && id !== 362);
+      const unvisited = book.sections.map(x => x.id).filter(id => !visited.has(id) && !TERMINAL[id] && id !== 0 && !AVOID.has(id));
       if (unvisited.length) return nearest(s, pool, distancesTo(unvisited, true));
       return randomPick(pool);
     }
-    if (policy === 'explorer' && steps >= opts.explorerPatience && !ready) return nearest(s, acts, distancesTo([395]));
+    if (policy === 'explorer' && steps >= opts.explorerPatience && !ready) return nearest(s, acts, distancesTo(FINAL));
     return nearest(s, acts, distancesTo(targetSet()));
   }
 
@@ -179,7 +195,7 @@ function runPolicy(rawBook, policy, N, seed, opts) {
         const combats = Array.isArray(s.combat) ? s.combat : [s.combat];
         const key = id + ' ' + combats.map(c => c.enemyName).join(' + ');
         const rec = agg.combat[key] || (agg.combat[key] = { section: id, enemies: combats.map(c => c.enemyName).join(' + '), fights: 0, won: 0, lost: 0, fled: 0, stamLost: 0, rounds: 0 });
-        if (id === 394) { agg.gate.finalFightEntered++; finalFightSeen = true; hasMagical() ? agg.gate.finalFightWithMagic++ : agg.gate.finalFightNoMagic++; }
+        if (id === A.finalFightSection) { agg.gate.finalFightEntered++; finalFightSeen = true; hasMagical() ? agg.gate.finalFightWithMagic++ : agg.gate.finalFightNoMagic++; }
         rec.fights++;
         const sta0 = GameState.stats.stamina;
         game.startCombat();
@@ -196,8 +212,8 @@ function runPolicy(rawBook, policy, N, seed, opts) {
         }
         rec.stamLost += Math.max(0, sta0 - GameState.stats.stamina);
         if (fled) rec.fled++;
-        else if (GameState.isGameOver || GameState.stats.stamina <= 0 || GameState.currentSection === 999) { rec.lost++; lastCombat = key; cause = 'combat: ' + combats.map(c => c.enemyName).join(' + ') + ' @' + id; if (id === 394) agg.gate.finalFightLost++; }
-        else { rec.won++; if (id === 394) agg.gate.finalFightWon++; }
+        else if (GameState.isGameOver || GameState.stats.stamina <= 0 || TERMINAL[GameState.currentSection] === 'defeat') { rec.lost++; lastCombat = key; cause = 'combat: ' + combats.map(c => c.enemyName).join(' + ') + ' @' + id; if (id === A.finalFightSection) agg.gate.finalFightLost++; }
+        else { rec.won++; if (id === A.finalFightSection) agg.gate.finalFightWon++; }
         continue;
       }
 
@@ -205,9 +221,6 @@ function runPolicy(rawBook, policy, N, seed, opts) {
       const acts = actionsFor(s);
       if (!acts.length) { outcome = 'stuck'; inc(agg.stuckSections, id); (agg.stuckInfo = agg.stuckInfo || []).push({ id, inCombat: GameState.inCombat, combatDone: GameState.combatDone, idx: GameState.currentCombatIndex, stamina: GameState.stats.stamina, enemyStamina: GameState.enemyCurrentStamina, gameOver: GameState.isGameOver }); break; }
 
-      if (id === 395) {
-        if (!agg.gate._seen) agg.gate._seen = new Set();
-      }
       const act = pickAction(s, acts, visited, steps);
       if (trace) trace.push(id + ':' + act.t + (act.t === 'choice' ? '>' + act.o.target : '') + ' sta' + GameState.stats.stamina + ' sk' + GameState.stats.skill + ' lu' + GameState.stats.luck);
       const before = GameState.currentSection;
@@ -219,21 +232,20 @@ function runPolicy(rawBook, policy, N, seed, opts) {
       if (act.t === 'dice') { agg.dice.total++; game.doRoll(); }
       else if (act.t === 'luck') {
         agg.luckTests.total++;
-        if (id === 395) { agg.gate.ritualAttempts++; }
+        if (id === A.gateSection) { agg.gate.ritualAttempts++; }
         game.doRoll();
         const dest = GameState.currentSection;
         const succ = s.roll.success.target, fail = s.roll.failure.target;
         const ok = dest === succ && succ !== fail ? true : (succ === fail ? null : false);
         if (ok === true) agg.luckTests.success++;
-        if (id === 395 && ok === true) agg.gate.ritualLucky++;
+        if (id === A.gateSection && ok === true) agg.gate.ritualLucky++;
         const hz = agg.hazards[id] || (agg.hazards[id] = { section: id, tests: 0, success: 0, kind: 'luck' }); hz.tests++; if (ok === true) hz.success++;
       } else {
-        if (id === 395) { /* choice instead of the ritual = missing key or name */ }
         game.chooseOption(act.o.id);
       }
       // gate bookkeeping on first arrival at 395
-      if (GameState.currentSection === 395 && before !== 395) {
-        const k = has('silver-key'), n = has('true-name');
+      if (A.gateSection != null && GameState.currentSection === A.gateSection && before !== A.gateSection) {
+        const k = has(A.keyItem), n = has(A.nameItem);
         if (!agg.gate._count) agg.gate._count = 0;
         agg.gate.arrivals = (agg.gate.arrivals || 0) + 1;
         inc(agg.gate.via395 = agg.gate.via395 || {}, before + (k && n ? ' (prepared)' : ' (unprepared)'));
@@ -246,7 +258,7 @@ function runPolicy(rawBook, policy, N, seed, opts) {
         d.n++; d.net += delta; if (delta < 0) d.lost += -delta; if (GameState.isGameOver) d.deaths++;
       }
       prevSec = before;
-      if (GameState.currentSection === 362 && before !== 362) inc(agg.via362 = agg.via362 || {}, before);
+      if (A.forcedSection != null && GameState.currentSection === A.forcedSection && before !== A.forcedSection) inc(agg.via362 = agg.via362 || {}, before);
       GameState.inventory.forEach(i => { if (!seenItems.has(i.id)) { seenItems.add(i.id); inc(agg.itemsFound, i.name); } });
       if (before === GameState.currentSection && !GameState.isGameOver && act.t === 'choice') { /* effect-only loop (e.g. same section) */ }
       if (GameState.currentSection !== before || true) { visited.add(GameState.currentSection); }
@@ -260,8 +272,8 @@ function runPolicy(rawBook, policy, N, seed, opts) {
     seenThisGame.forEach(id => inc(agg.visitGames, id));
     agg.steps.push(steps); agg.uniqueSections.push(visited.size);
     const st = GameState.stats; agg.finalStamina.push(st.stamina); agg.finalSkill.push(st.skill); agg.finalLuck.push(st.luck); agg.gold.push(st.gold || 0);
-    if (seenItems.has('silver-key')) agg.itemGamesWithKey++;
-    if (seenItems.has('true-name')) agg.itemGamesWithName++;
+    if (A.keyItem && seenItems.has(A.keyItem)) agg.itemGamesWithKey++;
+    if (A.nameItem && seenItems.has(A.nameItem)) agg.itemGamesWithName++;
     if (GameState.inventory.some(i => (i.properties || []).includes('magical')) || [...seenItems].some(n => /longsword|mace|blessed/i.test(n))) agg.itemGamesWithMagic++;
     if (outcome === 'victory') agg.victoryRuns.push({ steps, sections: visited.size, stamina: st.stamina, skill: st.skill, lowest: hpLow, itemsUsed: stats.itemsUsed });
   }
@@ -272,12 +284,13 @@ function runPolicy(rawBook, policy, N, seed, opts) {
 // ---------------------------------------------------------------------------------------------
 (function main() {
   const book = JSON.parse(fs.readFileSync(path.resolve(bookFile), 'utf8'));
+  const cfg = loadSimConfig(bookFile);
   const opts = { maxSteps: 3000, exploreRate: 0.15, explorerPatience: 700, fleeAt: 5, healAt: 0.45, preFightHeal: 0.6 };
   const t0 = Date.now();
   const results = { book: { title: book.title, sections: book.sections.length, file: bookFile }, seed, games, opts, engine: 'engine.js', policies: {} };
   for (const policy of ['random', 'explorer', 'guided']) {
     const t = Date.now();
-    results.policies[policy] = runPolicy(book, policy, games, seed, opts);
+    results.policies[policy] = runPolicy(book, policy, games, seed, opts, cfg);
     console.log(`${policy}: ${games} games in ${((Date.now() - t) / 1000).toFixed(1)}s`, JSON.stringify(results.policies[policy].outcomes));
   }
   results.runtimeSeconds = (Date.now() - t0) / 1000;

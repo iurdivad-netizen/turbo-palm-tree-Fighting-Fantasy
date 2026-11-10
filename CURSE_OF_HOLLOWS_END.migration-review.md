@@ -2,13 +2,13 @@
 
 395 sections, 767 options, 277 labelled just 'Continue'.
 
-Items for a human to check. The conversion changed no game logic (every destination, condition, effect, roll and combat is identical to v1; only the 9 false ending flags were dropped).
+Items for a human to check. The conversion changed no game logic (every destination, condition, effect, roll and combat is identical to v1); the only flags dropped are 'ending' marks on sections that still lead somewhere (listed below). Run check_v2_equivalence.py to prove it.
 
 ## Found while reading the text: logic that v1 already lacked (NOT changed by the migration): 3
 
+- 24 | item check (Mayor's Ledger) without conditions: both branches are open to everyone
 - 54 | item check (rope) without conditions: a player without rope can still pick the rope branch
 - 164 | item check (rope) without conditions
-- 24 | item check (Mayor's Ledger) without conditions: both branches are open to everyone
 
 ## Sections that mix 'Continue' with other labels (check they read clearly): 0
 

@@ -1,0 +1,16 @@
+{
+  "name": "fighting-fantasy-reader",
+  "version": "2.0.0",
+  "private": true,
+  "description": "A gamebook reader and rules engine with a fixed JSON book format (schema v2).",
+  "scripts": {
+    "test": "node --test",
+    "test:ui": "node tests/ui-smoke.js",
+    "validate": "python3 validate_adventure.py CURSE_OF_HOLLOWS_END.v2.json example-adventure.v2.json templates/minimal-book.v2.json",
+    "simulate": "node simulate_playthroughs.js CURSE_OF_HOLLOWS_END.v2.json 1000"
+  },
+  "devDependencies": {
+    "axe-core": "^4.10.0",
+    "playwright": "^1.50.0"
+  }
+}

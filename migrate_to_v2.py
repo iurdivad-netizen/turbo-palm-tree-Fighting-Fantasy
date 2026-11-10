@@ -8,53 +8,54 @@
   * stat/item effects are grouped under `effects`; endings are explicit (`ending`)
   * no "Turn to N" is left anywhere in the text
 
-Usage: python3 migrate_to_v2.py [book.json] [out.json] [review.md]
+Hand-written decisions (labels the prose cannot give, text fixes, notes about problems in the book) live in a sidecar
+file next to the book, <book>.overrides.json, so the converter itself stays generic. See AUTHORING.md.
+
+Usage: python3 migrate_to_v2.py book.json [out.json] [review.md] [--overrides file.json]
+  out.json   defaults to <book>.v2.json
+  review.md  defaults to <book>.migration-review.md
+  overrides  defaults to <book>.overrides.json when that file exists
 """
+import argparse
 import json
+import os
 import re
 import sys
 from collections import Counter
 
-SRC = sys.argv[1] if len(sys.argv) > 1 else "CURSE_OF_HOLLOWS_END.json"
-OUT = sys.argv[2] if len(sys.argv) > 2 else "CURSE_OF_HOLLOWS_END.v2.json"
-REVIEW = sys.argv[3] if len(sys.argv) > 3 else "migration-review.md"
+_ap = argparse.ArgumentParser(description="Convert a gamebook from format v1 to v2.")
+_ap.add_argument("book")
+_ap.add_argument("out", nargs="?")
+_ap.add_argument("review", nargs="?")
+_ap.add_argument("--overrides")
+_args = _ap.parse_args()
+SRC = _args.book
+_stem = os.path.splitext(SRC)[0]
+OUT = _args.out or _stem + ".v2.json"
+REVIEW = _args.review or _stem + ".migration-review.md"
+OVERRIDES_FILE = _args.overrides or (_stem + ".overrides.json" if os.path.exists(_stem + ".overrides.json") else None)
+
+
+def load_overrides(path):
+    """{'labels': {section: {option id: label}}, 'text': {section: [{replace, with}]}, 'notes': {section: text}}"""
+    if not path:
+        return {}, {}, {}
+    data = json.load(open(path, encoding="utf-8"))
+    unknown = set(data) - {"_comment", "labels", "text", "notes"}
+    if unknown:
+        raise SystemExit(f"{path}: unknown key(s) {sorted(unknown)}; allowed: labels, text, notes")
+    labels = {(int(sid), oid): lab for sid, d in data.get("labels", {}).items() for oid, lab in d.items()}
+    text = {int(sid): [(r["replace"], r["with"]) for r in lst] for sid, lst in data.get("text", {}).items()}
+    notes = {int(sid): note for sid, note in data.get("notes", {}).items()}
+    return labels, text, notes
+
+
+LABEL_OVERRIDES, TEXT_OVERRIDES, NOTES = load_overrides(OVERRIDES_FILE)
 
 GENERIC = re.compile(r"^\s*(turn to|go to( section)?)\s+\d+\s*[.:]?\s*$", re.I)
 TURN = re.compile(r"\bTurn to (\d+)\b", re.I)
 # Sections where the generic conversion cannot know which button belongs to which line (several options share one
 # destination). The replacement is applied to the converted text. Keep this table short and reviewed.
-TEXT_OVERRIDES = {
-    35: [("Drink the vial to gain +1 SKILL but lose 1 LUCK\n\nSave it for later (add it to your inventory)\n\nLeave it behind",
-          "{{opt:to-111}}\n{{opt:to-111-2}}\n{{opt:to-111-3}}"),
-         ("\n\nOnce you've made your decision about the vial, you continue exploring.\n\n{{opt:to-111}}", "")],
-}
-# Hand-written labels where the prose only says "If yes: / If no: ..." or "Continue" and several buttons would read the same.
-# {(section, option id): label}. Reviewed by hand against the section text.
-LABEL_OVERRIDES = {
-    (24, "to-127"): "Retreat to the cemetery", (24, "to-234"): "Accept the Mayor's help",
-    (52, "to-3"): "Search his body", (52, "to-180"): "Move on quickly",
-    (54, "to-109"): "Climb down the well on the rope", (54, "to-127"): "Leave the well unexplored",
-    (56, "to-127"): "Retreat to the cemetery",
-    (74, "to-221"): "Investigate what is in the water", (74, "to-111"): "Go back and find another route",
-    (81, "to-245"): "Extinguish the candles", (81, "to-301"): "Leave the candles burning and move on",
-    (100, "to-6"): "Hide and let them pass", (100, "to-89"): "Prepare to face them",
-    (110, "to-82"): "Chase the fleeing cultist", (110, "to-180"): "Let him go and keep exploring",
-    (112, "to-27"): "Free Lydia now", (112, "to-245"): "Keep exploring and come back for her later",
-    (121, "to-221"): "Swim across", (121, "to-111"): "Turn back and find another route",
-    (145, "to-111"): "Retreat and find another way",
-    (153, "to-6"): "Hide", (153, "to-89"): "Prepare to confront them",
-    (164, "to-109"): "Climb down the well on the rope", (164, "to-127"): "Leave the well alone",
-    (165, "to-221"): "Follow the stream", (165, "to-111"): "Go back",
-    (170, "to-245"): "Head for the eastern catacombs", (170, "to-301"): "Go to the manor", (170, "to-111"): "Explore more of the catacombs first",
-    (180, "to-346"): "Escape toward the cemetery path",
-    (209, "to-221"): "Continue down the passage", (209, "to-111"): "Go back and try another route",
-    (236, "to-80"): "Destroy the altar to weaken the curse", (236, "to-155"): "Take the west passage", (236, "to-267"): "Take the east passage",
-    (241, "to-62"): "Fight the Drowned Zombie", (241, "to-221"): "Slip past it through the water",
-    (258, "to-111"): "Go back and explore elsewhere",
-    (289, "to-312"): "Continue toward the manor", (289, "to-346"): "Escape toward the cemetery path",
-    (341, "to-333"): "Encounter another ghoul",   # the book lists "encounter a ghoul" twice (311 and 333)
-    (325, "to-378"): "Take the left staircase (the cultists)", (325, "to-395"): "Take the right staircase (the Widow's lair)",
-}
 EFFECT_KEYS = ("modifyStats", "permanentStats", "maxStats", "addItems", "removeItems")
 
 review = {"auto_label": [], "residual_roll": [], "victory_narrative": [], "stripped_fragment": [], "unreferenced": [], "dropped_endings": []}
@@ -385,12 +386,11 @@ def main():
     if missing:
         raise SystemExit(f"LABEL_OVERRIDES refer to options that do not exist: {missing}")
     n_opts = sum(len(s.get("options", [])) for s in v2["sections"])
-    follow = {54: "item check (rope) without conditions: a player without rope can still pick the rope branch",
-              164: "item check (rope) without conditions", 24: "item check (Mayor's Ledger) without conditions: both branches are open to everyone"}
+    follow = NOTES
     amb = [(sec["id"], [o["label"] for o in sec["options"]]) for sec in v2["sections"] if len(sec.get("options", [])) >= 2 and any(o["label"] == "Continue" for o in sec["options"])]
     longl = [(sec["id"], o["id"], o["label"]) for sec in v2["sections"] for o in sec.get("options", []) if len(o["label"]) > 60]
     lines = [f"# Migration review: {SRC} -> {OUT}", "", f"{len(v2['sections'])} sections, {n_opts} options, {sum(1 for sec in v2['sections'] for o in sec.get('options', []) if o['label'] == 'Continue')} labelled just 'Continue'.", "",
-             "Items for a human to check. The conversion changed no game logic (every destination, condition, effect, roll and combat is identical to v1; only the 9 false ending flags were dropped).", ""]
+             "Items for a human to check. The conversion changed no game logic (every destination, condition, effect, roll and combat is identical to v1); the only flags dropped are 'ending' marks on sections that still lead somewhere (listed below). Run check_v2_equivalence.py to prove it.", ""]
     sections_ = (("follow", "Found while reading the text: logic that v1 already lacked (NOT changed by the migration)", follow),
                  ("amb", "Sections that mix 'Continue' with other labels (check they read clearly)", amb),
                  ("longl", "Labels longer than 60 characters", longl),
@@ -399,6 +399,17 @@ def main():
                  ("victory_narrative", "Narrative about winning a fight, kept as combat.victoryText", review["victory_narrative"]),
                  ("stripped_fragment", "'Turn to N' fragments and stray stat blocks removed", review["stripped_fragment"]),
                  ("dropped_endings", "Sections whose v1 ending flag was dropped (they are not endings)", review["dropped_endings"]))
+    # a ready-to-fill skeleton for the sidecar: every section whose buttons would read the same or mostly "Continue"
+    todo = {}
+    for sec in v2["sections"]:
+        labs = [o["label"] for o in sec.get("options", [])]
+        if len(labs) >= 2 and (len(set(labs)) < len(labs) or "Continue" in labs):
+            todo[str(sec["id"])] = {o["id"]: o["label"] for o in sec["options"]}
+    if todo:
+        lines += [f"## Labels still to write: {len(todo)} section(s)", "",
+                  "Several buttons in these sections read the same (or just 'Continue'), so a player cannot tell them apart.",
+                  "Copy this into the \"labels\" part of the overrides file and replace each label with what the button does:", "",
+                  "```json", json.dumps({"labels": todo}, indent=2, ensure_ascii=False), "```", ""]
     for key, title, items in sections_:
         items = list(items.items()) if isinstance(items, dict) else items
         lines += [f"## {title}: {len(items)}", ""]

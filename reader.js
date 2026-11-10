@@ -186,7 +186,7 @@ function renderLanding() {
             <div class="card">
                 <div class="bookrow">
                     <button class="btn btn-primary" onclick="loadBookFile('CURSE_OF_HOLLOWS_END.v2.json')">The Curse of Hollow's End</button>
-                    <button class="btn" onclick="loadBookFile('example-adventure.json')">Example adventure</button>
+                    <button class="btn" onclick="loadBookFile('example-adventure.v2.json')">Example adventure</button>
                 </div>
                 <details>
                     <summary>Import a book from a file</summary>

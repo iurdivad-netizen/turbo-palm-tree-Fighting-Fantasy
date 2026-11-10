@@ -1,3 +1,5 @@
+> **Legacy guide (format v1).** For new books use [AUTHORING.md](AUTHORING.md); this file is kept for reference only.
+
 # Fighting Fantasy - Format Guide
 
 This guide explains how to create adventures in different formats for the Fighting Fantasy web app.

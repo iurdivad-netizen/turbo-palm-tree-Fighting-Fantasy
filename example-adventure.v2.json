@@ -1,0 +1,466 @@
+{
+  "schemaVersion": 2,
+  "id": "cavern-of-fear",
+  "title": "The Cavern of Fear",
+  "author": "Example Adventure",
+  "description": "You are a brave adventurer who has discovered the entrance to a mysterious cavern. Legends speak of a powerful artifact hidden within, but many dangers await. Can you survive and claim the treasure?",
+  "startingSection": 1,
+  "initialStats": {
+    "skill": 8,
+    "stamina": 20,
+    "luck": 9
+  },
+  "startingItems": [
+    {
+      "id": "sword",
+      "name": "Iron Sword",
+      "description": "Your trusty blade",
+      "type": "weapon"
+    },
+    {
+      "id": "leather-armor",
+      "name": "Leather Armor",
+      "description": "Basic protective gear",
+      "type": "armor"
+    }
+  ],
+  "sections": [
+    {
+      "id": 1,
+      "title": "The Entrance",
+      "text": "You stand before a dark cavern entrance. The air is cold and damp, and you can hear strange echoes from within. A wooden sign near the entrance reads: 'Abandon hope, all ye who enter here.' Two paths lead into the darkness - one to the left appears well-worn, while the right path is covered in cobwebs.",
+      "options": [
+        {
+          "id": "to-2",
+          "label": "Take the left path (the well-worn route)",
+          "target": 2
+        },
+        {
+          "id": "to-3",
+          "label": "Take the right path (through the cobwebs)",
+          "target": 3
+        },
+        {
+          "id": "to-4",
+          "label": "Search around the entrance before proceeding",
+          "target": 4
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "The Well-Worn Path",
+      "text": "You follow the left path deeper into the cavern. The walls are smooth and the floor is packed dirt - clearly many others have passed this way. After a few minutes, you hear growling ahead. A CAVE TROLL emerges from the shadows, blocking your path!",
+      "combat": {
+        "enemyName": "Cave Troll",
+        "enemySkill": 7,
+        "enemyStamina": 8,
+        "onVictorySection": 5,
+        "onDefeatSection": 99
+      }
+    },
+    {
+      "id": 3,
+      "title": "The Cobweb Path",
+      "text": "You push through the thick cobwebs, brushing them from your face. The path is narrow and rarely traveled. As you proceed, you notice something glinting in a corner - a small wooden chest! Do you investigate or continue forward?",
+      "options": [
+        {
+          "id": "to-6",
+          "label": "Open the chest",
+          "target": 6
+        },
+        {
+          "id": "to-7",
+          "label": "Leave the chest and continue",
+          "target": 7
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "The Search",
+      "text": "You carefully search around the entrance. Behind a large rock, you discover a dusty old backpack! Inside you find a healing potion and a strange amulet with mystical symbols.",
+      "options": [
+        {
+          "id": "to-2",
+          "label": "Take the left path",
+          "target": 2
+        },
+        {
+          "id": "to-3",
+          "label": "Take the right path",
+          "target": 3
+        }
+      ],
+      "effects": {
+        "addItems": [
+          {
+            "id": "healing-potion",
+            "name": "Healing Potion",
+            "description": "Restores 4 STAMINA points",
+            "type": "potion"
+          },
+          {
+            "id": "mystic-amulet",
+            "name": "Mystic Amulet",
+            "description": "A mysterious protective charm",
+            "type": "treasure"
+          }
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "title": "Victory Over the Troll",
+      "text": "The troll falls with a mighty crash! As you catch your breath, you notice it was guarding a small pouch. Inside you find 10 gold pieces and a rusty key. The path continues deeper into the cavern, and you can see flickering light ahead.",
+      "options": [
+        {
+          "id": "to-8",
+          "label": "Continue toward the light",
+          "target": 8
+        },
+        {
+          "id": "to-10",
+          "label": "Rest and recover (restore 2 STAMINA)",
+          "target": 10
+        }
+      ],
+      "effects": {
+        "addItems": [
+          {
+            "id": "rusty-key",
+            "name": "Rusty Key",
+            "description": "An old key - what does it unlock?",
+            "type": "key"
+          },
+          {
+            "id": "gold-pieces",
+            "name": "10 Gold Pieces",
+            "description": "Coins from the troll's hoard",
+            "type": "treasure"
+          }
+        ]
+      }
+    },
+    {
+      "id": 6,
+      "title": "The Trapped Chest",
+      "text": "As you open the chest, you hear a CLICK! A poison dart shoots out, grazing your arm. You lose 2 STAMINA points. Inside the chest, you find a silver dagger and a map of the cavern.",
+      "options": [
+        {
+          "id": "to-7",
+          "label": "Continue down the path",
+          "target": 7
+        }
+      ],
+      "effects": {
+        "modifyStats": {
+          "stamina": -2
+        },
+        "addItems": [
+          {
+            "id": "silver-dagger",
+            "name": "Silver Dagger",
+            "description": "A fine blade, especially effective against dark creatures",
+            "type": "weapon"
+          },
+          {
+            "id": "cavern-map",
+            "name": "Cavern Map",
+            "description": "Shows the layout of the cave system",
+            "type": "other"
+          }
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "title": "The Underground River",
+      "text": "The path opens into a large chamber with an underground river flowing through it. A narrow stone bridge crosses the water. On the far side, you can see a doorway carved into the rock. The bridge looks old and unstable.",
+      "options": [
+        {
+          "id": "to-11",
+          "label": "Cross the bridge carefully",
+          "target": 11
+        },
+        {
+          "id": "to-12",
+          "label": "Try to swim across the river",
+          "target": 12
+        },
+        {
+          "id": "to-13",
+          "label": "Search for another way around",
+          "target": 13
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "The Treasure Chamber",
+      "text": "You emerge into a vast chamber lit by torches. In the center stands a pedestal with a locked chest upon it. The chest glows with an otherworldly light - this must be the legendary artifact! But as you approach, you hear a voice: 'None shall claim the treasure of Zargon!'",
+      "options": [
+        {
+          "id": "to-14",
+          "label": "Examine the chest",
+          "target": 14
+        },
+        {
+          "id": "to-15",
+          "label": "Call out to the voice",
+          "target": 15
+        },
+        {
+          "id": "to-16",
+          "label": "Leave immediately",
+          "target": 16
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "title": "A Brief Rest",
+      "text": "You take a moment to rest and tend your wounds. You recover 2 STAMINA points. Feeling refreshed, you continue toward the flickering light.",
+      "options": [
+        {
+          "id": "to-8",
+          "label": "Continue to the treasure chamber",
+          "target": 8
+        }
+      ],
+      "effects": {
+        "modifyStats": {
+          "stamina": 2
+        }
+      }
+    },
+    {
+      "id": 11,
+      "title": "The Bridge Crossing",
+      "text": "You carefully make your way across the bridge. The stones creak and shift beneath your feet, but you manage to reach the other side safely. Through the doorway, you see another chamber ahead.",
+      "options": [
+        {
+          "id": "to-8",
+          "label": "Enter the doorway",
+          "target": 8
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "title": "Swimming the River",
+      "text": "You dive into the cold water and begin swimming. The current is stronger than you expected! You must {{roll}} to see if you make it across safely.",
+      "roll": {
+        "kind": "luck",
+        "success": {
+          "text": "You fight against the current and make it to the other side, exhausted but alive.",
+          "target": 11
+        },
+        "failure": {
+          "text": "The current sweeps you downstream! You struggle to reach the shore.",
+          "target": 17
+        }
+      }
+    },
+    {
+      "id": 13,
+      "title": "The Side Passage",
+      "text": "You search along the cavern wall and find a narrow side passage. It's dark and tight, but it seems to lead in the right direction. As you squeeze through, you accidentally disturb a nest of GIANT BATS!",
+      "combat": {
+        "enemyName": "Giant Bats",
+        "enemySkill": 5,
+        "enemyStamina": 6,
+        "onVictorySection": 8,
+        "onDefeatSection": 99,
+        "canFlee": true,
+        "fleeSection": 11
+      }
+    },
+    {
+      "id": 14,
+      "title": "The Locked Chest",
+      "text": "You examine the chest closely. It has an intricate lock mechanism. If you have a rusty key, you might be able to open it. Do you have the key?",
+      "options": [
+        {
+          "id": "to-18",
+          "label": "Use the rusty key (requires rusty key)",
+          "target": 18,
+          "conditions": {
+            "requiresItem": "rusty-key"
+          }
+        },
+        {
+          "id": "to-19",
+          "label": "Try to force the lock (Test your Luck)",
+          "target": 19
+        },
+        {
+          "id": "to-16",
+          "label": "Leave the chest alone",
+          "target": 16
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "title": "The Guardian Appears",
+      "text": "A spectral figure materializes before you - the GHOST OF ZARGON! 'Foolish mortal!' it booms. 'You dare disturb my rest? Prepare to join me in eternal torment!' You must fight!",
+      "combat": {
+        "enemyName": "Ghost of Zargon",
+        "enemySkill": 9,
+        "enemyStamina": 10,
+        "onVictorySection": 20,
+        "onDefeatSection": 99
+      }
+    },
+    {
+      "id": 16,
+      "title": "Retreat",
+      "text": "You decide discretion is the better part of valor and retreat from the chamber. As you make your way back through the cavern, you realize you've escaped with your life, but the treasure remains unclaimed. Perhaps another adventurer will succeed where you did not.",
+      "ending": {
+        "type": "neutral"
+      }
+    },
+    {
+      "id": 17,
+      "title": "Swept Downstream",
+      "text": "The current pulls you under! You lose 3 STAMINA as you're battered against rocks. Finally, you manage to crawl onto a small beach. You're bruised and exhausted, but alive. You find yourself in a different part of the cavern system.",
+      "options": [
+        {
+          "id": "to-21",
+          "label": "Explore this new area",
+          "target": 21
+        }
+      ],
+      "effects": {
+        "modifyStats": {
+          "stamina": -3
+        }
+      }
+    },
+    {
+      "id": 18,
+      "title": "The Key Fits!",
+      "text": "The rusty key slides into the lock and turns with a satisfying CLICK! The chest opens to reveal the CROWN OF ETERNITY, a magnificent artifact radiating magical power! As you lift it, you feel strength flowing through you. You have succeeded in your quest!",
+      "effects": {
+        "modifyStats": {
+          "skill": 2,
+          "stamina": 5,
+          "luck": 2
+        }
+      },
+      "ending": {
+        "type": "victory"
+      }
+    },
+    {
+      "id": 19,
+      "title": "Forcing the Lock",
+      "text": "You attempt to force the lock open. {{roll}}!",
+      "roll": {
+        "kind": "luck",
+        "success": {
+          "target": 18
+        },
+        "failure": {
+          "target": 22
+        }
+      }
+    },
+    {
+      "id": 20,
+      "title": "The Ghost is Vanquished",
+      "text": "With a final blow, the ghost dissipates with an anguished wail! As it fades, the chest's lock clicks open on its own. Inside you find the CROWN OF ETERNITY! You have defeated the guardian and claimed the treasure. Victory is yours!",
+      "ending": {
+        "type": "victory"
+      }
+    },
+    {
+      "id": 21,
+      "title": "The Hidden Grotto",
+      "text": "You find yourself in a beautiful underground grotto. Luminescent fungi light the chamber with an eerie glow. In the center is a small pool of crystal-clear water. As you approach, you see coins glinting at the bottom.",
+      "options": [
+        {
+          "id": "to-23",
+          "label": "Drink from the pool (might restore health)",
+          "target": 23
+        },
+        {
+          "id": "to-24",
+          "label": "Take the coins and leave",
+          "target": 24
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "title": "The Trap Springs!",
+      "text": "As you try to force the lock, a magical trap is triggered! Searing energy blasts you backward. You lose 4 STAMINA. The chest remains locked. Maybe there's another way...",
+      "options": [
+        {
+          "id": "to-14",
+          "label": "Try again with the key if you have it",
+          "target": 14
+        },
+        {
+          "id": "to-16",
+          "label": "Give up and retreat",
+          "target": 16
+        }
+      ],
+      "effects": {
+        "modifyStats": {
+          "stamina": -4
+        }
+      }
+    },
+    {
+      "id": 23,
+      "title": "The Magical Pool",
+      "text": "You drink from the pool. The water tastes sweet and pure. Warmth spreads through your body - your wounds heal! You restore 6 STAMINA points and feel incredibly lucky! Add 1 to your LUCK.",
+      "options": [
+        {
+          "id": "to-8",
+          "label": "Search for a way back to the main chambers",
+          "target": 8
+        }
+      ],
+      "effects": {
+        "modifyStats": {
+          "stamina": 6,
+          "luck": 1
+        }
+      }
+    },
+    {
+      "id": 24,
+      "title": "Quick Treasure",
+      "text": "You scoop up the coins - 5 gold pieces - and look for an exit. You find a passage that seems to lead upward and back toward the main cavern system.",
+      "options": [
+        {
+          "id": "to-8",
+          "label": "Follow the passage",
+          "target": 8
+        }
+      ],
+      "effects": {
+        "addItems": [
+          {
+            "id": "gold-pieces-2",
+            "name": "5 Gold Pieces",
+            "description": "Coins from the grotto",
+            "type": "treasure"
+          }
+        ]
+      }
+    },
+    {
+      "id": 99,
+      "title": "Your Adventure Ends",
+      "text": "You have fallen in battle. Your adventure ends here in the dark depths of the Cavern of Fear. Your bones will join countless others who sought the legendary treasure and failed. The cavern's secrets remain hidden, waiting for the next brave (or foolish) adventurer...",
+      "ending": {
+        "type": "defeat"
+      }
+    }
+  ]
+}

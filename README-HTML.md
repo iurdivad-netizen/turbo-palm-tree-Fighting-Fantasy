@@ -1,3 +1,5 @@
+> **Legacy guide (format v1).** For new books use [AUTHORING.md](AUTHORING.md); this file is kept for reference only.
+
 # Fighting Fantasy - Standalone HTML App
 
 A complete standalone HTML version of the Fighting Fantasy web app. No installation, no build process - just open `index.html` in your browser!

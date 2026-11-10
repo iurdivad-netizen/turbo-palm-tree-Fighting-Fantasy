@@ -1,0 +1,111 @@
+{
+  "_comment": "Hand-written decisions for migrate_to_v2.py, specific to this book. labels: {section: {option id: button label}}; text: {section: [{replace, with}]} applied to the converted text; notes: {section: a problem in the book that the migration does not change}. See AUTHORING.md.",
+  "labels": {
+    "24": {
+      "to-127": "Retreat to the cemetery",
+      "to-234": "Accept the Mayor's help"
+    },
+    "52": {
+      "to-3": "Search his body",
+      "to-180": "Move on quickly"
+    },
+    "54": {
+      "to-109": "Climb down the well on the rope",
+      "to-127": "Leave the well unexplored"
+    },
+    "56": {
+      "to-127": "Retreat to the cemetery"
+    },
+    "74": {
+      "to-221": "Investigate what is in the water",
+      "to-111": "Go back and find another route"
+    },
+    "81": {
+      "to-245": "Extinguish the candles",
+      "to-301": "Leave the candles burning and move on"
+    },
+    "100": {
+      "to-6": "Hide and let them pass",
+      "to-89": "Prepare to face them"
+    },
+    "110": {
+      "to-82": "Chase the fleeing cultist",
+      "to-180": "Let him go and keep exploring"
+    },
+    "112": {
+      "to-27": "Free Lydia now",
+      "to-245": "Keep exploring and come back for her later"
+    },
+    "121": {
+      "to-221": "Swim across",
+      "to-111": "Turn back and find another route"
+    },
+    "145": {
+      "to-111": "Retreat and find another way"
+    },
+    "153": {
+      "to-6": "Hide",
+      "to-89": "Prepare to confront them"
+    },
+    "164": {
+      "to-109": "Climb down the well on the rope",
+      "to-127": "Leave the well alone"
+    },
+    "165": {
+      "to-221": "Follow the stream",
+      "to-111": "Go back"
+    },
+    "170": {
+      "to-245": "Head for the eastern catacombs",
+      "to-301": "Go to the manor",
+      "to-111": "Explore more of the catacombs first"
+    },
+    "180": {
+      "to-346": "Escape toward the cemetery path"
+    },
+    "209": {
+      "to-221": "Continue down the passage",
+      "to-111": "Go back and try another route"
+    },
+    "236": {
+      "to-80": "Destroy the altar to weaken the curse",
+      "to-155": "Take the west passage",
+      "to-267": "Take the east passage"
+    },
+    "241": {
+      "to-62": "Fight the Drowned Zombie",
+      "to-221": "Slip past it through the water"
+    },
+    "258": {
+      "to-111": "Go back and explore elsewhere"
+    },
+    "289": {
+      "to-312": "Continue toward the manor",
+      "to-346": "Escape toward the cemetery path"
+    },
+    "325": {
+      "to-378": "Take the left staircase (the cultists)",
+      "to-395": "Take the right staircase (the Widow's lair)"
+    },
+    "341": {
+      "to-333": "Encounter another ghoul"
+    }
+  },
+  "text": {
+    "35": [
+      {
+        "replace": "Drink the vial to gain +1 SKILL but lose 1 LUCK\n\nSave it for later (add it to your inventory)\n\nLeave it behind",
+        "with": "{{opt:to-111}}\n{{opt:to-111-2}}\n{{opt:to-111-3}}"
+      },
+      {
+        "replace": "\n\nOnce you've made your decision about the vial, you continue exploring.\n\n{{opt:to-111}}",
+        "with": ""
+      }
+    ]
+  },
+  "notes": {
+    "24": "item check (Mayor's Ledger) without conditions: both branches are open to everyone",
+    "54": "item check (rope) without conditions: a player without rope can still pick the rope branch",
+    "164": "item check (rope) without conditions"
+  }
+}
