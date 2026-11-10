@@ -1,6 +1,6 @@
 # Reader redesign: decisions, book format v2, build order
 
-Status: **design agreed, nothing built yet.** Parked so it can be picked up later.
+Status: **step 1 (schema, converter, validator) is done.** Steps 2 to 4 are not started. The reader (`index.html`) still plays the v1 file; `CURSE_OF_HOLLOWS_END.v2.json` is not playable until step 2.
 
 ## Why
 
@@ -69,9 +69,37 @@ Measured on `CURSE_OF_HOLLOWS_END.json`: 93% of the 767 buttons are labelled jus
 - Combat rounds should have a "roll round" button and an "auto-fight" toggle so long fights do not need 20 taps.
 - Accessibility: roll result is always printed as text, not only animated.
 
+## Step 1 result (done)
+
+| File | What it is |
+|---|---|
+| `book.schema.json` | The v2 contract (JSON Schema 2020-12). Strict: unknown keys are errors, so typos are caught. |
+| `migrate_to_v2.py` | v1 -> v2 converter. Recovers each option's label from its own section's "Turn to N to ..." lines, replaces those lines with `{{opt:ID}}`, moves rolls under `roll`, groups effects under `effects`, makes endings explicit, writes `migration-review.md`. |
+| `validate_adventure.py` | Now understands v2: the schema (needs `pip install jsonschema`, otherwise skipped with a note) plus cross-reference checks. |
+| `check_v2_equivalence.py` | Proves a migration changed no game logic (395 of 395 sections identical). |
+| `CURSE_OF_HOLLOWS_END.v2.json` | The converted book. |
+| `migration-review.md` | What a human should check. |
+
+Acceptance, as agreed: every option has a real label (the validator rejects "Turn to N" and duplicate labels in a section), no "Turn to N" is left in any text, the validator passes, and no game logic changed. The validator was tested against 12 deliberately broken copies and caught all 12.
+
+Numbers on the Curse of Hollow's End: 767 options; 87% are referenced inline in the text (the rest, mostly combat continuations, are listed under it); average text per section 602 -> 504 characters; 277 options are labelled just "Continue" (single exits at the end of a sentence).
+
+### How v2 differs from the draft above
+
+- Rolls: `{{roll}}` (one per section, no id) instead of `{{roll:ID}}`. Luck roll = `{kind:"luck", success:{...}, failure:{...}}`; dice roll = `{kind:"dice", dice:"1d6", outcomes:[{min,max,text,target,effects,luck:{success,failure}}]}`. `gatesChoices` is now `gatesOptions`.
+- Menu lines stay where the book put them, one `{{opt:ID}}` per line, consecutive lines form one list. Labels are sentence-case ("Search the cellar", "Go to the ballroom (ghostly dancers)").
+- `combat[].victoryText` is new: the "If you win: ..." narrative, previously shown before the fight.
+- Endings: exactly 4, 39, 65 (instant death), 400 (victory) and 999 (defeat). The 9 mid-game sections that v1 wrongly flagged as endings (14, 24, 29, 36, 38, 41, 56, 152, 297) no longer are.
+- `TEXT_OVERRIDES` (1 section) and `LABEL_OVERRIDES` (about 70 labels) in `migrate_to_v2.py` are hand-written and specific to this book. For future books they should live in a small sidecar file next to the book (step 4).
+
+### Follow-ups found while reading the text (logic v1 already lacked, not changed)
+
+- Sections 54 and 164 ("Do you have ROPE?") and 24 ("Do you have the Mayor's Ledger?") offer both branches to everyone: the choices carry no item conditions.
+- Section 180's menu of 19 places is still skipped by the fight's victory jump (sections 260-280 unreachable).
+
 ## Build order
 
-1. **Schema + converter + validator (v2).** Write `book.schema.json`; extend `validate_adventure.py` to check it; write a v1 to v2 migration that takes labels from `CURSE_OF_HOLLOWS_END_FORMATTED.txt` (its `{choice: N | label}` markers and "Turn to N for ..." prose) and strips the option lines from the text. Acceptance: every option has a real label, no `Turn to N` left in any section text, validator passes.
+1. **Schema + converter + validator (v2). DONE (see above).** Write `book.schema.json`; extend `validate_adventure.py` to check it; write a v1 to v2 migration that takes labels from `CURSE_OF_HOLLOWS_END_FORMATTED.txt` (its `{choice: N | label}` markers and "Turn to N for ..." prose) and strips the option lines from the text. Acceptance: every option has a real label, no `Turn to N` left in any section text, validator passes.
 2. **Engine/UI split.** Move game logic out of `index.html` into an engine module with the `requestRoll` hook; keep a thin adapter so the simulator runs unchanged. Acceptance: all browser tests and the 3,000-game simulation give the same results.
 3. **New reader UI.** Inline buttons, dice and auto-roll, readable layout on desktop and phone, saved preferences. Acceptance: a long section (388, 234) reads top to bottom with no scrolling back; phone width works.
 4. **Docs for authors:** how to convert a new book to v2 and validate it.
