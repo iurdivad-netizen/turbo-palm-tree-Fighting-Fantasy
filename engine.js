@@ -44,6 +44,7 @@
         add(e.modifyStats, '');
         add(e.permanentStats, ' (permanent)');
         add(e.maxStats, ' (maximum)');
+        if (e.nextFightSkill) parts.push(`${e.nextFightSkill > 0 ? '+' : ''}${e.nextFightSkill} SKILL in your next fight`);
         return parts.length ? ` [${parts.join(', ')}]` : '';
     }
 
@@ -130,7 +131,7 @@
      */
     function upgradeBook(book) {
         if (!book || book.schemaVersion === 2) return book;
-        const EK = ['modifyStats', 'permanentStats', 'maxStats', 'addItems', 'removeItems'];
+        const EK = ['modifyStats', 'permanentStats', 'maxStats', 'addItems', 'removeItems', 'nextFightSkill'];
         const fx = d => { const o = {}; EK.forEach(k => { if (d && d[k] && (!isArr(d[k]) || d[k].length)) o[k] = d[k]; }); return o; };
         const hasFx = o => Object.keys(o).length > 0;
         const out = { schemaVersion: 2, id: book.id, title: book.title };
@@ -244,6 +245,7 @@
             this.usedOnce = new Set();
             this.rollResolved = false;
             this.tempSkillPenalty = 0;
+            this.carriedSkillPenalty = 0;   // SKILL lost in the next fight (a wound that is still tingling)
             this.nextUid = 1;
             this.pending = null;      // { request, gen } while waiting for the player to roll
             this.advance = null;      // { target } navigation waiting for advance()
@@ -399,6 +401,7 @@
             if (e.modifyStats) this.modifyStats(e.modifyStats);
             if (e.permanentStats) this.reduceStats(e.permanentStats, true);
             if (e.maxStats) this.reduceStats(e.maxStats, false);
+            if (e.nextFightSkill) this.carriedSkillPenalty = Math.max(0, this.carriedSkillPenalty - e.nextFightSkill);   // a negative number is a penalty
             if (e.addItems) e.addItems.forEach(i => this.addItem(i));
             if (e.removeItems) e.removeItems.forEach(id => this.removeItem(id));
         }
@@ -600,7 +603,9 @@
         *_startCombat(list) {
             const first = list[0];
             this.inCombat = true;
-            this.tempSkillPenalty = 0;
+            this.tempSkillPenalty = this.carriedSkillPenalty;
+            if (this.carriedSkillPenalty) this.combatLog.push(`🩸 Your earlier wound still hurts: -${this.carriedSkillPenalty} SKILL for this fight.`);
+            this.carriedSkillPenalty = 0;
             this.lastWielded = null;
             this.currentCombatIndex = 0;
             this.enemyCurrentStamina = first.enemyStamina;
@@ -764,7 +769,7 @@
                 inventory: this.inventory, visited: Array.from(this.visited), usedOnce: Array.from(this.usedOnce), rolledOnce: Array.from(this.rolledOnce),
                 inCombat: this.inCombat, enemyCurrentStamina: this.enemyCurrentStamina, currentCombatIndex: this.currentCombatIndex, combatLog: this.combatLog,
                 isGameOver: this.isGameOver, gameOverType: this.gameOverType, combatDone: this.combatDone, lastWielded: this.lastWielded,
-                rollResolved: this.rollResolved, tempSkillPenalty: this.tempSkillPenalty, nextUid: this.nextUid, advance: this.advance
+                rollResolved: this.rollResolved, tempSkillPenalty: this.tempSkillPenalty, carriedSkillPenalty: this.carriedSkillPenalty, nextUid: this.nextUid, advance: this.advance
             };
         }
 
@@ -774,7 +779,7 @@
                 started: d.started, currentSection: d.currentSection, stats: d.stats, inventory: d.inventory, visited: new Set(d.visited),
                 usedOnce: new Set(d.usedOnce || []), rolledOnce: new Set(d.rolledOnce || []), inCombat: !!d.inCombat, enemyCurrentStamina: d.enemyCurrentStamina || 0,
                 currentCombatIndex: d.currentCombatIndex || 0, combatLog: d.combatLog || [], isGameOver: !!d.isGameOver, gameOverType: d.gameOverType || null,
-                combatDone: !!d.combatDone, lastWielded: d.lastWielded || null, rollResolved: !!d.rollResolved, tempSkillPenalty: d.tempSkillPenalty || 0,
+                combatDone: !!d.combatDone, lastWielded: d.lastWielded || null, rollResolved: !!d.rollResolved, tempSkillPenalty: d.tempSkillPenalty || 0, carriedSkillPenalty: d.carriedSkillPenalty || 0,
                 nextUid: d.nextUid || 1, advance: d.advance || null
             });
             this._changed();

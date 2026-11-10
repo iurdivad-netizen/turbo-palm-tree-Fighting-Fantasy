@@ -53,7 +53,7 @@ function runPolicy(rawBook, policy, N, seed, opts, cfg) {
   // the end of a game is decided by the book: every section with an `ending` is terminal
   const TERMINAL = {};
   book.sections.forEach(s => {
-    if (s.ending) TERMINAL[s.id] = cfg.terminalLabels[s.ending.type] || (s.ending.type === 'neutral' ? 'ended' : s.ending.type);
+    if (s.ending) TERMINAL[s.id] = cfg.terminalLabels[s.id] || cfg.terminalLabels[s.ending.type] || (s.ending.type === 'neutral' ? 'ended' : s.ending.type);   // a label may name a section or an ending type
   });
   const A = cfg.analytics || {};
   const GOALS = cfg.goalItems;

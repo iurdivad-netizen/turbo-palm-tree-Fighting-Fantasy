@@ -525,7 +525,7 @@ test('real book: the pit trap at 245 asks for a Luck save instead of killing; op
     const d = play(dice(1, 6, 6));
     d.goTo(245); d.doRoll();
     assert.equal(d.currentSection, 4);       // an unlucky save falls
-    assert.equal(d.section().ending.type, 'neutral');
+    assert.equal(d.section().ending.type, 'defeat');
 });
 
 test('real book: the encounter hub 301 rolls once per game, then shows its menu', () => {
@@ -591,4 +591,86 @@ test('real book: the rope gate at 89 - with rope you wade across, without it you
     g.addItem({ id: 'rope', name: 'Rope', type: 'other' });
     assert.equal(g.rollPending(), false);
     assert.deepEqual(g.optionStates().map(s => [s.option.id, s.enabled]), [['to-221', true]]);
+});
+
+// ---- the open book issues, fixed ---------------------------------------------------------------------------
+test('a wound that has not healed (nextFightSkill) is carried into the next fight, once, and survives a save', () => {
+    const g = make([sec(1), sec(2, { combat: enemy() }), sec(3, { combat: enemy() })]);
+    g.applyEffects({ nextFightSkill: -1 });
+    assert.equal(g.carriedSkillPenalty, 1);
+    const copy = Engine.create({ book: book([sec(1), sec(2, { combat: enemy() }), sec(3, { combat: enemy() })]), rng: dice() });
+    copy.restore(JSON.parse(JSON.stringify(g.serialize())));
+    assert.equal(copy.carriedSkillPenalty, 1, 'saved and restored');
+    g.goTo(2); g.startCombat();
+    assert.equal(g.tempSkillPenalty, 1);
+    assert.equal(g.carriedSkillPenalty, 0, 'used up');
+    g.goTo(3); g.startCombat();
+    assert.equal(g.tempSkillPenalty, 0, 'the second fight is not affected');
+    assert.equal(Engine.describeEffects({ nextFightSkill: -1 }), ' [-1 SKILL in your next fight]');
+});
+
+test('real book: section 22 is a Luck test; the paralysis costs 1 SKILL in the next fight', () => {
+    const bad = play(dice(6, 6));
+    bad.goTo(22); bad.doRoll();
+    assert.equal(bad.currentSection, 298);
+    assert.equal(bad.carriedSkillPenalty, 1);
+    bad.goTo(46); bad.startCombat();
+    assert.equal(bad.tempSkillPenalty >= 1, true);
+    const good = play(dice(1, 1));
+    good.goTo(22); good.doRoll();
+    assert.equal(good.currentSection, 298);
+    assert.equal(good.carriedSkillPenalty, 0);
+});
+
+test('real book: the instant-death pages are defeats and 39 hands out nothing', () => {
+    const b = real(); const S = id => b.sections.find(s => s.id === id);
+    for (const id of [4, 39, 65]) assert.equal(S(id).ending.type, 'defeat', `section ${id}`);
+    assert.equal(S(39).effects, undefined);
+});
+
+test('real book: 362 ends in the incomplete victory (998), not in the Phantom Servant fight', () => {
+    const b = real(); const S = id => b.sections.find(s => s.id === id);
+    assert.deepEqual([...new Set(S(362).combat.map(e => e.onVictorySection))], [998]);
+    assert.equal(S(998).ending.type, 'neutral');
+    assert.match(S(998).text, /INCOMPLETE VICTORY/);
+});
+
+test('real book: after the zombies in 180 the menu is shown, so sections 260-280 can be reached', () => {
+    const b = real(); const s = b.sections.find(x => x.id === 180);
+    assert.ok(s.combat.every(e => e.onVictorySection === undefined));
+    const seen = new Set();
+    const walk = id => { if (seen.has(id)) return; seen.add(id); const x = b.sections.find(y => y.id === id); if (!x) return;
+        const t = (x.options || []).map(o => o.target);
+        if (x.roll) JSON.stringify(x.roll).replace(/"target":(\d+)/g, (_, n) => t.push(+n));
+        [].concat(x.combat || []).forEach(e => ['onVictorySection', 'onDefeatSection', 'fleeSection'].forEach(k => e[k] != null && t.push(e[k])));
+        t.forEach(walk); };
+    walk(1);
+    for (let i = 260; i <= 280; i++) if (b.sections.some(x => x.id === i)) assert.ok(seen.has(i), `section ${i} is reachable`);
+});
+
+test('real book: a failed Luck test at a trap costs STAMINA and goes where success goes - never to a reward', () => {
+    const b = real();
+    for (const id of [138, 224, 256, 295, 142, 304, 228]) {
+        const r = b.sections.find(s => s.id === id).roll;
+        assert.equal(r.failure.target, r.success.target, `section ${id}`);
+        assert.ok(r.failure.effects.modifyStats.stamina < 0, `section ${id}`);
+    }
+    const shrine = b.sections.find(s => s.id === 155).options.find(o => o.target === 97);
+    assert.ok(shrine, 'the healing shrine (97) can still be found');
+});
+
+test('real book: the well (54, 164) needs rope and the Mayor (24) needs the ledger - reading the page gives nothing', () => {
+    const g = play(dice());
+    g.goTo(54);
+    assert.deepEqual(names(g).includes('rope'), false);
+    assert.deepEqual(g.optionStates().map(s => [s.option.id, s.enabled]), [['to-109', false], ['to-127', true]]);
+    g.addItem({ id: 'rope', name: 'Rope', type: 'other' });
+    assert.equal(g.optionStates()[0].enabled, true);
+    g.goTo(164);
+    assert.equal(g.optionStates()[0].enabled, true);
+    g.goTo(24);
+    assert.equal(names(g).includes('book'), false);
+    assert.deepEqual(g.optionStates().map(s => [s.option.id, s.enabled]), [['to-234', false], ['to-127', true]]);
+    g.addItem({ id: 'mayors-ledger', name: "Mayor's Ledger", type: 'other' });
+    assert.equal(g.optionStates()[0].enabled, true);
 });

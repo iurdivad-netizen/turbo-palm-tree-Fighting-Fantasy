@@ -47,6 +47,9 @@
       "to-6": "Hide",
       "to-89": "Prepare to confront them"
     },
+    "155": {
+      "to-97": "Visit the healing shrine"
+    },
     "164": {
       "to-109": "Climb down the well on the rope",
       "to-127": "Leave the well alone"
@@ -103,9 +106,5 @@
       }
     ]
   },
-  "notes": {
-    "24": "item check (Mayor's Ledger) without conditions: both branches are open to everyone",
-    "54": "item check (rope) without conditions: a player without rope can still pick the rope branch",
-    "164": "item check (rope) without conditions"
-  }
+  "notes": {}
 }

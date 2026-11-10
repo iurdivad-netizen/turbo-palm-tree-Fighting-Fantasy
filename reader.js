@@ -415,6 +415,7 @@ function renderStats() {
         <h2>Character</h2>
         ${meter('SKILL', st.skill, st.initialSkill)}${meter('STAMINA', st.stamina, st.initialStamina)}${meter('LUCK', st.luck, st.initialLuck)}
         ${game.tempSkillPenalty ? `<p class="penalty">−${game.tempSkillPenalty} SKILL for this fight</p>` : ''}
+        ${game.carriedSkillPenalty ? `<p class="penalty">−${game.carriedSkillPenalty} SKILL in your next fight</p>` : ''}
         <div class="gold"><span>💰 Gold</span><span>${st.gold || 0} GP</span></div>
     </section>`;
 }

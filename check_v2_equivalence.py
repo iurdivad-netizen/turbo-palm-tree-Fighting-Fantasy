@@ -13,7 +13,7 @@ import sys
 
 V1 = sys.argv[1] if len(sys.argv) > 1 else "CURSE_OF_HOLLOWS_END.json"
 V2 = sys.argv[2] if len(sys.argv) > 2 else "CURSE_OF_HOLLOWS_END.v2.json"
-EK = ("modifyStats", "permanentStats", "maxStats", "addItems", "removeItems")
+EK = ("modifyStats", "permanentStats", "maxStats", "addItems", "removeItems", "nextFightSkill")
 fx = lambda d: {k: d[k] for k in EK if d.get(k)}
 
 
