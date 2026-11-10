@@ -224,6 +224,10 @@ function runInPage(book, policy, N, seed, opts) {
       if (trace) trace.push(id + ':' + act.t + (act.t === 'choice' ? '>' + act.c.targetSection : '') + ' sta' + GameState.stats.stamina + ' sk' + GameState.stats.skill + ' lu' + GameState.stats.luck);
       const before = GameState.currentSection;
       const staBefore = GameState.stats.stamina;
+      if (act.t === 'dice' || act.t === 'luck') {
+        const lk = GameState.stats.luck, rec = (agg.luckAtRoll = agg.luckAtRoll || {})[id] || (agg.luckAtRoll[id] = { n: 0, sum: 0, zero: 0, low: 0 });
+        rec.n++; rec.sum += lk; if (lk === 0) rec.zero++; if (lk <= 3) rec.low++;
+      }
       if (act.t === 'dice') { agg.dice.total++; handleDiceRoll(id); }
       else if (act.t === 'luck') {
         agg.luckTests.total++;
