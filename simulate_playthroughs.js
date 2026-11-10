@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /**
- * Simulates many playthroughs of an adventure using the REAL game logic from index.html
- * (loaded in headless Chromium), driven by simple bot players, and writes the raw results as JSON.
+ * Simulates many playthroughs of an adventure with the game engine (engine.js), driven by simple bot players,
+ * and writes the raw results as JSON. No browser needed: the engine has no screen.
  *
  * Usage:  node simulate_playthroughs.js [book.json] [games-per-policy] [out.json] [seed]
  *   defaults: CURSE_OF_HOLLOWS_END.json 1000 simulation-results.json 20240601
+ *   (a book in the old format is upgraded in memory; a v2 book is played as it is)
  *
  * Policies
  *   random  - picks uniformly among the available actions (a lower bound: a player who never plans)
@@ -12,23 +13,19 @@
  *             and her true name (or gets impatient), then plays like 'guided'
  *   guided  - walks toward the items the final confrontation needs (Silver Key, her true name, a magical
  *             weapon), then to the final door; 15% of its choices are random, so it also explores
- * Both bots flee when STAMINA is low and drink/eat healing items when hurt.
- *
- * Requires: playwright (npm i playwright) - the Chromium bundled with it is used.
+ * All bots flee when STAMINA is low and drink/eat healing items when hurt. Dice and bot choices share one seeded
+ * generator, so a run is reproducible.
  */
 const fs = require('fs');
 const path = require('path');
-const { chromium } = require('playwright');
+const Engine = require('./engine.js');
 
 const bookFile = process.argv[2] || 'CURSE_OF_HOLLOWS_END.json';
 const games = parseInt(process.argv[3] || '1000', 10);
 const outFile = process.argv[4] || 'simulation-results.json';
 const seed = parseInt(process.argv[5] || '20240601', 10);
 
-// ---------------------------------------------------------------------------------------------
-// This function runs INSIDE the page, where GameState, canMakeChoice, fightRound ... exist.
-// ---------------------------------------------------------------------------------------------
-function runInPage(book, policy, N, seed, opts) {
+function runPolicy(rawBook, policy, N, seed, opts) {
   const MAX_STEPS = opts.maxSteps;
   function mulberry32(a) {
     return function () {
@@ -39,26 +36,26 @@ function runInPage(book, policy, N, seed, opts) {
     };
   }
   const rng = mulberry32(seed);
-  Math.random = rng;                       // dice and bot decisions are reproducible
-  window.alert = () => {};
-  window.confirm = () => true;
-  window.render = () => {};                // no DOM work needed
-  GameState.schedule = fn => fn();         // no delays between a result and the next section
-
+  const game = Engine.create({ book: rawBook, rng, autoRoll: true, autoAdvance: true });
+  const book = game.book;
+  const GameState = game;
   const sec = new Map(book.sections.map(s => [s.id, s]));
   const TERMINAL = { 400: 'victory', 999: 'defeat', 4: 'instant-death', 39: 'instant-death', 65: 'instant-death' };
-  const WEAPON_SOURCES = book.sections.filter(s => (s.addItems || []).some(i => (i.properties || []).includes('magical'))).map(s => s.id);
-  const KEY_SOURCES = book.sections.filter(s => (s.addItems || []).some(i => i.id === 'silver-key')).map(s => s.id);
-  const NAME_SOURCES = book.sections.filter(s => (s.addItems || []).some(i => i.id === 'true-name')).map(s => s.id);
+  const addsOf = s => (s.effects && s.effects.addItems) || [];
+  const WEAPON_SOURCES = book.sections.filter(s => addsOf(s).some(i => (i.properties || []).includes('magical'))).map(s => s.id);
+  const KEY_SOURCES = book.sections.filter(s => addsOf(s).some(i => i.id === 'silver-key')).map(s => s.id);
+  const NAME_SOURCES = book.sections.filter(s => addsOf(s).some(i => i.id === 'true-name')).map(s => s.id);
 
   // ----- graph (ignoring conditions) for the guided bot -----
   function successors(s) {
     const out = [];
-    (s.choices || []).forEach(c => out.push(c.targetSection));
-    const tl = s.testLuck || {};
-    if (tl.successSection) out.push(tl.successSection);
-    if (tl.failureSection) out.push(tl.failureSection);
-    ((s.diceRoll || {}).outcomes || []).forEach(o => o.targetSection && out.push(o.targetSection));
+    (s.options || []).forEach(o => out.push(o.target));
+    const r = s.roll || {};
+    if (r.kind === 'luck') {
+      if (r.success.target) out.push(r.success.target);
+      if (r.failure.target) out.push(r.failure.target);
+    }
+    (r.kind === 'dice' ? r.outcomes : []).forEach(o => o.target && out.push(o.target));
     const cc = s.combat ? (Array.isArray(s.combat) ? s.combat : [s.combat]) : [];
     cc.forEach(e => { if (e.onVictorySection) out.push(e.onVictorySection); if (e.fleeSection) out.push(e.fleeSection); });
     return out.filter(t => sec.has(t) && !TERMINAL[t] || t === 400);
@@ -86,25 +83,17 @@ function runInPage(book, policy, N, seed, opts) {
 
   // ----- helpers mirroring what the page shows the player -----
   function visibleChoices(s) {
-    if (!(s.choices && s.choices.length && (!s.combat || GameState.combatDone) && choicesUnlocked(s))) return [];
-    const out = [];
-    s.choices.forEach((c, i) => {
-      if (c.once && GameState.usedOnce.has(s.id)) return;
-      if (c.conditions && hasNegativeCondition(c.conditions) && !canMakeChoice({ conditions: stripPositive(c.conditions) })) return;
-      if (canMakeChoice(c)) out.push({ t: 'choice', i, c });
-    });
-    return out;
+    return game.optionStates(s).filter(x => x.enabled).map(x => ({ t: 'choice', o: x.option }));
   }
   function actionsFor(s) {
     const a = [];
-    if (rollPending(s, 'diceRoll')) a.push({ t: 'dice' });
-    if (rollPending(s, 'testLuck')) a.push({ t: 'luck' });
+    if (game.rollPending(s)) a.push({ t: s.roll.kind === 'dice' ? 'dice' : 'luck' });
     return a.concat(visibleChoices(s));
   }
   function actionTargets(s, act) {
-    if (act.t === 'choice') return [act.c.targetSection];
-    if (act.t === 'luck') return [s.testLuck.successSection, s.testLuck.failureSection].filter(Boolean);
-    return ((s.diceRoll || {}).outcomes || []).map(o => o.targetSection).filter(Boolean);
+    if (act.t === 'choice') return [act.o.target];
+    if (act.t === 'luck') return [s.roll.success.target, s.roll.failure.target].filter(Boolean);
+    return (s.roll.outcomes || []).map(o => o.target).filter(Boolean);
   }
 
   function healIfHurt(threshold) {
@@ -164,8 +153,7 @@ function runInPage(book, policy, N, seed, opts) {
   const inc = (o, k, n = 1) => { o[k] = (o[k] || 0) + n; };
 
   for (let g = 0; g < N; g++) {
-    GameState.loadBook(book);
-    GameState.startGame();
+    game.start();
     stats.itemsUsed = 0;
     const visited = new Set([GameState.currentSection]);
     let steps = 0, outcome = null, cause = null, lastCombat = null, hpLow = 20, finalFightSeen = false;
@@ -194,17 +182,17 @@ function runInPage(book, policy, N, seed, opts) {
         if (id === 394) { agg.gate.finalFightEntered++; finalFightSeen = true; hasMagical() ? agg.gate.finalFightWithMagic++ : agg.gate.finalFightNoMagic++; }
         rec.fights++;
         const sta0 = GameState.stats.stamina;
-        startCombat(combats[0].enemyStamina);
+        game.startCombat();
         let guard = 0, fled = false;
         while (GameState.inCombat && !GameState.isGameOver && guard++ < 600) {
           if (GameState.stats.stamina <= 6) healIfHurt(1);
           const cur = combats[GameState.currentCombatIndex] || combats[0];
-          if (canFleeNow(cur) && GameState.stats.stamina <= opts.fleeAt && GameState.stats.luck > 0) {
-            const before = GameState.currentSection; fleeCombat(cur.fleeSection);
+          if (game.canFleeNow(cur) && GameState.stats.stamina <= opts.fleeAt && GameState.stats.luck > 0) {
+            const before = GameState.currentSection; game.flee();
             if (GameState.currentSection !== before) { fled = true; break; }
             // an unlucky escape attempt costs the round: the enemy still attacks, so fight on
           }
-          fightRound(); rec.rounds++;
+          game.fightRound(); rec.rounds++;
         }
         rec.stamLost += Math.max(0, sta0 - GameState.stats.stamina);
         if (fled) rec.fled++;
@@ -221,22 +209,27 @@ function runInPage(book, policy, N, seed, opts) {
         if (!agg.gate._seen) agg.gate._seen = new Set();
       }
       const act = pickAction(s, acts, visited, steps);
-      if (trace) trace.push(id + ':' + act.t + (act.t === 'choice' ? '>' + act.c.targetSection : '') + ' sta' + GameState.stats.stamina + ' sk' + GameState.stats.skill + ' lu' + GameState.stats.luck);
+      if (trace) trace.push(id + ':' + act.t + (act.t === 'choice' ? '>' + act.o.target : '') + ' sta' + GameState.stats.stamina + ' sk' + GameState.stats.skill + ' lu' + GameState.stats.luck);
       const before = GameState.currentSection;
       const staBefore = GameState.stats.stamina;
-      if (act.t === 'dice') { agg.dice.total++; handleDiceRoll(id); }
+      if (act.t === 'dice' || act.t === 'luck') {
+        const lk = GameState.stats.luck, rec = (agg.luckAtRoll = agg.luckAtRoll || {})[id] || (agg.luckAtRoll[id] = { n: 0, sum: 0, zero: 0, low: 0 });
+        rec.n++; rec.sum += lk; if (lk === 0) rec.zero++; if (lk <= 3) rec.low++;
+      }
+      if (act.t === 'dice') { agg.dice.total++; game.doRoll(); }
       else if (act.t === 'luck') {
         agg.luckTests.total++;
         if (id === 395) { agg.gate.ritualAttempts++; }
-        handleLuckTest(id);
+        game.doRoll();
         const dest = GameState.currentSection;
-        const ok = dest === s.testLuck.successSection && s.testLuck.successSection !== s.testLuck.failureSection ? true : (s.testLuck.successSection === s.testLuck.failureSection ? null : false);
+        const succ = s.roll.success.target, fail = s.roll.failure.target;
+        const ok = dest === succ && succ !== fail ? true : (succ === fail ? null : false);
         if (ok === true) agg.luckTests.success++;
         if (id === 395 && ok === true) agg.gate.ritualLucky++;
         const hz = agg.hazards[id] || (agg.hazards[id] = { section: id, tests: 0, success: 0, kind: 'luck' }); hz.tests++; if (ok === true) hz.success++;
       } else {
         if (id === 395) { /* choice instead of the ritual = missing key or name */ }
-        handleChoice(act.c.targetSection, act.i);
+        game.chooseOption(act.o.id);
       }
       // gate bookkeeping on first arrival at 395
       if (GameState.currentSection === 395 && before !== 395) {
@@ -277,25 +270,17 @@ function runInPage(book, policy, N, seed, opts) {
 }
 
 // ---------------------------------------------------------------------------------------------
-(async () => {
+(function main() {
   const book = JSON.parse(fs.readFileSync(path.resolve(bookFile), 'utf8'));
-  const browser = await chromium.launch();
-  const page = await browser.newPage();
-  const errors = [];
-  page.on('pageerror', e => errors.push(e.message));
-  await page.route('**/cdnjs.cloudflare.com/**', r => r.abort());
-  await page.goto('file://' + path.resolve('index.html'));
   const opts = { maxSteps: 3000, exploreRate: 0.15, explorerPatience: 700, fleeAt: 5, healAt: 0.45, preFightHeal: 0.6 };
   const t0 = Date.now();
-  const results = { book: { title: book.title, sections: book.sections.length, file: bookFile }, seed, games, opts, policies: {} };
+  const results = { book: { title: book.title, sections: book.sections.length, file: bookFile }, seed, games, opts, engine: 'engine.js', policies: {} };
   for (const policy of ['random', 'explorer', 'guided']) {
     const t = Date.now();
-    results.policies[policy] = await page.evaluate(`(${runInPage.toString()})(${JSON.stringify(book)}, ${JSON.stringify(policy)}, ${games}, ${seed}, ${JSON.stringify(opts)})`);
+    results.policies[policy] = runPolicy(book, policy, games, seed, opts);
     console.log(`${policy}: ${games} games in ${((Date.now() - t) / 1000).toFixed(1)}s`, JSON.stringify(results.policies[policy].outcomes));
   }
-  results.pageErrors = errors.slice(0, 5);
   results.runtimeSeconds = (Date.now() - t0) / 1000;
   fs.writeFileSync(outFile, JSON.stringify(results));
-  console.log(`wrote ${outFile}; page errors: ${errors.length}`);
-  await browser.close();
+  console.log(`wrote ${outFile}`);
 })();

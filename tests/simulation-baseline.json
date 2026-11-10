@@ -1,0 +1,26 @@
+{
+  "note": "Fingerprint of simulate_playthroughs.js on CURSE_OF_HOLLOWS_END.json, 1000 games per player, seed 20240601. The first version of this fingerprint was identical to the results recorded from the old in-browser game logic (260 KB, every field).",
+  "book": "CURSE_OF_HOLLOWS_END.json",
+  "games": 1000,
+  "seed": 20240601,
+  "outcomes": {
+    "random": {
+      "instant-death": 431,
+      "defeat": 494,
+      "victory": 64,
+      "death": 11
+    },
+    "explorer": {
+      "instant-death": 491,
+      "victory": 185,
+      "defeat": 317,
+      "death": 7
+    },
+    "guided": {
+      "victory": 761,
+      "instant-death": 117,
+      "defeat": 122
+    }
+  },
+  "sha256": "1d3eb27888ae5fceb9ac4074ffab3c844bade3a1cb56e7fb3277290920433778"
+}

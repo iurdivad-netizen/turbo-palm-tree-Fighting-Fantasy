@@ -1,0 +1,224 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/fighting-fantasy/book.schema.json",
+  "title": "Gamebook, format v2",
+  "description": "The contract between the converter, the game engine and the reader. See UI-AND-SCHEMA-DESIGN.md. Structure only: cross-references (targets, option references, item ids, no 'Turn to N' left in text) are checked by validate_adventure.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "title", "startingSection", "initialStats", "sections"],
+  "properties": {
+    "schemaVersion": { "const": 2 },
+    "id": { "$ref": "#/$defs/slug" },
+    "title": { "type": "string", "minLength": 1 },
+    "author": { "type": "string" },
+    "description": { "type": "string" },
+    "startingSection": { "type": "integer" },
+    "initialStats": { "$ref": "#/$defs/stats" },
+    "startingItems": { "type": "array", "items": { "$ref": "#/$defs/item" } },
+    "sections": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/section" } }
+  },
+  "$defs": {
+    "slug": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "stats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["skill", "stamina", "luck"],
+      "properties": {
+        "skill": { "type": "integer", "minimum": 1 },
+        "stamina": { "type": "integer", "minimum": 1 },
+        "luck": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "statChange": {
+      "description": "Add or subtract (clamped between 0 and the Initial value); 'max' restores the stat to its Initial value.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "skill": { "oneOf": [{ "type": "integer" }, { "const": "max" }] },
+        "stamina": { "oneOf": [{ "type": "integer" }, { "const": "max" }] },
+        "luck": { "oneOf": [{ "type": "integer" }, { "const": "max" }] }
+      }
+    },
+    "statDelta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "skill": { "type": "integer" },
+        "stamina": { "type": "integer" },
+        "luck": { "type": "integer" }
+      }
+    },
+    "effects": {
+      "description": "Applied once, when it happens. permanentStats lowers (or raises) the current score AND the Initial value; maxStats only the Initial maximum.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "modifyStats": { "$ref": "#/$defs/statChange" },
+        "permanentStats": { "$ref": "#/$defs/statDelta" },
+        "maxStats": { "$ref": "#/$defs/statDelta" },
+        "addItems": { "type": "array", "items": { "$ref": "#/$defs/item" } },
+        "removeItems": { "type": "array", "items": { "$ref": "#/$defs/slug" } }
+      }
+    },
+    "item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "type"],
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "name": { "type": "string", "minLength": 1 },
+        "type": { "enum": ["weapon", "armor", "potion", "food", "treasure", "key", "other"] },
+        "description": { "type": "string" },
+        "bonus": { "type": "string" },
+        "restore": { "type": "string", "description": "e.g. '+4 stamina'" },
+        "properties": { "type": "array", "items": { "enum": ["magical", "silver", "crushing"] }, "uniqueItems": true },
+        "unique": { "type": "boolean" },
+        "onUse": { "$ref": "#/$defs/effects" }
+      }
+    },
+    "idList": {
+      "oneOf": [{ "$ref": "#/$defs/slug" }, { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/slug" } }]
+    },
+    "conditions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "requiresItem": { "$ref": "#/$defs/idList" },
+        "requiresNoItem": { "$ref": "#/$defs/idList" },
+        "requiresMissingAny": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/slug" } },
+        "requiresMinSkill": { "type": "integer" },
+        "requiresMinStamina": { "type": "integer" },
+        "requiresMinLuck": { "type": "integer" }
+      }
+    },
+    "option": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "target"],
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "label": { "type": "string", "minLength": 3, "maxLength": 160, "description": "What the button says. Never 'Turn to N'." },
+        "target": { "type": "integer" },
+        "conditions": { "$ref": "#/$defs/conditions" },
+        "effects": { "$ref": "#/$defs/effects", "description": "Applied when the player picks this option." },
+        "once": { "type": "boolean", "description": "A one-time decision: once any 'once' option in the section was taken, all of them disappear on later visits." }
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "text": { "type": "string" },
+        "target": { "type": "integer", "description": "Where to go next; omitted = stay in the section." },
+        "effects": { "$ref": "#/$defs/effects" }
+      }
+    },
+    "luckRoll": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "success", "failure"],
+      "properties": {
+        "kind": { "const": "luck" },
+        "label": { "type": "string" },
+        "conditions": { "$ref": "#/$defs/conditions", "description": "The test is only offered when these hold (e.g. only without the key)." },
+        "once": { "type": "boolean", "description": "Rolled only the first time the section is entered in a game." },
+        "gatesOptions": { "type": "boolean", "description": "The section's options appear only after the roll was made." },
+        "success": { "$ref": "#/$defs/outcome" },
+        "failure": { "$ref": "#/$defs/outcome" }
+      }
+    },
+    "diceOutcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["min", "max"],
+      "properties": {
+        "min": { "type": "integer" },
+        "max": { "type": "integer" },
+        "text": { "type": "string" },
+        "target": { "type": "integer" },
+        "effects": { "$ref": "#/$defs/effects" },
+        "luck": {
+          "description": "The outcome asks for a Luck test of its own.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["success", "failure"],
+          "properties": { "success": { "$ref": "#/$defs/outcome" }, "failure": { "$ref": "#/$defs/outcome" } }
+        }
+      }
+    },
+    "diceRoll": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "dice", "outcomes"],
+      "properties": {
+        "kind": { "const": "dice" },
+        "dice": { "enum": ["1d6", "2d6"] },
+        "label": { "type": "string" },
+        "once": { "type": "boolean" },
+        "gatesOptions": { "type": "boolean" },
+        "outcomes": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/diceOutcome" } }
+      }
+    },
+    "enemy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enemyName", "enemySkill", "enemyStamina"],
+      "properties": {
+        "enemyName": { "type": "string", "minLength": 1 },
+        "enemySkill": { "type": "integer", "minimum": 0 },
+        "enemyStamina": { "type": "integer", "minimum": 1 },
+        "onVictorySection": { "type": "integer" },
+        "onDefeatSection": { "type": "integer" },
+        "victoryText": { "type": "string", "description": "Shown after the fight is won." },
+        "onVictoryEffects": { "$ref": "#/$defs/effects" },
+        "canFlee": { "type": "boolean" },
+        "fleeSection": { "type": "integer" },
+        "fleeMaxStamina": { "type": "integer" },
+        "fleeTestLuck": { "type": "boolean" },
+        "onWound": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": { "skillLoss": { "type": "integer" }, "permanent": { "type": "boolean" }, "luckTest": { "type": "boolean" } }
+        },
+        "onStart": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": { "skillLoss": { "type": "integer" }, "luckTest": { "type": "boolean" }, "text": { "type": "string" } }
+        },
+        "reviveOn": { "type": "array", "items": { "type": "integer", "minimum": 1, "maximum": 6 } },
+        "effectiveWeapons": { "type": "array", "items": { "enum": ["magical", "silver", "crushing"] } },
+        "normalWeaponDamage": { "type": "integer", "minimum": 0 },
+        "weakTo": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["property", "damage"],
+          "properties": { "property": { "enum": ["magical", "silver", "crushing"] }, "damage": { "type": "integer" } }
+        },
+        "note": { "type": "string" }
+      }
+    },
+    "section": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "text"],
+      "properties": {
+        "id": { "type": "integer", "minimum": 0 },
+        "title": { "type": "string" },
+        "text": {
+          "type": "string",
+          "description": "Paragraphs separated by a blank line. {{opt:ID}} puts that option's button here; {{roll}} puts the dice here. Options not referenced are listed under the text. Never contains 'Turn to N'."
+        },
+        "options": { "type": "array", "items": { "$ref": "#/$defs/option" } },
+        "roll": { "oneOf": [{ "$ref": "#/$defs/luckRoll" }, { "$ref": "#/$defs/diceRoll" }] },
+        "combat": { "oneOf": [{ "$ref": "#/$defs/enemy" }, { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/enemy" } }] },
+        "effects": { "$ref": "#/$defs/effects", "description": "Applied the first time the section is entered." },
+        "ending": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type"],
+          "properties": { "type": { "enum": ["victory", "defeat", "neutral"] } }
+        }
+      }
+    }
+  }
+}
