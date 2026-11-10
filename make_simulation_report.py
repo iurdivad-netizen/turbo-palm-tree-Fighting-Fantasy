@@ -236,75 +236,121 @@ def top_visited():
 
 
 # numbers for the narrative
+BEFORE = sys.argv[4] if len(sys.argv) > 4 else "simulation-results-before.json"
+try:
+    BP = json.load(open(BEFORE, encoding="utf-8"))["policies"]
+except OSError:
+    BP = None
 rnd, exp, gd = P["random"], P["explorer"], P["guided"]
 n = N
-d245 = {p: sum(v for k, v in P[p].get("deathVia", {}).items() if k == "245 > 4") for p in ORDER}
-inst = {p: P[p]["outcomes"].get("instant-death", 0) for p in ORDER}
 speed = [r["steps"] for r in gd["victoryRuns"]]
 fastest = min(speed) if speed else 0
-gate_rnd, gate_exp = rnd["gate"], exp["gate"]
-vis245 = {p: P[p]["visitGames"].get("245", 0) for p in ORDER}
-
 c362 = next(c for c in comb_rows if c['section'] == 362)
 c394 = next(c for c in comb_rows if c['section'] == 394)
+W = {p: P[p]["outcomes"].get("victory", 0) for p in ORDER}
+WB = {p: BP[p]["outcomes"].get("victory", 0) for p in ORDER} if BP else None
+
+# pit traps: instant-death routes, pooled over the three players
+TRAPS = [(245, "1–2", 33), (189, "1–2", 33), (150, "1–2", 33), (275, "1–2", 33), (107, "1–2", 33), (167, "1–3", 50), (7, "4–6", 50)]
+trap_rows = []
+for sid, band, chance in TRAPS:
+    reached = sum(P[p]["visitGames"].get(str(sid), 0) for p in ORDER)
+    died = sum(v for p in ORDER for k, v in P[p].get("deathVia", {}).items() if k.startswith(f"{sid} > ") and k.split(" > ")[1] in ("4", "39", "65"))
+    died_g = sum(v for k, v in gd.get("deathVia", {}).items() if k.startswith(f"{sid} > ") and k.split(" > ")[1] in ("4", "39", "65"))
+    trap_rows.append((sid, band, chance, reached, died, died_g, inbound[sid]))
+
+# one-way doors to the final confrontation
+one_way = sorted(x["id"] for x in B["sections"] if x["id"] != 395 and set(targets(x)) == {395})
+ow_src = defaultdict(list)
+for x in B["sections"]:
+    for c in x.get("choices") or []:
+        if c["targetSection"] in one_way:
+            ow_src[x["id"]].append(c["targetSection"])
+hub388 = sorted(ow_src.get(388, []))
+g_r, g_e = rnd["gate"], exp["gate"]
+forced362 = {p: P[p].get("via362", {}) for p in ORDER}
+unprep = {p: (P[p]["gate"].get("missingEither", 0), P[p]["gate"].get("arrivals", 0)) for p in ORDER}
+mismatch = [(x["id"], x["testLuck"]["failureSection"]) for x in B["sections"] if x.get("testLuck") and x["testLuck"].get("failureSection") in (97, 117, 152)]
+mismatch_by = defaultdict(list)
+for a_, b_ in mismatch:
+    mismatch_by[b_].append(a_)
+left_gates = sorted(dice_gates + luck_gates)
+
+inst_g = gd["outcomes"].get("instant-death", 0)
 verdict = f"""
-<p><b>As shipped, the book does not work as a gamebook.</b> A player who just follows the menus wins
-<b>{pct(rnd['outcomes'].get('victory', 0), n)}</b> of the time, and a careful explorer only <b>{pct(exp['outcomes'].get('victory', 0), n)}</b>.
-{pct(inst['random'], n, 0)} and {pct(inst['explorer'], n, 0)} of their games end in an <i>instant-death</i> section. One section, <b>245</b>, accounts for
-{d245['random']} of {inst['random']} (random) and {d245['explorer']} of {inst['explorer']} (explorer) of those deaths.</p>
-<p>The opposite failure shows up too: a bot that knows the book wins <b>{pct(gd['outcomes'].get('victory', 0), n)}</b> of its games, in a median of
-<b>{median(speed)}</b> moves (fastest {fastest}), out of a book with {R['book']['sections']} sections. There is almost nothing in between to stop it.</p>
-<p>Both results have the same root cause: about <b>{len(dice_gates) + len(luck_gates)} sections</b> that should be decided by a die or a Luck test are still plain choices (details in Finding 1).
-Until they are converted, these numbers describe a broken build, not the book's real difficulty, so <b>do not tune balance from this report</b>; fix Findings 1–3 and re-run (Findings 4–6 are smaller, separate data defects).</p>
+<p><b>The chance gates are converted, and the picture is sharper.</b> The informed player's win rate fell from
+<b>{pct(WB['guided'], n)}</b> to <b>{pct(W['guided'], n)}</b>, because it can no longer pick the safe branch of every roll. The unguided players still almost never win
+(random {pct(WB['random'], n)} → <b>{pct(W['random'], n)}</b>, explorer {pct(WB['explorer'], n)} → <b>{pct(W['explorer'], n)}</b>).</p>
+<p>Two structural problems now explain nearly every loss, and neither is a conversion error:</p>
+<ul>
+<li><b>Pit traps on the main routes.</b> Sections 245 and 189 each kill one in three players who reach them. Together they killed
+<b>{pct(trap_rows[0][5] + trap_rows[1][5], n, 0)}</b> of the informed player's games.</li>
+<li><b>One-way doors to the final boss.</b> Hub 388 offers {len(hub388)} "final preparation" rooms, and each leads only to the final door (395). Arrive without the Silver Key and her true name
+and 395 forces the 362 ambush. It was entered <b>{sum(sum(v.values()) for v in forced362.values()):,}</b> times in the {3 * N:,} games and killed the player in {pct(c362['lost'], c362['fights'], 0)} of its fights.</li>
+</ul>
+<p>A player who knows where the key, the name and a magical weapon are wins about {W['guided'] * 100 // n} games in 100; a player without that knowledge almost never does, and the traps are the least avoidable part of that. These results describe <b>this build</b> and these bots, so read them as a diagnosis rather than a final balance verdict.</p>
 """
 
-via_rnd, tot_rnd = via_table("random")
-via_exp, tot_exp = via_table("explorer")
+compare_rows = ""
+if BP:
+    for p in ORDER:
+        a_, b_ = P[p], BP[p]
+        def cell(k):
+            x, y = b_["outcomes"].get(k, 0), a_["outcomes"].get(k, 0)
+            return f"<td class='num'>{pct(x, n)}</td><td class='num'><b>{pct(y, n)}</b></td>"
+        compare_rows += f"<tr><td>{LABEL[p]}</td>{cell('victory')}{cell('instant-death')}{cell('defeat')}<td class='num'>{median(b_['steps'])}</td><td class='num'><b>{median(a_['steps'])}</b></td></tr>"
+
+trap_html = "".join(
+    f"<tr><td>{sid}</td><td>roll {band}</td><td class='num'>{ch}%</td><td class='num'>{ib}</td><td class='num'>{reached:,}</td><td class='num'>{died:,}</td><td class='num'>{died_g:,}</td></tr>"
+    for sid, band, ch, reached, died, died_g, ib in trap_rows
+)
 
 findings = f"""
-<div class="finding sev-high"><h3><span>1</span> {len(dice_gates) + len(luck_gates)} chance gates are still plain choices <em>high</em></h3>
-<p>The book says "Roll one die" or "Test your Luck", but the build shows the outcomes as buttons. The player can pick the safe one every time, and the random walker picks the deadly one half the time.
-{len(converted)} sections are already real rolls (several I converted earlier); this census found the rest, because that earlier scan only looked at sections carrying stat-effect markers.</p>
-<p class="small"><b>Dice rolls / encounter tables ({len(dice_gates)}):</b> {', '.join(map(str, dice_gates))}<br>
-<b>Luck-test traps and obstacles ({len(luck_gates)}):</b> {', '.join(map(str, luck_gates))}<br>
-Sections 155, 189, 221, 301, 335 and 355 are six-way <i>random encounter tables</i>: the die should decide whether you meet a Shadow, a hidden cache or a fountain. Today the player simply picks.</p>
-<p><b>Evidence:</b> {tot_rnd} of the random walker's instant deaths and {tot_exp} of the explorer's came through "Turn to 4/39/65"; sections 245, 150, 275 and 189 are dice rolls that offer the death page as a button.</p></div>
+<div class="finding sev-high"><h3><span>1</span> Two pit traps decide most games <em>high</em></h3>
+<p>Sections <b>245</b> and <b>189</b> send the player to an instant-death page on a roll of 1–2. Both sit on the central routes: 245 is linked from {inbound[245]} sections and 189 from {inbound[189]}.
+The roll is made once per game on the first visit (a trap that has already been sprung is no longer a trap); even so, they killed
+<b>{trap_rows[0][5] + trap_rows[1][5]}</b> of the informed player's {n:,} games and {trap_rows[0][4] + trap_rows[1][4]:,} across all three players.
+The roll leaves no way to avoid it, no way to notice it, and no cost short of death. Options: turn the death into damage (the book already does this at 41, 107's middle band and 167's survival), make it a Luck test, or cut the links to it.</p>
+<div class="scroll"><table class="t"><thead><tr><th>Section</th><th>Dies on</th><th class="num">Chance</th><th class="num">Links in</th><th class="num">Games that reached it</th><th class="num">Died there (all)</th><th class="num">Died there (informed)</th></tr></thead><tbody>{trap_html}</tbody></table></div></div>
 
-<div class="finding sev-high"><h3><span>2</span> Section 245 is a one-in-three death trap with {inbound[245]} entrances <em>high</em></h3>
-<p>245 says "The floor collapses! Roll one die: 1–2 turn to 4 (instant death)". It is linked from {inbound[245]} sections ({', '.join(map(str, src245[:10]))}…).
-It was entered in {vis245['random']} of 1,000 random games and {vis245['explorer']} of 1,000 explorer games. <b>Even after finding 1 is fixed, every pass through 245 will kill a third of players.</b>
-Either cut the number of links to it, make the roll survivable (damage instead of death), or give the player a way to notice the trap.</p></div>
+<div class="finding sev-high"><h3><span>2</span> The final-preparation rooms are one-way doors to the boss <em>high</em></h3>
+<p>Section 388 ("review everything you've learned about the curse") offers {len(hub388)} preparation rooms: {', '.join(map(str, hub388))}. Each of them has the final door (395) as its <b>only</b> exit
+(so do 377 and 380, reached from the staircase hub 355, and the Shadow fight in 25). A player can use one room (a healing fountain, a potion, a final fight) and is then carried to the boss, whether or not they hold the Silver Key and her true name.
+Without both, 395 has one way on: the 362 ambush (three Shadows, then the weakened Widow, SKILL 10, STAMINA 12).
+{pct(unprep['random'][0], unprep['random'][1], 0)} of the random walker's {unprep['random'][1]:,} arrivals at 395 and {pct(unprep['explorer'][0], unprep['explorer'][1], 0)} of the explorer's {unprep['explorer'][1]:,} were unprepared, including a player who plays carefully and tries to avoid the door.
+Sections 29 and 91 add to the funnel: without the key their only exit is 362.
+In total 362 was entered <b>{sum(sum(v.values()) for v in forced362.values()):,}</b> times, with {c362['lost']} deaths ({pct(c362['won'], c362['fights'], 0)} of its fights won).
+Fix: let each preparation room return to 388, and give 395 a way back for a player who is not ready.</p></div>
 
-<div class="finding sev-high"><h3><span>3</span> Arriving at the final door unprepared is a trap <em>high</em></h3>
-<p>The final door (395) is offered from the central hubs, so players reach it whenever they like.
-{pct(gate_rnd.get('missingEither', 0), gate_rnd.get('arrivals', 0), 0)} of the random walker's arrivals and {pct(gate_exp.get('missingEither', 0), gate_exp.get('arrivals', 0), 0)} of the explorer's lacked the Silver Key or her true name.
-Sections 29 and 91 make it worse: their only alternatives are "go to 395 (needs the key)" and "go to 362", so a player without the key is <b>forced</b> into 362,
-which is the book's biggest killer: <b>{c362['lost']} deaths in {c362['fights']:,} fights</b> ({pct(c362['won'], c362['fights'], 0)} won; only the Widow's final fight, at {pct(c394['won'], c394['fights'] - c394['fled'], 0)}, has a lower win rate).</p></div>
-
-<div class="finding sev-med"><h3><span>4</span> The "incomplete victory" ending does not exist <em>medium</em></h3>
+<div class="finding sev-med"><h3><span>3</span> The "incomplete victory" ending does not exist <em>medium</em></h3>
 <p>Section 362 ends in the text with "THE END (Partial Victory)", but in the data its fight leads on to section 363, an ordinary Phantom Servant ambush, and then back into the hub at 335.
 Players who survive the three Shadows and the weakened Widow get no ending. Add a proper ending section (or make 362 an ending after the fight).</p></div>
 
-<div class="finding sev-med"><h3><span>5</span> Wrong "ending" flags on {len(false_end)} mid-game sections <em>medium</em></h3>
+<div class="finding sev-med"><h3><span>4</span> Wrong "ending" flags on {len(false_end)} mid-game sections <em>medium</em></h3>
 <p>Sections {', '.join(map(str, false_end))} are flagged as endings although they carry choices, dice rolls or combat. The reader prints a "Victory!" or "The End" banner on them while the story continues
 (24 and 56 are the Mayor refusing to help, flagged as <i>victory</i>). This came from the converter reading "(VICTORY!)" or "THE END" in prose. Remove <code>isEnding</code> from these sections.</p></div>
 
-<div class="finding sev-med"><h3><span>6</span> {sum(len(m[3]) for m in skipped_menu)} sections can never be reached in play <em>medium</em></h3>
+<div class="finding sev-med"><h3><span>5</span> {sum(len(m[3]) for m in skipped_menu)} sections can never be reached in play <em>medium</em></h3>
 <p>{'; '.join(f"Section {a} lists {len(m)} places to explore after the fight, but its victory link jumps straight to {b}, so the menu is never shown. Sections {', '.join(map(str, o))} have no other entrance." for a, b, m, o in skipped_menu)}
 These are the {len(never)} sections the bots never entered in {3 * N:,} games. Fix: remove <code>onVictorySection</code> from the fight so its menu appears after the win (and keep the jump target as one of the menu items).</p></div>
 
-<div class="finding sev-info"><h3><span>7</span> The book has almost no real gating <em>design note</em></h3>
-<p>The informed bot reaches the final door in a median of {median(speed)} moves. Sections like 45, 301, 378 and 234 are menus with 19–35 options each, so the shortest route is short. That is a property of how the
-parser flattened the source's "you may also explore…" lists into choices; the original probably relied on the player's own sense of what is worth doing. Worth a design decision rather than a code fix.</p></div>
+<div class="finding sev-med"><h3><span>6</span> Some Luck-test failures lead somewhere that does not fit <em>medium</em></h3>
+<p>The conversion follows the book's own cross-references literally, and some of them do not match the story:
+{'; '.join(f"failing the test in {', '.join(map(str, v))} sends you to <b>{k}</b> ({ {97: 'a healing shrine that fully restores STAMINA and gives +1 LUCK', 117: 'a journal with the curse timeline', 152: 'a study with a journal'}[k] })" for k, v in sorted(mismatch_by.items()))}.
+In those sections an unlucky roll is a reward. I did not guess the author's intent; they need a human decision (most likely a real trap section, such as the dart trap in 58).</p></div>
+
+<div class="finding sev-info"><h3><span>7</span> Still open <em>note</em></h3>
+<p>{', '.join(map(str, left_gates)) or 'None'}: {'section 22 is a Ghoul paralysis test whose SKILL penalty must carry into the next fight; it needs a carry-over penalty mechanic' if 22 in left_gates else 'no remaining unconverted gates'}.
+The informed bot's median of <b>{median(speed)}</b> moves to win is still short: menus of 19–35 options (45, 301, 378, 234) come from how the source's "you may also explore" lists were flattened into choices, which is a design question rather than a defect.</p></div>
 """
 
 method = f"""
 <ul>
 <li><b>Engine:</b> the bots drive the real <code>index.html</code> game logic (<code>GameState</code>, <code>fightRound</code>, <code>handleChoice</code>, Luck tests, dice rolls, item use, conditions) in headless Chromium, with delays and DOM rendering switched off.</li>
-<li><b>Randomness:</b> a seeded generator (seed {R['seed']}) feeds every die and every bot decision, so the run is reproducible. {N:,} games per policy, {3 * N:,} in total, in {R['runtimeSeconds']:.0f}s.</li>
+<li><b>Randomness:</b> a seeded generator (seed {R['seed']}) feeds every die and every bot decision, so the run is reproducible. {N:,} games per policy, {3 * N:,} in total, in {R['runtimeSeconds']:.0f}s. The before-column uses the same seed on the build before the conversion.</li>
 <li><b>Shared bot habits:</b> flee when STAMINA ≤ {R['opts']['fleeAt']} and the fight allows it; eat or drink healing items when STAMINA falls below {int(R['opts']['healAt'] * 100)}% of the maximum (and below {int(R['opts']['preFightHeal'] * 100)}% before a fight); a game ends after {R['opts']['maxSteps']:,} moves.</li>
+<li><b>Roll once:</b> encounter hubs (155, 221, 301, 335, 355, 127) and the pit traps (150, 189, 245, 275) roll only on the first visit per game. Other traps roll again on every visit.</li>
 <li><b>Limits:</b> bots are not people. Random under-plays (never plans) and the informed bot over-plays (has read the book), so treat them as bounds. Gold is never spent (the book has no shop). Reading text, noticing hints and risk-aversion are not modelled.</li>
-<li><b>Not a balance study:</b> because of Finding 1, the player has choices in the simulation that the book does not intend. Re-run after fixing it.</li>
 </ul>
 <p class="small">Reproduce: <code>node simulate_playthroughs.js CURSE_OF_HOLLOWS_END.json 1000 simulation-results.json {R['seed']} &amp;&amp; python3 make_simulation_report.py</code></p>
 """
@@ -359,10 +405,14 @@ table.t{{border-collapse:collapse;width:100%;font-size:.92rem}}.t th,.t td{{padd
 <div class="cards">{cards}</div>
 <div class="verdict">{verdict}</div>
 
-<h2>1 · How the games ended</h2>
+<h2>1 · Before and after the conversion</h2>
+<p>The same three players and the same seed, on the build before and after converting 31 chance gates.</p>
+<div class="scroll"><table class="t"><thead><tr><th rowspan="2">Player</th><th colspan="2" class="num">Victory</th><th colspan="2" class="num">Instant death</th><th colspan="2" class="num">Died in combat</th><th colspan="2" class="num">Median moves</th></tr><tr><th class="num">before</th><th class="num">after</th><th class="num">before</th><th class="num">after</th><th class="num">before</th><th class="num">after</th><th class="num">before</th><th class="num">after</th></tr></thead><tbody>{compare_rows}</tbody></table></div>
+
+<h2>2 · How the games ended</h2>
 {outcome_block()}
 
-<h2>2 · What kills players</h2>
+<h2>3 · What kills players</h2>
 <p>Share of all games that ended in each death. "Section 4/39/65" are the instant-death pages.</p>
 <div class="cols deaths">{death_table('random')}{death_table('explorer')}{death_table('guided')}</div>
 <h4>Which section sent them to the instant-death page</h4>
@@ -370,30 +420,30 @@ table.t{{border-collapse:collapse;width:100%;font-size:.92rem}}.t th,.t td{{padd
 {''.join(f"<tr><td>{LABEL[p]}</td><td>{', '.join(f'<b>{k}</b> ×{v}' for k, v in via_table(p)[0])}</td></tr>" for p in ORDER)}
 </tbody></table></div>
 
-<h2>3 · The final confrontation</h2>
+<h2>4 · The final confrontation</h2>
 <p>How often players reach section 395 and what happens there. <i>Arrivals</i> counts every entry to 395; <i>unprepared</i> means without both the Silver Key and her true name.</p>
 <div class="scroll"><table class="t"><thead><tr><th>Player</th><th class="num">Arrivals</th><th class="num">Unprepared</th><th class="num">%</th><th class="num">Ritual tried</th><th class="num">Ritual lucky</th><th class="num">Widow fight</th><th class="num">Won</th><th class="num">Lost</th></tr></thead><tbody>
 {''.join(funnel_row(p) for p in ORDER)}</tbody></table></div>
 <p class="small">The ritual is the Luck test at 395; lucky goes straight to victory (400), unlucky fights the Widow in section 394 (SKILL 11, STAMINA 15, immune to non-magical weapons).</p>
 
-<h2>4 · Game length</h2>
+<h2>5 · Game length</h2>
 <div class="cols">{hist_html}</div>
 
-<h2>5 · The deadliest fights</h2>
+<h2>6 · The deadliest fights</h2>
 <p>Pooled over all {3 * N:,} games; fights seen at least 25 times, lowest win rate first. A fight ends in a win, a death or a flight.</p>
 <div class="scroll"><table class="t"><thead><tr><th>Section</th><th>Enemies</th><th class="num">Fights</th><th class="num">Won (of fought)</th><th class="num">Fled</th><th class="num">STAMINA lost / fight</th></tr></thead><tbody>{combat_table()}</tbody></table></div>
 
-<h2>6 · Where STAMINA goes</h2>
+<h2>7 · Where STAMINA goes</h2>
 <p>Sections ranked by total STAMINA lost on entering or rolling in them (sections entered at least 40 times).</p>
 <div class="scroll"><table class="t"><thead><tr><th>Section</th><th>Type</th><th class="num">Entries</th><th class="num">Avg loss</th><th class="num">Deaths</th><th>Text</th></tr></thead><tbody>{hazard_table()}</tbody></table></div>
 
-<h2>7 · Coverage</h2>
+<h2>8 · Coverage</h2>
 {coverage}
 
-<h2>8 · Findings</h2>
+<h2>9 · Findings</h2>
 {findings}
 
-<h2>9 · Method and limits</h2>
+<h2>10 · Method and limits</h2>
 {method}
 <footer>Generated from <code>{e(RES)}</code> by <code>make_simulation_report.py</code>.</footer>
 </main></body></html>

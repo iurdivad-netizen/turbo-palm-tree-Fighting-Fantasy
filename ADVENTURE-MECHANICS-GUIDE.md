@@ -203,6 +203,15 @@ Applied once, the first time the section is entered - by any route (choice, Luck
   "modifyStats": { "stamina": -4 }, "targetSection": 221 } ] }` - one die decides the outcome.
 - Put the outcomes here instead of listing them as plain choices, otherwise the player can simply pick the good one.
 - A Luck test or dice roll can be made only once per visit to a section.
+- `"once": true` on a `testLuck` or `diceRoll`: the roll is made only the first time the section is entered in a game.
+  Use it for encounter hubs that other sections lead back to (otherwise the player would re-roll forever) and for traps.
+- `"gatesChoices": true`: the section's choices appear only after the roll has been made (for example the menu of places
+  to explore after "roll one die to see what you encounter first").
+- An outcome without `targetSection` keeps the player in the section ("the passage is clear"); its choices then appear.
+- A dice outcome may carry a nested Luck test:
+  `{ "min": 2, "max": 2, "luckTest": { "success": { "text": "You recover." }, "failure": { "targetSection": 50 } } }`.
+- `successEffects` / `failureEffects` / outcome effects may also use `addItems` and `removeItems` (a locked chest that
+  gives its contents only when the test succeeds).
 
 **Choices with effects, and items with an effect (JSON only):**
 - A choice may carry `"effects": { "permanentStats": {...}, "modifyStats": {...}, "addItems": [...], "removeItems": [...] }`,

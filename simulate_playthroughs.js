@@ -86,7 +86,7 @@ function runInPage(book, policy, N, seed, opts) {
 
   // ----- helpers mirroring what the page shows the player -----
   function visibleChoices(s) {
-    if (!(s.choices && s.choices.length && (!s.combat || GameState.combatDone))) return [];
+    if (!(s.choices && s.choices.length && (!s.combat || GameState.combatDone) && choicesUnlocked(s))) return [];
     const out = [];
     s.choices.forEach((c, i) => {
       if (c.once && GameState.usedOnce.has(s.id)) return;
@@ -97,8 +97,8 @@ function runInPage(book, policy, N, seed, opts) {
   }
   function actionsFor(s) {
     const a = [];
-    if (s.diceRoll && !GameState.rollResolved) a.push({ t: 'dice' });
-    if (s.testLuck && !GameState.rollResolved && canMakeChoice({ conditions: s.testLuck.conditions })) a.push({ t: 'luck' });
+    if (rollPending(s, 'diceRoll')) a.push({ t: 'dice' });
+    if (rollPending(s, 'testLuck')) a.push({ t: 'luck' });
     return a.concat(visibleChoices(s));
   }
   function actionTargets(s, act) {
@@ -243,6 +243,7 @@ function runInPage(book, policy, N, seed, opts) {
         const k = has('silver-key'), n = has('true-name');
         if (!agg.gate._count) agg.gate._count = 0;
         agg.gate.arrivals = (agg.gate.arrivals || 0) + 1;
+        inc(agg.gate.via395 = agg.gate.via395 || {}, before + (k && n ? ' (prepared)' : ' (unprepared)'));
         if (k && n) agg.gate.withKeyAndName++; else { agg.gate.missingEither = (agg.gate.missingEither || 0) + 1; if (!k) agg.gate.missingKey++; if (!n) agg.gate.missingName++; }
       }
       {
@@ -252,6 +253,7 @@ function runInPage(book, policy, N, seed, opts) {
         d.n++; d.net += delta; if (delta < 0) d.lost += -delta; if (GameState.isGameOver) d.deaths++;
       }
       prevSec = before;
+      if (GameState.currentSection === 362 && before !== 362) inc(agg.via362 = agg.via362 || {}, before);
       GameState.inventory.forEach(i => { if (!seenItems.has(i.id)) { seenItems.add(i.id); inc(agg.itemsFound, i.name); } });
       if (before === GameState.currentSection && !GameState.isGameOver && act.t === 'choice') { /* effect-only loop (e.g. same section) */ }
       if (GameState.currentSection !== before || true) { visited.add(GameState.currentSection); }
