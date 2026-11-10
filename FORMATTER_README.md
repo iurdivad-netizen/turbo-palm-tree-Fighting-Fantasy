@@ -1,3 +1,5 @@
+> **Legacy guide (format v1).** For new books use [AUTHORING.md](AUTHORING.md); this file is kept for reference only.
+
 # Adventure Formatter Tool
 
 A comprehensive tool to help you format, validate, and convert gamebook adventures for the Fighting Fantasy app.

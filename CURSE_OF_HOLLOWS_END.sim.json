@@ -1,0 +1,9 @@
+{
+  "_comment": "What the simulated players know about THIS book. goalItems: the 'informed' player collects these in order (then a magical weapon if wantMagicalWeapon), then heads for finalSection. avoidUntilReady: the 'explorer' keeps away from these sections until it holds all goal items. terminalLabels: how to name 'neutral' endings in the results. analytics: sections and items the Curse report breaks out (the final door, its fight, the forced fight, the key and the name). See AUTHORING.md.",
+  "goalItems": ["silver-key", "true-name"],
+  "wantMagicalWeapon": true,
+  "finalSection": 395,
+  "avoidUntilReady": [395, 362],
+  "terminalLabels": { "neutral": "instant-death" },
+  "analytics": { "gateSection": 395, "finalFightSection": 394, "forcedSection": 362, "keyItem": "silver-key", "nameItem": "true-name" }
+}

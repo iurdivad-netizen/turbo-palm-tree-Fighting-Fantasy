@@ -1,6 +1,6 @@
 # Reader redesign: decisions, book format v2, build order
 
-Status: **steps 1, 2 and 3 are done** (book format v2; the engine split from the screen; the new reader). Step 4 (author docs and a sidecar file for hand-written labels) is not started.
+Status: **all four steps are done** (book format v2; the engine split from the screen; the new reader; author docs and sidecar files).
 
 ## Why
 
@@ -90,7 +90,7 @@ Numbers on the Curse of Hollow's End: 767 options; 87% are referenced inline in 
 - Menu lines stay where the book put them, one `{{opt:ID}}` per line, consecutive lines form one list. Labels are sentence-case ("Search the cellar", "Go to the ballroom (ghostly dancers)").
 - `combat[].victoryText` is new: the "If you win: ..." narrative, previously shown before the fight.
 - Endings: exactly 4, 39, 65 (instant death), 400 (victory) and 999 (defeat). The 9 mid-game sections that v1 wrongly flagged as endings (14, 24, 29, 36, 38, 41, 56, 152, 297) no longer are.
-- `TEXT_OVERRIDES` (1 section) and `LABEL_OVERRIDES` (about 70 labels) in `migrate_to_v2.py` are hand-written and specific to this book. For future books they should live in a small sidecar file next to the book (step 4).
+- `TEXT_OVERRIDES` (1 section) and `LABEL_OVERRIDES` (43 labels) in `migrate_to_v2.py` are hand-written and specific to this book. They now live in `CURSE_OF_HOLLOWS_END.overrides.json` (step 4).
 
 ### Follow-ups found while reading the text (logic v1 already lacked, not changed)
 
@@ -159,12 +159,21 @@ The page is now four small files and no build step: `index.html` (shell), `reade
 
 **Not done / not verified.** Checked in an emulated phone only, not on a real device or with a screen reader. No dice sound. Saves are per browser (localStorage). Importing TXT/PDF still guesses structure and produces old-format books; use `migrate_to_v2.py` for a proper conversion.
 
+## Step 4 result (done)
+
+* **`AUTHORING.md`** is the one guide for new books (fast path, section/option/roll/combat reference, sidecars, checks). The v1-era guides carry a "legacy" banner; `README.md` starts with a "Start here" block.
+* **`templates/minimal-book.v2.json`**: a five-section book that validates and plays (bots finish it).
+* **Sidecar `<book>.overrides.json`** (labels, text replacements, notes) is read by `migrate_to_v2.py`; the Curse v2 file regenerates byte-identical from it. A second book (`example-adventure.json`, no overrides) converts and validates with no converter changes.
+* **Simulator generalized**: endings come from each section's `ending`; goals, the final section and the avoid list come from optional `<book>.sim.json`. Guard: the Curse 3,000-game fingerprint is unchanged (`tests/simulation.test.js`).
+* **Tests**: `tests/docs.test.js` keeps the guide true (template validates, sidecars point at real sections, named files exist). `package.json` adds `npm test` and `npm run test:ui`.
+* **Not done**: the importers for TXT/PDF still produce v1 books (upgraded in memory); `make_simulation_report.py` is still written around the Curse book.
+
 ## Build order
 
 1. **Schema + converter + validator (v2). DONE (see above).** Write `book.schema.json`; extend `validate_adventure.py` to check it; write a v1 to v2 migration that takes labels from `CURSE_OF_HOLLOWS_END_FORMATTED.txt` (its `{choice: N | label}` markers and "Turn to N for ..." prose) and strips the option lines from the text. Acceptance: every option has a real label, no `Turn to N` left in any section text, validator passes.
 2. **Engine/UI split. DONE (see "Step 2 result").** Move game logic out of `index.html` into an engine module with the `requestRoll` hook; keep a thin adapter so the simulator runs unchanged. Acceptance: all browser tests and the 3,000-game simulation give the same results.
 3. **New reader UI. DONE (see "Step 3 result").** Inline buttons, dice and auto-roll, readable layout on desktop and phone, saved preferences. Acceptance: a long section (388, 234) reads top to bottom with no scrolling back; phone width works.
-4. **Docs for authors:** how to convert a new book to v2 and validate it.
+4. **Docs for authors. DONE (see "Step 4 result").** How to write or convert a book, validate it and simulate it.
 
 ## Open questions (for later)
 

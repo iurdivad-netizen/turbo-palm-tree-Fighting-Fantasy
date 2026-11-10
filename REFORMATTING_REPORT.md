@@ -1,3 +1,5 @@
+> **Legacy guide (format v1).** For new books use [AUTHORING.md](AUTHORING.md); this file is kept for reference only.
+
 # Adventure Reformatting Report
 
 ## File: CURSE_OF_HOLLOWS_END_FORMATTED.txt

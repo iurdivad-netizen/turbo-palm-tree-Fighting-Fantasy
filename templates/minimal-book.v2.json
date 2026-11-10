@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 2,
+  "id": "my-first-book",
+  "title": "My First Book",
+  "author": "You",
+  "description": "A four-section template that uses every basic feature: choices in the text, a Luck test, a fight, an item and the three kinds of ending.",
+  "startingSection": 1,
+  "initialStats": {
+    "skill": 8,
+    "stamina": 20,
+    "luck": 9
+  },
+  "startingItems": [
+    {
+      "id": "sword",
+      "name": "Sword",
+      "description": "A plain blade",
+      "type": "weapon"
+    }
+  ],
+  "sections": [
+    {
+      "id": 1,
+      "title": "The Crossroads",
+      "text": "A cold wind crosses the road. To the north a {{opt:north}}, to the east a {{opt:east}}.",
+      "options": [
+        {
+          "id": "north",
+          "label": "ruined tower stands against the sky",
+          "target": 2
+        },
+        {
+          "id": "east",
+          "label": "bridge crosses a dark river",
+          "target": 3
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "The Tower",
+      "text": "A goblin guards the door. Draw your sword!",
+      "combat": {
+        "enemyName": "GOBLIN",
+        "enemySkill": 6,
+        "enemyStamina": 5,
+        "onVictorySection": 4,
+        "onDefeatSection": 5,
+        "victoryText": "The goblin falls and the stairs are free."
+      }
+    },
+    {
+      "id": 3,
+      "title": "The Bridge",
+      "text": "The planks are rotten. {{roll}}",
+      "roll": {
+        "kind": "luck",
+        "success": {
+          "text": "You cross safely.",
+          "target": 4
+        },
+        "failure": {
+          "text": "A plank gives way!",
+          "target": 5
+        }
+      }
+    },
+    {
+      "id": 4,
+      "title": "The Treasure",
+      "text": "A chest full of gold. You win!",
+      "ending": {
+        "type": "victory"
+      }
+    },
+    {
+      "id": 5,
+      "title": "The River",
+      "text": "You fall into the water and are swept away.",
+      "ending": {
+        "type": "defeat"
+      }
+    }
+  ]
+}

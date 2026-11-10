@@ -1,5 +1,17 @@
 # Fighting Fantasy - Standalone Web Apps
 
+## Start here (current version)
+
+* **Play:** open `index.html` (or serve the folder, e.g. `python3 -m http.server`, so books can be fetched). Choose a book; buttons sit inside the story text, dice can be rolled by hand (button or **R**) or automatically.
+* **Write a book:** read [`AUTHORING.md`](AUTHORING.md) and start from `templates/minimal-book.v2.json`. The format is fixed by `book.schema.json` (v2).
+* **Check a book:** `python3 validate_adventure.py book.v2.json`; stress-test it with `node simulate_playthroughs.js book.v2.json 1000`.
+* **Tests:** `npm test` (engine, simulation fingerprint, docs); `npm run test:ui` on its own (needs `npm i` for Playwright).
+* **Design record:** [`UI-AND-SCHEMA-DESIGN.md`](UI-AND-SCHEMA-DESIGN.md).
+
+> Everything below this line describes the older single-file app and the v1 book format. It is kept for reference; where it disagrees with `AUTHORING.md`, `AUTHORING.md` is right.
+
+---
+
 Two complete standalone web applications for creating and playing Fighting Fantasy-style gamebook adventures. No installation, no build process - just open in your browser!
 
 ## 🚀 Quick Start
