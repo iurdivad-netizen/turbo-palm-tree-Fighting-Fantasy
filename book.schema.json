@@ -56,6 +56,7 @@
         "modifyStats": { "$ref": "#/$defs/statChange" },
         "permanentStats": { "$ref": "#/$defs/statDelta" },
         "maxStats": { "$ref": "#/$defs/statDelta" },
+        "nextFightSkill": { "type": "integer", "description": "Carried into the next fight: -1 starts that fight at -1 SKILL (a wound that has not healed). Use a negative number." },
         "addItems": { "type": "array", "items": { "$ref": "#/$defs/item" } },
         "removeItems": { "type": "array", "items": { "$ref": "#/$defs/slug" } }
       }

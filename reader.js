@@ -12,7 +12,7 @@ const prefs = loadPrefs();
 
 // ---- small helpers -----------------------------------------------------------------------------------
 function loadPrefs() {
-    const base = { autoRoll: false, textSize: 1 };
+    const base = { autoRoll: false, textSize: 1, markSeen: true };
     try { return Object.assign(base, JSON.parse(localStorage.getItem('ff_prefs') || '{}')); } catch (e) { return base; }
 }
 function savePrefs() { try { localStorage.setItem('ff_prefs', JSON.stringify(prefs)); } catch (e) { /* private window */ } }
@@ -63,6 +63,7 @@ const ui = {
     use(uid) { begin(); game.useItem(uid); },
     drop(uid) { game.dropItem(uid); },
     toggleAutoRoll(on) { prefs.autoRoll = !!on; savePrefs(); if (game && !autoFightOn) game.setAutoRoll(prefs.autoRoll); },
+    toggleMarkSeen(on) { prefs.markSeen = !!on; savePrefs(); render(); },
     setSize(delta) { prefs.textSize = Math.min(3, Math.max(0, prefs.textSize + delta)); savePrefs(); applyTextSize(); },
     togglePack() { packOpen = !packOpen; render(); },
     toggleAutoFight() { autoFightOn ? (stopAutoFight(), render()) : startAutoFight(); },
@@ -236,6 +237,7 @@ function renderGame() {
         <div class="topbar">
             <h1>${esc(game.book.title)}</h1>
             <div class="controls">
+                <label class="toggle" title="Shade the paths you have already taken"><input type="checkbox" id="mark-seen" ${prefs.markSeen ? 'checked' : ''} onchange="ui.toggleMarkSeen(this.checked)"> Mark explored</label>
                 <label class="toggle" title="Roll the dice for me"><input type="checkbox" ${prefs.autoRoll ? 'checked' : ''} onchange="ui.toggleAutoRoll(this.checked)"> Auto-roll dice</label>
                 <span class="sizer" role="group" aria-label="Text size">
                     <button class="btn btn-small" onclick="ui.setSize(-1)" aria-label="Smaller text">A−</button>
@@ -278,7 +280,9 @@ function optionButton(state, inline) {
     const locked = !state.enabled;
     const waiting = !!game.pending;                  // dice are being asked for: nothing else can be done yet
     const hint = locked ? `<span class="lock-hint"> (${esc(Engine.describeConditions(o.conditions || {}))})</span>` : '';
-    return `<button class="${inline ? 'opt-inline' : 'opt'}" data-opt="${esc(o.id)}" ${locked || waiting ? 'disabled' : ''}>${esc(o.label)}${hint}</button>`;
+    const seen = prefs.markSeen && game.visited.has(o.target);     // already been there: shaded, ticked and said aloud
+    const mark = seen ? '<span class="seen-mark" aria-hidden="true">✓ </span><span class="sr-only">(already visited) </span>' : '';
+    return `<button class="${inline ? 'opt-inline' : 'opt'}${seen ? ' seen' : ''}" data-opt="${esc(o.id)}" ${locked || waiting ? 'disabled' : ''}>${mark}${esc(o.label)}${hint}</button>`;
 }
 
 function rollWidget(section) {
@@ -415,6 +419,7 @@ function renderStats() {
         <h2>Character</h2>
         ${meter('SKILL', st.skill, st.initialSkill)}${meter('STAMINA', st.stamina, st.initialStamina)}${meter('LUCK', st.luck, st.initialLuck)}
         ${game.tempSkillPenalty ? `<p class="penalty">−${game.tempSkillPenalty} SKILL for this fight</p>` : ''}
+        ${game.carriedSkillPenalty ? `<p class="penalty">−${game.carriedSkillPenalty} SKILL in your next fight</p>` : ''}
         <div class="gold"><span>💰 Gold</span><span>${st.gold || 0} GP</span></div>
     </section>`;
 }

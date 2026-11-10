@@ -91,7 +91,7 @@
       "title": "INSTANT DEATH!",
       "text": "INSTANT DEATH!\n\nThe floor collapses beneath you without the slightest warning. One moment you're standing on what appears to be solid stone, the next you're plummeting into darkness as ancient wood and rotted supports finally succumb to time and weight.\n\nYour arms flail uselessly, fingers grasping at empty air. A scream tears from your throat, echoing in the void as you fall into the blackness below.\n\nThen you see them—rusted iron spikes rising from the pit floor like the teeth of some monstrous beast, dozens of them, their points dulled by time but still more than sharp enough to pierce flesh and bone.\n\nYou land with a sickening crunch. The spikes punch through your armor, through flesh and muscle and bone, pinning you like an insect in a collector's case. Pain explodes through your body—white-hot agony that makes thought impossible.\n\nYour vision darkens at the edges. The pain becomes distant. You can hear your heartbeat slowing... slowing... stopping...\n\nYour adventure ends here, impaled in a forgotten trap. Your body will never be found. The curse continues, and Hollow's End remains doomed.\n\nTHE END",
       "ending": {
-        "type": "neutral"
+        "type": "defeat"
       }
     },
     {
@@ -476,14 +476,22 @@
     },
     {
       "id": 22,
-      "text": "The Ghoul's claws rake across your arm, and where they touch, your flesh goes numb almost instantly. The paralysis spreads from the wound like poison, making your fingers tingle, your hand go weak, your entire arm feel heavy and unresponsive.\n\nThis is no ordinary wound—the Ghoul's touch carries a supernatural paralytic agent, something that affects not just flesh but nerves, not just body but the signals that tell your body how to move.\n\nTest your Luck.\n\nIf Lucky: You manage to resist the worst of the paralysis through sheer force of will. Your arm remains functional, though it tingles unpleasantly and feels weaker than before. You can still fight effectively. {{opt:to-298}}\n\nIf Unlucky: The paralysis takes hold, and you feel your combat effectiveness plummet. Reduce your SKILL by 1 for the duration of this combat as you struggle to fight with reduced mobility and strength. Your movements are slower, your strikes less accurate, your defense compromised.",
-      "options": [
-        {
-          "id": "to-298",
-          "label": "Continue",
+      "text": "The Ghoul's claws rake across your arm, and where they touch, your flesh goes numb almost instantly. The paralysis spreads from the wound like poison, making your fingers tingle, your hand go weak, your entire arm feel heavy and unresponsive.\n\nThis is no ordinary wound—the Ghoul's touch carries a supernatural paralytic agent, something that affects not just flesh but nerves, not just body but the signals that tell your body how to move.\n\n{{roll}}",
+      "roll": {
+        "kind": "luck",
+        "label": "Test your Luck",
+        "success": {
+          "text": "You resist the worst of the paralysis. Your arm tingles but still works.",
           "target": 298
+        },
+        "failure": {
+          "text": "The paralysis takes hold; your arm turns slow and weak.",
+          "target": 298,
+          "effects": {
+            "nextFightSkill": -1
+          }
         }
-      ]
+      }
     },
     {
       "id": 23,
@@ -508,23 +516,19 @@
         {
           "id": "to-234",
           "label": "Accept the Mayor's help",
-          "target": 234
+          "target": 234,
+          "conditions": {
+            "requiresItem": [
+              "mayors-ledger"
+            ]
+          }
         },
         {
           "id": "to-127",
           "label": "Retreat to the cemetery",
           "target": 127
         }
-      ],
-      "effects": {
-        "addItems": [
-          {
-            "id": "book",
-            "name": "Book",
-            "type": "other"
-          }
-        ]
-      }
+      ]
     },
     {
       "id": 25,
@@ -916,17 +920,8 @@
       "id": 39,
       "title": "INSTANT DEATH!",
       "text": "INSTANT DEATH!\n\nWithout warning, a spectral blade materializes from thin air and plunges directly through your chest! The blade is transparent, ghostly, but the pain it causes is horrifyingly real. You look down in shock to see the ethereal weapon protruding from your chest, right where your heart should be.\n\nCold spreads from the wound—not the cold of ice, but the cold of the grave, of death itself. You try to cry out, but your lungs won't work. You try to pull the blade free, but your hands pass through it without finding purchase.\n\nYou fall to your knees, then to your side, your vision already darkening. The last thing you hear is laughter—the Widow's laughter, echoing from everywhere and nowhere, filled with cruel satisfaction.\n\n\"Another fool,\" her voice whispers in your dying ears. \"Another victim. Join my army, little hero. Serve me in death as you failed to stop me in life.\"\n\nYour adventure ends here, killed by the Widow's spectral power before you could even face her directly. Your body will rise as one of her undead servants, forever bound to serve the very evil you came to destroy.\n\nTHE END",
-      "effects": {
-        "addItems": [
-          {
-            "id": "blade",
-            "name": "Blade",
-            "type": "weapon"
-          }
-        ]
-      },
       "ending": {
-        "type": "neutral"
+        "type": "defeat"
       }
     },
     {
@@ -1338,23 +1333,19 @@
         {
           "id": "to-109",
           "label": "Climb down the well on the rope",
-          "target": 109
+          "target": 109,
+          "conditions": {
+            "requiresItem": [
+              "rope"
+            ]
+          }
         },
         {
           "id": "to-127",
           "label": "Leave the well unexplored",
           "target": 127
         }
-      ],
-      "effects": {
-        "addItems": [
-          {
-            "id": "rope",
-            "name": "Rope",
-            "type": "other"
-          }
-        ]
-      }
+      ]
     },
     {
       "id": 55,
@@ -1540,7 +1531,7 @@
       "title": "INSTANT DEATH!",
       "text": "INSTANT DEATH!\n\nThe floor gives way beneath you, and you plummet into a bottomless pit! The darkness swallows you whole as you fall, fall, fall into depths that seem to have no end.\n\nYour screams echo off walls you can't see, growing fainter and more distant until they fade entirely. Perhaps you fall forever, trapped in an eternal descent. Perhaps you eventually hit bottom, but by then you're traveling so fast that death is instantaneous and mercifully painless.\n\nEither way, your adventure ends here, lost in the depths beneath Hollow's End. Your body will never be recovered. Your name will be forgotten. The curse continues, and the village remains doomed.   \nTHE END",
       "ending": {
-        "type": "neutral"
+        "type": "defeat"
       }
     },
     {
@@ -3119,8 +3110,13 @@
           "target": 155
         },
         "failure": {
-          "text": "Your foot catches a wire!",
-          "target": 97
+          "text": "Your foot catches a wire and a dart grazes you as you stumble on!",
+          "target": 155,
+          "effects": {
+            "modifyStats": {
+              "stamina": -3
+            }
+          }
         }
       }
     },
@@ -3176,8 +3172,13 @@
           "target": 301
         },
         "failure": {
-          "text": "The floor collapses!",
-          "target": 117
+          "text": "The floor collapses! You crash through and claw your way out, bruised.",
+          "target": 301,
+          "effects": {
+            "modifyStats": {
+              "stamina": -4
+            }
+          }
         }
       }
     },
@@ -3578,6 +3579,11 @@
           "id": "to-176",
           "label": "Consolidate your findings",
           "target": 176
+        },
+        {
+          "id": "to-97",
+          "label": "Visit the healing shrine",
+          "target": 97
         }
       ],
       "roll": {
@@ -3794,7 +3800,12 @@
         {
           "id": "to-109",
           "label": "Climb down the well on the rope",
-          "target": 109
+          "target": 109,
+          "conditions": {
+            "requiresItem": [
+              "rope"
+            ]
+          }
         },
         {
           "id": "to-127",
@@ -4210,7 +4221,6 @@
           "enemyName": "ZOMBIE 1",
           "enemySkill": 5,
           "enemyStamina": 6,
-          "onVictorySection": 259,
           "onDefeatSection": 999,
           "reviveOn": [
             5,
@@ -4225,7 +4235,6 @@
           "enemyName": "ZOMBIE 2",
           "enemySkill": 5,
           "enemyStamina": 6,
-          "onVictorySection": 259,
           "onDefeatSection": 999,
           "reviveOn": [
             5,
@@ -4240,7 +4249,6 @@
           "enemyName": "ZOMBIE 3",
           "enemySkill": 4,
           "enemyStamina": 5,
-          "onVictorySection": 259,
           "onDefeatSection": 999,
           "reviveOn": [
             5,
@@ -5361,8 +5369,13 @@
           "target": 245
         },
         "failure": {
-          "text": "You trigger a trap!",
-          "target": 97
+          "text": "You trigger a trap and are hurt before you stagger clear!",
+          "target": 245,
+          "effects": {
+            "modifyStats": {
+              "stamina": -3
+            }
+          }
         }
       }
     },
@@ -5445,8 +5458,13 @@
           "target": 301
         },
         "failure": {
-          "text": "The floor gives way!",
-          "target": 152
+          "text": "The floor gives way! You drop through and haul yourself out, bruised.",
+          "target": 301,
+          "effects": {
+            "modifyStats": {
+              "stamina": -4
+            }
+          }
         }
       }
     },
@@ -6265,8 +6283,13 @@
           "target": 301
         },
         "failure": {
-          "text": "The trap activates!",
-          "target": 97
+          "text": "The trap activates and catches you before you jump clear!",
+          "target": 301,
+          "effects": {
+            "modifyStats": {
+              "stamina": -3
+            }
+          }
         }
       }
     },
@@ -7196,8 +7219,13 @@
           "target": 301
         },
         "failure": {
-          "text": "The trap springs!",
-          "target": 97
+          "text": "The trap springs and clips you as you dive past!",
+          "target": 301,
+          "effects": {
+            "modifyStats": {
+              "stamina": -3
+            }
+          }
         }
       }
     },
@@ -7571,8 +7599,13 @@
           "target": 301
         },
         "failure": {
-          "text": "The floor gives way!",
-          "target": 117
+          "text": "The floor gives way! You fall hard and scramble back up.",
+          "target": 301,
+          "effects": {
+            "modifyStats": {
+              "stamina": -4
+            }
+          }
         }
       }
     },
@@ -9304,13 +9337,13 @@
     {
       "id": 362,
       "title": "You stand before the Widow without the necessary items to bind her properly!",
-      "text": "You stand before the Widow without the necessary items to bind her properly!\n\nWithout the SILVER KEY, without knowing her TRUE NAME, or without proper understanding of the binding ritual, you're attempting to face one of the most powerful vengeful spirits in existence with no way to permanently defeat her.\n\nThe Widow materializes before you in all her terrible glory—a tall figure in a blood-stained wedding dress, her face hidden beneath a torn veil, her hands ending in spectral claws. The temperature plummets. Your breath forms ice crystals in the air.\n\n\"You DARE face me?\" her voice echoes from everywhere, filled with rage and anguish. \"You come to stop my vengeance with nothing but courage and steel? Foolish mortal. Join my army of the dead!\"\n\nShe raises her hands, and three Shadows tear themselves from the darkness to attack you. You must fight them all while she watches, gathering her power for the killing blow.\n\nSHADOW 1: SKILL 6 | STAMINA 4\n\nSHADOW 2: SKILL 6 | STAMINA 4\n\nSHADOW 3: SKILL 5 | STAMINA 3\n\nEach Shadow's wound permanently reduces your SKILL by 1.\n\nIf you somehow defeat all three Shadows:\n\nThe Widow herself attacks! But without the proper binding tools, you cannot truly defeat her—only delay her.\n\nTHE WIDOW (Weakened by missing tools)\n\nYou've achieved a temporary victory at best. The Widow will return, perhaps stronger than before.\n\nINCOMPLETE VICTORY\n\nYou've driven back the Widow temporarily, but without the Silver Key and her true name, you couldn't bind her spirit permanently. The curse will return, perhaps within days, certainly within weeks.\n\nHollow's End remains doomed to eventual destruction.\n\nTHE END (Partial Victory)",
+      "text": "You stand before the Widow without the necessary items to bind her properly!\n\nWithout the SILVER KEY, without knowing her TRUE NAME, or without proper understanding of the binding ritual, you're attempting to face one of the most powerful vengeful spirits in existence with no way to permanently defeat her.\n\nThe Widow materializes before you in all her terrible glory—a tall figure in a blood-stained wedding dress, her face hidden beneath a torn veil, her hands ending in spectral claws. The temperature plummets. Your breath forms ice crystals in the air.\n\n\"You DARE face me?\" her voice echoes from everywhere, filled with rage and anguish. \"You come to stop my vengeance with nothing but courage and steel? Foolish mortal. Join my army of the dead!\"\n\nShe raises her hands, and three Shadows tear themselves from the darkness to attack you. You must fight them all while she watches, gathering her power for the killing blow.\n\nSHADOW 1: SKILL 6 | STAMINA 4\n\nSHADOW 2: SKILL 6 | STAMINA 4\n\nSHADOW 3: SKILL 5 | STAMINA 3\n\nEach Shadow's wound permanently reduces your SKILL by 1.\n\nIf you somehow defeat all three Shadows:\n\nThe Widow herself attacks! But without the proper binding tools, you cannot truly defeat her—only delay her.\n\nTHE WIDOW (Weakened by missing tools)",
       "combat": [
         {
           "enemyName": "SHADOW 1",
           "enemySkill": 6,
           "enemyStamina": 4,
-          "onVictorySection": 363,
+          "onVictorySection": 998,
           "onDefeatSection": 999,
           "onWound": {
             "skillLoss": 1,
@@ -9321,7 +9354,7 @@
           "enemyName": "SHADOW 2",
           "enemySkill": 6,
           "enemyStamina": 4,
-          "onVictorySection": 363,
+          "onVictorySection": 998,
           "onDefeatSection": 999,
           "onWound": {
             "skillLoss": 1,
@@ -9332,7 +9365,7 @@
           "enemyName": "SHADOW 3",
           "enemySkill": 5,
           "enemyStamina": 3,
-          "onVictorySection": 363,
+          "onVictorySection": 998,
           "onDefeatSection": 999,
           "onWound": {
             "skillLoss": 1,
@@ -9343,7 +9376,7 @@
           "enemyName": "THE WIDOW (WEAKENED)",
           "enemySkill": 10,
           "enemyStamina": 12,
-          "onVictorySection": 363,
+          "onVictorySection": 998,
           "onDefeatSection": 999,
           "victoryText": "She dissipates with a scream of rage... but you know it's temporary. Without proper binding, she'll reform. The curse continues. The village remains doomed"
         }
@@ -10246,6 +10279,14 @@
       },
       "ending": {
         "type": "victory"
+      }
+    },
+    {
+      "id": 998,
+      "title": "Incomplete Victory",
+      "text": "You've achieved a temporary victory at best. The Widow will return, perhaps stronger than before.\n\nINCOMPLETE VICTORY\n\nYou've driven back the Widow temporarily, but without the Silver Key and her true name, you couldn't bind her spirit permanently. The curse will return, perhaps within days, certainly within weeks.\n\nHollow's End remains doomed to eventual destruction.\n\nTHE END (Partial Victory)",
+      "ending": {
+        "type": "neutral"
       }
     },
     {

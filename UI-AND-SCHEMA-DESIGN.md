@@ -182,6 +182,15 @@ The page is now four small files and no build step: `index.html` (shell), `reade
 - Save format: version it with `schemaVersion`.
 - Should the UI be a single file (as now) or a small build? Single file is easier to host; decide in step 2.
 
-## Known data issues carried over (not part of this redesign)
+## Book issues: status
 
-Tracked in `simulation-report.html`: section 22 (needs a carry-over penalty), 362 has no real ending, nine mid-game sections carry a wrong ending flag, sections 260-280 are unreachable (section 180 menu skipped), some Luck-test failures lead to rewards, LUCK supply and the Widow's final fight (see report).
+Fixed in the Curse book (source `CURSE_OF_HOLLOWS_END.json`, v2 regenerated, new fingerprint in `tests/simulation-baseline.json`):
+
+* **Section 22**: now a real Luck test; failing it carries -1 SKILL into the next fight (new effect `nextFightSkill`, in the schema, engine, converter, saves and the stat panel).
+* **362**: the fight now ends in a real ending, section 998 "Incomplete Victory" (`neutral`); before, it led into the Phantom Servant fight at 363.
+* **180**: the victory jump to 259 is gone, so the 19-option menu shows after the zombies; sections 260-280 are reachable (every section is now reachable from section 1).
+* **Luck-test failures that paid a reward** (138, 224, 256, 295, 142, 304, 228): a failure now costs 3 STAMINA (tripwires) or 4 (floors) and goes where success goes, like the sibling traps 17 and 41. This made the healing shrine 97 unreachable, so it is now an option in the catacomb hub 155 ("Visit the healing shrine"; its heal still applies only once). **This is a design decision; change it in the v1 file if you disagree.**
+* **24, 54, 164**: the Mayor's offer needs the Mayor's Ledger and the well needs Rope; reading the page no longer hands you a "Book" (24) or "Rope" (54).
+* **4, 39, 65**: ending type `defeat` (they were `neutral`); 39 no longer gives a "Blade".
+
+Not changed (balance decisions, not errors): LUCK supply (about 7.3 of 9 on arrival at the pit rolls; refills in 24 sections), the Widow's final fight (the informed player still loses it about half the time), `simulation-report.html` (a record of the earlier builds; it still lists these issues as open).

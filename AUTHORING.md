@@ -38,7 +38,7 @@ Conditions (on an option, or on a roll): `requiresItem`, `requiresNoItem` (an id
 
 Effects (on an option, a section, a roll outcome, a fight victory or an item's `onUse`):
 `modifyStats` (`{"stamina": -2}`; a value of `"max"` restores to the Initial score), `permanentStats` (changes the current
-score **and** the Initial one), `maxStats` (only the Initial maximum), `addItems`, `removeItems`.
+score **and** the Initial one), `maxStats` (only the Initial maximum), `addItems`, `removeItems`, `nextFightSkill` (`-1`: the next fight starts at -1 SKILL, for a wound that has not healed).
 Section effects apply the first time the section is entered in a game.
 
 Items: `id`, `name`, `type` (weapon, armor, potion, food, treasure, key, other); optional `description`, `bonus`, `restore`

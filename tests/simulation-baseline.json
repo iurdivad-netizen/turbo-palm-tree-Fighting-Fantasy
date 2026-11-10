@@ -1,26 +1,29 @@
 {
-  "note": "Fingerprint of simulate_playthroughs.js on CURSE_OF_HOLLOWS_END.json, 1000 games per player, seed 20240601. The first version of this fingerprint was identical to the results recorded from the old in-browser game logic (260 KB, every field).",
-  "book": "CURSE_OF_HOLLOWS_END.json",
+  "note": "Fingerprint of simulate_playthroughs.js on CURSE_OF_HOLLOWS_END.json, 1000 games per player, seed 20240601. Refreshed after the open book issues were fixed (22, 362, 180, the Luck traps, item gates, instant-death pages). The first version of this fingerprint was identical to the results recorded from the old in-browser game logic (260 KB, every field).",
+  "book": "CURSE_OF_HOLLOWS_END.v2.json",
   "games": 1000,
   "seed": 20240601,
   "outcomes": {
     "random": {
-      "instant-death": 431,
-      "defeat": 494,
-      "victory": 64,
-      "death": 11
+      "instant-death": 275,
+      "incomplete-victory": 470,
+      "defeat": 212,
+      "victory": 42,
+      "death": 1
     },
     "explorer": {
-      "instant-death": 491,
-      "victory": 185,
-      "defeat": 317,
-      "death": 7
+      "instant-death": 393,
+      "victory": 184,
+      "incomplete-victory": 125,
+      "defeat": 292,
+      "death": 6
     },
     "guided": {
-      "victory": 761,
-      "instant-death": 117,
-      "defeat": 122
+      "victory": 833,
+      "instant-death": 69,
+      "defeat": 97,
+      "incomplete-victory": 1
     }
   },
-  "sha256": "1d3eb27888ae5fceb9ac4074ffab3c844bade3a1cb56e7fb3277290920433778"
+  "sha256": "f5c13e326258c3bd8294a0589f6d4c0da417dbeca3b37a0f217d40c541a81742"
 }
