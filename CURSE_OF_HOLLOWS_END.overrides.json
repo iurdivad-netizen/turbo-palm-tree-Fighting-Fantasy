@@ -126,7 +126,25 @@
     "180": {
       "to-346": "Escape toward the cemetery path",
       "to-161": "Search a dead cultist: a note",
-      "to-193": "Search a fallen cultist: a medallion"
+      "to-193": "Search a fallen cultist: a medallion",
+      "to-259": "A hidden map of the manor's secret passages",
+      "to-260": "A Shadow emerges (fight)",
+      "to-261": "A blessed fountain (STAMINA restored)",
+      "to-262": "Stone stairs up into the manor's cellar",
+      "to-263": "A Phantom Servant blocks your path (fight)",
+      "to-264": "A hidden chest: a Cloak of Shadows",
+      "to-265": "A door locked with a complex mechanism",
+      "to-271": "A cultist guards the way (fight)",
+      "to-269": "A hidden armory: a +1 Longsword",
+      "to-270": "A trapped passage",
+      "to-273": "A Ghoul leaps from the shadows (fight)",
+      "to-274": "A detailed map of the manor's layout",
+      "to-276": "A Shadow materializes (fight)",
+      "to-277": "Find your way through a maze of passages",
+      "to-278": "A Phantom Servant attacks (fight)",
+      "to-279": "A hidden cache: 2 Healing Potions and 50 gold",
+      "to-280": "A storage room: 3 Provisions",
+      "to-312": "Search the remains: a key, a potion, gold"
     },
     "189": {
       "to-230": "A Shadow emerges from your own shadow (fight)",
@@ -199,6 +217,15 @@
     "258": {
       "to-111": "Go back and explore elsewhere"
     },
+    "267": {
+      "to-94": "A captive's journal: the Wight is loose",
+      "to-158": "A second journal: the Wight feeds on fear",
+      "to-175": "A torn page: the Widow's power peaks at midnight",
+      "to-200": "A warning: the Widow can only be bound",
+      "to-5": "The sealed eastern door: a Cursed Wight (fight)",
+      "to-180": "Three Zombies rise (fight)",
+      "to-245": "The floor collapses beneath you"
+    },
     "289": {
       "to-312": "Continue toward the manor",
       "to-346": "Escape toward the cemetery path"
@@ -226,6 +253,26 @@
       "to-137": "Climb a slippery shaft upward",
       "to-147": "A locked chest",
       "to-168": "Pick a lock to a staircase up"
+    },
+    "312": {
+      "to-17": "A passage that narrows to a crawl",
+      "to-33": "Occult symbols carved into the walls",
+      "to-36": "A Phantom Servant blocks your path (fight)",
+      "to-42": "A dead cultist's belongings: a torn map (+1 LUCK)",
+      "to-60": "A floor slick with blood",
+      "to-63": "A hidden passage marked with the Hollow crest",
+      "to-68": "Cross a groaning bridge",
+      "to-76": "An ancient tapestry: the Widow's name",
+      "to-88": "A skeleton's prayer book (a blessing)",
+      "to-91": "The Widow appears without warning",
+      "to-100": "Footsteps approaching: hide or face them",
+      "to-118": "A silver locket on the ground",
+      "to-125": "A secret shrine to the Widow",
+      "to-143": "A holy symbol on a skeleton's neck",
+      "to-171": "A skeleton clutching a Silver Dagger",
+      "to-195": "A skeleton wearing a silver ring",
+      "to-219": "A holy symbol on an altar",
+      "to-252": "A silver amulet on a skeleton's neck"
     },
     "325": {
       "to-378": "Take the left staircase (the cultists)",

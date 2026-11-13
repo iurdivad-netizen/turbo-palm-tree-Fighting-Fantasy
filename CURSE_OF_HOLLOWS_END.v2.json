@@ -4234,37 +4234,37 @@
       "options": [
         {
           "id": "to-259",
-          "label": "Search the zombie remains",
+          "label": "A hidden map of the manor's secret passages",
           "target": 259
         },
         {
           "id": "to-260",
-          "label": "Find a hidden crypt",
+          "label": "A Shadow emerges (fight)",
           "target": 260
         },
         {
           "id": "to-261",
-          "label": "Discover a blessed weapon",
+          "label": "A blessed fountain (STAMINA restored)",
           "target": 261
         },
         {
           "id": "to-262",
-          "label": "Find healing supplies",
+          "label": "Stone stairs up into the manor's cellar",
           "target": 262
         },
         {
           "id": "to-263",
-          "label": "Encounter another undead",
+          "label": "A Phantom Servant blocks your path (fight)",
           "target": 263
         },
         {
           "id": "to-264",
-          "label": "Find a protective amulet",
+          "label": "A hidden chest: a Cloak of Shadows",
           "target": 264
         },
         {
           "id": "to-265",
-          "label": "Discover a journal",
+          "label": "A door locked with a complex mechanism",
           "target": 265
         },
         {
@@ -4274,57 +4274,57 @@
         },
         {
           "id": "to-269",
-          "label": "Find an armory",
+          "label": "A hidden armory: a +1 Longsword",
           "target": 269
         },
         {
           "id": "to-270",
-          "label": "Navigate a trapped passage",
+          "label": "A trapped passage",
           "target": 270
         },
         {
           "id": "to-271",
-          "label": "Encounter a cultist",
+          "label": "A cultist guards the way (fight)",
           "target": 271
         },
         {
           "id": "to-273",
-          "label": "Find a ritual chamber",
+          "label": "A Ghoul leaps from the shadows (fight)",
           "target": 273
         },
         {
           "id": "to-274",
-          "label": "Discover binding notes",
+          "label": "A detailed map of the manor's layout",
           "target": 274
         },
         {
           "id": "to-276",
-          "label": "Find a strength potion",
+          "label": "A Shadow materializes (fight)",
           "target": 276
         },
         {
           "id": "to-277",
-          "label": "Encounter a ghost",
+          "label": "Find your way through a maze of passages",
           "target": 277
         },
         {
           "id": "to-278",
-          "label": "Find a silver dagger",
+          "label": "A Phantom Servant attacks (fight)",
           "target": 278
         },
         {
           "id": "to-279",
-          "label": "Discover a hidden tomb",
+          "label": "A hidden cache: 2 Healing Potions and 50 gold",
           "target": 279
         },
         {
           "id": "to-280",
-          "label": "Find holy water",
+          "label": "A storage room: 3 Provisions",
           "target": 280
         },
         {
           "id": "to-312",
-          "label": "Continue toward the manor",
+          "label": "Search the remains: a key, a potion, gold",
           "target": 312
         },
         {
@@ -6531,27 +6531,27 @@
       "options": [
         {
           "id": "to-94",
-          "label": "Examine journals and notes left by previous explorers",
+          "label": "A captive's journal: the Wight is loose",
           "target": 94
         },
         {
           "id": "to-158",
-          "label": "Search for information about the Wight",
+          "label": "A second journal: the Wight feeds on fear",
           "target": 158
         },
         {
           "id": "to-175",
-          "label": "Find documents about midnight timing",
+          "label": "A torn page: the Widow's power peaks at midnight",
           "target": 175
         },
         {
           "id": "to-200",
-          "label": "Investigate the warning runes more closely",
+          "label": "A warning: the Widow can only be bound",
           "target": 200
         },
         {
           "id": "to-5",
-          "label": "Approach the sealed eastern door",
+          "label": "The sealed eastern door: a Cursed Wight (fight)",
           "target": 5,
           "conditions": {
             "requiresItem": "brass-key"
@@ -6559,12 +6559,12 @@
         },
         {
           "id": "to-180",
-          "label": "Continue exploring the catacombs carefully",
+          "label": "Three Zombies rise (fight)",
           "target": 180
         },
         {
           "id": "to-245",
-          "label": "Head toward the ritual chambers",
+          "label": "The floor collapses beneath you",
           "target": 245
         },
         {
@@ -7726,42 +7726,42 @@
       "options": [
         {
           "id": "to-17",
-          "label": "Explore the Hollow family tomb",
+          "label": "A passage that narrows to a crawl",
           "target": 17
         },
         {
           "id": "to-33",
-          "label": "Investigate a collapsed crypt",
+          "label": "Occult symbols carved into the walls",
           "target": 33
         },
         {
           "id": "to-36",
-          "label": "Search another section of graves",
+          "label": "A Phantom Servant blocks your path (fight)",
           "target": 36
         },
         {
           "id": "to-42",
-          "label": "Examine an ancient mausoleum",
+          "label": "A dead cultist's belongings: a torn map (+1 LUCK)",
           "target": 42
         },
         {
           "id": "to-60",
-          "label": "Look for hidden passages",
+          "label": "A floor slick with blood",
           "target": 60
         },
         {
           "id": "to-63",
-          "label": "Search cult markings",
+          "label": "A hidden passage marked with the Hollow crest",
           "target": 63
         },
         {
           "id": "to-68",
-          "label": "Investigate a ritual site",
+          "label": "Cross a groaning bridge",
           "target": 68
         },
         {
           "id": "to-76",
-          "label": "Examine an ancient tapestry",
+          "label": "An ancient tapestry: the Widow's name",
           "target": 76
         },
         {
@@ -7771,52 +7771,52 @@
         },
         {
           "id": "to-88",
-          "label": "Search for a prayer book",
+          "label": "A skeleton's prayer book (a blessing)",
           "target": 88
         },
         {
           "id": "to-91",
-          "label": "Examine a cultist's belongings",
+          "label": "The Widow appears without warning",
           "target": 91
         },
         {
           "id": "to-100",
-          "label": "Follow a trail of blood",
+          "label": "Footsteps approaching: hide or face them",
           "target": 100
         },
         {
           "id": "to-118",
-          "label": "Discover a silver locket",
+          "label": "A silver locket on the ground",
           "target": 118
         },
         {
           "id": "to-125",
-          "label": "Find a secret shrine",
+          "label": "A secret shrine to the Widow",
           "target": 125
         },
         {
           "id": "to-143",
-          "label": "Locate a holy symbol",
+          "label": "A holy symbol on a skeleton's neck",
           "target": 143
         },
         {
           "id": "to-171",
-          "label": "Find a silver dagger",
+          "label": "A skeleton clutching a Silver Dagger",
           "target": 171
         },
         {
           "id": "to-195",
-          "label": "Find a silver ring",
+          "label": "A skeleton wearing a silver ring",
           "target": 195
         },
         {
           "id": "to-219",
-          "label": "Find another holy symbol",
+          "label": "A holy symbol on an altar",
           "target": 219
         },
         {
           "id": "to-252",
-          "label": "Find a silver amulet",
+          "label": "A silver amulet on a skeleton's neck",
           "target": 252
         },
         {
