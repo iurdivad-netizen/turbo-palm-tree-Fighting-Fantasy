@@ -33,6 +33,7 @@ test('endings, fights, rolls and the start are told apart', () => {
     const data = build('CURSE_OF_HOLLOWS_END.v2.json');
     const kind = id => data.nodes.find(n => n.id === id).kind;
     assert.deepEqual([kind(1), kind(400), kind(999), kind(998), kind(30), kind(245)], ['start', 'end-victory', 'end-defeat', 'end-neutral', 'combat', 'dice']);
+    assert.deepEqual(data.nodes.filter(n => n.group).map(n => n.id), [180, 289], 'the two group fights are marked');
     const links = data.edges.filter(e => e.s === 395).map(e => `${e.t}:${e.k}`).sort();
     assert.deepEqual(links, ['362:option', '388:option', '394:failure', '400:success']);
 });

@@ -32,6 +32,11 @@ def enemies(s):
     return [e["enemyName"] for e in (c if isinstance(c, list) else [c] if c else [])]
 
 
+def is_group(s):
+    c = s.get("combat")
+    return isinstance(c, list) and len(c) > 1 and all(e.get("together") for e in c)
+
+
 def effects_of(s):
     out = [s.get("effects")]
     return [e for e in out if e]
@@ -127,7 +132,7 @@ for sid, s in sections.items():
     nodes.append({
         "id": sid, "kind": kind, "title": s.get("title") or "", "text": text[:420], "out": out_deg[sid], "in": in_deg[sid],
         "area": s.get("area") or "", "tags": s.get("tags") or [], "gives": gives, "foes": enemies(s),
-        "stealth": bool(r and r.get("stealth")), "zone": zone.get(sid, 0),
+        "stealth": bool(r and r.get("stealth")), "zone": zone.get(sid, 0), "group": is_group(s),
     })
 
 data = {"title": book["title"], "start": start, "nodes": nodes, "edges": edges}
@@ -301,6 +306,9 @@ function draw() {
     ctx.globalAlpha = lit ? 1 : 0.16;
     if (lit) { ctx.shadowColor = c; ctx.shadowBlur = n === sel ? 26 : n.kind === 'hub' || n.kind === 'start' ? 16 : 9; }
     ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill(); ctx.shadowBlur = 0;
+    if (n.group) {                                       // a group fight: a dashed outer ring
+      ctx.strokeStyle = c; ctx.lineWidth = 1.6; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.arc(x, y, r + 5, 0, 6.2832); ctx.stroke(); ctx.setLineDash([]);
+    }
     if (n.stealth) { ctx.strokeStyle = '#0b0d14'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(x, y, r * .45, 0, 6.2832); ctx.stroke(); }
     if (n === sel || n === hov) { ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, r + 3, 0, 6.2832); ctx.stroke(); }
     if (lit && (showLabels ? zoom > 0.55 : (zoom > 1.5 || n === sel || n === hov || (hl && near.has(n.id)) || routeSet.has(n.id) || n.kind === 'start' || (n.kind === 'hub' && zoom > 0.7)))) {
@@ -343,7 +351,7 @@ cv.addEventListener('wheel', e => { e.preventDefault(); zoomAt(e.clientX, e.clie
 // ---- tooltip and panel
 const tip = $('tip'), panel = $('panel');
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-function showTip(n, e) { if (!n) return hideTip(); tip.innerHTML = `<b>${n.id}</b> · ${KIND[n.kind].n}${n.title ? `<br>${esc(n.title)}` : ''}<br><span style="color:var(--muted)">${esc(n.text.slice(0, 140))}…</span>`; tip.style.display = 'block'; moveTip(e); }
+function showTip(n, e) { if (!n) return hideTip(); tip.innerHTML = `<b>${n.id}</b> · ${KIND[n.kind].n}${n.group ? ' (group: they attack together)' : ''}${n.title ? `<br>${esc(n.title)}` : ''}<br><span style="color:var(--muted)">${esc(n.text.slice(0, 140))}…</span>`; tip.style.display = 'block'; moveTip(e); }
 function moveTip(e) { tip.style.left = Math.min(e.clientX + 14, innerWidth - 320) + 'px'; tip.style.top = Math.min(e.clientY + 14, innerHeight - 120) + 'px'; }
 function hideTip() { tip.style.display = 'none'; }
 function select(n) {
@@ -353,7 +361,7 @@ function select(n) {
   const from = [...new Set(ins.get(n.id).map(e => e.s.id))].sort((a, b) => a - b);
   panel.innerHTML = `<h2>Section ${n.id}</h2><div class="sub">${KIND[n.kind].n}${n.area ? ` · ${esc(n.area)}` : ''}${n.tags.length ? ` · ${esc(n.tags.join(', '))}` : ''}${dist.has(n.id) ? ` · ${dist.get(n.id)} step${dist.get(n.id) === 1 ? '' : 's'} from the start` : ' · not reachable from the start'}</div>
   ${n.title ? `<p><b>${esc(n.title)}</b></p>` : ''}<p>${esc(n.text)}${n.text.length >= 420 ? '…' : ''}</p>
-  ${n.foes.length ? `<h3>Fight</h3><p>${esc(n.foes.join(', '))}</p>` : ''}${n.gives.length ? `<h3>You find</h3><p>${esc(n.gives.join(', '))}</p>` : ''}
+  ${n.foes.length ? `<h3>${n.group ? 'Group fight' : 'Fight'}</h3><p>${esc(n.foes.join(', '))}${n.group ? '<br><small>They attack at the same time: you choose whom to strike, the others keep attacking you.</small>' : ''}</p>` : ''}${n.gives.length ? `<h3>You find</h3><p>${esc(n.gives.join(', '))}</p>` : ''}
   <h3>Leads to (${outs.get(n.id).length})</h3><div class="exits">${exits}</div>
   <h3>Reached from (${from.length})</h3><p>${from.map(f => `<a href="#" data-go="${f}" style="color:var(--accent)">${f}</a>`).join(', ') || '<small>nothing</small>'}</p>`;
   panel.style.display = 'block';
@@ -388,9 +396,11 @@ function legend() {
     : mode === 'zone' ? ZONES.map(z => `<div><i style="color:${zoneColor(z)};background:${zoneColor(z)}"></i>around section ${z} <span>(${N.filter(n => n.zone === z).length})</span></div>`)
     : AREAS.map(a => `<div><i style="color:${areaColor(a)};background:${areaColor(a)}"></i>${esc(a)} <span>(${N.filter(n => n.area === a).length})</span></div>`).concat(`<div><i style="color:#6f819e;background:#6f819e"></i>no area</div>`);
   const edges = Object.entries({ option: 'choice', success: 'lucky', failure: 'unlucky', dice: 'dice result', win: 'win a fight', lose: 'lose a fight', flee: 'flee' }).map(([k, v]) => `<span style="color:${EDGE[k]}">━ ${v}</span>`).join(' ');
+  const groups = N.filter(n => n.group).length;
+  if (groups && mode === 'kind') rows.push(`<div><i style="background:transparent;border:2px dashed ${KIND.combat.c};color:${KIND.combat.c};box-shadow:none"></i>Group fight, they attack together <span>(${groups})</span></div>`);
   $('legend').innerHTML = rows.join('') + `<div style="display:block;margin-top:6px;line-height:1.7">${edges}</div>`;
 }
-$('stats').textContent = `${N.length} sections · ${E.length} links · ${N.filter(n => !dist.has(n.id)).length} unreachable`;
+$('stats').textContent = `${N.length} sections · ${E.length} links · ${N.filter(n => !dist.has(n.id)).length} unreachable${N.some(n => n.group) ? ` · ${N.filter(n => n.group).length} group fights` : ''}`;
 $('summary').textContent = `A network of ${N.length} sections and ${E.length} links. Use the search box to find a section by number or words; selecting one lists where it leads and where it is reached from.`;
 legend(); resize(); for (let i = 0; i < 420; i++) tick(); fit(); addEventListener('resize', () => { resize(); });
 window.__map = { nodes: N.length, edges: E.length, select: id => goTo(byId.get(id)), state: () => ({ zoom, sel: sel && sel.id, route: routeSet.size, focus: focusSet && focusSet.size }) };
