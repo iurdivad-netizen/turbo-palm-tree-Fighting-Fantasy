@@ -153,7 +153,8 @@
         "target": { "type": "integer" },
         "conditions": { "$ref": "#/$defs/conditions" },
         "effects": { "$ref": "#/$defs/effects", "description": "Applied when the player picks this option." },
-        "once": { "type": "boolean", "description": "A one-time decision: once any 'once' option in the section was taken, all of them disappear on later visits." }
+        "once": { "type": "boolean", "description": "A one-time decision: once any 'once' option in the section was taken, all of them disappear on later visits." },
+        "vanishes": { "type": "boolean", "description": "This option disappears from the menu once it has been taken (a room that has been explored)." }
       }
     },
     "outcome": {

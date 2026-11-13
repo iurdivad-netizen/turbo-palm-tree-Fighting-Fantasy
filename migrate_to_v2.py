@@ -113,7 +113,7 @@ def convert_section(x, book_info):
         seen[c["targetSection"]] += 1
         oid = f"to-{c['targetSection']}" + ("" if seen[c["targetSection"]] == 1 else f"-{seen[c['targetSection']]}")
         o = {"id": oid, "label": c["text"], "target": c["targetSection"], "_generic": bool(GENERIC.match(c["text"]))}
-        for k in ("conditions", "effects", "once"):
+        for k in ("conditions", "effects", "once", "vanishes"):
             if c.get(k):
                 o[k] = c[k]
         opts.append(o)

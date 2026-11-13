@@ -153,7 +153,7 @@
             const options = (x.choices || []).map(c => {
                 seen[c.targetSection] = (seen[c.targetSection] || 0) + 1;
                 const o = { id: `to-${c.targetSection}` + (seen[c.targetSection] === 1 ? '' : `-${seen[c.targetSection]}`), label: c.text, target: c.targetSection };
-                ['conditions', 'effects', 'once'].forEach(k => { if (c[k]) o[k] = c[k]; });
+                ['conditions', 'effects', 'once', 'vanishes'].forEach(k => { if (c[k]) o[k] = c[k]; });
                 return o;
             });
             if (options.length) sec.options = options;
@@ -258,6 +258,7 @@
             this.lastWielded = null;
             this.rolledOnce = new Set();
             this.usedOnce = new Set();
+            this.usedOptions = new Set();   // options marked `vanishes` that were taken ("sectionId:optionId")
             this.rollResolved = false;
             this.tempSkillPenalty = 0;
             this.carriedSkillPenalty = 0;   // SKILL lost (or, if negative, gained) in the next fight
@@ -589,6 +590,7 @@
             const out = [];
             for (const o of s.options) {
                 if (o.once && this.usedOnce.has(s.id)) continue;
+                if (o.vanishes && this.usedOptions.has(`${s.id}:${o.id}`)) continue;
                 if (hasNegativeCondition(o.conditions) && !this.meets(stripPositive(o.conditions))) continue;
                 out.push({ option: o, enabled: this.meets(o.conditions), revealed: this.revealedBy(o.target) });
             }
@@ -620,6 +622,7 @@
             const o = state.option;
             if (o.effects) this.applyEffects(o.effects);
             if (o.once) this.usedOnce.add(s.id);
+            if (o.vanishes) this.usedOptions.add(`${s.id}:${o.id}`);
             if (this.isGameOver) { this._changed(); return true; }
             this.goTo(o.target);
             return true;
@@ -931,7 +934,7 @@
         serialize() {
             return {
                 bookId: this.book.id, started: this.started, currentSection: this.currentSection, stats: this.stats,
-                inventory: this.inventory, visited: Array.from(this.visited), usedOnce: Array.from(this.usedOnce), rolledOnce: Array.from(this.rolledOnce),
+                inventory: this.inventory, visited: Array.from(this.visited), usedOnce: Array.from(this.usedOnce), usedOptions: Array.from(this.usedOptions), rolledOnce: Array.from(this.rolledOnce),
                 inCombat: this.inCombat, enemyCurrentStamina: this.enemyCurrentStamina, currentCombatIndex: this.currentCombatIndex, combatLog: this.combatLog,
                 isGameOver: this.isGameOver, gameOverType: this.gameOverType, combatDone: this.combatDone, lastWielded: this.lastWielded,
                 rollResolved: this.rollResolved, tempSkillPenalty: this.tempSkillPenalty, carriedSkillPenalty: this.carriedSkillPenalty, invisible: this.invisible, tempSave: this.tempSave, carriedSave: this.carriedSave, equipped: this.equipped, nextUid: this.nextUid, advance: this.advance
@@ -942,7 +945,7 @@
             this._blank();
             Object.assign(this, {
                 started: d.started, currentSection: d.currentSection, stats: d.stats, inventory: d.inventory, visited: new Set(d.visited),
-                usedOnce: new Set(d.usedOnce || []), rolledOnce: new Set(d.rolledOnce || []), inCombat: !!d.inCombat, enemyCurrentStamina: d.enemyCurrentStamina || 0,
+                usedOnce: new Set(d.usedOnce || []), usedOptions: new Set(d.usedOptions || []), rolledOnce: new Set(d.rolledOnce || []), inCombat: !!d.inCombat, enemyCurrentStamina: d.enemyCurrentStamina || 0,
                 currentCombatIndex: d.currentCombatIndex || 0, combatLog: d.combatLog || [], isGameOver: !!d.isGameOver, gameOverType: d.gameOverType || null,
                 combatDone: !!d.combatDone, lastWielded: d.lastWielded || null, rollResolved: !!d.rollResolved, tempSkillPenalty: d.tempSkillPenalty || 0, carriedSkillPenalty: d.carriedSkillPenalty || 0, invisible: d.invisible || 0, tempSave: d.tempSave || 0, carriedSave: d.carriedSave || 0, equipped: Object.assign({ weapon: null, armor: null }, d.equipped || {}),
                 nextUid: d.nextUid || 1, advance: d.advance || null

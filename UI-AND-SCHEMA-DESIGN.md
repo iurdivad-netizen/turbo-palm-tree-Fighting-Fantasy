@@ -202,6 +202,19 @@ A review of the 17 menus of 8 or more options (`check_option_coherence.py`) foun
 
 **Not changed:** the destinations of the options themselves. Menus 180, 312 and 267 (48-78% at first) were relabelled afterwards the same way (46 labels); now every menu of 8 or more options is at 75-100%, 96% overall. Only 21% of menu options lead back to the menu they came from; that is the book's geography and a rewiring job. The promised items that do not exist (ring of protection, helm of clarity, boots of speed, silver dust, holy water, soul anchor) are gone from the labels, not added to the book.
 
+## Menus you come back to (rewired)
+
+Before, almost every room offered by a menu dropped you into some other area (the book's own "Turn to N" exits were scattered): only 21% of the options led back to the menu they were chosen from. Now **294 side rooms lead back to their menu** (victory of a fight, success and failure of a trap, "continue" of a find; several choices that all went to the same place all go back). Rules, so that nothing broke:
+
+* **One home per room.** A room offered by several menus lives in one (77 tavern, 54 catacombs, 73 wedding chamber, 82 and 88 cemetery graves, 94, 158, 175 and 200 the eastern catacombs, 303 ballroom, 321 upper hall) and is dropped from the others.
+* **Consequences stay.** A trap roll whose bad outcome is a fall or a fight keeps it (only exits to a menu return); instant-death and the final scenes are untouched.
+* **Story scenes are left alone** (36 rooms with other entrances or branching choices of their own: 5 the Wight, 13, 19, 24 the Mayor, 27, 29, 33, 52, 54, 58, 70, 74, 78, 81, 100, 101, 110, 112, 121, 132, 145, 153, 164, 165, 170, 203, 209, 235, 236, 241, 245, 258, 289, 292, 325, 346).
+* **No section is cut off.** A link that was the only way into a section was kept beside the way back (one case: 194, the tavern ledger, still leads on to the weak floor 142).
+* **Explored rooms leave the menu.** New option flag `vanishes` (schema, engine, saves, converter): once a side room has been taken, its option is gone. Without it a menu you return to would offer the same ambush forever.
+* **The world is now explicit.** The old random exits had been the only link between areas, so each menu gained "Go on to ..." options for the walkable neighbours its rooms used to lead to (town, cemetery, catacombs, manor; only moves that make sense on foot, plus 155 to the pit-trap passages 189, which were only ever reached by chance). All 16 menus stay connected through options that never vanish (a test checks it).
+
+Side effect on the simulation: the careful explorer, which visits every new section, now meets every ambush: wins 17.2% -> 3.4%, deaths in combat 39% -> 62%. The informed player (83.7%) is unchanged within noise. People can read "(fight)" in the labels and skip; the bot cannot.
+
 ## Book issues: status
 
 Fixed in the Curse book (source `CURSE_OF_HOLLOWS_END.json`, v2 regenerated, new fingerprint in `tests/simulation-baseline.json`):

@@ -595,11 +595,11 @@ test('real book: a preparation room returns to its hub, and a fountain heals onl
 test('real book: the vial in 35 can be drunk, taken or left - once', () => {
     const g = play(dice());
     g.goTo(35);
-    assert.equal(ids(g).filter(i => i.startsWith('to-111')).length, 3);
-    g.chooseOption('to-111');                // drink: +1 SKILL permanently, -1 LUCK
+    assert.equal(ids(g).filter(i => i.startsWith('to-45')).length, 3);
+    g.chooseOption('to-45');                // drink: +1 SKILL permanently, -1 LUCK
     assert.deepEqual([g.stats.skill, g.stats.initialSkill, g.stats.luck], [9, 9, 8]);
     g.goTo(35);
-    assert.deepEqual(ids(g), ['to-111-3']);  // only "leave" remains
+    assert.deepEqual(ids(g), ['to-45-3']);  // only "leave" remains
 });
 
 test('real book: the rope gate at 89 - with rope you wade across, without it you test your Luck', () => {
@@ -630,13 +630,13 @@ test('a wound that has not healed (nextFightSkill) is carried into the next figh
 test('real book: section 22 is a Luck test; the paralysis costs 1 SKILL in the next fight', () => {
     const bad = play(dice(6, 6));
     bad.goTo(22); bad.doRoll();
-    assert.equal(bad.currentSection, 298);
+    assert.equal(bad.currentSection, 45);
     assert.equal(bad.carriedSkillPenalty, 1);
     bad.goTo(46); bad.startCombat();
     assert.equal(bad.tempSkillPenalty >= 1, true);
     const good = play(dice(1, 1));
     good.goTo(22); good.doRoll();
-    assert.equal(good.currentSection, 298);
+    assert.equal(good.currentSection, 45);
     assert.equal(good.carriedSkillPenalty, 0);
 });
 
@@ -999,4 +999,39 @@ test('real book: 388 offers only rest and a way out, and the sections moved out 
     for (const id of [381, 383, 385, 387, 389, 140, 163, 169, 170, 194]) assert.ok(seen.has(id), `section ${id} can still be reached`);
     assert.equal(b.sections.filter(s => s.id !== 0 && !seen.has(s.id)).length, 0, 'every section is reachable');
     for (const id of [381, 383, 385, 387, 389]) assert.ok(S(355).options.some(o => o.target === id), `the guardian ${id} waits in the upper hall (355)`);
+});
+
+// ---- menus you come back to --------------------------------------------------------------------------------------------------------
+test('a menu option that is a side room leads back to its menu, and disappears once it has been explored', () => {
+    const g = Engine.create({ book: book([
+        sec(1, { options: [opt('a', 2, { vanishes: true }), opt('b', 3, { vanishes: true }), opt('c', 4)] }),
+        sec(2, { options: [opt('back', 1)] }), sec(3, { options: [opt('back', 1)] }), sec(4)]), rng: dice() });
+    g.start();
+    assert.deepEqual(ids(g), ['a', 'b', 'c']);
+    g.chooseOption('a'); g.chooseOption('back');
+    assert.equal(g.currentSection, 1);
+    assert.deepEqual(ids(g), ['b', 'c'], 'the explored room is gone from the menu');
+    const copy = Engine.create({ book: g.book, rng: dice() });
+    copy.restore(JSON.parse(JSON.stringify(g.serialize())));
+    assert.deepEqual(ids(copy), ['b', 'c'], 'and stays gone after a save');
+});
+
+test('real book: every side room of every big menu leads back to it, no menu is a dead end, and the areas stay connected', () => {
+    const b = real(); const S = id => b.sections.find(s => s.id === id);
+    const hubs = b.sections.filter(s => (s.options || []).length >= 8).map(s => s.id);
+    const exits = s => { const t = (s.options || []).map(o => o.target); if (s.roll) JSON.stringify(s.roll).replace(/"target":(\d+)/g, (_, n) => t.push(+n)); [].concat(s.combat || []).forEach(e => ['onVictorySection', 'fleeSection'].forEach(k => e[k] != null && t.push(e[k]))); return t; };
+    const stay = [];                       // side rooms that do not lead back (the story scenes that were left alone)
+    let vanishing = 0;
+    for (const h of hubs) for (const o of S(h).options) {
+        if (hubs.includes(o.target) || [39, 395].includes(o.target)) continue;
+        if (o.vanishes) { vanishing++; assert.ok(exits(S(o.target)).includes(h), `${o.target} leads back to ${h}`); } else stay.push(o.target);
+    }
+    assert.ok(vanishing > 250, `${vanishing} side rooms lead back`);
+    assert.ok(stay.length < 50, `only story scenes are left alone (${stay.length})`);
+    // with every vanishing option used up, each menu still has a way on, and all the menus are still connected
+    const lasting = h => S(h).options.filter(o => !o.vanishes && hubs.includes(o.target)).map(o => o.target);
+    for (const h of hubs) assert.ok(lasting(h).length > 0, `menu ${h} still has a way on when its rooms are explored`);
+    const seen = new Set([45]), todo = [45];
+    while (todo.length) for (const t of lasting(todo.pop())) if (!seen.has(t)) { seen.add(t); todo.push(t); }
+    assert.deepEqual(hubs.filter(h => !seen.has(h)), [], 'every menu can be reached through lasting options');
 });

@@ -1,6 +1,6 @@
 # Migration review: CURSE_OF_HOLLOWS_END.json -> CURSE_OF_HOLLOWS_END.v2.json
 
-396 sections, 769 options, 276 labelled just 'Continue'.
+396 sections, 788 options, 34 labelled just 'Continue'.
 
 Items for a human to check. The conversion changed no game logic (every destination, condition, effect, roll and combat is identical to v1); the only flags dropped are 'ending' marks on sections that still lead somewhere (listed below). Run check_v2_equivalence.py to prove it.
 
@@ -22,8 +22,8 @@ Items for a human to check. The conversion changed no game logic (every destinat
 ## Options not referenced in the text (listed under it): combat continuations, rewritten choices: 49
 
 - 29 | to-378 | Keep searching for the Silver Key
-- 35 | to-111-2 | Take the vial with you to drink later
-- 35 | to-111-3 | Leave the vial behind and continue
+- 35 | to-45-2 | Take the vial with you to drink later
+- 35 | to-45-3 | Leave the vial behind and continue
 - 45 | to-194 | Behind the bar: a ledger (and a fight)
 - 111 | to-183 | A sheer cliff edge
 - 111 | to-170 | Find Lydia, chained to a pillar
@@ -60,14 +60,14 @@ Items for a human to check. The conversion changed no game logic (every destinat
 - 355 | to-389 | A Phantom Servant materializes (fight)
 - 377 | to-355 | Return to the stairs
 - 380 | to-355 | Return to the stairs
-- 381 | to-388 | Return to your preparations
+- 381 | to-355 | Back to the upper hall
 - 382 | to-388 | Return to your preparations
-- 383 | to-388 | Return to your preparations
+- 383 | to-355 | Back to the upper hall
 - 384 | to-388 | Return to your preparations
-- 385 | to-388 | Return to your preparations
+- 385 | to-355 | Back to the upper hall
 - 386 | to-388 | Return to your preparations
-- 387 | to-388 | Return to your preparations
-- 389 | to-388 | Return to your preparations
+- 387 | to-355 | Back to the upper hall
+- 389 | to-355 | Back to the upper hall
 - 390 | to-388 | Return to your preparations
 - 395 | to-388 | Back away from the doors and prepare further
 
@@ -95,7 +95,7 @@ Items for a human to check. The conversion changed no game logic (every destinat
 - 266 | You surface, gasping and coughing. Lose 2 STAMINA from near-drowning
 - 362 | She dissipates with a scream of rage... but you know it's temporary. Without pro
 
-## 'Turn to N' fragments and stray stat blocks removed: 108
+## 'Turn to N' fragments and stray stat blocks removed: 107
 
 - 5 | Turn to 221 ...
 - 5 | 1 stat-block line(s) of the fight (the combat panel shows them)
@@ -106,7 +106,7 @@ Items for a human to check. The conversion changed no game logic (every destinat
 - 32 | 1 stat-block line(s) of the fight (the combat panel shows them)
 - 36 | 1 stat-block line(s) of the fight (the combat panel shows them)
 - 44 | Turn to 44 ...
-- 44 | Turn to 301 ...
+- 44 | Turn to 234 ...
 - 46 | 1 stat-block line(s) of the fight (the combat panel shows them)
 - 62 | 1 stat-block line(s) of the fight (the combat panel shows them)
 - 67 | 1 stat-block line(s) of the fight (the combat panel shows them)
@@ -157,7 +157,7 @@ Items for a human to check. The conversion changed no game logic (every destinat
 - 302 | 1 stat-block line(s) of the fight (the combat panel shows them)
 - 306 | 1 stat-block line(s) of the fight (the combat panel shows them)
 - 309 | 1 stat-block line(s) of the fight (the combat panel shows them)
-- ... and 48 more
+- ... and 47 more
 
 ## Items defined differently in different sections (add them to the overrides file's "items"): 0
 
