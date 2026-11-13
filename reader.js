@@ -12,7 +12,7 @@ const prefs = loadPrefs();
 
 // ---- small helpers -----------------------------------------------------------------------------------
 function loadPrefs() {
-    const base = { autoRoll: false, textSize: 1, markSeen: true };
+    const base = { autoRoll: false, textSize: 1, markSeen: true, rules: {} };
     try { return Object.assign(base, JSON.parse(localStorage.getItem('ff_prefs') || '{}')); } catch (e) { return base; }
 }
 function savePrefs() { try { localStorage.setItem('ff_prefs', JSON.stringify(prefs)); } catch (e) { /* private window */ } }
@@ -36,7 +36,7 @@ function scheduleRender() {
 function begin() { notices = []; rolls = []; }
 function createGame(book) {
     return Engine.create({
-        book, rng: Math.random, autoRoll: prefs.autoRoll, autoAdvance: false,
+        book, rng: Math.random, autoRoll: prefs.autoRoll, autoAdvance: false, rules: (prefs.rules || {})[book.id],
         onEvent: e => {
             if (e.type === 'message') notices.push(e.text);
             else if (e.type === 'rolled') rolls.push({ request: e.request, dice: e.dice, fresh: true });
@@ -66,6 +66,17 @@ const ui = {
     unequip(slot) { game.unequip(slot); },
     equipChoice(v) { v === 'auto' ? game.unequip('weapon') : game.equip(Number(v)); },
     toggleAutoRoll(on) { prefs.autoRoll = !!on; savePrefs(); if (game && !autoFightOn) game.setAutoRoll(prefs.autoRoll); },
+    // the optional Fighting Fantasy rules, chosen on the book's page before the game starts (the book's own choice is the default)
+    setRule(key, value) {
+        if (!game || game.started) return;
+        prefs.rules = prefs.rules || {}; prefs.rules[game.book.id] = Object.assign({}, prefs.rules[game.book.id], { [key]: value });
+        savePrefs(); game.rules = Object.assign({}, game.rules, { [key]: value }); render();
+    },
+    decide(yes) { game.resolveDecision(yes); },
+    target(i) { game.setTarget(i); },
+    takePickup(i) { game.takePickup(i); },
+    leavePickup(i) { game.leavePickup(i); },
+    swapPickup(i) { const v = $('#swap-' + i); game.takePickup(i, v && v.value ? Number(v.value) : undefined); },
     toggleMarkSeen(on) { prefs.markSeen = !!on; savePrefs(); render(); },
     setSize(delta) { prefs.textSize = Math.min(3, Math.max(0, prefs.textSize + delta)); savePrefs(); applyTextSize(); },
     togglePack() { packOpen = !packOpen; render(); },
@@ -92,12 +103,14 @@ const ui = {
 function startAutoFight() {
     if (!game || !game.inCombat || game.pending) return;
     autoFightOn = true;
+    game.autoDecline = true;                      // no luck questions while it runs
     game.setAutoRoll(true);                       // the dice roll themselves while it runs
     autoFightTick();
     render();
 }
 function stopAutoFight() {
     clearTimeout(autoFightTimer);
+    if (game) game.autoDecline = false;
     if (autoFightOn && game) game.setAutoRoll(prefs.autoRoll);
     autoFightOn = false;
 }
@@ -133,11 +146,11 @@ function dieFace(v, extra) {
 function renderTray() {
     let html = '';
     const req = game.pendingRoll;
-    if (req) {
-        const n = req.dice === '2d6' ? 2 : 1;
+    if (req && !req.decision) {
+        const n = parseInt(req.dice, 10) || 1;
         html += `<div class="rollrow ask" role="group" aria-label="Dice">
             <div class="dice" aria-hidden="true">${Array.from({ length: n }, () => '<span class="die big blank">?</span>').join('')}</div>
-            <div class="what">${esc(req.label || 'Roll the dice')}<small>Roll ${n === 2 ? 'two dice' : 'one die'}</small></div>
+            <div class="what">${esc(req.label || 'Roll the dice')}<small>Roll ${['', 'one die', 'two dice', 'three dice'][n] || n + ' dice'}</small></div>
             <button class="btn btn-primary" id="roll-now" onclick="ui.rollPending()">Roll <span class="sr-only">the dice</span></button>
         </div>`;
     }
@@ -174,7 +187,7 @@ function afterRender() {
         const h = $('#page-title');
         if (h) h.focus({ preventScroll: true });
     }
-    const ask = $('#roll-now');
+    const ask = $('#roll-now') || $('#decide-yes');
     if (ask) ask.focus({ preventScroll: false });
 }
 
@@ -217,7 +230,8 @@ function renderLanding() {
                 ${book.author ? `<p style="text-align: center; color: var(--muted); margin: 0;">By ${esc(book.author)}</p>` : ''}
                 ${book.description ? `<p style="text-align: center;">${esc(book.description)}</p>` : ''}
                 ${intro ? `<div class="text">${paragraphs(intro.text).map(p => `<p>${esc(p)}</p>`).join('')}</div>` : ''}
-                <div class="stats-preview"><span>SKILL ${book.initialStats.skill}</span><span>STAMINA ${book.initialStats.stamina}</span><span>LUCK ${book.initialStats.luck}</span></div>
+                <div class="stats-preview">${game.rules.randomStats ? '<span>Your SKILL, STAMINA and LUCK will be rolled</span>' : `<span>SKILL ${book.initialStats.skill}</span><span>STAMINA ${book.initialStats.stamina}</span><span>LUCK ${book.initialStats.luck}</span>`}</div>
+                ${rulesPanel()}
                 <div class="actions">
                     <button class="btn btn-primary" onclick="ui.start()">Start Adventure</button>
                     ${auto ? `<button class="btn" onclick="ui.loadSave('auto')">Continue (${esc(when(auto.timestamp))}, section ${auto.section})</button>` : ''}
@@ -229,6 +243,30 @@ function renderLanding() {
                     <button class="btn btn-small" onclick="ui.deleteSave('${esc(s.id)}')" aria-label="Delete the save from ${esc(when(s.timestamp))}">Delete</button></span></li>`).join('')}</ul>` : ''}
             </div>
         </main>`;
+}
+
+// ---- the optional rules ------------------------------------------------------------------------------------------------
+const RULES = [
+    ['luckInCombat', 'Luck in combat', 'After a wound you may Test your Luck. Your blow: lucky +2 damage, unlucky 1 less. Its blow: lucky 1 less damage, unlucky 1 more. Each test costs 1 LUCK.'],
+    ['randomStats', 'Roll my character', 'SKILL 1d6+6, STAMINA 2d6+12, LUCK 1d6+6, as in the Fighting Fantasy books, instead of the book\'s fixed scores.'],
+    ['eatOnlyBetweenFights', 'Eat only between fights', 'Provisions cannot be eaten in the middle of a fight (potions still can).']
+];
+function rulesPanel() {
+    const r = game.rules;
+    const box = ([key, name, help]) => `<label class="rule"><input type="checkbox" id="rule-${key}" ${r[key] ? 'checked' : ''} onchange="ui.setRule('${key}', this.checked)"> <span><b>${name}</b><small>${help}</small></span></label>`;
+    return `<fieldset class="rules"><legend>Rules (optional)</legend>
+        ${RULES.map(box).join('')}
+        <label class="rule"><span><b>Pack limit</b><small>Most things you can carry (0 = no limit). Food, keys, gold and things the story asks for do not count.</small></span>
+            <input type="number" id="rule-packLimit" min="0" max="30" value="${r.packLimit || 0}" aria-label="Pack limit" onchange="ui.setRule('packLimit', Math.max(0, parseInt(this.value, 10) || 0))"></label>
+    </fieldset>`;
+}
+function activeRules() {
+    const r = game.rules, out = [];
+    if (r.luckInCombat) out.push('luck in combat');
+    if (r.randomStats) out.push('rolled character');
+    if (r.eatOnlyBetweenFights) out.push('eat between fights');
+    if (r.packLimit) out.push(`pack limit ${r.packLimit}`);
+    return out;
 }
 
 function renderGame() {
@@ -356,9 +394,9 @@ function renderPage(section) {
 
 // ---- combat -------------------------------------------------------------------------------------------------------------------
 const enemyLine = c => `${esc(c.enemyName)} · SKILL ${c.enemySkill} · STAMINA ${c.enemyStamina}`;
-function rulesList(c) {
+function rulesList(c, named) {
     const notes = Engine.combatNotes(c);
-    return notes.length ? `<ul class="rules">${notes.map(n => `<li>⚠️ ${esc(n)}</li>`).join('')}</ul>` : '';
+    return notes.length ? `<ul class="rules">${notes.map(n => `<li>⚠️ ${named ? `<b>${esc(c.enemyName)}:</b> ` : ''}${esc(n)}</li>`).join('')}</ul>` : '';
 }
 
 function renderCombatStart(section) {
@@ -366,9 +404,9 @@ function renderCombatStart(section) {
     const first = list[game.currentCombatIndex] || list[0];
     return `<div class="combat">
         <h3>⚔️ Combat ahead</h3>
-        ${list.length > 1 ? `<p style="text-align: center; margin: 0;">You must fight them one after another, in this order:</p>` : ''}
+        ${list.length > 1 ? `<p style="text-align: center; margin: 0;">${list.every(e => e.together) ? 'They attack at the same time. You fight one of them; the others keep attacking you.' : 'You must fight them one after another, in this order:'}</p>` : ''}
         ${list.map((c, i) => `<p style="text-align: center; margin: 0.25rem 0; ${i === game.currentCombatIndex ? 'font-weight: 700;' : ''}">${list.length > 1 ? `${i + 1}. ` : ''}${enemyLine(c)}</p>`).join('')}
-        ${rulesList(first)}
+        ${list.length > 1 ? list.map(c => rulesList(c, true)).join('') : rulesList(first)}
         <button class="btn btn-danger btn-block" onclick="ui.fight()">Fight!</button>
     </div>`;
 }
@@ -383,25 +421,45 @@ function meter(label, value, max, tight) {
 
 function renderCombat() {
     const list = Engine.enemiesOf(game.section());
+    const group = list.length > 1 && list.every(e => e.together);
     const c = game.currentEnemy();
     const st = game.stats;
     const busy = game.pending || autoFightOn;
     const skillNow = Math.max(0, st.skill - game.tempSkillPenalty);
     const fightMod = n => n > 0 ? `−${n} this fight` : `+${-n} this fight`;
     return `<div class="combat">
-        <h3>⚔️ Combat${list.length > 1 ? ` · enemy ${game.currentCombatIndex + 1} of ${list.length}` : ''}</h3>
+        <h3>⚔️ Combat${group ? ` · ${list.length} enemies at once` : list.length > 1 ? ` · enemy ${game.currentCombatIndex + 1} of ${list.length}` : ''}</h3>
         <div class="versus">
             <div class="fighter"><strong>You</strong><div class="skillline">SKILL ${skillNow}${game.tempSkillPenalty ? ` (${fightMod(game.tempSkillPenalty)})` : ''}</div>${meter('STAMINA', st.stamina, st.initialStamina, true)}</div>
-            <div class="fighter"><strong>${esc(c.enemyName)}</strong><div class="skillline">SKILL ${c.enemySkill}</div>${meter('STAMINA', game.enemyCurrentStamina, c.enemyStamina, true)}</div>
+            ${group ? '' : `<div class="fighter"><strong>${esc(c.enemyName)}</strong><div class="skillline">SKILL ${c.enemySkill}</div>${meter('STAMINA', game.enemyCurrentStamina, c.enemyStamina, true)}</div>`}
         </div>
+        ${group ? `<div class="foes" role="group" aria-label="Choose whom to attack">${list.map((e, j) => {
+            const hp = j === game.currentCombatIndex ? game.enemyCurrentStamina : game.groupStamina[j];
+            const alive = hp > 0, target = j === game.currentCombatIndex;
+            return `<div class="foe${target ? ' target' : ''}${alive ? '' : ' down'}"><div><strong>${esc(e.enemyName)}</strong> <span class="skillline">SKILL ${e.enemySkill}</span>${meter('STAMINA', Math.max(0, hp), e.enemyStamina, true)}</div>
+                ${alive ? `<button class="btn btn-small" onclick="ui.target(${j})" aria-pressed="${target}" ${busy ? 'disabled' : ''}>${target ? 'Attacking' : 'Attack this one'}</button>` : '<span class="skillline">defeated</span>'}</div>`;
+        }).join('')}</div>` : ''}
         ${renderGear(c, busy)}
-        ${rulesList(c)}
+        ${group ? list.map(e => rulesList(e, true)).join('') : rulesList(c)}
         <div class="fightlog" role="log" aria-live="polite" tabindex="0" aria-label="Fight log">${game.combatLog.map(l => `<div>${esc(l)}</div>`).join('')}</div>
+        ${renderLuckQuestion()}
         <div class="actions">
             <button class="btn btn-danger" onclick="ui.round()" ${busy ? 'disabled' : ''}>Fight a round</button>
             <button class="btn" onclick="ui.toggleAutoFight()" ${game.pending && !autoFightOn ? 'disabled' : ''} aria-pressed="${autoFightOn}">${autoFightOn ? '⏸ Stop auto-fight' : '⏩ Auto-fight'}</button>
             ${game.canFleeNow(c) ? `<button class="btn" onclick="ui.flee()" ${game.pending ? 'disabled' : ''}>${game.invisible > 0 ? 'Slip away unseen' : c.fleeTestLuck ? 'Flee (Test your Luck)' : 'Flee'}</button>` : ''}
         </div>
+    </div>`;
+}
+
+function renderLuckQuestion() {
+    const q = game.pendingRoll;
+    if (!q || !q.decision) return '';
+    const hit = q.kind === 'hit';
+    return `<div class="decision" role="group" aria-label="Luck in combat">
+        <p><b>${hit ? `You wound it for ${q.damage}.` : `It wounds you for ${q.damage}.`}</b> ${esc(q.label)}
+        <small>${hit ? 'Lucky: +2 damage. Unlucky: 1 less.' : 'Lucky: 1 less damage. Unlucky: 1 more.'} The test costs 1 LUCK (you have ${game.stats.luck}).</small></p>
+        <div class="actions"><button class="btn btn-primary" id="decide-yes" onclick="ui.decide(true)">🍀 Test your Luck</button>
+        <button class="btn" onclick="ui.decide(false)">No thanks</button></div>
     </div>`;
 }
 
@@ -431,6 +489,7 @@ function renderStats() {
         ${game.invisible > 0 ? `<p class="penalty good">👻 Invisible: ${game.invisible} more move${game.invisible > 1 ? 's' : ''}</p>` : ''}
         ${game.carriedSkillPenalty ? `<p class="penalty">${game.carriedSkillPenalty > 0 ? '−' : '+'}${Math.abs(game.carriedSkillPenalty)} SKILL in your next fight</p>` : ''}
         <div class="gold"><span>💰 Gold</span><span>${st.gold || 0} GP</span></div>
+        ${activeRules().length ? `<p class="rulesline">Rules: ${esc(activeRules().join(' · '))}</p>` : ''}
     </section>`;
 }
 
@@ -460,7 +519,8 @@ function itemRow(g) {
         badge = g.inUse ? `<span class="badge">${g.equipped ? 'Worn' : 'Worn (auto)'}</span>` : '';
         act = g.inUse ? '' : `<button class="btn btn-small" onclick="ui.equip(${uid})" ${game.pending ? 'disabled' : ''}>Wear</button>`;
     } else if (g.usable) {
-        act = `<button class="btn btn-small" onclick="ui.use(${uid})" ${game.pending ? 'disabled' : ''}>Use</button>`;
+        const cu = game.canUse(item);
+        act = `<button class="btn btn-small" onclick="ui.use(${uid})" ${game.pending || !cu.ok ? 'disabled' : ''} ${cu.ok ? '' : `title="${esc(cu.reason)}"`}>Use</button>${cu.ok ? '' : `<span class="sr-only"> ${esc(cu.reason)}</span>`}`;
     }
     return `<div class="item${badge ? ' active' : ''}">
         <span class="ico" aria-hidden="true">${ICONS[item.type] || ICONS.other}</span>
@@ -476,7 +536,14 @@ function renderPack() {
             ? `<button class="btn btn-small linkish" onclick="ui.unequip('${cat}')" ${game.pending ? 'disabled' : ''}>Back to automatic</button>` : '';
         return `<div class="pack-group"><h3>${title} ${auto}</h3><p class="hint">${hint}</p>${rows.map(itemRow).join('')}</div>`;
     }).join('');
-    return `<section class="card" aria-label="Pack"><h2>Pack</h2>${sections || '<p class="empty">Your pack is empty.</p>'}</section>`;
+    const limit = game.rules.packLimit;
+    const droppable = game.inventory.filter(i => game.countsAgainstPack(i));
+    const pickups = game.pendingPickups.length ? `<div class="pickups" role="group" aria-label="Found but left behind"><h3>Found, but your pack is full</h3>
+        ${game.pendingPickups.map((p, i) => `<div class="item"><span class="ico" aria-hidden="true">${ICONS[p.type] || ICONS.other}</span>
+            <div class="body"><strong>${esc(p.name)}</strong>${p.description ? `<div class="tags">${esc(p.description)}</div>` : ''}
+            <label class="swap">Swap for <select id="swap-${i}" aria-label="Item to drop for ${esc(p.name)}"><option value="">(nothing: drop it first)</option>${droppable.map(d => `<option value="${Number(d.uid)}">${esc(d.name)}</option>`).join('')}</select></label></div>
+            <div class="acts"><button class="btn btn-small" onclick="ui.swapPickup(${i})" ${game.pending ? 'disabled' : ''}>Take</button><button class="btn btn-small" onclick="ui.leavePickup(${i})">Leave it</button></div></div>`).join('')}</div>` : '';
+    return `<section class="card" aria-label="Pack"><h2>Pack${limit ? ` <small class="packcount">${game.packCount()} of ${limit}</small>` : ''}</h2>${pickups}${sections || '<p class="empty">Your pack is empty.</p>'}</section>`;
 }
 
 // what you fight with, shown in the fight: the weapon, what it does against this enemy, the armour; a picker to change them

@@ -1,54 +1,417 @@
 {
   "_comment": "Hand-written decisions for migrate_to_v2.py, specific to this book. items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). labels: {section: {option id: button label}}; text: {section: [{replace, with}]} applied to the converted text; notes: {section: a problem in the book that the migration does not change}. See AUTHORING.md.",
   "labels": {
+    "10": {
+      "to-234": "Back to the Mayor's house"
+    },
+    "11": {
+      "to-45": "Back to the tavern"
+    },
+    "12": {
+      "to-234": "Back to the Mayor's house"
+    },
+    "14": {
+      "to-378": "Back to the wedding chamber"
+    },
+    "16": {
+      "to-234": "Back to the Mayor's house"
+    },
+    "18": {
+      "to-45": "Back to the tavern"
+    },
+    "21": {
+      "to-127": "Back to the cemetery"
+    },
+    "23": {
+      "to-155": "Back to the catacomb junction"
+    },
     "24": {
       "to-127": "Retreat to the cemetery",
       "to-234": "Accept the Mayor's help"
+    },
+    "25": {
+      "to-378": "Back to the wedding chamber"
+    },
+    "26": {
+      "to-234": "Back to the Mayor's house"
+    },
+    "31": {
+      "to-45": "Back to the tavern"
+    },
+    "36": {
+      "to-312": "Back to the cemetery"
+    },
+    "37": {
+      "to-378": "Back to the wedding chamber"
+    },
+    "38": {
+      "to-45": "Back to the tavern"
+    },
+    "40": {
+      "to-45": "Back to the tavern"
+    },
+    "42": {
+      "to-312": "Back to the cemetery"
+    },
+    "43": {
+      "to-45": "Back to the tavern"
+    },
+    "44": {
+      "to-234": "Back to the Mayor's house"
+    },
+    "45": {
+      "to-78": "Question the bartender about the undead",
+      "to-203": "Search the tavern: a journal and a bottle",
+      "to-9": "A ghost's wail pierces your skull",
+      "to-11": "The bartender's eyes go black",
+      "to-18": "A spectral hand passes through your chest (−3 STAMINA, −1 SKILL for good)",
+      "to-22": "A Ghoul's paralysing claws",
+      "to-24": "The Mayor grows suspicious",
+      "to-31": "Climb the stone stairs",
+      "to-35": "A storage room: 3 Provisions",
+      "to-38": "Lydia thanks you: the Silver Key",
+      "to-40": "An old journal in shaky handwriting",
+      "to-43": "A hidden laboratory behind a false wall",
+      "to-47": "Try to flee: you stumble",
+      "to-52": "A dying cultist's last words",
+      "to-55": "A Shadow drains your strength (−1 SKILL, −2 STAMINA for good)",
+      "to-61": "The ritual chanting grows louder (−1 STAMINA)",
+      "to-66": "Disarm a chest trap: a scroll and 50 gold",
+      "to-70": "A door sealed with glowing runes",
+      "to-79": "Flee before combat begins",
+      "to-84": "Pick the lock on an iron gate",
+      "to-95": "A ghost materialises",
+      "to-101": "A junction of three passages",
+      "to-110": "A cultist flees ahead",
+      "to-77": "Walk to the edge of the village (dead end)",
+      "to-194": "Behind the bar: a ledger (and a fight)",
+      "to-298": "Go on to the cemetery path",
+      "to-180": "Go on to the graves"
+    },
+    "46": {
+      "to-127": "Back to the cemetery"
+    },
+    "47": {
+      "to-45": "Back to the tavern"
+    },
+    "48": {
+      "to-234": "Back to the Mayor's house"
+    },
+    "49": {
+      "to-155": "Back to the catacomb junction"
     },
     "52": {
       "to-3": "Search his body",
       "to-180": "Move on quickly"
     },
+    "53": {
+      "to-234": "Back to the Mayor's house"
+    },
     "54": {
       "to-109": "Climb down the well on the rope",
       "to-127": "Leave the well unexplored"
     },
+    "55": {
+      "to-45": "Back to the tavern"
+    },
     "56": {
-      "to-127": "Retreat to the cemetery"
+      "to-234": "Back to the Mayor's house"
+    },
+    "57": {
+      "to-234": "Back to the Mayor's house"
+    },
+    "59": {
+      "to-155": "Back to the catacomb junction"
+    },
+    "61": {
+      "to-45": "Back to the tavern"
+    },
+    "62": {
+      "to-234": "Back to the Mayor's house"
+    },
+    "63": {
+      "to-312": "Back to the cemetery"
+    },
+    "64": {
+      "to-335": "Back to the ballroom"
+    },
+    "66": {
+      "to-45": "Back to the tavern"
+    },
+    "67": {
+      "to-234": "Back to the Mayor's house"
+    },
+    "68": {
+      "to-312": "Back to the cemetery"
+    },
+    "69": {
+      "to-127": "Back to the cemetery"
+    },
+    "71": {
+      "to-234": "Back to the Mayor's house"
+    },
+    "72": {
+      "to-234": "Back to the Mayor's house"
+    },
+    "73": {
+      "to-378": "Back to the wedding chamber"
     },
     "74": {
       "to-221": "Investigate what is in the water",
       "to-111": "Go back and find another route"
     },
+    "75": {
+      "to-221": "Back to the flooded section"
+    },
+    "76": {
+      "to-312": "Back to the cemetery"
+    },
+    "77": {
+      "to-45": "Back to the tavern"
+    },
     "81": {
       "to-245": "Extinguish the candles",
       "to-301": "Leave the candles burning and move on"
+    },
+    "82": {
+      "to-312": "Back to the cemetery"
+    },
+    "84": {
+      "to-45": "Back to the tavern"
+    },
+    "85": {
+      "to-234": "Back to the Mayor's house"
+    },
+    "86": {
+      "to-155": "Back to the catacomb junction"
+    },
+    "88": {
+      "to-312": "Back to the cemetery"
+    },
+    "90": {
+      "to-155": "Back to the catacomb junction"
+    },
+    "91": {
+      "to-312": "Back to the cemetery"
+    },
+    "92": {
+      "to-234": "Back to the Mayor's house"
+    },
+    "93": {
+      "to-335": "Back to the ballroom"
+    },
+    "94": {
+      "to-267": "Back to the eastern catacombs"
+    },
+    "95": {
+      "to-45": "Back to the tavern"
+    },
+    "96": {
+      "to-234": "Back to the Mayor's house"
+    },
+    "97": {
+      "to-155": "Back to the catacomb junction"
+    },
+    "98": {
+      "to-234": "Back to the Mayor's house"
+    },
+    "99": {
+      "to-378": "Back to the wedding chamber"
     },
     "100": {
       "to-6": "Hide and let them pass",
       "to-89": "Prepare to face them"
     },
+    "102": {
+      "to-234": "Back to the Mayor's house"
+    },
+    "105": {
+      "to-234": "Back to the Mayor's house"
+    },
+    "106": {
+      "to-155": "Back to the catacomb junction"
+    },
+    "108": {
+      "to-335": "Back to the ballroom"
+    },
     "110": {
       "to-82": "Chase the fleeing cultist",
       "to-180": "Let him go and keep exploring"
+    },
+    "111": {
+      "to-119": "A cultist sounds the alarm",
+      "to-124": "Cross a bridge that groans but holds",
+      "to-126": "The Zombie lets go of your ankle",
+      "to-202": "A locked iron gate",
+      "to-205": "A trapped corridor, safely passed (+1 LUCK)",
+      "to-206": "A hidden laboratory: the journal and the Widow's name",
+      "to-208": "A Phantom Servant blocks your path (fight)",
+      "to-211": "A Zombie's infected bite (−3 STAMINA)",
+      "to-213": "A secret armory: a +1 Longsword",
+      "to-214": "A passage ending in a cave-in (dead end)",
+      "to-216": "Darts shoot from the walls",
+      "to-217": "Climb a shaft to the surface",
+      "to-218": "A Skeleton Warrior guards the passage (fight)",
+      "to-220": "The ancient bridge collapses beneath you",
+      "to-223": "A map of the manor",
+      "to-224": "A passage of tripwires and pressure plates",
+      "to-225": "50 feet of rope on a hook",
+      "to-226": "A hidden cache: Provisions and 30 gold",
+      "to-227": "A Phantom Servant materializes (fight)",
+      "to-183": "A sheer cliff edge",
+      "to-170": "Find Lydia, chained to a pillar",
+      "to-181": "The bridge snaps beneath you",
+      "to-186": "Sneak past praying cultists",
+      "to-355": "Go on to the upper hall",
+      "to-335": "Go on to the ballroom"
     },
     "112": {
       "to-27": "Free Lydia now",
       "to-245": "Keep exploring and come back for her later"
     },
+    "113": {
+      "to-335": "Back to the ballroom"
+    },
+    "114": {
+      "to-234": "Back to the Mayor's house"
+    },
+    "115": {
+      "to-155": "Back to the catacomb junction"
+    },
+    "116": {
+      "to-234": "Back to the Mayor's house"
+    },
+    "117": {
+      "to-127": "Back to the cemetery"
+    },
+    "118": {
+      "to-312": "Back to the cemetery"
+    },
+    "119": {
+      "to-111": "Back to the passages"
+    },
+    "120": {
+      "to-335": "Back to the ballroom"
+    },
     "121": {
       "to-221": "Swim across",
       "to-111": "Turn back and find another route"
     },
+    "122": {
+      "to-335": "Back to the ballroom"
+    },
+    "123": {
+      "to-221": "Back to the flooded section"
+    },
+    "124": {
+      "to-111": "Back to the passages"
+    },
+    "125": {
+      "to-312": "Back to the cemetery"
+    },
+    "126": {
+      "to-111": "Back to the passages"
+    },
+    "128": {
+      "to-127": "Back to the cemetery"
+    },
+    "129": {
+      "to-127": "Back to the cemetery"
+    },
+    "130": {
+      "to-127": "Back to the cemetery"
+    },
+    "131": {
+      "to-127": "Back to the cemetery"
+    },
+    "133": {
+      "to-127": "Back to the cemetery"
+    },
+    "135": {
+      "to-155": "Back to the catacomb junction"
+    },
+    "136": {
+      "to-335": "Back to the ballroom"
+    },
+    "137": {
+      "to-301": "Back to the Spectral Manor"
+    },
+    "139": {
+      "to-378": "Back to the wedding chamber"
+    },
+    "140": {
+      "to-355": "Back to the upper hall"
+    },
+    "141": {
+      "to-378": "Back to the wedding chamber"
+    },
+    "143": {
+      "to-312": "Back to the cemetery"
+    },
+    "144": {
+      "to-127": "Back to the cemetery"
+    },
     "145": {
       "to-111": "Retreat and find another way"
+    },
+    "146": {
+      "to-45": "Back to the tavern"
+    },
+    "148": {
+      "to-298": "Back to the cemetery path"
+    },
+    "149": {
+      "to-155": "Back to the catacomb junction"
+    },
+    "151": {
+      "to-221": "Back to the flooded section"
+    },
+    "152": {
+      "to-155": "Back to the catacomb junction"
     },
     "153": {
       "to-6": "Hide",
       "to-89": "Prepare to confront them"
     },
+    "154": {
+      "to-335": "Back to the ballroom"
+    },
     "155": {
-      "to-97": "Visit the healing shrine"
+      "to-97": "Visit the healing shrine",
+      "to-138": "A passage strung with tripwires",
+      "to-150": "A floor that looks solid (danger)",
+      "to-160": "Cross a crumbling bridge",
+      "to-169": "A Ghoul leaps from the shadows (fight)",
+      "to-197": "A Skeleton Warrior attacks (fight)",
+      "to-153": "Hide from approaching cultists",
+      "to-157": "A heavily locked door",
+      "to-187": "A trapped door",
+      "to-111": "Go on to the passages",
+      "to-301": "Go on to the Spectral Manor",
+      "to-267": "Go on to the eastern catacombs",
+      "to-355": "Go on to the upper hall",
+      "to-189": "Go on to the pit-trap passages"
+    },
+    "157": {
+      "to-155": "Back to the catacomb junction"
+    },
+    "158": {
+      "to-267": "Back to the eastern catacombs"
+    },
+    "159": {
+      "to-335": "Back to the ballroom"
+    },
+    "160": {
+      "to-155": "Back to the catacomb junction"
+    },
+    "161": {
+      "to-180": "Back to the graves"
+    },
+    "162": {
+      "to-221": "Back to the flooded section"
+    },
+    "163": {
+      "to-355": "Back to the upper hall"
     },
     "164": {
       "to-109": "Climb down the well on the rope",
@@ -58,50 +421,740 @@
       "to-221": "Follow the stream",
       "to-111": "Go back"
     },
+    "166": {
+      "to-335": "Back to the ballroom"
+    },
+    "168": {
+      "to-301": "Back to the Spectral Manor"
+    },
+    "169": {
+      "to-155": "Back to the catacomb junction"
+    },
     "170": {
       "to-245": "Head for the eastern catacombs",
       "to-301": "Go to the manor",
       "to-111": "Explore more of the catacombs first"
     },
+    "171": {
+      "to-312": "Back to the cemetery"
+    },
+    "173": {
+      "to-335": "Back to the ballroom"
+    },
+    "174": {
+      "to-221": "Back to the flooded section"
+    },
+    "175": {
+      "to-267": "Back to the eastern catacombs"
+    },
+    "176": {
+      "to-155": "Back to the catacomb junction"
+    },
+    "178": {
+      "to-335": "Back to the ballroom"
+    },
+    "179": {
+      "to-335": "Back to the ballroom"
+    },
     "180": {
-      "to-346": "Escape toward the cemetery path"
+      "to-346": "Escape toward the cemetery path",
+      "to-161": "Search a dead cultist: a note",
+      "to-193": "Search a fallen cultist: a medallion",
+      "to-259": "A hidden map of the manor's secret passages",
+      "to-260": "A Shadow emerges (fight)",
+      "to-261": "A blessed fountain (STAMINA restored)",
+      "to-262": "Stone stairs up into the manor's cellar",
+      "to-263": "A Phantom Servant blocks your path (fight)",
+      "to-264": "A hidden chest: a Cloak of Shadows",
+      "to-265": "A door locked with a complex mechanism",
+      "to-271": "A cultist guards the way (fight)",
+      "to-269": "A hidden armory: a +1 Longsword",
+      "to-270": "A trapped passage",
+      "to-273": "A Ghoul leaps from the shadows (fight)",
+      "to-274": "A detailed map of the manor's layout",
+      "to-276": "A Shadow materializes (fight)",
+      "to-277": "Find your way through a maze of passages",
+      "to-278": "A Phantom Servant attacks (fight)",
+      "to-279": "A hidden cache: 2 Healing Potions and 50 gold",
+      "to-280": "A storage room: 3 Provisions",
+      "to-312": "Search the remains: a key, a potion, gold",
+      "to-301": "Go on to the Spectral Manor",
+      "to-355": "Go on to the upper hall",
+      "to-335": "Go on to the ballroom"
+    },
+    "181": {
+      "to-111": "Back to the passages"
+    },
+    "182": {
+      "to-221": "Back to the flooded section"
+    },
+    "183": {
+      "to-111": "Back to the passages"
+    },
+    "185": {
+      "to-355": "Back to the upper hall"
+    },
+    "186": {
+      "to-111": "Back to the passages"
+    },
+    "187": {
+      "to-155": "Back to the catacomb junction"
+    },
+    "188": {
+      "to-378": "Back to the wedding chamber"
+    },
+    "189": {
+      "to-230": "A Shadow emerges from your own shadow (fight)",
+      "to-231": "Find your way through a maze of passages",
+      "to-232": "A grand chamber with vaulted ceilings",
+      "to-233": "A Ghoul leaps from an alcove (fight)",
+      "to-235": "A sealed door with glowing runes",
+      "to-238": "A Skeleton Warrior blocks the passage (fight)",
+      "to-239": "A hidden armory: a +1 Mace",
+      "to-240": "A locked iron door in chains",
+      "to-242": "A niche with a Potion of Strength",
+      "to-243": "A cultist guards the passage (fight)",
+      "to-244": "A well-kept prayer shrine",
+      "to-246": "A Phantom Servant materializes (fight)",
+      "to-248": "A Shadow attacks from the dark (fight)",
+      "to-249": "A trapped corridor, carefully crossed (+1 LUCK)",
+      "to-251": "A Ghoul attacks from hiding (fight)",
+      "to-253": "A passage sloping up to the surface",
+      "to-254": "A Skeleton Warrior guards the section (fight)",
+      "to-255": "A hidden cache: a Potion of Healing and 40 gold",
+      "to-256": "A trapped floor",
+      "to-257": "A cultist attacks (fight)",
+      "to-301": "Go on to the Spectral Manor",
+      "to-355": "Go on to the upper hall",
+      "to-312": "Go on to the cemetery graves"
+    },
+    "190": {
+      "to-221": "Back to the flooded section"
+    },
+    "191": {
+      "to-221": "Back to the flooded section"
+    },
+    "193": {
+      "to-180": "Back to the graves"
+    },
+    "194": {
+      "to-142": "Go deeper",
+      "to-45": "Back to the tavern"
+    },
+    "195": {
+      "to-312": "Back to the cemetery"
+    },
+    "196": {
+      "to-221": "Back to the flooded section"
+    },
+    "197": {
+      "to-155": "Back to the catacomb junction"
+    },
+    "198": {
+      "to-335": "Back to the ballroom"
+    },
+    "200": {
+      "to-267": "Back to the eastern catacombs"
+    },
+    "202": {
+      "to-111": "Back to the passages"
+    },
+    "205": {
+      "to-111": "Back to the passages"
+    },
+    "206": {
+      "to-111": "Back to the passages"
+    },
+    "208": {
+      "to-111": "Back to the passages"
     },
     "209": {
       "to-221": "Continue down the passage",
       "to-111": "Go back and try another route"
+    },
+    "210": {
+      "to-335": "Back to the ballroom"
+    },
+    "211": {
+      "to-111": "Back to the passages"
+    },
+    "212": {
+      "to-155": "Back to the catacomb junction"
+    },
+    "213": {
+      "to-111": "Back to the passages"
+    },
+    "214": {
+      "to-111": "Back to the passages"
+    },
+    "215": {
+      "to-221": "Back to the flooded section"
+    },
+    "217": {
+      "to-111": "Back to the passages"
+    },
+    "218": {
+      "to-111": "Back to the passages"
+    },
+    "219": {
+      "to-312": "Back to the cemetery"
+    },
+    "220": {
+      "to-111": "Back to the passages"
+    },
+    "221": {
+      "to-167": "The floor gives way: a spike pit",
+      "to-199": "The floor gives way beneath you",
+      "to-111": "Go on to the passages"
+    },
+    "222": {
+      "to-111": "Back to the passages"
+    },
+    "223": {
+      "to-111": "Back to the passages"
+    },
+    "224": {
+      "to-111": "Back to the passages"
+    },
+    "225": {
+      "to-111": "Back to the passages"
+    },
+    "226": {
+      "to-111": "Back to the passages"
+    },
+    "227": {
+      "to-111": "Back to the passages"
+    },
+    "229": {
+      "to-378": "Back to the wedding chamber"
+    },
+    "230": {
+      "to-189": "Back to the passages"
+    },
+    "231": {
+      "to-189": "Back to the passages"
+    },
+    "232": {
+      "to-189": "Back to the passages"
+    },
+    "233": {
+      "to-189": "Back to the passages"
+    },
+    "234": {
+      "to-10": "Sneak past the undead guardians",
+      "to-13": "A reinforced door, something moving behind it",
+      "to-16": "Step into a chamber holding up the Cult Medallion",
+      "to-19": "The real bartender, bound in the cellar",
+      "to-20": "Cross an ancient, rotten bridge",
+      "to-27": "Smash through a door",
+      "to-34": "A floor that looks too solid",
+      "to-44": "Pick the lock of a chest",
+      "to-53": "A passage ending in a cave-in (dead end)",
+      "to-56": "The Mayor turns suspicious",
+      "to-57": "Sneak past a guardian creature",
+      "to-58": "A poison dart from the wall (−4 STAMINA)",
+      "to-62": "A Zombie grabs your ankle (fight)",
+      "to-67": "The cult leader raises his dagger (fight)",
+      "to-71": "Sneak closer to the ritual chamber",
+      "to-72": "A potion explodes in your hands (−3 STAMINA)",
+      "to-85": "A Shadow's brief touch (−1 SKILL for good)",
+      "to-87": "A pressure plate fires spears",
+      "to-96": "Cross a crumbling bridge over a chasm",
+      "to-98": "Defeat a cultist: a medallion drops",
+      "to-102": "Pick through a Skeleton Warrior's bones (a ring, 40 gold)",
+      "to-105": "A Zombie's infected bite (−3 STAMINA, −1 maximum)",
+      "to-112": "Smash the door: Lydia, chained to a pillar",
+      "to-114": "A passage blocked by rubble (dead end)",
+      "to-116": "A Shadow drains your life force (−1 SKILL, −2 maximum STAMINA for good)",
+      "to-180": "Go on to the graves"
     },
     "236": {
       "to-80": "Destroy the altar to weaken the curse",
       "to-155": "Take the west passage",
       "to-267": "Take the east passage"
     },
+    "237": {
+      "to-127": "Back to the cemetery"
+    },
+    "238": {
+      "to-189": "Back to the passages"
+    },
+    "239": {
+      "to-189": "Back to the passages"
+    },
+    "240": {
+      "to-189": "Back to the passages"
+    },
     "241": {
       "to-62": "Fight the Drowned Zombie",
       "to-221": "Slip past it through the water"
     },
+    "242": {
+      "to-189": "Back to the passages"
+    },
+    "243": {
+      "to-189": "Back to the passages"
+    },
+    "244": {
+      "to-189": "Back to the passages"
+    },
+    "246": {
+      "to-189": "Back to the passages"
+    },
+    "247": {
+      "to-378": "Back to the wedding chamber"
+    },
+    "248": {
+      "to-189": "Back to the passages"
+    },
+    "249": {
+      "to-189": "Back to the passages"
+    },
+    "251": {
+      "to-189": "Back to the passages"
+    },
+    "252": {
+      "to-312": "Back to the cemetery"
+    },
+    "253": {
+      "to-189": "Back to the passages"
+    },
+    "254": {
+      "to-189": "Back to the passages"
+    },
+    "255": {
+      "to-189": "Back to the passages"
+    },
+    "257": {
+      "to-189": "Back to the passages"
+    },
     "258": {
       "to-111": "Go back and explore elsewhere"
+    },
+    "259": {
+      "to-180": "Back to the graves"
+    },
+    "260": {
+      "to-180": "Back to the graves"
+    },
+    "261": {
+      "to-180": "Back to the graves"
+    },
+    "262": {
+      "to-180": "Back to the graves"
+    },
+    "263": {
+      "to-180": "Back to the graves"
+    },
+    "264": {
+      "to-180": "Back to the graves"
+    },
+    "265": {
+      "to-180": "Back to the graves"
+    },
+    "267": {
+      "to-94": "A captive's journal: the Wight is loose",
+      "to-158": "A second journal: the Wight feeds on fear",
+      "to-175": "A torn page: the Widow's power peaks at midnight",
+      "to-200": "A warning: the Widow can only be bound",
+      "to-5": "The sealed eastern door: a Cursed Wight (fight)",
+      "to-180": "Three Zombies rise (fight)",
+      "to-245": "The floor collapses beneath you",
+      "to-378": "Go on to the wedding chamber"
+    },
+    "268": {
+      "to-180": "Back to the graves"
+    },
+    "269": {
+      "to-180": "Back to the graves"
+    },
+    "271": {
+      "to-180": "Back to the graves"
+    },
+    "272": {
+      "to-127": "Back to the cemetery"
+    },
+    "273": {
+      "to-180": "Back to the graves"
+    },
+    "274": {
+      "to-180": "Back to the graves"
+    },
+    "276": {
+      "to-180": "Back to the graves"
+    },
+    "277": {
+      "to-180": "Back to the graves"
+    },
+    "278": {
+      "to-180": "Back to the graves"
+    },
+    "279": {
+      "to-180": "Back to the graves"
+    },
+    "280": {
+      "to-180": "Back to the graves"
+    },
+    "281": {
+      "to-378": "Back to the wedding chamber"
+    },
+    "282": {
+      "to-298": "Back to the cemetery path"
+    },
+    "283": {
+      "to-298": "Back to the cemetery path"
+    },
+    "284": {
+      "to-298": "Back to the cemetery path"
+    },
+    "285": {
+      "to-378": "Back to the wedding chamber"
+    },
+    "286": {
+      "to-298": "Back to the cemetery path"
+    },
+    "287": {
+      "to-298": "Back to the cemetery path"
+    },
+    "288": {
+      "to-298": "Back to the cemetery path"
     },
     "289": {
       "to-312": "Continue toward the manor",
       "to-346": "Escape toward the cemetery path"
     },
+    "290": {
+      "to-298": "Back to the cemetery path"
+    },
+    "291": {
+      "to-298": "Back to the cemetery path"
+    },
+    "293": {
+      "to-298": "Back to the cemetery path"
+    },
+    "294": {
+      "to-298": "Back to the cemetery path"
+    },
+    "296": {
+      "to-298": "Back to the cemetery path"
+    },
+    "297": {
+      "to-298": "Back to the cemetery path"
+    },
+    "298": {
+      "to-289": "Surrounded by three Zombies and a Ghoul (fight)",
+      "to-282": "A Skeleton Warrior blocks the passage (fight)",
+      "to-283": "A blessed shrine (+4 STAMINA, +1 LUCK)",
+      "to-284": "A cultist ambush (fight)",
+      "to-286": "A Shadow emerges (fight)",
+      "to-287": "A chasm with no way across",
+      "to-288": "A Phantom Servant materializes (fight)",
+      "to-290": "A Potion of Invisibility in an alcove",
+      "to-291": "A Ghoul attacks (fight)",
+      "to-292": "Enter the Spectral Manor proper",
+      "to-293": "A Skeleton Warrior guards the entrance (fight)",
+      "to-294": "A hidden room: 50 gold and a Scroll of Protection",
+      "to-295": "A trapped floor",
+      "to-296": "A cultist attacks (fight)",
+      "to-297": "Check that you have everything you need",
+      "to-299": "A Potion of Strength in a niche",
+      "to-148": "A Ghoul's paralysing claws",
+      "to-301": "Go on to the Spectral Manor",
+      "to-312": "Go on to the cemetery graves",
+      "to-180": "Go on to the graves"
+    },
+    "299": {
+      "to-298": "Back to the cemetery path"
+    },
+    "300": {
+      "to-298": "Back to the cemetery path"
+    },
+    "301": {
+      "to-137": "Climb a slippery shaft upward",
+      "to-147": "A locked chest",
+      "to-168": "Pick a lock to a staircase up"
+    },
+    "303": {
+      "to-335": "Back to the ballroom"
+    },
+    "306": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "307": {
+      "to-301": "Back to the Spectral Manor"
+    },
+    "308": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "310": {
+      "to-355": "Back to the upper hall"
+    },
+    "311": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "312": {
+      "to-17": "A passage that narrows to a crawl",
+      "to-33": "Occult symbols carved into the walls",
+      "to-36": "A Phantom Servant blocks your path (fight)",
+      "to-42": "A dead cultist's belongings: a torn map (+1 LUCK)",
+      "to-60": "A floor slick with blood",
+      "to-63": "A hidden passage marked with the Hollow crest",
+      "to-68": "Cross a groaning bridge",
+      "to-76": "An ancient tapestry: the Widow's name",
+      "to-88": "A skeleton's prayer book (a blessing)",
+      "to-91": "The Widow appears without warning",
+      "to-100": "Footsteps approaching: hide or face them",
+      "to-118": "A silver locket on the ground",
+      "to-125": "A secret shrine to the Widow",
+      "to-143": "A holy symbol on a skeleton's neck",
+      "to-171": "A skeleton clutching a Silver Dagger",
+      "to-195": "A skeleton wearing a silver ring",
+      "to-219": "A holy symbol on an altar",
+      "to-252": "A silver amulet on a skeleton's neck",
+      "to-127": "Go on to the cemetery"
+    },
+    "314": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "316": {
+      "to-355": "Back to the upper hall"
+    },
+    "318": {
+      "to-301": "Back to the Spectral Manor"
+    },
+    "319": {
+      "to-355": "Back to the upper hall"
+    },
+    "321": {
+      "to-355": "Back to the upper hall"
+    },
+    "323": {
+      "to-355": "Back to the upper hall"
+    },
+    "324": {
+      "to-341": "Back to Eliza's chambers"
+    },
     "325": {
       "to-378": "Take the left staircase (the cultists)",
       "to-395": "Take the right staircase (the Widow's lair)"
     },
+    "326": {
+      "to-301": "Back to the Spectral Manor"
+    },
+    "327": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "328": {
+      "to-355": "Back to the upper hall"
+    },
+    "329": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "330": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "331": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "332": {
+      "to-301": "Back to the Spectral Manor"
+    },
+    "333": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "334": {
+      "to-355": "Back to the upper hall"
+    },
+    "335": {
+      "to-179": "A Phantom Servant appears (fight)"
+    },
+    "337": {
+      "to-355": "Back to the upper hall"
+    },
+    "338": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "339": {
+      "to-301": "Back to the Spectral Manor"
+    },
+    "340": {
+      "to-341": "Back to Eliza's chambers"
+    },
     "341": {
-      "to-333": "Encounter another ghoul"
+      "to-333": "A Ghoul ambush (fight 3 of 7)",
+      "to-306": "A Shadow ambush (fight 1 of 7)",
+      "to-327": "A Shadow ambush (fight 2 of 7)",
+      "to-344": "A Shadow ambush (fight 3 of 7)",
+      "to-352": "A Shadow ambush (fight 4 of 7)",
+      "to-360": "A Shadow ambush (fight 5 of 7)",
+      "to-369": "A Shadow ambush (fight 6 of 7)",
+      "to-379": "A Shadow ambush (fight 7 of 7)",
+      "to-311": "A Ghoul ambush (fight 1 of 7)",
+      "to-324": "A Ghoul ambush (fight 2 of 7)",
+      "to-342": "A Ghoul ambush (fight 4 of 7)",
+      "to-358": "A Ghoul ambush (fight 5 of 7)",
+      "to-367": "A Ghoul ambush (fight 6 of 7)",
+      "to-376": "A Ghoul ambush (fight 7 of 7)",
+      "to-314": "A Phantom Servant ambush (fight 1 of 7)",
+      "to-329": "A Phantom Servant ambush (fight 2 of 7)",
+      "to-338": "A Phantom Servant ambush (fight 3 of 7)",
+      "to-347": "A Phantom Servant ambush (fight 4 of 7)",
+      "to-354": "A Phantom Servant ambush (fight 5 of 7)",
+      "to-363": "A Phantom Servant ambush (fight 6 of 7)",
+      "to-371": "A Phantom Servant ambush (fight 7 of 7)",
+      "to-331": "A Skeleton Warrior ambush (fight 1 of 6)",
+      "to-340": "A Skeleton Warrior ambush (fight 2 of 6)",
+      "to-349": "A Skeleton Warrior ambush (fight 3 of 6)",
+      "to-356": "A Skeleton Warrior ambush (fight 4 of 6)",
+      "to-365": "A Skeleton Warrior ambush (fight 5 of 6)",
+      "to-373": "A Skeleton Warrior ambush (fight 6 of 6)",
+      "to-308": "Chanting echoes through the manor walls (−1 STAMINA)",
+      "to-330": "A secret armory: a Silver Dagger",
+      "to-359": "A journal with the final preparations for the ritual",
+      "to-372": "A cache of gold (75 gold)",
+      "to-355": "Go on to the upper hall",
+      "to-335": "Go on to the ballroom",
+      "to-301": "Go on to the Spectral Manor"
+    },
+    "342": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "343": {
+      "to-355": "Back to the upper hall"
+    },
+    "344": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "345": {
+      "to-301": "Back to the Spectral Manor"
+    },
+    "347": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "348": {
+      "to-355": "Back to the upper hall"
+    },
+    "349": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "350": {
+      "to-301": "Back to the Spectral Manor"
+    },
+    "352": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "353": {
+      "to-355": "Back to the upper hall"
+    },
+    "354": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "355": {
+      "to-140": "A Shadow drains your essence (−1 SKILL for good)",
+      "to-163": "A Shadow saps your vitality (−1 SKILL, −1 maximum STAMINA for good)",
+      "to-185": "A Shadow in the dark (fight)",
+      "to-381": "A Phantom Servant blocks the final passage (fight)",
+      "to-383": "A Skeleton Warrior guards the way (fight)",
+      "to-385": "A Ghoul, the last guardian (fight)",
+      "to-387": "A Shadow attacks (fight)",
+      "to-389": "A Phantom Servant materializes (fight)"
+    },
+    "356": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "357": {
+      "to-355": "Back to the upper hall"
+    },
+    "358": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "359": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "360": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "361": {
+      "to-355": "Back to the upper hall"
+    },
+    "363": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "364": {
+      "to-355": "Back to the upper hall"
+    },
+    "365": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "366": {
+      "to-301": "Back to the Spectral Manor"
+    },
+    "367": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "368": {
+      "to-355": "Back to the upper hall"
+    },
+    "369": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "370": {
+      "to-355": "Back to the upper hall"
+    },
+    "371": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "372": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "373": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "374": {
+      "to-355": "Back to the upper hall"
+    },
+    "375": {
+      "to-301": "Back to the Spectral Manor"
+    },
+    "376": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "379": {
+      "to-341": "Back to Eliza's chambers"
+    },
+    "381": {
+      "to-355": "Back to the upper hall"
+    },
+    "383": {
+      "to-355": "Back to the upper hall"
+    },
+    "385": {
+      "to-355": "Back to the upper hall"
+    },
+    "387": {
+      "to-355": "Back to the upper hall"
+    },
+    "388": {
+      "to-382": "A dead adventurer's last journal (+1 LUCK)",
+      "to-384": "A Potion of Luck",
+      "to-386": "Thomas Ashford's ghost (+2 LUCK)",
+      "to-390": "A healing fountain (STAMINA and LUCK restored)",
+      "to-355": "Go back up to the manor's upper hall",
+      "to-301": "Go down to the manor's lower floors",
+      "to-155": "Return to the catacombs"
+    },
+    "389": {
+      "to-355": "Back to the upper hall"
     }
   },
   "text": {
     "35": [
       {
         "replace": "Drink the vial to gain +1 SKILL but lose 1 LUCK\n\nSave it for later (add it to your inventory)\n\nLeave it behind",
-        "with": "{{opt:to-111}}\n{{opt:to-111-2}}\n{{opt:to-111-3}}"
+        "with": "{{opt:to-45}}\n{{opt:to-45-2}}\n{{opt:to-45-3}}"
       },
       {
-        "replace": "\n\nOnce you've made your decision about the vial, you continue exploring.\n\n{{opt:to-111}}",
+        "replace": "\n\nOnce you've made your decision about the vial, you continue exploring.\n\n{{opt:to-45}}",
         "with": ""
       }
     ],

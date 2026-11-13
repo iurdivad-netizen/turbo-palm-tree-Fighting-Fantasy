@@ -595,11 +595,11 @@ test('real book: a preparation room returns to its hub, and a fountain heals onl
 test('real book: the vial in 35 can be drunk, taken or left - once', () => {
     const g = play(dice());
     g.goTo(35);
-    assert.equal(ids(g).filter(i => i.startsWith('to-111')).length, 3);
-    g.chooseOption('to-111');                // drink: +1 SKILL permanently, -1 LUCK
+    assert.equal(ids(g).filter(i => i.startsWith('to-45')).length, 3);
+    g.chooseOption('to-45');                // drink: +1 SKILL permanently, -1 LUCK
     assert.deepEqual([g.stats.skill, g.stats.initialSkill, g.stats.luck], [9, 9, 8]);
     g.goTo(35);
-    assert.deepEqual(ids(g), ['to-111-3']);  // only "leave" remains
+    assert.deepEqual(ids(g), ['to-45-3']);  // only "leave" remains
 });
 
 test('real book: the rope gate at 89 - with rope you wade across, without it you test your Luck', () => {
@@ -630,13 +630,13 @@ test('a wound that has not healed (nextFightSkill) is carried into the next figh
 test('real book: section 22 is a Luck test; the paralysis costs 1 SKILL in the next fight', () => {
     const bad = play(dice(6, 6));
     bad.goTo(22); bad.doRoll();
-    assert.equal(bad.currentSection, 298);
+    assert.equal(bad.currentSection, 45);
     assert.equal(bad.carriedSkillPenalty, 1);
     bad.goTo(46); bad.startCombat();
     assert.equal(bad.tempSkillPenalty >= 1, true);
     const good = play(dice(1, 1));
     good.goTo(22); good.doRoll();
-    assert.equal(good.currentSection, 298);
+    assert.equal(good.currentSection, 45);
     assert.equal(good.carriedSkillPenalty, 0);
 });
 
@@ -981,4 +981,262 @@ test('real book: the maps warn of the traps they cover; the prayer book blesses 
     assert.equal(k.hasItem('silver-key'), false);
     k.goTo(303);
     assert.ok(k.inventory.some(i => i.id === 'hollow-letter'));
+});
+
+// ---- the preparation hub (388) is a safe place -------------------------------------------------------------------------------
+test('real book: 388 offers only rest and a way out, and the sections moved out of it are still reachable', () => {
+    const b = real(); const S = id => b.sections.find(s => s.id === id);
+    const hub = S(388);
+    assert.deepEqual(hub.options.map(o => o.target).sort((a, c) => a - c), [155, 301, 355, 382, 384, 386, 390, 395]);
+    for (const o of hub.options.filter(o => [382, 384, 386, 390].includes(o.target))) {
+        const t = S(o.target);
+        assert.ok(!t.combat && !t.roll, `${o.target} is a rest, not an ambush`);
+        assert.deepEqual(t.options.map(x => x.target), [388], `${o.target} returns to the hub`);
+    }
+    const seen = new Set([1]); const todo = [1];
+    const out = s => { const t = (s.options || []).map(o => o.target); if (s.roll) JSON.stringify(s.roll).replace(/"target":(\d+)/g, (_, n) => t.push(+n)); [].concat(s.combat || []).forEach(e => ['onVictorySection', 'onDefeatSection', 'fleeSection'].forEach(k => e[k] != null && t.push(e[k]))); return t; };
+    while (todo.length) for (const t of out(S(todo.pop()))) if (!seen.has(t) && S(t)) { seen.add(t); todo.push(t); }
+    for (const id of [381, 383, 385, 387, 389, 140, 163, 169, 170, 194]) assert.ok(seen.has(id), `section ${id} can still be reached`);
+    assert.equal(b.sections.filter(s => s.id !== 0 && !seen.has(s.id)).length, 0, 'every section is reachable');
+    for (const id of [381, 383, 385, 387, 389]) assert.ok(S(355).options.some(o => o.target === id), `the guardian ${id} waits in the upper hall (355)`);
+});
+
+// ---- menus you come back to --------------------------------------------------------------------------------------------------------
+test('a menu option that is a side room leads back to its menu, and disappears once it has been explored', () => {
+    const g = Engine.create({ book: book([
+        sec(1, { options: [opt('a', 2, { vanishes: true }), opt('b', 3, { vanishes: true }), opt('c', 4)] }),
+        sec(2, { options: [opt('back', 1)] }), sec(3, { options: [opt('back', 1)] }), sec(4)]), rng: dice() });
+    g.start();
+    assert.deepEqual(ids(g), ['a', 'b', 'c']);
+    g.chooseOption('a'); g.chooseOption('back');
+    assert.equal(g.currentSection, 1);
+    assert.deepEqual(ids(g), ['b', 'c'], 'the explored room is gone from the menu');
+    const copy = Engine.create({ book: g.book, rng: dice() });
+    copy.restore(JSON.parse(JSON.stringify(g.serialize())));
+    assert.deepEqual(ids(copy), ['b', 'c'], 'and stays gone after a save');
+});
+
+test('real book: every side room of every big menu leads back to it, no menu is a dead end, and the areas stay connected', () => {
+    const b = real(); const S = id => b.sections.find(s => s.id === id);
+    const hubs = b.sections.filter(s => (s.options || []).length >= 8).map(s => s.id);
+    const exits = s => { const t = (s.options || []).map(o => o.target); if (s.roll) JSON.stringify(s.roll).replace(/"target":(\d+)/g, (_, n) => t.push(+n)); [].concat(s.combat || []).forEach(e => ['onVictorySection', 'fleeSection'].forEach(k => e[k] != null && t.push(e[k]))); return t; };
+    const stay = [];                       // side rooms that do not lead back (the story scenes that were left alone)
+    let vanishing = 0;
+    for (const h of hubs) for (const o of S(h).options) {
+        if (hubs.includes(o.target) || [39, 395].includes(o.target)) continue;
+        if (o.vanishes) { vanishing++; assert.ok(exits(S(o.target)).includes(h), `${o.target} leads back to ${h}`); } else stay.push(o.target);
+    }
+    assert.ok(vanishing > 250, `${vanishing} side rooms lead back`);
+    assert.ok(stay.length < 50, `only story scenes are left alone (${stay.length})`);
+    // with every vanishing option used up, each menu still has a way on, and all the menus are still connected
+    const lasting = h => S(h).options.filter(o => !o.vanishes && hubs.includes(o.target)).map(o => o.target);
+    for (const h of hubs) assert.ok(lasting(h).length > 0, `menu ${h} still has a way on when its rooms are explored`);
+    const seen = new Set([45]), todo = [45];
+    while (todo.length) for (const t of lasting(todo.pop())) if (!seen.has(t)) { seen.add(t); todo.push(t); }
+    assert.deepEqual(hubs.filter(h => !seen.has(h)), [], 'every menu can be reached through lasting options');
+});
+
+// ---- optional Fighting Fantasy rules ------------------------------------------------------------------------------------------------
+const ffItems = Object.assign({}, gear, { key: { name: 'Key', type: 'key' }, rations: { name: 'Provisions', type: 'food', restore: '+4 stamina' } });
+
+test('rules.randomStats rolls SKILL 1d6+6, STAMINA 2d6+12, LUCK 1d6+6 when the game starts; off by default', () => {
+    const rolled = make([sec(1)], { rules: { randomStats: true }, rng: dice(3, 4, 5, 6) });
+    assert.deepEqual([rolled.stats.skill, rolled.stats.stamina, rolled.stats.luck], [9, 21, 12]);
+    assert.deepEqual([rolled.stats.initialSkill, rolled.stats.initialStamina, rolled.stats.initialLuck], [9, 21, 12], 'the rolled scores are the maximums');
+    assert.ok(rolled.messages.some(m => m.includes('SKILL 9, STAMINA 21, LUCK 12')));
+    const fixed = make([sec(1)], { rng: dice() });
+    assert.deepEqual([fixed.stats.skill, fixed.stats.stamina, fixed.stats.luck], [8, 20, 9]);
+    const byBook = make([sec(1)], { rng: dice(1, 1, 1, 1) }, { rules: { randomStats: true } });
+    assert.equal(byBook.stats.skill, 7, 'a book can ask for it');
+});
+
+test('rules.luckInCombat: after a blow you may Test your Luck; lucky +2 / unlucky -1 on yours, lucky -1 / unlucky +1 on its', () => {
+    const fight = (rng, rules) => { const g = make([sec(1, { combat: enemy({ enemyStamina: 8 }) })], { rng, rules }); g.startCombat(); return g; };
+    // you wound it (12+8 against 2+5); the test rolls 1+1: lucky
+    const lucky = fight(dice(6, 6, 1, 1, 1, 1), { luckInCombat: true });
+    lucky.fightRound();
+    assert.equal(lucky.pendingRoll.decision, 'luck');
+    lucky.resolveDecision(true);
+    assert.equal(lucky.enemyCurrentStamina, 4, 'lucky: 4 damage instead of 2');
+    assert.equal(lucky.stats.luck, 8, 'the test cost 1 LUCK');
+    const unlucky = fight(dice(6, 6, 1, 1, 6, 6), { luckInCombat: true });
+    unlucky.fightRound(); unlucky.resolveDecision(true);
+    assert.equal(unlucky.enemyCurrentStamina, 7, 'unlucky: 1 damage');
+    const declined = fight(dice(6, 6, 1, 1), { luckInCombat: true });
+    declined.fightRound(); declined.resolveDecision(false);
+    assert.equal(declined.enemyCurrentStamina, 6);
+    assert.equal(declined.stats.luck, 9, 'no test, no cost');
+    // it wounds you (2+8 against 12+5)
+    const hurt = fight(dice(1, 1, 6, 6, 1, 1), { luckInCombat: true });
+    hurt.fightRound(); hurt.resolveDecision(true);
+    assert.equal(hurt.stats.stamina, 19, 'lucky: 1 damage instead of 2');
+    const worse = fight(dice(1, 1, 6, 6, 6, 6), { luckInCombat: true });
+    worse.fightRound(); worse.resolveDecision(true);
+    assert.equal(worse.stats.stamina, 17, 'unlucky: 3 damage');
+});
+
+test('luck in a fight can save your life, is never asked when switched off or on auto-decline, and cannot be asked with no LUCK', () => {
+    const dying = make([sec(1, { combat: enemy() })], { rng: dice(1, 1, 6, 6, 1, 1), rules: { luckInCombat: true } });
+    dying.stats.stamina = 2; dying.startCombat(); dying.fightRound();
+    assert.equal(dying.isGameOver, false, 'the wound is only dealt after the choice');
+    dying.resolveDecision(true);
+    assert.deepEqual([dying.stats.stamina, dying.isGameOver], [1, false]);
+    const off = make([sec(1, { combat: enemy() })], { rng: dice(6, 6, 1, 1) });
+    off.startCombat(); off.fightRound();
+    assert.equal(off.pending, null);
+    const auto = make([sec(1, { combat: enemy() })], { rng: dice(6, 6, 1, 1), rules: { luckInCombat: true } });
+    auto.autoDecline = true; auto.startCombat(); auto.fightRound();
+    assert.equal(auto.pending, null);
+    const broke = make([sec(1, { combat: enemy() })], { rng: dice(6, 6, 1, 1), rules: { luckInCombat: true } });
+    broke.stats.luck = 0; broke.startCombat(); broke.fightRound();
+    assert.equal(broke.pending, null);
+});
+
+test('rules.eatOnlyBetweenFights: no eating in a fight, eating afterwards is fine; potions are not food', () => {
+    const g = make([sec(1, { combat: enemy() })], { rng: dice(), rules: { eatOnlyBetweenFights: true } }, { items: ffItems, startingItems: ['rations', 'tonic'] });
+    g.stats.stamina = 10;
+    g.startCombat();
+    g.useItem(g.inventory.find(i => i.id === 'rations').uid);
+    assert.equal(g.stats.stamina, 10);
+    assert.ok(g.messages.some(m => m.includes('middle of a fight')));
+    g.useItem(g.inventory.find(i => i.id === 'tonic').uid);
+    assert.equal(g.stats.stamina, 14, 'a potion may be drunk in a fight');
+    g.inCombat = false;
+    g.useItem(g.inventory.find(i => i.id === 'rations').uid);
+    assert.equal(g.stats.stamina, 18);
+});
+
+test('rules.packLimit: a full pack leaves finds lying until you drop something; keys, food and gold never count', () => {
+    const g = make([sec(1), sec(2, { effects: { addItems: ['dagger', 'cloak', 'key', 'rations'], gold: 10 } })], { rng: dice(), rules: { packLimit: 2 } }, { items: ffItems, startingItems: ['sword', 'plate'] });
+    assert.equal(g.packCount(), 2, 'the starting kit is never turned away');
+    g.goTo(2);
+    assert.deepEqual(g.pendingPickups.map(i => i.id), ['dagger', 'cloak'], 'two things did not fit');
+    assert.ok(g.hasItem('key') && g.hasItem('rations'), 'a key and food do not count against the pack');
+    assert.equal(g.stats.gold, 20);
+    assert.equal(g.takePickup(0), false, 'no room yet');
+    assert.equal(g.takePickup(0, g.inventory.find(i => i.id === 'plate').uid), true, 'swap the plate for the dagger');
+    assert.deepEqual(g.inventory.filter(i => ['sword', 'plate', 'dagger'].includes(i.id)).map(i => i.id).sort(), ['dagger', 'sword']);
+    g.leavePickup(0);
+    assert.equal(g.pendingPickups.length, 0);
+    const copy = make([sec(1)], {}, { items: ffItems });
+    g.pendingPickups.push(ffItems.cloak);
+    copy.restore(JSON.parse(JSON.stringify(g.serialize())));
+    assert.deepEqual([copy.rules.packLimit, copy.pendingPickups.length], [2, 1], 'rules and left-behind finds survive a save');
+});
+
+// ---- monster rules --------------------------------------------------------------------------------------------------------------------
+const foe = (extra = {}) => enemy(Object.assign({ enemyName: 'BEAST', enemySkill: 5, enemyStamina: 8, onVictorySection: 2 }, extra));
+const fightOf = (e, rng, opts = {}) => { const g = make([sec(1, { combat: e }), sec(2)], Object.assign({ rng }, opts)); g.startCombat(); return g; };
+// you 12+8 = 20 against 2+5 = 7: you win; you 2+8 = 10 against 12+5 = 17: it wins
+
+test('damage: a monster that hits for more, and armour only takes off so much (never below 1)', () => {
+    const g = fightOf([foe({ damage: 4 })], dice(1, 1, 6, 6));
+    g.fightRound();
+    assert.equal(g.stats.stamina, 16);
+    const armoured = make([sec(1, { combat: [foe({ damage: 4 })] }), sec(2)], { rng: dice(1, 1, 6, 6) }, { items: gear, startingItems: ['plate'] });
+    armoured.startCombat(); armoured.fightRound();
+    assert.equal(armoured.stats.stamina, 18, '4 - 2 armour');
+    const pierce = make([sec(1, { combat: [foe({ damage: 4, ignoresArmor: true })] }), sec(2)], { rng: dice(1, 1, 6, 6) }, { items: gear, startingItems: ['plate'] });
+    pierce.startCombat(); pierce.fightRound();
+    assert.equal(pierce.stats.stamina, 16, 'armour does not help against it');
+});
+
+test('attackDice 3, tiesWound and strikesFirst', () => {
+    const three = fightOf([foe({ attackDice: 3 })], dice(1, 1, 6, 6, 6));
+    assert.equal(three.pendingRoll, null);
+    three.fightRound();                                   // it rolls 18 + 5 = 23 against 10
+    assert.equal(three.stats.stamina, 18);
+    const tie = fightOf([foe({ tiesWound: true, enemySkill: 8 })], dice(1, 1, 1, 1));   // 2 + 8 = 10 against 2 + 8 = 10
+    tie.fightRound();
+    assert.equal(tie.stats.stamina, 18, 'a tie goes to it');
+    const first = fightOf([foe({ strikesFirst: true })], dice(6, 6, 1, 1, 6, 6, 1, 1));
+    first.fightRound();
+    assert.equal(first.enemyCurrentStamina, 8, 'round one: you can only parry');
+    first.fightRound();
+    assert.equal(first.enemyCurrentStamina, 6, 'round two: normal');
+});
+
+test('regenerates: it heals a little every round, never above its starting STAMINA', () => {
+    const g = fightOf([foe({ regenerates: 1, enemyStamina: 8 })], dice(6, 6, 1, 1, 1, 1, 6, 6));
+    g.fightRound();
+    assert.equal(g.enemyCurrentStamina, 7, '8 - 2 + 1');
+    g.fightRound();                                       // a drawn round: it still regenerates
+    assert.equal(g.enemyCurrentStamina, 8);
+});
+
+test('life drain, poison and unnerving wounds (onWound)', () => {
+    const drain = fightOf([foe({ onWound: { maxStaminaLoss: 1 } })], dice(1, 1, 6, 6));
+    drain.fightRound();
+    assert.deepEqual([drain.stats.stamina, drain.stats.initialStamina], [18, 19], 'the maximum falls too');
+    const poison = fightOf([foe({ onWound: { staminaLoss: 2 } })], dice(1, 1, 6, 6));
+    poison.fightRound();
+    assert.equal(poison.stats.stamina, 16);
+    const fear = fightOf([foe({ onWound: { luckLoss: 1 } })], dice(1, 1, 6, 6));
+    fear.fightRound();
+    assert.equal(fear.stats.luck, 8);
+});
+
+test('a spell: once per fight, on a high roll you lose your attack that round but are still attacked', () => {
+    const g = fightOf([foe({ spell: { on: [5, 6] } })], dice(6, 1, 6, 6, 1, 1, 1, 1, 1, 1, 6, 6));
+    g.fightRound();                                       // spell 6; you 12+8 would win, but you are held; it rolls 2+5 = 7 < 20
+    assert.equal(g.enemyCurrentStamina, 8, 'no damage dealt');
+    assert.ok(g.combatLog.some(l => l.includes('compelled to stand still')));
+    g.fightRound();                                       // no second spell: you win this round
+    assert.equal(g.enemyCurrentStamina, 6);
+    const failed = fightOf([foe({ spell: { on: [5, 6] } })], dice(2, 6, 6, 1, 1));
+    failed.fightRound();
+    assert.equal(failed.enemyCurrentStamina, 6, 'the spell failed: normal round');
+});
+
+test('a shapechanger: wounded, it may test its luck and confuse you for the next round only', () => {
+    const g = fightOf([foe({ onHurt: { luckTest: true, enemyLuck: 7, attackPenalty: 2 } })], dice(6, 6, 1, 1, 1, 1, 1, 1, 6, 6));
+    g.fightRound();                                       // it tests: 1 + 1 = 2 <= 7: lucky
+    assert.equal(g.nextRoundBonus, -2);
+    g.fightRound();                                       // you 2 + 8 - 2 = 8 against 6 + 6 + 5 = 17: it wins; the confusion is spent
+    assert.equal(g.nextRoundBonus, 0, 'only one round');
+    const unlucky = fightOf([foe({ onHurt: { luckTest: true, enemyLuck: 7, attackPenalty: 2 } })], dice(6, 6, 1, 1, 6, 6));
+    unlucky.fightRound();
+    assert.equal(unlucky.nextRoundBonus, 0);
+});
+
+test('maxRounds: out of time, the fight ends and the book moves on', () => {
+    const g = make([sec(1, { combat: [foe({ maxRounds: 2, onTimeoutSection: 3, enemyStamina: 20 })] }), sec(2), sec(3)], { rng: dice(1, 1, 1, 1, 1, 1, 1, 1) });
+    g.startCombat(); g.fightRound(); g.fightRound();      // two drawn rounds
+    assert.equal(g.currentSection, 3);
+    assert.equal(g.inCombat, false);
+});
+
+test('a group fights together: you choose whom to attack, the others keep attacking, and a fallen target passes to the next', () => {
+    const e1 = foe({ enemyName: 'A', together: true, enemyStamina: 2, onVictorySection: 2 }), e2 = foe({ enemyName: 'B', together: true, enemyStamina: 8, onVictorySection: 2 });
+    // you 12+8 = 20; A 1+1+5 = 7 (target, falls); B 1+1+5 = 7 (loses to you: fended off)
+    const g = fightOf([e1, e2], dice(6, 6, 1, 1, 1, 1));
+    assert.equal(g.setTarget(1), true);
+    g.fightRound();
+    assert.deepEqual([g.groupStamina[1], g.currentCombatIndex], [6, 1], 'B was hit; A was only fended off');
+    assert.equal(g.stats.stamina, 20, 'A could not wound you');
+    // now A beats you (2+8 = 10 against 6+6+5 = 17) while you attack B: you are wounded by A too
+    const h = fightOf([e1, e2], dice(1, 1, 1, 1, 6, 6));
+    h.fightRound();
+    assert.ok(h.stats.stamina < 20, 'the one you were not fighting still hit you');
+    // killing the target moves on to the next one
+    const k = fightOf([e1, e2], dice(6, 6, 1, 1, 1, 1));
+    k.fightRound();
+    assert.deepEqual([k.groupStamina[0], k.currentCombatIndex], [0, 1], 'A fell and you turn to B');
+    assert.equal(k.inCombat, true);
+});
+
+test('real book: the zombie and ghoul groups (289, 180) attack together', () => {
+    const b = real();
+    for (const id of [289, 180]) { const c = [].concat(b.sections.find(s => s.id === id).combat); assert.ok(c.length >= 3 && c.every(e => e.together), `section ${id}`); }
+    const g = play(dice(6, 6, 1, 1, 1, 1, 1, 1, 1, 1)); g.goTo(180); g.startCombat();
+    assert.ok(g.combatLog.some(l => l.includes('at the same time')));
+    g.fightRound();
+    assert.equal(g.groupStamina.length, 3, 'a group of three is tracked');
+});
+
+test('real book: the Wight drains your life, the Cult Fanatic casts a spell, the Doppelganger shifts forms', () => {
+    const b = real(); const S = id => [].concat(b.sections.find(s => s.id === id).combat)[0];
+    assert.equal(S(5).onWound.maxStaminaLoss, 1);
+    assert.deepEqual(S(67).spell.on, [5, 6]);
+    for (const id of [78, 194]) assert.equal(S(id).onHurt.luckTest, true);
 });

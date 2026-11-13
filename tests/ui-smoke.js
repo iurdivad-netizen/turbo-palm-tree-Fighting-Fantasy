@@ -60,7 +60,7 @@ try { axeSource = fs.readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8'
 
         await page.click('[data-opt="to-45"]');
         await page.waitForTimeout(100);
-        assert.equal((await page.$$('[data-opt]')).length, 27, 'a 27-option menu is shown as buttons');
+        assert.equal((await page.$$('[data-opt]')).length, 30, 'a 30-option menu is shown as buttons');
         assert.equal(await page.evaluate(() => scrollY), 0, 'a new section starts at the top');
         assert.ok(await noOverflow(page), 'no horizontal scrolling');
 
@@ -113,7 +113,7 @@ try { axeSource = fs.readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8'
         await page.click('button[aria-label="Larger text"]');
         assert.equal(await page.evaluate(() => document.documentElement.className), 'ts-2');
         const prefs = await page.evaluate(() => JSON.parse(localStorage.getItem('ff_prefs')));
-        assert.deepEqual(prefs, { autoRoll: true, textSize: 2, markSeen: true }, 'the choices are remembered');
+        assert.deepEqual(prefs, { autoRoll: true, textSize: 2, markSeen: true, rules: {} }, 'the choices are remembered');
 
         // explored paths are shaded (a tick and a dashed outline); the setting can be turned off
         await page.evaluate(() => game.goTo(1));
@@ -162,6 +162,49 @@ try { axeSource = fs.readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8'
         await page.click('text=Start Adventure');
         await page.waitForSelector('.text');
         assert.ok((await page.$$('[data-opt]')).length > 0, 'an old-format book plays');
+
+        // optional Fighting Fantasy rules: chosen on the book's page, luck in a fight is a question put to the player
+        await page.evaluate(() => ui.loadBook(null));
+        await page.click('text=The Curse of Hollow');
+        await page.waitForSelector('#rule-luckInCombat');
+        assert.equal(await page.isChecked('#rule-luckInCombat'), false, 'the rules are off unless chosen');
+        await page.check('#rule-luckInCombat');
+        await page.fill('#rule-packLimit', '9');
+        await page.dispatchEvent('#rule-packLimit', 'change');
+        assert.deepEqual(await page.evaluate(() => JSON.parse(localStorage.getItem('ff_prefs')).rules['hollows-end'] || JSON.parse(localStorage.getItem('ff_prefs')).rules[game.book.id]), { luckInCombat: true, packLimit: 9 }, 'the choice is remembered');
+        await page.click('text=Start Adventure');
+        await page.waitForSelector('.text');
+        assert.ok((await page.textContent('.stats-card')).includes('luck in combat'), 'the rules in use are shown');
+        assert.ok((await page.textContent('.side')).includes('0 of 9') || (await page.textContent('.side')).includes(' of 9'), 'the pack shows its limit');
+        await page.evaluate(() => { game.goTo(30); game.setAutoRoll(true); let i = 0; const seq = [6, 6, 1, 1, 1, 1]; game.rng = () => (seq[i++ % seq.length] - 0.5) / 6; });
+        await page.click('text=Fight!');
+        await page.click('text=Fight a round');
+        await page.waitForSelector('#decide-yes');
+        assert.ok((await page.textContent('.decision')).includes('You wound it'), 'the question says what happened');
+        await page.click('#decide-yes');
+        await page.waitForTimeout(80);
+        assert.ok((await page.textContent('.fightlog')).includes('Test your Luck'), 'the test is in the fight log');
+        assert.equal(await page.$('.decision'), null, 'the question is gone once answered');
+
+        // monster rules in the page: a group that fights together, and a monster that rolls three dice
+        await page.evaluate(() => ui.loadBook({ schemaVersion: 2, id: 'monsters', title: 'Monsters', startingSection: 1, initialStats: { skill: 9, stamina: 20, luck: 9 }, sections: [
+            { id: 1, text: 'A pack attacks.', combat: [
+                { enemyName: 'WOLF', enemySkill: 5, enemyStamina: 4, together: true, onVictorySection: 2, onDefeatSection: 3 },
+                { enemyName: 'DIRE WOLF', enemySkill: 7, enemyStamina: 6, together: true, attackDice: 3, damage: 3, regenerates: 1, onVictorySection: 2, onDefeatSection: 3 }] },
+            { id: 2, text: 'You live.', ending: { type: 'victory' } }, { id: 3, text: 'You fall.', ending: { type: 'defeat' } }] }));
+        await page.click('text=Start Adventure');
+        await page.waitForSelector('text=Fight!');
+        assert.ok((await page.textContent('.combat')).includes('at the same time'), 'a group is announced');
+        assert.ok((await page.textContent('.combat')).includes('Rolls three dice'), 'its special rules are listed before the fight');
+        await page.click('text=Fight!');
+        await page.waitForSelector('.foes');
+        assert.equal((await page.$$('.foe')).length, 2, 'both enemies are shown');
+        await page.click('.foe:nth-child(2) button');
+        assert.ok((await page.getAttribute('.foe:nth-child(2) button', 'aria-pressed')) === 'true', 'the chosen target is marked');
+        await page.evaluate(() => game.setAutoRoll(true));
+        await page.click('text=Fight a round');
+        await page.waitForTimeout(150);
+        assert.equal((await page.$$('.rollrow:not(.ask) .die')).length >= 7, true, 'seven dice were thrown: two of yours, three of the dire wolf, two of the wolf');
 
         if (axeSource) {
             await page.evaluate(() => ui.loadBook(null));

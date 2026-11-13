@@ -68,8 +68,8 @@ def main():
             bad.append(("(book)", k))
     for i in sorted(set(S1) & set(S2)):
         a, b = S1[i], S2[i]
-        o1 = [(c["targetSection"], c.get("conditions"), fx(c.get("effects") or {}), c.get("once")) for c in a.get("choices") or []]
-        o2 = [(o["target"], o.get("conditions"), fx(o.get("effects") or {}), o.get("once")) for o in b.get("options") or []]
+        o1 = [(c["targetSection"], c.get("conditions"), fx(c.get("effects") or {}), c.get("once"), c.get("vanishes")) for c in a.get("choices") or []]
+        o2 = [(o["target"], o.get("conditions"), fx(o.get("effects") or {}), o.get("once"), o.get("vanishes")) for o in b.get("options") or []]
         if o1 != o2:
             bad.append((i, "options"))
         if fx(a) != fx(b.get("effects") or {}):

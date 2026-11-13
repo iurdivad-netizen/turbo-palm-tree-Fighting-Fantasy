@@ -1,6 +1,6 @@
 # Migration review: CURSE_OF_HOLLOWS_END.json -> CURSE_OF_HOLLOWS_END.v2.json
 
-396 sections, 767 options, 276 labelled just 'Continue'.
+396 sections, 788 options, 34 labelled just 'Continue'.
 
 Items for a human to check. The conversion changed no game logic (every destination, condition, effect, roll and combat is identical to v1); the only flags dropped are 'ending' marks on sections that still lead somewhere (listed below). Run check_v2_equivalence.py to prove it.
 
@@ -10,30 +10,64 @@ Items for a human to check. The conversion changed no game logic (every destinat
 ## Sections that mix 'Continue' with other labels (check they read clearly): 0
 
 
-## Labels longer than 60 characters: 2
+## Labels longer than 60 characters: 6
 
+- 45 | to-18 | A spectral hand passes through your chest (−3 STAMINA, −1 SKILL for good)
+- 45 | to-55 | A Shadow drains your strength (−1 SKILL, −2 STAMINA for good)
 - 155 | to-236 | Go to the left passage (toward candlelight and ritual chambers)
+- 234 | to-116 | A Shadow drains your life force (−1 SKILL, −2 maximum STAMINA for good)
+- 355 | to-163 | A Shadow saps your vitality (−1 SKILL, −1 maximum STAMINA for good)
 - 395 | to-362 | Face the Widow without the full binding (the incomplete confrontation)
 
-## Options not referenced in the text (listed under it): combat continuations, rewritten choices: 19
+## Options not referenced in the text (listed under it): combat continuations, rewritten choices: 49
 
 - 29 | to-378 | Keep searching for the Silver Key
-- 35 | to-111-2 | Take the vial with you to drink later
-- 35 | to-111-3 | Leave the vial behind and continue
+- 35 | to-45-2 | Take the vial with you to drink later
+- 35 | to-45-3 | Leave the vial behind and continue
+- 45 | to-194 | Behind the bar: a ledger (and a fight)
+- 111 | to-183 | A sheer cliff edge
+- 111 | to-170 | Find Lydia, chained to a pillar
+- 111 | to-181 | The bridge snaps beneath you
+- 111 | to-186 | Sneak past praying cultists
 - 150 | to-155 | Edge around the trap and continue
 - 155 | to-97 | Visit the healing shrine
+- 155 | to-138 | A passage strung with tripwires
+- 155 | to-150 | A floor that looks solid (danger)
+- 155 | to-160 | Cross a crumbling bridge
+- 155 | to-169 | A Ghoul leaps from the shadows (fight)
+- 155 | to-197 | A Skeleton Warrior attacks (fight)
+- 155 | to-153 | Hide from approaching cultists
+- 155 | to-157 | A heavily locked door
+- 155 | to-187 | A trapped door
+- 180 | to-161 | Search a dead cultist: a note
+- 180 | to-193 | Search a fallen cultist: a medallion
+- 221 | to-167 | The floor gives way: a spike pit
+- 221 | to-199 | The floor gives way beneath you
 - 245 | to-155 | Edge around the collapsed floor and continue
 - 275 | to-301 | Continue
+- 298 | to-148 | A Ghoul's paralysing claws
+- 301 | to-137 | Climb a slippery shaft upward
+- 301 | to-147 | A locked chest
+- 301 | to-168 | Pick a lock to a staircase up
+- 335 | to-179 | A Phantom Servant appears (fight)
+- 355 | to-140 | A Shadow drains your essence (−1 SKILL for good)
+- 355 | to-163 | A Shadow saps your vitality (−1 SKILL, −1 maximum STAMINA for good)
+- 355 | to-185 | A Shadow in the dark (fight)
+- 355 | to-381 | A Phantom Servant blocks the final passage (fight)
+- 355 | to-383 | A Skeleton Warrior guards the way (fight)
+- 355 | to-385 | A Ghoul, the last guardian (fight)
+- 355 | to-387 | A Shadow attacks (fight)
+- 355 | to-389 | A Phantom Servant materializes (fight)
 - 377 | to-355 | Return to the stairs
 - 380 | to-355 | Return to the stairs
-- 381 | to-388 | Return to your preparations
+- 381 | to-355 | Back to the upper hall
 - 382 | to-388 | Return to your preparations
-- 383 | to-388 | Return to your preparations
+- 383 | to-355 | Back to the upper hall
 - 384 | to-388 | Return to your preparations
-- 385 | to-388 | Return to your preparations
+- 385 | to-355 | Back to the upper hall
 - 386 | to-388 | Return to your preparations
-- 387 | to-388 | Return to your preparations
-- 389 | to-388 | Return to your preparations
+- 387 | to-355 | Back to the upper hall
+- 389 | to-355 | Back to the upper hall
 - 390 | to-388 | Return to your preparations
 - 395 | to-388 | Back away from the doors and prepare further
 
@@ -61,7 +95,7 @@ Items for a human to check. The conversion changed no game logic (every destinat
 - 266 | You surface, gasping and coughing. Lose 2 STAMINA from near-drowning
 - 362 | She dissipates with a scream of rage... but you know it's temporary. Without pro
 
-## 'Turn to N' fragments and stray stat blocks removed: 108
+## 'Turn to N' fragments and stray stat blocks removed: 107
 
 - 5 | Turn to 221 ...
 - 5 | 1 stat-block line(s) of the fight (the combat panel shows them)
@@ -72,7 +106,7 @@ Items for a human to check. The conversion changed no game logic (every destinat
 - 32 | 1 stat-block line(s) of the fight (the combat panel shows them)
 - 36 | 1 stat-block line(s) of the fight (the combat panel shows them)
 - 44 | Turn to 44 ...
-- 44 | Turn to 301 ...
+- 44 | Turn to 234 ...
 - 46 | 1 stat-block line(s) of the fight (the combat panel shows them)
 - 62 | 1 stat-block line(s) of the fight (the combat panel shows them)
 - 67 | 1 stat-block line(s) of the fight (the combat panel shows them)
@@ -123,7 +157,7 @@ Items for a human to check. The conversion changed no game logic (every destinat
 - 302 | 1 stat-block line(s) of the fight (the combat panel shows them)
 - 306 | 1 stat-block line(s) of the fight (the combat panel shows them)
 - 309 | 1 stat-block line(s) of the fight (the combat panel shows them)
-- ... and 48 more
+- ... and 47 more
 
 ## Items defined differently in different sections (add them to the overrides file's "items"): 0
 

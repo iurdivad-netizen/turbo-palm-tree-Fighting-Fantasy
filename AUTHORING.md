@@ -81,6 +81,21 @@ entering a section that only *mentions* it ("Do you have the BRASS KEY?" is a co
 different ids (a torn map and a manor map are two ids, not "map" twice); say quantities with `qty`, not by repeating the grant;
 use `unique: true` for things that exist once. `validate_adventure.py` checks all of this and lists the keepsakes.
 
+## 3c. Optional Fighting Fantasy rules
+
+A book can declare the classic rules it is written for, and the player can switch each one on or off on the book's page before starting (the book's own choice is the default; all are off unless chosen):
+
+```json
+"rules": { "luckInCombat": true, "randomStats": true, "eatOnlyBetweenFights": true, "packLimit": 8 }
+```
+
+| Rule | What the app does |
+| --- | --- |
+| `luckInCombat` | After a wound, in either direction, the player is asked whether to Test their Luck. Their blow: lucky +2 damage, unlucky 1 less. Its blow: lucky 1 less damage, unlucky 1 more. The test costs 1 LUCK like any other (charms help) and is made *before* the wound is applied, so it can save a life or finish an enemy. Auto-fight never asks. |
+| `randomStats` | SKILL 1d6+6, STAMINA 2d6+12, LUCK 1d6+6 are rolled when the game starts; `initialStats` is then only a guide. |
+| `eatOnlyBetweenFights` | Food (`type: food`) cannot be eaten while a fight is on; potions still can. |
+| `packLimit` | At most this many items. Food, keys, gold and anything an option asks for (`requiresItem` and the like) never count, so the limit cannot lock the book. A find that does not fit is left lying: the pack shows it with Take (swap for something) and Leave it. The starting kit is never turned away. |
+
 ## 4. Dice
 
 One `roll` per section, with `{{roll}}` where it belongs in the text.
@@ -103,6 +118,25 @@ The player chooses: roll the dice by hand (button or **R**) or switch on auto-ro
 An array fights several enemies one after another. Optional: `canFlee` with `fleeSection` / `fleeMaxStamina` / `fleeTestLuck`,
 `onWound`, `onStart`, `onVictoryEffects`, `reviveOn`, `effectiveWeapons`, `normalWeaponDamage`, `weakTo` – see the `enemy`
 definition in the schema; the Curse book (`CURSE_OF_HOLLOWS_END.v2.json`) uses all of them.
+
+### Monster rules
+
+Every field is optional and goes on the enemy (they are all listed in the `enemy` part of `book.schema.json`; the reader tells the player about each before the fight):
+
+| Field | Rule |
+| --- | --- |
+| `damage: 3` | each of its wounds takes 3 STAMINA instead of 2 (armour takes off its bonus, never below 1); `ignoresArmor: true` skips the armour |
+| `attackDice: 3` | it rolls three dice for its attack |
+| `strikesFirst: true` | in round 1 you can only parry: a round you win does nothing |
+| `tiesWound: true` | it wins a tied round |
+| `regenerates: 1` | it recovers that much STAMINA after every round, up to its start |
+| `onWound: {...}` | your wounds do more: `skillLoss` (with `luckTest` or `permanent`), `maxStaminaLoss` (the maximum falls for good), `staminaLoss` (poison: extra STAMINA), `luckLoss` |
+| `spell: {"roll": "1d6", "on": [5, 6]}` | once per fight, before the first attack, it rolls; on those totals you lose your attack that round |
+| `onHurt: {"luckTest": true, "enemyLuck": 7, "attackPenalty": 2}` | wounded but alive, it tests its luck (2d6 at or below `enemyLuck`); if lucky you lose 2 from your next attack only (a shapechanger) |
+| `maxRounds: 3, onTimeoutSection: 40` | after that many rounds with nobody fallen the fight ends and the book moves on (collapsing rooms, chases) |
+| `together: true` (on every enemy of the group) | they fight at the same time: you choose whom to attack, the others each roll against your attack every round and wound you if they win; a fallen target passes to the next |
+
+Already there before: `effectiveWeapons` and `normalWeaponDamage` (immunities), `weakTo` (a weakness), `reviveOn` (rises again), `onStart` (a wail or a penalty at the start), `tags` (what it is, for charms).
 
 ## 6. Hand-written fixes: the sidecar
 
@@ -136,5 +170,8 @@ See `CURSE_OF_HOLLOWS_END.sim.json`. Endings come from each section's `ending`, 
 | --- | --- |
 | Schema and cross-references (dead ends, unreachable targets, generic labels, dice coverage, items that can never be found) | `python3 validate_adventure.py book.v2.json` |
 | Rules engine tests | `node --test` |
+| Do the choices make sense? (labels vs where they lead, promised finds, fights, coming back to the menu) | `python3 check_option_coherence.py book.v2.json` |
+| See the book as a flowchart from the first section (layers, every option an arrow) | `python3 make_flowchart.py book.v2.json flow.html` |
+| See the whole book as a network (hubs, dead-end branches, how the endings are reached) | `python3 make_book_map.py book.v2.json map.html` |
 | Playable by bots, endings reachable | `node simulate_playthroughs.js book.v2.json 1000` |
 | The page in a real browser (needs `npm i`) | `npm run test:ui` – run it on its own, not together with `node --test` |
