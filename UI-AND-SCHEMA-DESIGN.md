@@ -205,4 +205,4 @@ Fixed in the Curse book (source `CURSE_OF_HOLLOWS_END.json`, v2 regenerated, new
 * **24, 54, 164**: the Mayor's offer needs the Mayor's Ledger and the well needs Rope; reading the page no longer hands you a "Book" (24) or "Rope" (54).
 * **4, 39, 65**: ending type `defeat` (they were `neutral`); 39 no longer gives a "Blade".
 
-Not changed (balance decisions, not errors): LUCK supply (about 7.3 of 9 on arrival at the pit rolls; refills in 24 sections), the Widow's final fight (the informed player still loses it about half the time), `simulation-report.html` (a record of the earlier builds; it still lists these issues as open).
+Not changed (balance decisions, not errors): LUCK supply (about 7.3 of 9 on arrival at the pit rolls; refills in 24 sections), the Widow's final fight (the informed player still loses it about half the time), `simulation-report.html` (regenerated for the current build, with six builds compared; its findings list what is still open).
