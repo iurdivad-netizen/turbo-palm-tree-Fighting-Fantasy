@@ -434,12 +434,13 @@ const CATEGORIES = [
     ['weapon', 'Weapons', 'Hold one in a fight. Left on automatic, the best one for each enemy is used.'],
     ['armor', 'Armor', 'One piece is worn. Left on automatic, the one that protects most is worn.'],
     ['consumable', 'Potions and food', 'Use them when you need them: in a fight too.'],
+    ['charm', 'Charms', 'Carried, not worn: the best one that applies adds to your saving throws (Luck tests).'],
     ['story', 'Story items', 'The story asks for these at the right moment; nothing to do here.'],
     ['keepsake', 'Keepsakes', 'Described in the book but with no effect on the rules.']
 ];
 function itemRow(g) {
     const item = g.item;
-    const tags = [item.restore && `✨ ${item.restore}`, item.bonus && `⚡ ${item.bonus}`, item.properties && item.properties.length && `🏷️ ${item.properties.join(', ')}`].filter(Boolean).join(' · ');
+    const tags = [item.restore && `✨ ${item.restore}`, item.bonus && `⚡ ${item.bonus}`, item.saveBonus && `🍀 +${item.saveBonus.amount} saves${item.saveBonus.versus ? ` vs ${item.saveBonus.versus}` : ''}`, item.properties && item.properties.length && `🏷️ ${item.properties.join(', ')}`].filter(Boolean).join(' · ');
     const uid = Number(item.uid);
     let badge = '', act = '';
     if (g.category === 'weapon') {
@@ -483,11 +484,13 @@ function renderGear(enemy, busy) {
             <option value="auto" ${game.equipped.weapon == null ? 'selected' : ''}>Automatic (best against this enemy)</option>
             ${choices.map(c => `<option value="${Number(c.item.uid)}" ${game.equipped.weapon === c.item.uid ? 'selected' : ''}>${esc(c.item.name)}: ${c.bonus ? `${c.bonus > 0 ? '+' : ''}${c.bonus} SKILL, ` : ''}${dmgText(c.damage)}</option>`).join('')}
         </select></label>` : '';
+    const sb = game.saveBonus(enemy);
+    const saveLine = sb.amount ? `<div><span class="ico" aria-hidden="true">🍀</span> <strong>Saving throws:</strong> +${sb.amount} <span class="muted">(${esc(sb.source)})</span></div>` : '';
     const warn = w.damage === 0 ? `<p class="gear-warn" role="alert">⚠️ ${esc(wName)} cannot hurt ${esc(enemy.enemyName)}. ${(enemy.effectiveWeapons || []).length ? `Only a ${esc(enemy.effectiveWeapons.join(' or '))} weapon can.` : ''}</p>` : '';
     return `<div class="gear" aria-label="Your equipment">
         <div><span class="ico" aria-hidden="true">🗡️</span> <strong>In your hand:</strong> ${esc(wName)} <span class="muted">(${esc(detail)}${w.chosen ? '' : ', chosen automatically'})</span></div>
         <div><span class="ico" aria-hidden="true">🛡️</span> <strong>Wearing:</strong> ${armor ? esc(armor.name) : 'no armor'}${armor && game._armorValue(armor) ? ` <span class="muted">(${esc(armor.bonus)})</span>` : ''}</div>
-        ${picker}${warn}
+        ${saveLine}${picker}${warn}
     </div>`;
 }
 

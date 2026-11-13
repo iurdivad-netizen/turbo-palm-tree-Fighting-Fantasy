@@ -772,3 +772,65 @@ test('real book: every item a section gives is in the catalogue, every potion an
     assert.equal(g.stats.gold, 40);
     assert.equal(g.inventory.filter(i => i.id === 'healing-potion').length, 2);
 });
+
+// ---- charms: saving-throw bonuses ----------------------------------------------------------------------------------------------
+const charms = Object.assign({}, gear, {
+    amulet: { name: 'Silver Amulet', type: 'other', saveBonus: { amount: 1, versus: 'undead' } },
+    grave: { name: 'Amulet of the Grave', type: 'other', saveBonus: { amount: 2, versus: 'undead' } },
+    luckystone: { name: 'Lucky Stone', type: 'other', saveBonus: { amount: 1 } },
+    scroll: { name: 'Scroll of Protection', type: 'other', onUse: { fightSave: 2 } }
+});
+const wraith = (extra = {}) => enemy(Object.assign({ enemyName: 'WRAITH', tags: ['undead'], onStart: { luckTest: true, skillLoss: 1 } }, extra));
+
+test('a charm adds to the saving throw, but only against what it is made for', () => {
+    // LUCK 7 and a roll of 8: unlucky; with +1 against undead: lucky
+    const bare = make([sec(1, { combat: wraith() })], { rng: dice(4, 4) }, { items: charms });
+    bare.stats.luck = 7; bare.startCombat();
+    assert.equal(bare.tempSkillPenalty, 1, 'without a charm the wail costs SKILL');
+    const worn = make([sec(1, { combat: wraith() })], { rng: dice(4, 4) }, { items: charms, startingItems: ['amulet'] });
+    worn.stats.luck = 7; worn.startCombat();
+    assert.equal(worn.tempSkillPenalty, 0, 'with the amulet the same roll saves you');
+    assert.ok(worn.combatLog.some(l => l.includes('+1 from Silver Amulet')), 'and the log says why');
+    const cultist = make([sec(1, { combat: wraith({ enemyName: 'CULTIST', tags: [] }) })], { rng: dice(4, 4) }, { items: charms, startingItems: ['amulet'] });
+    cultist.stats.luck = 7; cultist.startCombat();
+    assert.equal(cultist.tempSkillPenalty, 1, 'against the living an undead charm does nothing');
+});
+
+test('charms do not add up (the best counts); a charm without "versus" counts everywhere, traps included', () => {
+    const g = make([sec(1)], {}, { items: charms, startingItems: ['amulet', 'grave'] });
+    assert.deepEqual(g.saveBonus({ tags: ['undead'] }), { amount: 2, source: 'Amulet of the Grave' });
+    assert.equal(g.saveBonus(null).amount, 0, 'no enemy: an undead charm does not apply');
+    const trap = make([sec(1, { roll: { kind: 'luck', success: { target: 2 }, failure: { target: 3 } } }), sec(2), sec(3)], { rng: dice(4, 4) }, { items: charms, startingItems: ['luckystone'] });
+    trap.stats.luck = 7; trap.doRoll();
+    assert.equal(trap.currentSection, 2, 'LUCK 7 + 1 beats a roll of 8 at a trap');
+    const noStone = make([sec(1, { roll: { kind: 'luck', success: { target: 2 }, failure: { target: 3 } } }), sec(2), sec(3)], { rng: dice(4, 4) }, { items: charms });
+    noStone.stats.luck = 7; noStone.doRoll();
+    assert.equal(noStone.currentSection, 3);
+});
+
+test('a Scroll of Protection adds +2 to the saves of one fight, and survives a save', () => {
+    const g = make([sec(1, { combat: wraith() }), sec(2, { combat: wraith() })], { rng: dice(5, 5) }, { items: charms, startingItems: ['scroll'] });
+    g.stats.luck = 8;                                   // a roll of 10 fails on LUCK 8, passes with +2
+    g.useItem(g.inventory[0].uid);
+    assert.equal(g.carriedSave, 2);
+    const copy = make([sec(1, { combat: wraith() })], {}, { items: charms });
+    copy.restore(JSON.parse(JSON.stringify(g.serialize())));
+    assert.equal(copy.carriedSave, 2);
+    g.startCombat();
+    assert.equal(g.tempSkillPenalty, 0, 'the +2 saved the wail');
+    assert.equal(g.carriedSave, 0);
+    g.goTo(2);
+    assert.equal(g.tempSave, 0, 'it ends with the fight');
+});
+
+test('real book: the charms work against the undead and not against cultists; the scroll is a Use item', () => {
+    const b = real();
+    const tagged = n => b.sections.flatMap(s => [].concat(s.combat || [])).filter(e => e.enemyName.startsWith(n)).every(e => (e.tags || []).includes('undead'));
+    assert.ok(tagged('GHOUL') && tagged('ZOMBIE') && tagged('SHADOW') && tagged('THE WIDOW'));
+    assert.ok(b.sections.flatMap(s => [].concat(s.combat || [])).filter(e => /CULT/.test(e.enemyName)).every(e => !e.tags));
+    for (const id of ['holy-symbol', 'holy-symbol-of-binding', 'silver-amulet', 'amulet-of-the-grave', 'silver-ring']) assert.equal(b.items[id].saveBonus.versus, 'undead', id);
+    const g = play(dice());
+    g.addItem('silver-ring'); g.addItem('scroll-of-protection');
+    const cats = Object.fromEntries(g.inventoryView().map(v => [v.item.id, v.category]));
+    assert.deepEqual([cats['silver-ring'], cats['scroll-of-protection']], ['charm', 'consumable']);
+});

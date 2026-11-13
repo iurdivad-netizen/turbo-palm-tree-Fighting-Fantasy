@@ -1,5 +1,5 @@
 {
-  "_comment": "Hand-written decisions for migrate_to_v2.py, specific to this book. items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). labels: {section: {option id: button label}}; text: {section: [{replace, with}]} applied to the converted text; notes: {section: a problem in the book that the migration does not change}. See AUTHORING.md.",
+  "_comment": "Hand-written decisions for migrate_to_v2.py, specific to this book. items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). labels: {section: {option id: button label}}; text: {section: [{replace, with}]} applied to the converted text; notes: {section: a problem in the book that the migration does not change}. See AUTHORING.md.",
   "labels": {
     "24": {
       "to-127": "Retreat to the cemetery",
@@ -262,22 +262,47 @@
     "holy-symbol": {
       "name": "Holy Symbol",
       "type": "other",
-      "description": "Blessed silver. The book: +1 to saves against undead (no effect in this app)."
+      "saveBonus": {
+        "amount": 1,
+        "versus": "undead"
+      },
+      "description": "Blessed silver: +1 to saving throws against undead."
+    },
+    "holy-symbol-of-binding": {
+      "name": "Holy Symbol of Binding",
+      "type": "other",
+      "saveBonus": {
+        "amount": 2,
+        "versus": "undead"
+      },
+      "description": "Blessed at the altar: +2 to saving throws against undead."
     },
     "silver-amulet": {
       "name": "Silver Amulet",
       "type": "other",
-      "description": "The book: +1 to saves against undead (no effect in this app)."
+      "saveBonus": {
+        "amount": 1,
+        "versus": "undead"
+      },
+      "description": "+1 to saving throws against undead."
     },
     "amulet-of-the-grave": {
       "name": "Amulet of the Grave",
       "type": "other",
-      "description": "The book: absorbs dark energy, +2 against undead (no effect in this app)."
+      "saveBonus": {
+        "amount": 2,
+        "versus": "undead"
+      },
+      "description": "Absorbs dark energy: +2 to saving throws against undead and spectral creatures."
     },
     "silver-ring": {
       "name": "Silver Ring",
       "type": "other",
-      "description": "Worth 30 gold; the book: minor protection against undead (no effect in this app)."
+      "saveBonus": {
+        "amount": 1,
+        "versus": "undead"
+      },
+      "description": "Worth 30 gold. Worn against the dead: +1 to saving throws against undead."
     },
     "golden-ring": {
       "name": "Golden Ring",
@@ -307,7 +332,10 @@
     "scroll-of-protection": {
       "name": "Scroll of Protection",
       "type": "other",
-      "description": "The book: +2 to saves for one battle (no effect in this app)."
+      "onUse": {
+        "fightSave": 2
+      },
+      "description": "Read it before or during a fight: +2 to your saving throws for that whole fight."
     },
     "diary": {
       "name": "Skeleton's Diary",

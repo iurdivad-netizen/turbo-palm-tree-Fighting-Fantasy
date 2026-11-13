@@ -45,6 +45,7 @@
         add(e.permanentStats, ' (permanent)');
         add(e.maxStats, ' (maximum)');
         if (e.nextFightSkill) parts.push(`${e.nextFightSkill > 0 ? '+' : ''}${e.nextFightSkill} SKILL for one fight`);
+        if (e.fightSave) parts.push(`+${e.fightSave} to saving throws for one fight`);
         if (e.gold) parts.push(`${e.gold > 0 ? '+' : ''}${e.gold} gold`);
         return parts.length ? ` [${parts.join(', ')}]` : '';
     }
@@ -132,7 +133,7 @@
      */
     function upgradeBook(book) {
         if (!book || book.schemaVersion === 2) return book;
-        const EK = ['modifyStats', 'permanentStats', 'maxStats', 'addItems', 'removeItems', 'nextFightSkill', 'gold'];
+        const EK = ['modifyStats', 'permanentStats', 'maxStats', 'addItems', 'removeItems', 'nextFightSkill', 'fightSave', 'gold'];
         const fx = d => { const o = {}; EK.forEach(k => { if (d && d[k] && (!isArr(d[k]) || d[k].length)) o[k] = d[k]; }); return o; };
         const hasFx = o => Object.keys(o).length > 0;
         const out = { schemaVersion: 2, id: book.id, title: book.title };
@@ -255,6 +256,8 @@
             this.rollResolved = false;
             this.tempSkillPenalty = 0;
             this.carriedSkillPenalty = 0;   // SKILL lost (or, if negative, gained) in the next fight
+            this.tempSave = 0;              // bonus to saving throws (Luck tests) for this fight only, from a scroll
+            this.carriedSave = 0;           // the same, for the next fight
             this.equipped = { weapon: null, armor: null };   // uids the player chose; null = the best one is used automatically
             this.nextUid = 1;
             this.pending = null;      // { request, gen } while waiting for the player to roll
@@ -411,7 +414,7 @@
 
         /**
          * The pack for the screen: identical items grouped, each with a category and what can be done with it.
-         * category: weapon | armor | consumable | story (the book asks for it somewhere) | keepsake (no effect).
+         * category: weapon | armor | consumable | charm (helps saving throws) | story (the book asks for it somewhere) | keepsake (no effect).
          */
         inventoryView() {
             const groups = new Map();
@@ -424,7 +427,7 @@
             return [...groups.values()].map(g => {
                 const it = g.item;
                 const usable = !!(it.restore || it.onUse);
-                const category = it.type === 'weapon' ? 'weapon' : it.type === 'armor' ? 'armor' : usable ? 'consumable'
+                const category = it.type === 'weapon' ? 'weapon' : it.type === 'armor' ? 'armor' : usable ? 'consumable' : it.saveBonus ? 'charm'
                     : (this.itemsNeeded.has(it.id) || it.type === 'key') ? 'story' : 'keepsake';
                 return Object.assign(g, {
                     category, usable, needed: this.itemsNeeded.has(it.id),
@@ -500,6 +503,7 @@
                 if (this.inCombat) this.tempSkillPenalty -= e.nextFightSkill;       // drunk during the fight: counts now
                 else this.carriedSkillPenalty -= e.nextFightSkill;
             }
+            if (e.fightSave) { if (this.inCombat) this.tempSave += e.fightSave; else this.carriedSave += e.fightSave; }
             if (e.gold) this.addGold(e.gold);
             if (e.addItems) e.addItems.forEach(i => this.addItem(i));
             if (e.removeItems) e.removeItems.forEach(id => this.removeItem(id));
@@ -512,6 +516,7 @@
             this.combatDone = false;
             this.rollResolved = false;
             this.tempSkillPenalty = 0;
+            this.tempSave = 0;
             const first = !this.visited.has(id);
             this.currentSection = id;
             this.visited.add(id);
@@ -631,13 +636,30 @@
             this._drive(gen, gen.next(dice));
         }
 
-        *_testLuck() {
-            if (!this.stats) return { success: false, newLuck: 0, roll: 0 };
+        /**
+         * The bonus a saving throw gets. Charms are carried, not worn: the best one that applies counts (they do not add up).
+         * A charm with `versus` (e.g. "undead") only counts in a fight against an enemy with that tag. A scroll adds its bonus for one fight.
+         */
+        saveBonus(enemy) {
+            let best = 0, source = null;
+            for (const it of this.inventory) {
+                const sb = it.saveBonus;
+                if (!sb || !sb.amount) continue;
+                if (sb.versus && !(enemy && [].concat(enemy.tags || []).includes(sb.versus))) continue;
+                if (sb.amount > best) { best = sb.amount; source = it.name; }
+            }
+            if (this.inCombat && this.tempSave) { best += this.tempSave; source = source ? `${source} and your scroll` : 'your scroll'; }
+            return { amount: best, source };
+        }
+
+        *_testLuck(enemy) {
+            if (!this.stats) return { success: false, newLuck: 0, roll: 0, bonus: 0 };
             const dice = yield { dice: '2d6', reason: 'luck', label: 'Test your Luck' };
             const roll = dice[0] + dice[1];
-            const success = roll <= this.stats.luck;
+            const b = this.saveBonus(enemy);
+            const success = roll <= this.stats.luck + b.amount;
             this.stats.luck = Math.max(0, this.stats.luck - 1);
-            return { success, newLuck: this.stats.luck, roll, dice };
+            return { success, newLuck: this.stats.luck, roll, dice, bonus: b.amount, source: b.source };
         }
 
         // ---- the section's own roll (Luck test or dice table) ---------------------------------------------------------
@@ -653,9 +675,9 @@
             this.rollResolved = true;
             if (r.once) this.rolledOnce.add(s.id);
             if (r.kind === 'luck') {
-                const result = yield* this._testLuck();
+                const result = yield* this._testLuck(this.inCombat ? this.currentEnemy() : null);
                 const side = result.success ? r.success : r.failure;
-                this._say(`${result.success ? 'Lucky' : 'Unlucky'}! (rolled ${result.roll}) ${side.text || ''}${describeEffects(side.effects)}`);
+                this._say(`${result.success ? 'Lucky' : 'Unlucky'}! (rolled ${result.roll}${result.bonus ? `, +${result.bonus} from ${result.source}` : ''}) ${side.text || ''}${describeEffects(side.effects)}`);
                 this.applyEffects(side.effects);
                 if (this.isGameOver) return;
                 if (side.target) this.goTo(side.target);
@@ -672,7 +694,7 @@
             if (outcome.luck) {
                 const lt = yield* this._testLuck();
                 const res = lt.success ? outcome.luck.success : outcome.luck.failure;
-                this._say(`${lt.success ? 'Lucky' : 'Unlucky'}! (rolled ${lt.roll}) ${(res && res.text) || ''}${describeEffects(res && res.effects)}`);
+                this._say(`${lt.success ? 'Lucky' : 'Unlucky'}! (rolled ${lt.roll}${lt.bonus ? `, +${lt.bonus} from ${lt.source}` : ''}) ${(res && res.text) || ''}${describeEffects(res && res.effects)}`);
                 if (res) { this.applyEffects(res.effects); if (res.target) target = res.target; }
                 if (this.isGameOver) return;
             }
@@ -703,14 +725,19 @@
             const first = list[0];
             this.inCombat = true;
             this.tempSkillPenalty = this.carriedSkillPenalty;
-            if (this.carriedSkillPenalty > 0) this.combatLog.push(`🩸 Your earlier wound still hurts: -${this.carriedSkillPenalty} SKILL for this fight.`);
-            if (this.carriedSkillPenalty < 0) this.combatLog.push(`✨ You fight with +${-this.carriedSkillPenalty} SKILL for this fight.`);
+            this.tempSave = this.carriedSave;
+            const carriedNotes = [];
+            if (this.carriedSkillPenalty > 0) carriedNotes.push(`🩸 Your earlier wound still hurts: -${this.carriedSkillPenalty} SKILL for this fight.`);
+            if (this.carriedSkillPenalty < 0) carriedNotes.push(`✨ You fight with +${-this.carriedSkillPenalty} SKILL for this fight.`);
+            if (this.carriedSave > 0) carriedNotes.push(`📜 Your protection holds: +${this.carriedSave} to your saving throws in this fight.`);
             this.carriedSkillPenalty = 0;
+            this.carriedSave = 0;
             this.lastWielded = null;
             this.currentCombatIndex = 0;
             this.enemyCurrentStamina = first.enemyStamina;
             this.combatLog = [`⚔️ Combat begins with ${first.enemyName}!`, `${first.enemyName}: SKILL ${first.enemySkill}, STAMINA ${first.enemyStamina}`];
             if (list.length > 1) this.combatLog.push(`⚠️ Warning: ${list.length} enemies detected! You must defeat them all.`);
+            this.combatLog.push(...carriedNotes);
             yield* this._combatStart(first);
         }
 
@@ -724,8 +751,8 @@
                 this.combatLog.push(`🌊 ${os.text || 'Difficult conditions'}: -${loss} SKILL for this combat. (SKILL now ${Math.max(0, this.stats.skill - this.tempSkillPenalty)})`);
                 return;
             }
-            const lt = yield* this._testLuck();
-            if (lt.success) this.combatLog.push(`🍀 Test your Luck (rolled ${lt.roll}): Lucky! ${enemy.enemyName}'s power does not touch you.`);
+            const lt = yield* this._testLuck(enemy);
+            if (lt.success) this.combatLog.push(`🍀 Test your Luck (rolled ${lt.roll}${lt.bonus ? `, +${lt.bonus} from ${lt.source}` : ''}): Lucky! ${enemy.enemyName}'s power does not touch you.`);
             else {
                 this.tempSkillPenalty += loss;
                 this.combatLog.push(`😱 Test your Luck (rolled ${lt.roll}): Unlucky! You lose ${loss} SKILL for the entire battle. (SKILL now ${Math.max(0, this.stats.skill - this.tempSkillPenalty)})`);
@@ -813,8 +840,8 @@
                 if (combat.onWound && this.stats.stamina > 0) {
                     const loss = combat.onWound.skillLoss || 1;
                     if (combat.onWound.luckTest) {
-                        const lt = yield* this._testLuck();
-                        if (lt.success) log.push(`🍀 Test your Luck (rolled ${lt.roll}): Lucky! The toxins have no effect.`);
+                        const lt = yield* this._testLuck(combat);
+                        if (lt.success) log.push(`🍀 Test your Luck (rolled ${lt.roll}${lt.bonus ? `, +${lt.bonus} from ${lt.source}` : ''}): Lucky! The toxins have no effect.`);
                         else {
                             this.tempSkillPenalty += loss;
                             log.push(`☠️ Test your Luck (rolled ${lt.roll}): Unlucky! You lose ${loss} SKILL for the rest of this combat. (SKILL now ${Math.max(0, this.stats.skill - this.tempSkillPenalty)})`);
@@ -852,7 +879,7 @@
 
         *_flee(enemy) {
             if (enemy.fleeTestLuck) {
-                const lt = yield* this._testLuck();
+                const lt = yield* this._testLuck(enemy);
                 if (!lt.success) { this.combatLog.push(`\n🎲 Test your Luck (rolled ${lt.roll}): Unlucky! They catch you before you can flee. You must keep fighting.`); return; }
                 this.combatLog.push(`\n🍀 Test your Luck (rolled ${lt.roll}): Lucky! You escape.`);
             }
@@ -869,7 +896,7 @@
                 inventory: this.inventory, visited: Array.from(this.visited), usedOnce: Array.from(this.usedOnce), rolledOnce: Array.from(this.rolledOnce),
                 inCombat: this.inCombat, enemyCurrentStamina: this.enemyCurrentStamina, currentCombatIndex: this.currentCombatIndex, combatLog: this.combatLog,
                 isGameOver: this.isGameOver, gameOverType: this.gameOverType, combatDone: this.combatDone, lastWielded: this.lastWielded,
-                rollResolved: this.rollResolved, tempSkillPenalty: this.tempSkillPenalty, carriedSkillPenalty: this.carriedSkillPenalty, equipped: this.equipped, nextUid: this.nextUid, advance: this.advance
+                rollResolved: this.rollResolved, tempSkillPenalty: this.tempSkillPenalty, carriedSkillPenalty: this.carriedSkillPenalty, tempSave: this.tempSave, carriedSave: this.carriedSave, equipped: this.equipped, nextUid: this.nextUid, advance: this.advance
             };
         }
 
@@ -879,7 +906,7 @@
                 started: d.started, currentSection: d.currentSection, stats: d.stats, inventory: d.inventory, visited: new Set(d.visited),
                 usedOnce: new Set(d.usedOnce || []), rolledOnce: new Set(d.rolledOnce || []), inCombat: !!d.inCombat, enemyCurrentStamina: d.enemyCurrentStamina || 0,
                 currentCombatIndex: d.currentCombatIndex || 0, combatLog: d.combatLog || [], isGameOver: !!d.isGameOver, gameOverType: d.gameOverType || null,
-                combatDone: !!d.combatDone, lastWielded: d.lastWielded || null, rollResolved: !!d.rollResolved, tempSkillPenalty: d.tempSkillPenalty || 0, carriedSkillPenalty: d.carriedSkillPenalty || 0, equipped: Object.assign({ weapon: null, armor: null }, d.equipped || {}),
+                combatDone: !!d.combatDone, lastWielded: d.lastWielded || null, rollResolved: !!d.rollResolved, tempSkillPenalty: d.tempSkillPenalty || 0, carriedSkillPenalty: d.carriedSkillPenalty || 0, tempSave: d.tempSave || 0, carriedSave: d.carriedSave || 0, equipped: Object.assign({ weapon: null, armor: null }, d.equipped || {}),
                 nextUid: d.nextUid || 1, advance: d.advance || null
             });
             this._changed();

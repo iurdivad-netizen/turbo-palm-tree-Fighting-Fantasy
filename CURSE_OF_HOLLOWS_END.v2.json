@@ -133,7 +133,11 @@
     "amulet-of-the-grave": {
       "name": "Amulet of the Grave",
       "type": "other",
-      "description": "The book: absorbs dark energy, +2 against undead (no effect in this app)."
+      "saveBonus": {
+        "amount": 2,
+        "versus": "undead"
+      },
+      "description": "Absorbs dark energy: +2 to saving throws against undead and spectral creatures."
     },
     "catacomb-map": {
       "name": "Map of the Catacombs",
@@ -168,7 +172,20 @@
     "holy-symbol": {
       "name": "Holy Symbol",
       "type": "other",
-      "description": "Blessed silver. The book: +1 to saves against undead (no effect in this app)."
+      "saveBonus": {
+        "amount": 1,
+        "versus": "undead"
+      },
+      "description": "Blessed silver: +1 to saving throws against undead."
+    },
+    "holy-symbol-of-binding": {
+      "name": "Holy Symbol of Binding",
+      "type": "other",
+      "saveBonus": {
+        "amount": 2,
+        "versus": "undead"
+      },
+      "description": "Blessed at the altar: +2 to saving throws against undead."
     },
     "manor-map": {
       "name": "Map of the Manor",
@@ -219,17 +236,28 @@
     "scroll-of-protection": {
       "name": "Scroll of Protection",
       "type": "other",
-      "description": "The book: +2 to saves for one battle (no effect in this app)."
+      "onUse": {
+        "fightSave": 2
+      },
+      "description": "Read it before or during a fight: +2 to your saving throws for that whole fight."
     },
     "silver-amulet": {
       "name": "Silver Amulet",
       "type": "other",
-      "description": "The book: +1 to saves against undead (no effect in this app)."
+      "saveBonus": {
+        "amount": 1,
+        "versus": "undead"
+      },
+      "description": "+1 to saving throws against undead."
     },
     "silver-ring": {
       "name": "Silver Ring",
       "type": "other",
-      "description": "Worth 30 gold; the book: minor protection against undead (no effect in this app)."
+      "saveBonus": {
+        "amount": 1,
+        "versus": "undead"
+      },
+      "description": "Worth 30 gold. Worn against the dead: +1 to saving throws against undead."
     },
     "tomb-map": {
       "name": "Map of the Hollow Tomb",
@@ -345,6 +373,9 @@
         "onDefeatSection": 999,
         "canFlee": true,
         "fleeSection": 221,
+        "tags": [
+          "undead"
+        ],
         "victoryText": "The creature collapses with a final, soundless scream, its mummified form crumbling to dust and ancient bones. As the dark magic dissipates, you can breathe easier.  to search the chamber for treasures and information"
       }
     },
@@ -550,7 +581,10 @@
         "enemySkill": 5,
         "enemyStamina": 6,
         "onVictorySection": 189,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -735,7 +769,10 @@
           "onWound": {
             "skillLoss": 1,
             "permanent": true
-          }
+          },
+          "tags": [
+            "undead"
+          ]
         },
         {
           "enemyName": "SHADOW 2",
@@ -746,7 +783,10 @@
           "onWound": {
             "skillLoss": 1,
             "permanent": true
-          }
+          },
+          "tags": [
+            "undead"
+          ]
         },
         {
           "enemyName": "SHADOW 3",
@@ -757,7 +797,10 @@
           "onWound": {
             "skillLoss": 1,
             "permanent": true
-          }
+          },
+          "tags": [
+            "undead"
+          ]
         }
       ]
     },
@@ -869,7 +912,10 @@
         "weakTo": {
           "property": "crushing",
           "damage": 3
-        }
+        },
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -1010,7 +1056,10 @@
           "magical",
           "silver"
         ],
-        "normalWeaponDamage": 1
+        "normalWeaponDamage": 1,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -1317,7 +1366,10 @@
         "onWound": {
           "skillLoss": 1,
           "luckTest": true
-        }
+        },
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -1571,6 +1623,9 @@
         "reviveOn": [
           5,
           6
+        ],
+        "tags": [
+          "undead"
         ]
       }
     },
@@ -2683,7 +2738,10 @@
           "magical",
           "silver"
         ],
-        "normalWeaponDamage": 1
+        "normalWeaponDamage": 1,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -3015,7 +3073,10 @@
           "magical",
           "silver"
         ],
-        "normalWeaponDamage": 1
+        "normalWeaponDamage": 1,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -3147,7 +3208,10 @@
         "weakTo": {
           "property": "crushing",
           "damage": 3
-        }
+        },
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -3783,7 +3847,10 @@
         "onWound": {
           "skillLoss": 1,
           "luckTest": true
-        }
+        },
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -3918,6 +3985,9 @@
         "reviveOn": [
           5,
           6
+        ],
+        "tags": [
+          "undead"
         ]
       }
     },
@@ -3958,7 +4028,10 @@
           "magical",
           "silver"
         ],
-        "normalWeaponDamage": 1
+        "normalWeaponDamage": 1,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -4084,7 +4157,10 @@
           "canFlee": true,
           "fleeSection": 346,
           "fleeMaxStamina": 4,
-          "fleeTestLuck": true
+          "fleeTestLuck": true,
+          "tags": [
+            "undead"
+          ]
         },
         {
           "enemyName": "ZOMBIE 2",
@@ -4098,7 +4174,10 @@
           "canFlee": true,
           "fleeSection": 346,
           "fleeMaxStamina": 4,
-          "fleeTestLuck": true
+          "fleeTestLuck": true,
+          "tags": [
+            "undead"
+          ]
         },
         {
           "enemyName": "ZOMBIE 3",
@@ -4112,7 +4191,10 @@
           "canFlee": true,
           "fleeSection": 346,
           "fleeMaxStamina": 4,
-          "fleeTestLuck": true
+          "fleeTestLuck": true,
+          "tags": [
+            "undead"
+          ]
         }
       ]
     },
@@ -4191,7 +4273,10 @@
         "onWound": {
           "skillLoss": 1,
           "permanent": true
-        }
+        },
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -4522,7 +4607,10 @@
         "weakTo": {
           "property": "crushing",
           "damage": 3
-        }
+        },
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -4588,7 +4676,10 @@
         "onWound": {
           "skillLoss": 1,
           "luckTest": true
-        }
+        },
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -4665,7 +4756,10 @@
         "onWound": {
           "skillLoss": 1,
           "permanent": true
-        }
+        },
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -4737,7 +4831,10 @@
           "magical",
           "silver"
         ],
-        "normalWeaponDamage": 1
+        "normalWeaponDamage": 1,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -4900,7 +4997,10 @@
         "weakTo": {
           "property": "crushing",
           "damage": 3
-        }
+        },
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -5178,7 +5278,10 @@
           "magical",
           "silver"
         ],
-        "normalWeaponDamage": 1
+        "normalWeaponDamage": 1,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -5234,7 +5337,10 @@
         "onWound": {
           "skillLoss": 1,
           "permanent": true
-        }
+        },
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -5279,7 +5385,10 @@
         "onWound": {
           "skillLoss": 1,
           "luckTest": true
-        }
+        },
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -5571,7 +5680,10 @@
         "enemySkill": 6,
         "enemyStamina": 5,
         "onVictorySection": 155,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -5750,7 +5862,10 @@
           "magical",
           "silver"
         ],
-        "normalWeaponDamage": 1
+        "normalWeaponDamage": 1,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -5785,7 +5900,10 @@
         "onWound": {
           "skillLoss": 1,
           "permanent": true
-        }
+        },
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -5846,7 +5964,10 @@
         "onWound": {
           "skillLoss": 1,
           "luckTest": true
-        }
+        },
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -5892,7 +6013,10 @@
         "enemySkill": 6,
         "enemyStamina": 5,
         "onVictorySection": 155,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -6024,7 +6148,10 @@
         "onWound": {
           "skillLoss": 1,
           "permanent": true
-        }
+        },
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -6076,7 +6203,10 @@
           "magical",
           "silver"
         ],
-        "normalWeaponDamage": 1
+        "normalWeaponDamage": 1,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -6150,6 +6280,9 @@
             "stamina": -2
           }
         },
+        "tags": [
+          "undead"
+        ],
         "victoryText": "You surface, gasping and coughing. Lose 2 STAMINA from near-drowning"
       }
     },
@@ -6223,7 +6356,10 @@
         "enemySkill": 6,
         "enemyStamina": 5,
         "onVictorySection": 155,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -6307,7 +6443,10 @@
         "enemySkill": 6,
         "enemyStamina": 6,
         "onVictorySection": 312,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -6391,7 +6530,10 @@
         "onWound": {
           "skillLoss": 1,
           "permanent": true
-        }
+        },
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -6426,7 +6568,10 @@
           "magical",
           "silver"
         ],
-        "normalWeaponDamage": 1
+        "normalWeaponDamage": 1,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -6500,7 +6645,10 @@
         "enemySkill": 6,
         "enemyStamina": 5,
         "onVictorySection": 155,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -6568,7 +6716,10 @@
         "enemySkill": 6,
         "enemyStamina": 4,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -6598,7 +6749,10 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -6630,7 +6784,10 @@
           "canFlee": true,
           "fleeSection": 346,
           "fleeMaxStamina": 4,
-          "fleeTestLuck": true
+          "fleeTestLuck": true,
+          "tags": [
+            "undead"
+          ]
         },
         {
           "enemyName": "ZOMBIE 2",
@@ -6645,7 +6802,10 @@
           "canFlee": true,
           "fleeSection": 346,
           "fleeMaxStamina": 4,
-          "fleeTestLuck": true
+          "fleeTestLuck": true,
+          "tags": [
+            "undead"
+          ]
         },
         {
           "enemyName": "ZOMBIE 3",
@@ -6660,7 +6820,10 @@
           "canFlee": true,
           "fleeSection": 346,
           "fleeMaxStamina": 4,
-          "fleeTestLuck": true
+          "fleeTestLuck": true,
+          "tags": [
+            "undead"
+          ]
         },
         {
           "enemyName": "GHOUL",
@@ -6675,7 +6838,10 @@
           "onWound": {
             "skillLoss": 1,
             "luckTest": true
-          }
+          },
+          "tags": [
+            "undead"
+          ]
         }
       ]
     },
@@ -6711,7 +6877,10 @@
         "enemySkill": 6,
         "enemyStamina": 6,
         "onVictorySection": 312,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -6751,7 +6920,10 @@
         "enemySkill": 6,
         "enemyStamina": 5,
         "onVictorySection": 155,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -7096,7 +7268,10 @@
           "magical",
           "silver"
         ],
-        "normalWeaponDamage": 1
+        "normalWeaponDamage": 1,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -7175,7 +7350,10 @@
         "onWound": {
           "skillLoss": 1,
           "permanent": true
-        }
+        },
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -7226,7 +7404,10 @@
         "enemySkill": 6,
         "enemyStamina": 5,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -7261,7 +7442,10 @@
         "onWound": {
           "skillLoss": 1,
           "luckTest": true
-        }
+        },
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -7424,7 +7608,10 @@
           "magical",
           "silver"
         ],
-        "normalWeaponDamage": 1
+        "normalWeaponDamage": 1,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -7477,7 +7664,10 @@
         "enemySkill": 6,
         "enemyStamina": 4,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -7533,7 +7723,10 @@
         "enemySkill": 6,
         "enemyStamina": 5,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -7568,7 +7761,10 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -7604,7 +7800,10 @@
         "enemySkill": 6,
         "enemyStamina": 6,
         "onVictorySection": 312,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -7650,7 +7849,10 @@
         "enemySkill": 6,
         "enemyStamina": 4,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -7686,7 +7888,10 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -7722,7 +7927,10 @@
         "enemySkill": 6,
         "enemyStamina": 5,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -7758,7 +7966,10 @@
         "enemySkill": 6,
         "enemyStamina": 6,
         "onVictorySection": 312,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -7929,7 +8140,10 @@
         "enemySkill": 6,
         "enemyStamina": 4,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -7965,7 +8179,10 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -8002,7 +8219,10 @@
         "enemySkill": 6,
         "enemyStamina": 5,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -8197,7 +8417,10 @@
         "enemySkill": 6,
         "enemyStamina": 6,
         "onVictorySection": 312,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -8234,7 +8457,10 @@
         "enemySkill": 6,
         "enemyStamina": 4,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -8290,7 +8516,10 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -8321,7 +8550,10 @@
         "enemySkill": 6,
         "enemyStamina": 5,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -8372,7 +8604,10 @@
         "enemySkill": 6,
         "enemyStamina": 4,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -8408,7 +8643,10 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -8602,7 +8840,10 @@
         "enemySkill": 6,
         "enemyStamina": 5,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -8636,7 +8877,10 @@
         "enemySkill": 6,
         "enemyStamina": 6,
         "onVictorySection": 312,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -8667,7 +8911,10 @@
         "enemySkill": 6,
         "enemyStamina": 4,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -8702,7 +8949,10 @@
           "onWound": {
             "skillLoss": 1,
             "permanent": true
-          }
+          },
+          "tags": [
+            "undead"
+          ]
         },
         {
           "enemyName": "SHADOW 2",
@@ -8713,7 +8963,10 @@
           "onWound": {
             "skillLoss": 1,
             "permanent": true
-          }
+          },
+          "tags": [
+            "undead"
+          ]
         },
         {
           "enemyName": "SHADOW 3",
@@ -8724,7 +8977,10 @@
           "onWound": {
             "skillLoss": 1,
             "permanent": true
-          }
+          },
+          "tags": [
+            "undead"
+          ]
         },
         {
           "enemyName": "THE WIDOW (WEAKENED)",
@@ -8732,6 +8988,9 @@
           "enemyStamina": 12,
           "onVictorySection": 998,
           "onDefeatSection": 999,
+          "tags": [
+            "undead"
+          ],
           "victoryText": "She dissipates with a scream of rage... but you know it's temporary. Without proper binding, she'll reform. The curse continues. The village remains doomed"
         }
       ]
@@ -8752,7 +9011,10 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -8788,7 +9050,10 @@
         "enemySkill": 6,
         "enemyStamina": 5,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -8818,7 +9083,10 @@
         "enemySkill": 6,
         "enemyStamina": 6,
         "onVictorySection": 312,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -8854,7 +9122,10 @@
         "enemySkill": 6,
         "enemyStamina": 4,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -8889,7 +9160,10 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 335,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -8923,7 +9197,10 @@
         "enemySkill": 6,
         "enemyStamina": 5,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -8950,7 +9227,7 @@
       ],
       "effects": {
         "addItems": [
-          "holy-symbol"
+          "holy-symbol-of-binding"
         ]
       }
     },
@@ -8970,7 +9247,10 @@
         "enemySkill": 6,
         "enemyStamina": 6,
         "onVictorySection": 312,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -9112,7 +9392,10 @@
         "enemySkill": 6,
         "enemyStamina": 4,
         "onVictorySection": 355,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -9149,7 +9432,10 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 388,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -9185,7 +9471,10 @@
         "enemySkill": 6,
         "enemyStamina": 5,
         "onVictorySection": 388,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -9221,7 +9510,10 @@
         "enemySkill": 6,
         "enemyStamina": 6,
         "onVictorySection": 388,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -9257,7 +9549,10 @@
         "enemySkill": 6,
         "enemyStamina": 4,
         "onVictorySection": 388,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -9463,7 +9758,10 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 388,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {
@@ -9501,7 +9799,10 @@
         ],
         "normalWeaponDamage": 0,
         "onVictorySection": 400,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "tags": [
+          "undead"
+        ]
       }
     },
     {

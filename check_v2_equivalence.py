@@ -15,7 +15,7 @@ from collections import Counter
 
 V1 = sys.argv[1] if len(sys.argv) > 1 else "CURSE_OF_HOLLOWS_END.json"
 V2 = sys.argv[2] if len(sys.argv) > 2 else "CURSE_OF_HOLLOWS_END.v2.json"
-EK = ("modifyStats", "permanentStats", "maxStats", "addItems", "removeItems", "nextFightSkill")
+EK = ("modifyStats", "permanentStats", "maxStats", "addItems", "removeItems", "nextFightSkill", "fightSave")
 GOLD = re.compile(r"\b(gold pieces?|coins?|gp)\b", re.I)
 CAT = {}
 

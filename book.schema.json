@@ -62,6 +62,7 @@
         "modifyStats": { "$ref": "#/$defs/statChange" },
         "permanentStats": { "$ref": "#/$defs/statDelta" },
         "maxStats": { "$ref": "#/$defs/statDelta" },
+        "fightSave": { "type": "integer", "minimum": 1, "description": "A bonus to saving throws (Luck tests) for one fight, e.g. a scroll: +2." },
         "nextFightSkill": { "type": "integer", "description": "Carried into the next fight: -1 starts that fight at -1 SKILL (a wound that has not healed). Use a negative number." },
         "gold": { "type": "integer", "description": "Gold pieces gained (negative: spent). Gold is a number, not an item." },
         "addItems": { "type": "array", "items": { "$ref": "#/$defs/itemRef" } },
@@ -88,6 +89,11 @@
         "bonus": { "type": "string" },
         "restore": { "type": "string", "description": "e.g. '+4 stamina'" },
         "properties": { "type": "array", "items": { "enum": ["magical", "silver", "crushing"] }, "uniqueItems": true },
+        "saveBonus": {
+          "description": "A charm that helps saving throws (Luck tests): the roll succeeds if it is at most LUCK + amount. The best charm that applies counts. With 'versus' it only counts in a fight against an enemy carrying that tag.",
+          "type": "object", "additionalProperties": false, "required": ["amount"],
+          "properties": { "amount": { "type": "integer", "minimum": 1 }, "versus": { "type": "string", "pattern": "^[a-z][a-z-]*$" } }
+        },
         "unique": { "type": "boolean" },
         "onUse": { "$ref": "#/$defs/effects" }
       }
@@ -104,6 +110,11 @@
         "bonus": { "type": "string" },
         "restore": { "type": "string", "description": "e.g. '+4 stamina'" },
         "properties": { "type": "array", "items": { "enum": ["magical", "silver", "crushing"] }, "uniqueItems": true },
+        "saveBonus": {
+          "description": "A charm that helps saving throws (Luck tests): the roll succeeds if it is at most LUCK + amount. The best charm that applies counts. With 'versus' it only counts in a fight against an enemy carrying that tag.",
+          "type": "object", "additionalProperties": false, "required": ["amount"],
+          "properties": { "amount": { "type": "integer", "minimum": 1 }, "versus": { "type": "string", "pattern": "^[a-z][a-z-]*$" } }
+        },
         "unique": { "type": "boolean" },
         "onUse": { "$ref": "#/$defs/effects" }
       }
@@ -207,6 +218,7 @@
         "fleeSection": { "type": "integer" },
         "fleeMaxStamina": { "type": "integer" },
         "fleeTestLuck": { "type": "boolean" },
+        "tags": { "type": "array", "items": { "type": "string", "pattern": "^[a-z][a-z-]*$" }, "uniqueItems": true, "description": "What the enemy is, e.g. [\"undead\"]; charms with saveBonus.versus match it." },
         "onWound": {
           "type": "object",
           "additionalProperties": false,

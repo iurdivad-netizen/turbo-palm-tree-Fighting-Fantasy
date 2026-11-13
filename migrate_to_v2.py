@@ -56,7 +56,7 @@ GENERIC = re.compile(r"^\s*(turn to|go to( section)?)\s+\d+\s*[.:]?\s*$", re.I)
 TURN = re.compile(r"\bTurn to (\d+)\b", re.I)
 # Sections where the generic conversion cannot know which button belongs to which line (several options share one
 # destination). The replacement is applied to the converted text. Keep this table short and reviewed.
-EFFECT_KEYS = ("modifyStats", "permanentStats", "maxStats", "addItems", "removeItems", "nextFightSkill", "gold")
+EFFECT_KEYS = ("modifyStats", "permanentStats", "maxStats", "addItems", "removeItems", "nextFightSkill", "fightSave", "gold")
 
 review = {"item_conflicts": [], "uncatalogued": [], "auto_label": [], "residual_roll": [], "victory_narrative": [], "stripped_fragment": [], "unreferenced": [], "dropped_endings": []}
 
