@@ -60,7 +60,7 @@ try { axeSource = fs.readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8'
 
         await page.click('[data-opt="to-45"]');
         await page.waitForTimeout(100);
-        assert.equal((await page.$$('[data-opt]')).length, 27, 'a 27-option menu is shown as buttons');
+        assert.equal((await page.$$('[data-opt]')).length, 30, 'a 30-option menu is shown as buttons');
         assert.equal(await page.evaluate(() => scrollY), 0, 'a new section starts at the top');
         assert.ok(await noOverflow(page), 'no horizontal scrolling');
 
