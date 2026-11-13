@@ -1,5 +1,5 @@
 {
-  "_comment": "Hand-written decisions for migrate_to_v2.py, specific to this book. items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). labels: {section: {option id: button label}}; text: {section: [{replace, with}]} applied to the converted text; notes: {section: a problem in the book that the migration does not change}. See AUTHORING.md.",
+  "_comment": "Hand-written decisions for migrate_to_v2.py, specific to this book. items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). labels: {section: {option id: button label}}; text: {section: [{replace, with}]} applied to the converted text; notes: {section: a problem in the book that the migration does not change}. See AUTHORING.md.",
   "labels": {
     "24": {
       "to-127": "Retreat to the cemetery",
@@ -103,6 +103,12 @@
       {
         "replace": "\n\nOnce you've made your decision about the vial, you continue exploring.\n\n{{opt:to-111}}",
         "with": ""
+      }
+    ],
+    "234": [
+      {
+        "replace": "50 Gold Pieces\n\nMAYOR'S LEDGER",
+        "with": "50 Gold Pieces\n\nA MAP OF HOLLOW'S END (his own, marked with the dangers he knows)\n\nMAYOR'S LEDGER"
       }
     ]
   },
@@ -400,7 +406,16 @@
     "tomb-map": {
       "name": "Map of the Hollow Tomb",
       "type": "other",
-      "description": "Shows where the Hollow family tomb lies in the cemetery.",
+      "reveals": {
+        "tags": [
+          "trap",
+          "hazard"
+        ],
+        "areas": [
+          "cemetery"
+        ]
+      },
+      "description": "Shows where the Hollow family tomb lies and how the cemetery is laid out. It shows the traps and hazards of the cemetery: the ways that lead to one are marked ⚠.",
       "text": "A map showing the location of the Hollow family tomb in the cemetery, found with the letter that says the Amulet of the Grave rests there."
     },
     "manor-map": {
@@ -422,6 +437,22 @@
       "type": "other",
       "description": "A clue about the Amulet of the Grave.",
       "text": "A letter written in a shaking hand:\n\n\"To whoever finds this: The Amulet of the Grave rests in our family tomb. It can absorb dark energy and protect against spectral attacks. You'll need it to survive a confrontation with the Widow.\""
+    },
+    "village-map": {
+      "name": "Map of Hollow's End",
+      "type": "other",
+      "reveals": {
+        "tags": [
+          "trap",
+          "hazard"
+        ],
+        "areas": [
+          "tavern",
+          "mayors-house",
+          "cemetery"
+        ]
+      },
+      "description": "The Mayor's own map of the village. It shows the traps and hazards of the tavern, his house and the cemetery: the ways that lead to one are marked ⚠."
     }
   }
 }

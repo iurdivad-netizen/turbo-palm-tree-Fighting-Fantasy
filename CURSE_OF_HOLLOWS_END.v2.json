@@ -303,7 +303,16 @@
     "tomb-map": {
       "name": "Map of the Hollow Tomb",
       "type": "other",
-      "description": "Shows where the Hollow family tomb lies in the cemetery.",
+      "reveals": {
+        "tags": [
+          "trap",
+          "hazard"
+        ],
+        "areas": [
+          "cemetery"
+        ]
+      },
+      "description": "Shows where the Hollow family tomb lies and how the cemetery is laid out. It shows the traps and hazards of the cemetery: the ways that lead to one are marked ⚠.",
       "text": "A map showing the location of the Hollow family tomb in the cemetery, found with the letter that says the Amulet of the Grave rests there."
     },
     "torn-map": {
@@ -325,6 +334,22 @@
       "type": "other",
       "unique": true,
       "description": "Eliza Hollow. One of the three things that bind the Widow."
+    },
+    "village-map": {
+      "name": "Map of Hollow's End",
+      "type": "other",
+      "reveals": {
+        "tags": [
+          "trap",
+          "hazard"
+        ],
+        "areas": [
+          "tavern",
+          "mayors-house",
+          "cemetery"
+        ]
+      },
+      "description": "The Mayor's own map of the village. It shows the traps and hazards of the tavern, his house and the cemetery: the ways that lead to one are marked ⚠."
     }
   },
   "startingItems": [
@@ -5513,7 +5538,7 @@
     },
     {
       "id": 234,
-      "text": "You approach the Mayor's manor and knock firmly on the heavy wooden door. After a long moment, you hear footsteps approaching from inside. The door opens just a crack, and you see a haggard man with dark circles under his eyes—Mayor Aldric Hollow.\n\n\"Thank the gods!\" he gasps, tears forming in his eyes. \"An adventurer! Please, come in quickly!\" He pulls you inside and immediately bolts the door behind you, checking multiple locks with trembling hands.\n\nThe Mayor looks terrible—unwashed, unshaven, his fine clothes wrinkled and stained. He's clearly been living in fear for days, perhaps weeks.\n\n\"Three days ago,\" he begins without preamble, his voice cracking with emotion, \"my daughter Lydia was taken. Robed figures—cultists—dragged her down into the catacombs beneath the cemetery. I'm too terrified to go after her myself. The undead attack this house every night.\"\n\nHe provides you with supplies:\n\n3 HEALING POTIONS (each restores 4 STAMINA)\n\nSILVER DAGGER (+2 damage vs undead)\n\n50 Gold Pieces\n\nMAYOR'S LEDGER (if you don't have it)\n\nAdd these items to your Adventure Sheet.\n\nThe Mayor's offer is clear: rescue Lydia from the catacombs, and he'll give you the Silver Key—one of the three critical items needed to bind the Widow permanently.\n\nSearch the Mayor's manor for more information:\n\n{{opt:to-10}}\n{{opt:to-12}}\n{{opt:to-13}}\n{{opt:to-16}}\n{{opt:to-19}}\n{{opt:to-20}}\n{{opt:to-26}}\n{{opt:to-27}}\n{{opt:to-34}}\n{{opt:to-39}}\n{{opt:to-41}}\n{{opt:to-44}}\n{{opt:to-48}}\n{{opt:to-53}}\n{{opt:to-56}}\n{{opt:to-57}}\n{{opt:to-58}}\n{{opt:to-62}}\n{{opt:to-67}}\n{{opt:to-71}}\n{{opt:to-72}}\n{{opt:to-85}}\n{{opt:to-87}}\n{{opt:to-92}}\n{{opt:to-94}}\n{{opt:to-96}}\n{{opt:to-98}}\n{{opt:to-102}}\n{{opt:to-105}}\n{{opt:to-112}}\n{{opt:to-114}}\n{{opt:to-116}}\n\nLeave the manor:\n\n{{opt:to-127}}\n{{opt:to-45}}\n{{opt:to-77}}",
+      "text": "You approach the Mayor's manor and knock firmly on the heavy wooden door. After a long moment, you hear footsteps approaching from inside. The door opens just a crack, and you see a haggard man with dark circles under his eyes—Mayor Aldric Hollow.\n\n\"Thank the gods!\" he gasps, tears forming in his eyes. \"An adventurer! Please, come in quickly!\" He pulls you inside and immediately bolts the door behind you, checking multiple locks with trembling hands.\n\nThe Mayor looks terrible—unwashed, unshaven, his fine clothes wrinkled and stained. He's clearly been living in fear for days, perhaps weeks.\n\n\"Three days ago,\" he begins without preamble, his voice cracking with emotion, \"my daughter Lydia was taken. Robed figures—cultists—dragged her down into the catacombs beneath the cemetery. I'm too terrified to go after her myself. The undead attack this house every night.\"\n\nHe provides you with supplies:\n\n3 HEALING POTIONS (each restores 4 STAMINA)\n\nSILVER DAGGER (+2 damage vs undead)\n\n50 Gold Pieces\n\nA MAP OF HOLLOW'S END (his own, marked with the dangers he knows)\n\nMAYOR'S LEDGER (if you don't have it)\n\nAdd these items to your Adventure Sheet.\n\nThe Mayor's offer is clear: rescue Lydia from the catacombs, and he'll give you the Silver Key—one of the three critical items needed to bind the Widow permanently.\n\nSearch the Mayor's manor for more information:\n\n{{opt:to-10}}\n{{opt:to-12}}\n{{opt:to-13}}\n{{opt:to-16}}\n{{opt:to-19}}\n{{opt:to-20}}\n{{opt:to-26}}\n{{opt:to-27}}\n{{opt:to-34}}\n{{opt:to-39}}\n{{opt:to-41}}\n{{opt:to-44}}\n{{opt:to-48}}\n{{opt:to-53}}\n{{opt:to-56}}\n{{opt:to-57}}\n{{opt:to-58}}\n{{opt:to-62}}\n{{opt:to-67}}\n{{opt:to-71}}\n{{opt:to-72}}\n{{opt:to-85}}\n{{opt:to-87}}\n{{opt:to-92}}\n{{opt:to-94}}\n{{opt:to-96}}\n{{opt:to-98}}\n{{opt:to-102}}\n{{opt:to-105}}\n{{opt:to-112}}\n{{opt:to-114}}\n{{opt:to-116}}\n\nLeave the manor:\n\n{{opt:to-127}}\n{{opt:to-45}}\n{{opt:to-77}}",
       "options": [
         {
           "id": "to-10",
@@ -5707,7 +5732,8 @@
             "id": "healing-potion",
             "qty": 3
           },
-          "mayors-ledger"
+          "mayors-ledger",
+          "village-map"
         ],
         "gold": 50
       }

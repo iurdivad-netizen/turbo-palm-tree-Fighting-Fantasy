@@ -956,12 +956,18 @@ test('real book: the maps warn of the traps they cover; the prayer book blesses 
     placed([60, 315], 'manor', 'hazard');
     placed([9], 'tavern', 'hazard');
     assert.equal(b.sections.filter(s => (s.tags || []).some(t => t === 'trap' || t === 'hazard')).length, 22, 'every trap-like section is placed');
+    // every one of them is covered by at least one map the book hands out
+    const maps = Object.entries(b.items).filter(([, d]) => d.reveals);
+    for (const s of b.sections.filter(x => x.tags)) assert.ok(maps.some(([, d]) => [].concat(d.reveals.tag || [], d.reveals.tags || []).some(t => s.tags.includes(t)) && d.reveals.areas.includes(s.area)), `section ${s.id} is on some map`);
     const g = play(dice());
     assert.equal(g.revealedBy(138), null);
     g.addItem('catacomb-map');
     assert.equal(g.revealedBy(138).source, 'Map of the Catacombs');
     assert.equal(g.revealedBy(142), null, 'the catacomb map does not cover the manor');
     assert.deepEqual([g.revealedBy(17).tag, g.revealedBy(245).tag], ['hazard', 'trap'], 'it shows hazards as well as traps');
+    g.addItem('village-map');
+    assert.equal(g.revealedBy(9).source, "Map of Hollow's End");
+    assert.equal(g.revealedBy(189).source, "Map of Hollow's End");
     g.addItem('manor-map');
     assert.equal(g.revealedBy(142).source, 'Map of the Manor');
     g.goTo(88);

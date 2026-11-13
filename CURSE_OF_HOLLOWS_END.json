@@ -5162,6 +5162,23 @@
           "type": "other",
           "description": "Payments to the Hollow Faith cult; proof for the Mayor.",
           "unique": true
+        },
+        {
+          "id": "village-map",
+          "name": "Map of Hollow's End",
+          "type": "other",
+          "description": "The Mayor's own map of the village. It shows the traps and hazards of the tavern, his house and the cemetery: the ways that lead to one are marked ⚠.",
+          "reveals": {
+            "tags": [
+              "trap",
+              "hazard"
+            ],
+            "areas": [
+              "tavern",
+              "mayors-house",
+              "cemetery"
+            ]
+          }
         }
       ]
     },
@@ -6841,8 +6858,17 @@
           "id": "tomb-map",
           "name": "Map of the Hollow Tomb",
           "type": "other",
-          "description": "Shows where the Hollow family tomb lies in the cemetery.",
-          "text": "A map showing the location of the Hollow family tomb in the cemetery, found with the letter that says the Amulet of the Grave rests there."
+          "description": "Shows where the Hollow family tomb lies and how the cemetery is laid out. It shows the traps and hazards of the cemetery: the ways that lead to one are marked ⚠.",
+          "text": "A map showing the location of the Hollow family tomb in the cemetery, found with the letter that says the Amulet of the Grave rests there.",
+          "reveals": {
+            "tags": [
+              "trap",
+              "hazard"
+            ],
+            "areas": [
+              "cemetery"
+            ]
+          }
         },
         {
           "id": "alchemists-journal",
