@@ -1123,3 +1123,111 @@ test('rules.packLimit: a full pack leaves finds lying until you drop something; 
     copy.restore(JSON.parse(JSON.stringify(g.serialize())));
     assert.deepEqual([copy.rules.packLimit, copy.pendingPickups.length], [2, 1], 'rules and left-behind finds survive a save');
 });
+
+// ---- monster rules --------------------------------------------------------------------------------------------------------------------
+const foe = (extra = {}) => enemy(Object.assign({ enemyName: 'BEAST', enemySkill: 5, enemyStamina: 8, onVictorySection: 2 }, extra));
+const fightOf = (e, rng, opts = {}) => { const g = make([sec(1, { combat: e }), sec(2)], Object.assign({ rng }, opts)); g.startCombat(); return g; };
+// you 12+8 = 20 against 2+5 = 7: you win; you 2+8 = 10 against 12+5 = 17: it wins
+
+test('damage: a monster that hits for more, and armour only takes off so much (never below 1)', () => {
+    const g = fightOf([foe({ damage: 4 })], dice(1, 1, 6, 6));
+    g.fightRound();
+    assert.equal(g.stats.stamina, 16);
+    const armoured = make([sec(1, { combat: [foe({ damage: 4 })] }), sec(2)], { rng: dice(1, 1, 6, 6) }, { items: gear, startingItems: ['plate'] });
+    armoured.startCombat(); armoured.fightRound();
+    assert.equal(armoured.stats.stamina, 18, '4 - 2 armour');
+    const pierce = make([sec(1, { combat: [foe({ damage: 4, ignoresArmor: true })] }), sec(2)], { rng: dice(1, 1, 6, 6) }, { items: gear, startingItems: ['plate'] });
+    pierce.startCombat(); pierce.fightRound();
+    assert.equal(pierce.stats.stamina, 16, 'armour does not help against it');
+});
+
+test('attackDice 3, tiesWound and strikesFirst', () => {
+    const three = fightOf([foe({ attackDice: 3 })], dice(1, 1, 6, 6, 6));
+    assert.equal(three.pendingRoll, null);
+    three.fightRound();                                   // it rolls 18 + 5 = 23 against 10
+    assert.equal(three.stats.stamina, 18);
+    const tie = fightOf([foe({ tiesWound: true, enemySkill: 8 })], dice(1, 1, 1, 1));   // 2 + 8 = 10 against 2 + 8 = 10
+    tie.fightRound();
+    assert.equal(tie.stats.stamina, 18, 'a tie goes to it');
+    const first = fightOf([foe({ strikesFirst: true })], dice(6, 6, 1, 1, 6, 6, 1, 1));
+    first.fightRound();
+    assert.equal(first.enemyCurrentStamina, 8, 'round one: you can only parry');
+    first.fightRound();
+    assert.equal(first.enemyCurrentStamina, 6, 'round two: normal');
+});
+
+test('regenerates: it heals a little every round, never above its starting STAMINA', () => {
+    const g = fightOf([foe({ regenerates: 1, enemyStamina: 8 })], dice(6, 6, 1, 1, 1, 1, 6, 6));
+    g.fightRound();
+    assert.equal(g.enemyCurrentStamina, 7, '8 - 2 + 1');
+    g.fightRound();                                       // a drawn round: it still regenerates
+    assert.equal(g.enemyCurrentStamina, 8);
+});
+
+test('life drain, poison and unnerving wounds (onWound)', () => {
+    const drain = fightOf([foe({ onWound: { maxStaminaLoss: 1 } })], dice(1, 1, 6, 6));
+    drain.fightRound();
+    assert.deepEqual([drain.stats.stamina, drain.stats.initialStamina], [18, 19], 'the maximum falls too');
+    const poison = fightOf([foe({ onWound: { staminaLoss: 2 } })], dice(1, 1, 6, 6));
+    poison.fightRound();
+    assert.equal(poison.stats.stamina, 16);
+    const fear = fightOf([foe({ onWound: { luckLoss: 1 } })], dice(1, 1, 6, 6));
+    fear.fightRound();
+    assert.equal(fear.stats.luck, 8);
+});
+
+test('a spell: once per fight, on a high roll you lose your attack that round but are still attacked', () => {
+    const g = fightOf([foe({ spell: { on: [5, 6] } })], dice(6, 1, 6, 6, 1, 1, 1, 1, 1, 1, 6, 6));
+    g.fightRound();                                       // spell 6; you 12+8 would win, but you are held; it rolls 2+5 = 7 < 20
+    assert.equal(g.enemyCurrentStamina, 8, 'no damage dealt');
+    assert.ok(g.combatLog.some(l => l.includes('compelled to stand still')));
+    g.fightRound();                                       // no second spell: you win this round
+    assert.equal(g.enemyCurrentStamina, 6);
+    const failed = fightOf([foe({ spell: { on: [5, 6] } })], dice(2, 6, 6, 1, 1));
+    failed.fightRound();
+    assert.equal(failed.enemyCurrentStamina, 6, 'the spell failed: normal round');
+});
+
+test('a shapechanger: wounded, it may test its luck and confuse you for the next round only', () => {
+    const g = fightOf([foe({ onHurt: { luckTest: true, enemyLuck: 7, attackPenalty: 2 } })], dice(6, 6, 1, 1, 1, 1, 1, 1, 6, 6));
+    g.fightRound();                                       // it tests: 1 + 1 = 2 <= 7: lucky
+    assert.equal(g.nextRoundBonus, -2);
+    g.fightRound();                                       // you 2 + 8 - 2 = 8 against 6 + 6 + 5 = 17: it wins; the confusion is spent
+    assert.equal(g.nextRoundBonus, 0, 'only one round');
+    const unlucky = fightOf([foe({ onHurt: { luckTest: true, enemyLuck: 7, attackPenalty: 2 } })], dice(6, 6, 1, 1, 6, 6));
+    unlucky.fightRound();
+    assert.equal(unlucky.nextRoundBonus, 0);
+});
+
+test('maxRounds: out of time, the fight ends and the book moves on', () => {
+    const g = make([sec(1, { combat: [foe({ maxRounds: 2, onTimeoutSection: 3, enemyStamina: 20 })] }), sec(2), sec(3)], { rng: dice(1, 1, 1, 1, 1, 1, 1, 1) });
+    g.startCombat(); g.fightRound(); g.fightRound();      // two drawn rounds
+    assert.equal(g.currentSection, 3);
+    assert.equal(g.inCombat, false);
+});
+
+test('a group fights together: you choose whom to attack, the others keep attacking, and a fallen target passes to the next', () => {
+    const e1 = foe({ enemyName: 'A', together: true, enemyStamina: 2, onVictorySection: 2 }), e2 = foe({ enemyName: 'B', together: true, enemyStamina: 8, onVictorySection: 2 });
+    // you 12+8 = 20; A 1+1+5 = 7 (target, falls); B 1+1+5 = 7 (loses to you: fended off)
+    const g = fightOf([e1, e2], dice(6, 6, 1, 1, 1, 1));
+    assert.equal(g.setTarget(1), true);
+    g.fightRound();
+    assert.deepEqual([g.groupStamina[1], g.currentCombatIndex], [6, 1], 'B was hit; A was only fended off');
+    assert.equal(g.stats.stamina, 20, 'A could not wound you');
+    // now A beats you (2+8 = 10 against 6+6+5 = 17) while you attack B: you are wounded by A too
+    const h = fightOf([e1, e2], dice(1, 1, 1, 1, 6, 6));
+    h.fightRound();
+    assert.ok(h.stats.stamina < 20, 'the one you were not fighting still hit you');
+    // killing the target moves on to the next one
+    const k = fightOf([e1, e2], dice(6, 6, 1, 1, 1, 1));
+    k.fightRound();
+    assert.deepEqual([k.groupStamina[0], k.currentCombatIndex], [0, 1], 'A fell and you turn to B');
+    assert.equal(k.inCombat, true);
+});
+
+test('real book: the Wight drains your life, the Cult Fanatic casts a spell, the Doppelganger shifts forms', () => {
+    const b = real(); const S = id => [].concat(b.sections.find(s => s.id === id).combat)[0];
+    assert.equal(S(5).onWound.maxStaminaLoss, 1);
+    assert.deepEqual(S(67).spell.on, [5, 6]);
+    for (const id of [78, 194]) assert.equal(S(id).onHurt.luckTest, true);
+});

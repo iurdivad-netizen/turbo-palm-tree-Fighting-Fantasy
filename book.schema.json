@@ -241,11 +241,22 @@
         "fleeSection": { "type": "integer" },
         "fleeMaxStamina": { "type": "integer" },
         "fleeTestLuck": { "type": "boolean" },
+        "damage": { "type": "integer", "minimum": 1, "description": "STAMINA each of its wounds takes (default 2; armour reduces it, to at least 1)." },
+        "attackDice": { "enum": [2, 3], "description": "How many dice it rolls for its attack (default 2)." },
+        "strikesFirst": { "type": "boolean", "description": "In the first round you can only parry: a round you win does no damage." },
+        "tiesWound": { "type": "boolean", "description": "It wins a tied round." },
+        "ignoresArmor": { "type": "boolean", "description": "Armour does not reduce its damage." },
+        "regenerates": { "type": "integer", "minimum": 1, "description": "STAMINA it recovers at the end of every round (up to its starting STAMINA)." },
+        "together": { "type": "boolean", "description": "Set on every enemy of a group to make them fight at the same time: you choose whom to attack, the others keep attacking you." },
+        "maxRounds": { "type": "integer", "minimum": 1, "description": "The fight ends after this many rounds if nobody has fallen, leading to onTimeoutSection." },
+        "onTimeoutSection": { "type": "integer" },
+        "spell": { "type": "object", "additionalProperties": false, "properties": { "roll": { "enum": ["1d6", "2d6"] }, "on": { "type": "array", "items": { "type": "integer" }, "minItems": 1 }, "text": { "type": "string" } }, "description": "Once per fight, before the first attack, it rolls; on these totals you lose your attack for that round (the monster still attacks)." },
+        "onHurt": { "type": "object", "additionalProperties": false, "properties": { "luckTest": { "type": "boolean" }, "enemyLuck": { "type": "integer" }, "attackPenalty": { "type": "integer", "minimum": 1 }, "text": { "type": "string" } }, "description": "When you wound it and it survives: it tests its luck (2d6 at or below enemyLuck, default 7); if lucky you lose attackPenalty from your next attack." },
         "tags": { "type": "array", "items": { "type": "string", "pattern": "^[a-z][a-z-]*$" }, "uniqueItems": true, "description": "What the enemy is, e.g. [\"undead\"]; charms with saveBonus.versus match it." },
         "onWound": {
           "type": "object",
           "additionalProperties": false,
-          "properties": { "skillLoss": { "type": "integer" }, "permanent": { "type": "boolean" }, "luckTest": { "type": "boolean" } }
+          "properties": { "skillLoss": { "type": "integer" }, "permanent": { "type": "boolean" }, "luckTest": { "type": "boolean" }, "maxStaminaLoss": { "type": "integer", "minimum": 1 }, "staminaLoss": { "type": "integer", "minimum": 1 }, "luckLoss": { "type": "integer", "minimum": 1 }, "text": { "type": "string" } }
         },
         "onStart": {
           "type": "object",

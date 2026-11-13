@@ -186,6 +186,26 @@ try { axeSource = fs.readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8'
         assert.ok((await page.textContent('.fightlog')).includes('Test your Luck'), 'the test is in the fight log');
         assert.equal(await page.$('.decision'), null, 'the question is gone once answered');
 
+        // monster rules in the page: a group that fights together, and a monster that rolls three dice
+        await page.evaluate(() => ui.loadBook({ schemaVersion: 2, id: 'monsters', title: 'Monsters', startingSection: 1, initialStats: { skill: 9, stamina: 20, luck: 9 }, sections: [
+            { id: 1, text: 'A pack attacks.', combat: [
+                { enemyName: 'WOLF', enemySkill: 5, enemyStamina: 4, together: true, onVictorySection: 2, onDefeatSection: 3 },
+                { enemyName: 'DIRE WOLF', enemySkill: 7, enemyStamina: 6, together: true, attackDice: 3, damage: 3, regenerates: 1, onVictorySection: 2, onDefeatSection: 3 }] },
+            { id: 2, text: 'You live.', ending: { type: 'victory' } }, { id: 3, text: 'You fall.', ending: { type: 'defeat' } }] }));
+        await page.click('text=Start Adventure');
+        await page.waitForSelector('text=Fight!');
+        assert.ok((await page.textContent('.combat')).includes('at the same time'), 'a group is announced');
+        assert.ok((await page.textContent('.combat')).includes('Rolls three dice'), 'its special rules are listed before the fight');
+        await page.click('text=Fight!');
+        await page.waitForSelector('.foes');
+        assert.equal((await page.$$('.foe')).length, 2, 'both enemies are shown');
+        await page.click('.foe:nth-child(2) button');
+        assert.ok((await page.getAttribute('.foe:nth-child(2) button', 'aria-pressed')) === 'true', 'the chosen target is marked');
+        await page.evaluate(() => game.setAutoRoll(true));
+        await page.click('text=Fight a round');
+        await page.waitForTimeout(150);
+        assert.equal((await page.$$('.rollrow:not(.ask) .die')).length >= 7, true, 'seven dice were thrown: two of yours, three of the dire wolf, two of the wolf');
+
         if (axeSource) {
             await page.evaluate(() => ui.loadBook(null));
             await page.addScriptTag({ content: axeSource });

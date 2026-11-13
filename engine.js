@@ -10,7 +10,7 @@
  *   game.doRoll();                // make the section's Luck test / dice roll
  *   game.startCombat(); game.fightRound(); game.flee();
  *
- * Dice: every random event is a "roll request" ({ dice: '1d6' | '2d6', reason, label }).
+ * Dice: every random event is a "roll request" ({ dice: '1d6' | '2d6' | '3d6', reason, label }).
  *   autoRoll true  : the engine rolls with `rng` and carries on at once (the simulator always uses this).
  *   autoRoll false : the engine stops with `game.pending` set and a 'roll-needed' event; the UI shows a die and calls
  *                    game.resolveRoll() (or resolveRoll([3, 5]) with chosen values). Nothing else is accepted meanwhile.
@@ -70,6 +70,19 @@
                 : `Each wound permanently drains ${c.onWound.skillLoss || 1} SKILL`);
         }
         if (isArr(c.reviveOn)) notes.push(`When reduced to 0 STAMINA, roll a die: on ${c.reviveOn.join(' or ')} it survives with 1 STAMINA`);
+        if (c.onWound && c.onWound.maxStaminaLoss) notes.push(`Each wound permanently lowers your maximum STAMINA by ${c.onWound.maxStaminaLoss}`);
+        if (c.onWound && c.onWound.staminaLoss) notes.push(`Each wound is poisoned: ${c.onWound.staminaLoss} more STAMINA lost`);
+        if (c.onWound && c.onWound.luckLoss) notes.push(`Each wound costs you ${c.onWound.luckLoss} LUCK`);
+        if (c.damage && c.damage !== 2) notes.push(`Each wound does ${c.damage} STAMINA damage`);
+        if (c.attackDice === 3) notes.push('Rolls three dice for its attack');
+        if (c.strikesFirst) notes.push('Strikes first: in the first round you can only parry');
+        if (c.tiesWound) notes.push('Wins a tied round');
+        if (c.ignoresArmor) notes.push('Your armor does not protect you from it');
+        if (c.regenerates) notes.push(`Regenerates ${c.regenerates} STAMINA every round`);
+        if (c.spell) notes.push(`Once per fight it casts a spell (roll ${(c.spell.on || [5, 6]).join(' or ')}): you lose your attack for that round`);
+        if (c.onHurt && c.onHurt.luckTest) notes.push(`When wounded it may shift forms: -${c.onHurt.attackPenalty || 2} to your next attack`);
+        if (c.maxRounds) notes.push(`You must win within ${c.maxRounds} rounds`);
+        if (c.together) notes.push('Fights at the same time as the others: choose whom to attack');
         return notes;
     }
 
@@ -262,7 +275,10 @@
             this.rolledOnce = new Set();
             this.usedOnce = new Set();
             this.usedOptions = new Set();
-            this.pendingPickups = [];       // things found while the pack was full (rules.packLimit)   // options marked `vanishes` that were taken ("sectionId:optionId")
+            this.pendingPickups = [];       // things found while the pack was full (rules.packLimit)
+            this.groupStamina = [];         // enemies that fight together: each one's STAMINA (the target's is also enemyCurrentStamina)
+            this.spellUsed = {};            // enemies that have already cast their spell this fight
+            this.nextRoundBonus = 0;        // added to your attack in the next round (negative: you are confused)   // options marked `vanishes` that were taken ("sectionId:optionId")
             this.rollResolved = false;
             this.tempSkillPenalty = 0;
             this.carriedSkillPenalty = 0;   // SKILL lost (or, if negative, gained) in the next fight
@@ -673,7 +689,7 @@
 
         // ---- dice ---------------------------------------------------------------------------------------------
         _autoDice(req) {
-            const n = req.dice === '2d6' ? 2 : 1;
+            const n = parseInt(req.dice, 10) || 1;
             const out = [];
             for (let i = 0; i < n; i++) out.push(Math.floor(this.rng() * 6) + 1);
             return out;
@@ -717,7 +733,7 @@
             if (!this.pending || this.pending.request.decision) return;
             const { request, gen } = this.pending;
             this.pending = null;
-            const n = request.dice === '2d6' ? 2 : 1;
+            const n = parseInt(request.dice, 10) || 1;
             const dice = isArr(values) && values.length === n && values.every(v => Number.isInteger(v) && v >= 1 && v <= 6) ? values : this._autoDice(request);
             this._emit({ type: 'rolled', request, dice });
             this._drive(gen, gen.next(dice));
@@ -831,10 +847,18 @@
             this.lastWielded = null;
             this.currentCombatIndex = 0;
             this.enemyCurrentStamina = first.enemyStamina;
-            this.combatLog = [`⚔️ Combat begins with ${first.enemyName}!`, `${first.enemyName}: SKILL ${first.enemySkill}, STAMINA ${first.enemyStamina}`];
-            if (list.length > 1) this.combatLog.push(`⚠️ Warning: ${list.length} enemies detected! You must defeat them all.`);
+            this.spellUsed = {};
+            this.nextRoundBonus = 0;
+            const group = this._isGroup(list);
+            this.groupStamina = group ? list.map(e => e.enemyStamina) : [];
+            this.combatLog = group
+                ? [`⚔️ Combat begins!`, ...list.map(e => `${e.enemyName}: SKILL ${e.enemySkill}, STAMINA ${e.enemyStamina}`)]
+                : [`⚔️ Combat begins with ${first.enemyName}!`, `${first.enemyName}: SKILL ${first.enemySkill}, STAMINA ${first.enemyStamina}`];
+            if (group) this.combatLog.push(`⚠️ ${list.length} enemies attack at the same time! You fight one of them; the others keep attacking you.`);
+            else if (list.length > 1) this.combatLog.push(`⚠️ Warning: ${list.length} enemies detected! You must defeat them all.`);
             this.combatLog.push(...carriedNotes);
-            yield* this._combatStart(first);
+            if (group) for (const e of list) yield* this._combatStart(e);
+            else yield* this._combatStart(first);
         }
 
         /** Effects that trigger when an enemy's fight begins (a wail: Test Luck or lose SKILL; underwater: a flat penalty). */
@@ -881,10 +905,92 @@
             this._run(this._fightRound(s));
         }
 
+        _isGroup(list) { return list.length > 1 && list.every(e => e.together); }
+
+        /** Fighting several enemies at once: choose which one you attack. Not while dice are being asked for. */
+        setTarget(i) {
+            if (this.pending || !this.inCombat) return false;
+            const list = enemiesOf(this.section());
+            if (!this._isGroup(list) || !(this.groupStamina[i] > 0)) return false;
+            this.groupStamina[this.currentCombatIndex] = this.enemyCurrentStamina;
+            this.currentCombatIndex = i;
+            this.enemyCurrentStamina = this.groupStamina[i];
+            this._changed();
+            return true;
+        }
+
+        /** An enemy's blow lands: armour, luck, its special effects. Returns true when it ended the fight (you are defeated). */
+        *_woundPlayer(combat) {
+            const log = this.combatLog;
+            const defense = combat.ignoresArmor ? 0 : this.calculateDefenseBonus();
+            const raw = combat.damage || 2;
+            const base = Math.max(1, raw - defense);
+            const damage = yield* this._luckOnBlow('wound', base, combat);
+            if (damage > 0) this.modifyStats({ stamina: -damage });
+            log.push(defense > 0
+                ? `💔 ${combat.enemyName} hits you for ${damage} damage! (reduced from ${raw} by ${defense} armor bonus)`
+                : `💔 ${combat.enemyName} hits you for ${damage} damage!`);
+
+            const ow = combat.onWound;
+            if (ow && this.stats.stamina > 0) {
+                const loss = ow.skillLoss || 1;
+                if (ow.luckTest) {
+                    const lt = yield* this._testLuck(combat);
+                    if (lt.success) log.push(`🍀 Test your Luck (rolled ${lt.roll}${lt.bonus ? `, +${lt.bonus} from ${lt.source}` : ''}): Lucky! The toxins have no effect.`);
+                    else {
+                        this.tempSkillPenalty += loss;
+                        log.push(`☠️ Test your Luck (rolled ${lt.roll}): Unlucky! You lose ${loss} SKILL for the rest of this combat. (SKILL now ${Math.max(0, this.stats.skill - this.tempSkillPenalty)})`);
+                    }
+                } else if (ow.permanent) {
+                    this.stats.skill = Math.max(0, this.stats.skill - loss);
+                    this.stats.initialSkill = Math.max(0, this.stats.initialSkill - loss);
+                    log.push(`🩸 ${combat.enemyName}'s wound permanently drains ${loss} SKILL! (SKILL now ${this.stats.skill})`);
+                }
+                if (ow.maxStaminaLoss) {
+                    this.reduceStats({ stamina: -ow.maxStaminaLoss }, false);
+                    log.push(`🩸 ${combat.enemyName} drains your life: your maximum STAMINA falls by ${ow.maxStaminaLoss} for good! (now ${this.stats.initialStamina})`);
+                }
+                if (ow.staminaLoss) {
+                    this.modifyStats({ stamina: -ow.staminaLoss });
+                    log.push(`☠️ ${ow.text || 'The wound is poisoned'}: you lose ${ow.staminaLoss} more STAMINA.`);
+                }
+                if (ow.luckLoss) {
+                    this.modifyStats({ luck: -ow.luckLoss });
+                    log.push(`😨 ${combat.enemyName} unnerves you: you lose ${ow.luckLoss} LUCK.`);
+                }
+            }
+
+            if (this.stats.stamina <= 0) {
+                log.push(`\n💀 You have been defeated...`);
+                this.inCombat = false;
+                this.currentCombatIndex = 0;
+                if (this.sections.has(combat.onDefeatSection)) {
+                    this.isGameOver = false;           // the book's defeat section takes over
+                    this.gameOverType = null;
+                    this.goTo(combat.onDefeatSection);
+                }
+                return true;
+            }
+            return false;
+        }
+
         *_fightRound(s) {
             const list = enemiesOf(s);
-            const combat = list[this.currentCombatIndex] || list[0];
+            const group = this._isGroup(list);
+            const idx = this.currentCombatIndex;
+            const combat = list[idx] || list[0];
             const log = this.combatLog;
+            const roundNum = log.filter(l => l.includes('Round')).length + 1;
+
+            // a spell cast before anyone strikes (once per fight)
+            let stunned = null;
+            if (combat.spell && !this.spellUsed[idx]) {
+                this.spellUsed[idx] = true;
+                const sd = yield { dice: combat.spell.roll || '1d6', reason: 'spell', label: `Does ${combat.enemyName} cast its spell?` };
+                const total = sd.reduce((a, c) => a + c, 0);
+                stunned = (combat.spell.on || [5, 6]).includes(total) ? (combat.spell.text || `${combat.enemyName}'s spell takes hold`) : null;
+                log.push(`\n🔮 ${combat.enemyName} chants... (rolled ${total}): ${stunned ? `the spell succeeds! You are compelled to stand still: you lose your attack this round.` : 'the spell fails.'}`);
+            }
 
             const pd = yield { dice: '2d6', reason: 'attack', label: 'Your attack', who: 'player' };
             const playerDice = pd[0] + pd[1];
@@ -893,99 +999,135 @@
             let ambush = 0;
             if (this.invisible > 0) { ambush = 2; this.invisible = 0; }       // striking breaks the spell
             const effectiveSkill = Math.max(0, this.stats.skill - this.tempSkillPenalty);
-            const playerStrength = playerDice + effectiveSkill + attackBonus + ambush;
+            const confused = this.nextRoundBonus; this.nextRoundBonus = 0;
+            const playerStrength = playerDice + effectiveSkill + attackBonus + ambush + confused;
 
-            const ed = yield { dice: '2d6', reason: 'attack', label: `${combat.enemyName}'s attack`, who: 'enemy' };
-            const enemyDice = ed[0] + ed[1];
+            const nDice = combat.attackDice === 3 ? 3 : 2;
+            const ed = yield { dice: `${nDice}d6`, reason: 'attack', label: `${combat.enemyName}'s attack`, who: 'enemy' };
+            const enemyDice = ed.reduce((a, c) => a + c, 0);
             const enemyStrength = enemyDice + combat.enemySkill;
 
-            const roundNum = log.filter(l => l.includes('Round')).length + 1;
             log.push(`\nRound ${roundNum}:`);
             const wieldName = wield.weapon ? wield.weapon.name : 'bare hands';
             if (this.lastWielded !== wieldName) { this.lastWielded = wieldName; log.push(`🗡️ You fight with: ${wieldName}`); }
             log.push(attackBonus !== 0
-                ? `You rolled ${playerDice} + ${effectiveSkill} SKILL + ${attackBonus} (weapon bonus) = ${playerStrength}`
-                : `You rolled ${playerDice} + ${effectiveSkill} SKILL = ${playerStrength}`);
+                ? `You rolled ${playerDice} + ${effectiveSkill} SKILL + ${attackBonus} (weapon bonus) = ${playerStrength - ambush - confused}`
+                : `You rolled ${playerDice} + ${effectiveSkill} SKILL = ${playerStrength - ambush - confused}`);
             if (ambush) log.push(`👻 You strike from the shadows: +${ambush} to your attack. You are visible again.`);
+            if (confused) log.push(`😵 ${confused < 0 ? 'Still confused' : 'Encouraged'}: ${confused > 0 ? '+' : ''}${confused} to your attack this round. (total ${playerStrength})`);
             log.push(`${combat.enemyName} rolled ${enemyDice} + ${combat.enemySkill} SKILL = ${enemyStrength}`);
 
-            if (playerStrength > enemyStrength) {
+            const youWin = playerStrength > enemyStrength;
+            const itWins = combat.tiesWound ? enemyStrength >= playerStrength : enemyStrength > playerStrength;
+            let ended = false;
+
+            if (youWin && stunned) {
+                log.push(`🔮 You cannot strike: you are held still. No damage dealt.`);
+            } else if (youWin && combat.strikesFirst && roundNum === 1) {
+                log.push(`🛡️ ${combat.enemyName} strikes first: you can only parry in the first round. No damage dealt.`);
+            } else if (youWin) {
                 const hit = wield.damage;
                 if (hit === 0) {
                     log.push(`👻 Your blow passes harmlessly through ${combat.enemyName}! Only a ${(combat.effectiveWeapons || []).join(' or ')} weapon can hurt it.`);
-                    return;
-                }
-                const dealt = yield* this._luckOnBlow('hit', hit, combat);
-                this.enemyCurrentStamina -= dealt;
-                const note = (hit !== 2 && wield.weapon) ? ` (${wield.weapon.name})` : (hit !== 2 ? ' (no suitable weapon)' : '');
-                log.push(`💥 You hit ${combat.enemyName} for ${dealt} damage${note}! (${this.enemyCurrentStamina} STAMINA remaining)`);
+                } else {
+                    const dealt = yield* this._luckOnBlow('hit', hit, combat);
+                    this.enemyCurrentStamina -= dealt;
+                    const note = (hit !== 2 && wield.weapon) ? ` (${wield.weapon.name})` : (hit !== 2 ? ' (no suitable weapon)' : '');
+                    log.push(`💥 You hit ${combat.enemyName} for ${dealt} damage${note}! (${this.enemyCurrentStamina} STAMINA remaining)`);
 
-                if (this.enemyCurrentStamina <= 0 && isArr(combat.reviveOn)) {
-                    const rd = yield { dice: '1d6', reason: 'revive', label: `Does ${combat.enemyName} stay down?` };
-                    const rr = rd[0];
-                    if (combat.reviveOn.includes(rr)) { this.enemyCurrentStamina = 1; log.push(`🧟 You roll a ${rr}: ${combat.enemyName} refuses to stay down! It survives with 1 STAMINA.`); }
-                    else log.push(`🎲 You roll a ${rr}: ${combat.enemyName} stays down.`);
-                }
-
-                if (this.enemyCurrentStamina <= 0) {
-                    log.push(`\n🎉 You defeated ${combat.enemyName}!`);
-                    if (this.currentCombatIndex < list.length - 1) {
-                        this.currentCombatIndex++;
-                        const next = list[this.currentCombatIndex];
-                        log.push(`\n⚠️ Another enemy approaches: ${next.enemyName}!`);
-                        this.enemyCurrentStamina = next.enemyStamina;
-                        yield* this._combatStart(next);
-                    } else {
-                        this.inCombat = false;
-                        this.currentCombatIndex = 0;
-                        this.combatDone = true;       // the section's own options appear if the book defines no victory section
-                        if (combat.victoryText) log.push(`\n${combat.victoryText}`);
-                        if (combat.onVictoryEffects) {
-                            this.applyEffects(combat.onVictoryEffects);
-                            log.push(`😮‍💨 Victory has a price:${describeEffects(combat.onVictoryEffects)}`);
-                        }
-                        if (this.isGameOver) return;
-                        if (this.sections.has(combat.onVictorySection)) this._navigateAfter(combat.onVictorySection);
+                    if (this.enemyCurrentStamina <= 0 && isArr(combat.reviveOn)) {
+                        const rd = yield { dice: '1d6', reason: 'revive', label: `Does ${combat.enemyName} stay down?` };
+                        const rr = rd[0];
+                        if (combat.reviveOn.includes(rr)) { this.enemyCurrentStamina = 1; log.push(`🧟 You roll a ${rr}: ${combat.enemyName} refuses to stay down! It survives with 1 STAMINA.`); }
+                        else log.push(`🎲 You roll a ${rr}: ${combat.enemyName} stays down.`);
                     }
-                }
-            } else if (enemyStrength > playerStrength) {
-                const defense = this.calculateDefenseBonus();
-                const base = Math.max(1, 2 - defense);
-                const damage = yield* this._luckOnBlow('wound', base, combat);
-                if (damage > 0) this.modifyStats({ stamina: -damage });
-                log.push(defense > 0
-                    ? `💔 ${combat.enemyName} hits you for ${damage} damage! (reduced from 2 by ${defense} armor bonus)`
-                    : `💔 ${combat.enemyName} hits you for ${damage} damage!`);
 
-                if (combat.onWound && this.stats.stamina > 0) {
-                    const loss = combat.onWound.skillLoss || 1;
-                    if (combat.onWound.luckTest) {
-                        const lt = yield* this._testLuck(combat);
-                        if (lt.success) log.push(`🍀 Test your Luck (rolled ${lt.roll}${lt.bonus ? `, +${lt.bonus} from ${lt.source}` : ''}): Lucky! The toxins have no effect.`);
-                        else {
-                            this.tempSkillPenalty += loss;
-                            log.push(`☠️ Test your Luck (rolled ${lt.roll}): Unlucky! You lose ${loss} SKILL for the rest of this combat. (SKILL now ${Math.max(0, this.stats.skill - this.tempSkillPenalty)})`);
-                        }
-                    } else if (combat.onWound.permanent) {
-                        this.stats.skill = Math.max(0, this.stats.skill - loss);
-                        this.stats.initialSkill = Math.max(0, this.stats.initialSkill - loss);
-                        log.push(`🩸 ${combat.enemyName}'s wound permanently drains ${loss} SKILL! (SKILL now ${this.stats.skill})`);
+                    if (this.enemyCurrentStamina > 0 && combat.onHurt && dealt > 0) {          // a shapechanger: wounded, it may try to confuse you
+                        const oh = combat.onHurt;
+                        if (oh.luckTest) {
+                            const hd = yield { dice: '2d6', reason: 'hurt', label: `Does ${combat.enemyName} shift forms?` };
+                            const hr = hd[0] + hd[1];
+                            const ok = hr <= (oh.enemyLuck != null ? oh.enemyLuck : 7);
+                            log.push(`🎭 ${combat.enemyName} tests its luck (rolled ${hr}): ${ok ? `${oh.text || 'it shifts forms'}! You lose ${oh.attackPenalty || 2} from your attack next round.` : 'it fails.'}`);
+                            if (ok) this.nextRoundBonus -= (oh.attackPenalty || 2);
+                        } else if (oh.attackPenalty) { this.nextRoundBonus -= oh.attackPenalty; log.push(`🎭 ${oh.text || 'The wound confuses you'}: -${oh.attackPenalty} to your attack next round.`); }
                     }
-                }
 
-                if (this.stats.stamina <= 0) {
-                    log.push(`\n💀 You have been defeated...`);
-                    this.inCombat = false;
-                    this.currentCombatIndex = 0;
-                    if (this.sections.has(combat.onDefeatSection)) {
-                        this.isGameOver = false;           // the book's defeat section takes over
-                        this.gameOverType = null;
-                        this.goTo(combat.onDefeatSection);
-                    }
+                    if (this.enemyCurrentStamina <= 0) {
+                        log.push(`\n🎉 You defeated ${combat.enemyName}!`);
+                        if (group) {
+                            this.groupStamina[idx] = 0;
+                            const nextAlive = this.groupStamina.findIndex(v => v > 0);
+                            if (nextAlive !== -1) {
+                                this.currentCombatIndex = nextAlive; this.enemyCurrentStamina = this.groupStamina[nextAlive];
+                                log.push(`\n⚠️ You turn to ${list[nextAlive].enemyName}.`);
+                            } else { ended = true; yield* this._wonFight(combat); }
+                        } else if (idx < list.length - 1) {
+                            this.currentCombatIndex++;
+                            const next = list[this.currentCombatIndex];
+                            log.push(`\n⚠️ Another enemy approaches: ${next.enemyName}!`);
+                            this.enemyCurrentStamina = next.enemyStamina;
+                            yield* this._combatStart(next);
+                        } else { ended = true; yield* this._wonFight(combat); }
+                    } else if (group) this.groupStamina[idx] = this.enemyCurrentStamina;
                 }
-            } else {
+            }
+            if (ended) return;
+            if (!youWin && itWins) {
+                if (yield* this._woundPlayer(combat)) return;
+            } else if (!youWin) {
                 log.push(`⚡ Your blows meet! No damage dealt.`);
             }
+
+            // the others in a group keep attacking: each one's attack is compared with yours
+            if (group) {
+                for (let j = 0; j < list.length; j++) {
+                    if (j === idx || !(this.groupStamina[j] > 0)) continue;
+                    const other = list[j];
+                    const od = yield { dice: `${other.attackDice === 3 ? 3 : 2}d6`, reason: 'attack', label: `${other.enemyName}'s attack`, who: 'enemy' };
+                    const os = od.reduce((a, c) => a + c, 0) + other.enemySkill;
+                    log.push(`${other.enemyName} rolled ${os - other.enemySkill} + ${other.enemySkill} SKILL = ${os}`);
+                    if ((other.tiesWound ? os >= playerStrength : os > playerStrength)) { if (yield* this._woundPlayer(other)) return; }
+                    else log.push(`🛡️ You fend off ${other.enemyName}.`);
+                }
+            }
+
+            // regeneration, and the clock
+            const stamOf = j => (j === this.currentCombatIndex ? this.enemyCurrentStamina : this.groupStamina[j]);
+            const living = group ? list.map((e, j) => ({ e, j })).filter(x => stamOf(x.j) > 0) : [{ e: combat, j: this.currentCombatIndex }];
+            for (const { e, j } of living) {
+                if (!e.regenerates) continue;
+                const cur = stamOf(j);
+                if (!(cur > 0)) continue;
+                const now = Math.min(e.enemyStamina, cur + e.regenerates);
+                if (now > cur) {
+                    if (j === this.currentCombatIndex) this.enemyCurrentStamina = now; else this.groupStamina[j] = now;
+                    if (group) this.groupStamina[j] = now;
+                    log.push(`🌿 ${e.enemyName} regenerates ${now - cur} STAMINA. (${now} STAMINA)`);
+                }
+            }
+            if (combat.maxRounds && roundNum >= combat.maxRounds && this.stats.stamina > 0 && this.inCombat && this.sections.has(combat.onTimeoutSection)) {
+                log.push(`\n⏳ Time runs out: you cannot finish this fight.`);
+                this.inCombat = false;
+                this.currentCombatIndex = 0;
+                this._navigateAfter(combat.onTimeoutSection);
+            }
+        }
+
+        /** The last enemy fell: the fight is won. */
+        *_wonFight(combat) {
+            const log = this.combatLog;
+            this.inCombat = false;
+            this.currentCombatIndex = 0;
+            this.groupStamina = [];
+            this.combatDone = true;       // the section's own options appear if the book defines no victory section
+            if (combat.victoryText) log.push(`\n${combat.victoryText}`);
+            if (combat.onVictoryEffects) {
+                this.applyEffects(combat.onVictoryEffects);
+                log.push(`😮‍💨 Victory has a price:${describeEffects(combat.onVictoryEffects)}`);
+            }
+            if (this.isGameOver) return;
+            if (this.sections.has(combat.onVictorySection)) this._navigateAfter(combat.onVictorySection);
         }
 
         flee() {
@@ -1013,7 +1155,7 @@
         serialize() {
             return {
                 bookId: this.book.id, started: this.started, currentSection: this.currentSection, stats: this.stats,
-                inventory: this.inventory, visited: Array.from(this.visited), usedOnce: Array.from(this.usedOnce), usedOptions: Array.from(this.usedOptions), rules: this.rules, pendingPickups: this.pendingPickups, rolledOnce: Array.from(this.rolledOnce),
+                inventory: this.inventory, visited: Array.from(this.visited), usedOnce: Array.from(this.usedOnce), usedOptions: Array.from(this.usedOptions), groupStamina: this.groupStamina, spellUsed: this.spellUsed, nextRoundBonus: this.nextRoundBonus, rules: this.rules, pendingPickups: this.pendingPickups, rolledOnce: Array.from(this.rolledOnce),
                 inCombat: this.inCombat, enemyCurrentStamina: this.enemyCurrentStamina, currentCombatIndex: this.currentCombatIndex, combatLog: this.combatLog,
                 isGameOver: this.isGameOver, gameOverType: this.gameOverType, combatDone: this.combatDone, lastWielded: this.lastWielded,
                 rollResolved: this.rollResolved, tempSkillPenalty: this.tempSkillPenalty, carriedSkillPenalty: this.carriedSkillPenalty, invisible: this.invisible, tempSave: this.tempSave, carriedSave: this.carriedSave, equipped: this.equipped, nextUid: this.nextUid, advance: this.advance
@@ -1024,7 +1166,7 @@
             this._blank();
             Object.assign(this, {
                 started: d.started, currentSection: d.currentSection, stats: d.stats, inventory: d.inventory, visited: new Set(d.visited),
-                usedOnce: new Set(d.usedOnce || []), usedOptions: new Set(d.usedOptions || []), rules: Object.assign({}, this.rules, d.rules || {}), pendingPickups: d.pendingPickups || [], rolledOnce: new Set(d.rolledOnce || []), inCombat: !!d.inCombat, enemyCurrentStamina: d.enemyCurrentStamina || 0,
+                usedOnce: new Set(d.usedOnce || []), usedOptions: new Set(d.usedOptions || []), groupStamina: d.groupStamina || [], spellUsed: d.spellUsed || {}, nextRoundBonus: d.nextRoundBonus || 0, rules: Object.assign({}, this.rules, d.rules || {}), pendingPickups: d.pendingPickups || [], rolledOnce: new Set(d.rolledOnce || []), inCombat: !!d.inCombat, enemyCurrentStamina: d.enemyCurrentStamina || 0,
                 currentCombatIndex: d.currentCombatIndex || 0, combatLog: d.combatLog || [], isGameOver: !!d.isGameOver, gameOverType: d.gameOverType || null,
                 combatDone: !!d.combatDone, lastWielded: d.lastWielded || null, rollResolved: !!d.rollResolved, tempSkillPenalty: d.tempSkillPenalty || 0, carriedSkillPenalty: d.carriedSkillPenalty || 0, invisible: d.invisible || 0, tempSave: d.tempSave || 0, carriedSave: d.carriedSave || 0, equipped: Object.assign({ weapon: null, armor: null }, d.equipped || {}),
                 nextUid: d.nextUid || 1, advance: d.advance || null

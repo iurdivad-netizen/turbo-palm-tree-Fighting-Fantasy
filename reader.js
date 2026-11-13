@@ -73,6 +73,7 @@ const ui = {
         savePrefs(); game.rules = Object.assign({}, game.rules, { [key]: value }); render();
     },
     decide(yes) { game.resolveDecision(yes); },
+    target(i) { game.setTarget(i); },
     takePickup(i) { game.takePickup(i); },
     leavePickup(i) { game.leavePickup(i); },
     swapPickup(i) { const v = $('#swap-' + i); game.takePickup(i, v && v.value ? Number(v.value) : undefined); },
@@ -146,10 +147,10 @@ function renderTray() {
     let html = '';
     const req = game.pendingRoll;
     if (req && !req.decision) {
-        const n = req.dice === '2d6' ? 2 : 1;
+        const n = parseInt(req.dice, 10) || 1;
         html += `<div class="rollrow ask" role="group" aria-label="Dice">
             <div class="dice" aria-hidden="true">${Array.from({ length: n }, () => '<span class="die big blank">?</span>').join('')}</div>
-            <div class="what">${esc(req.label || 'Roll the dice')}<small>Roll ${n === 2 ? 'two dice' : 'one die'}</small></div>
+            <div class="what">${esc(req.label || 'Roll the dice')}<small>Roll ${['', 'one die', 'two dice', 'three dice'][n] || n + ' dice'}</small></div>
             <button class="btn btn-primary" id="roll-now" onclick="ui.rollPending()">Roll <span class="sr-only">the dice</span></button>
         </div>`;
     }
@@ -393,9 +394,9 @@ function renderPage(section) {
 
 // ---- combat -------------------------------------------------------------------------------------------------------------------
 const enemyLine = c => `${esc(c.enemyName)} · SKILL ${c.enemySkill} · STAMINA ${c.enemyStamina}`;
-function rulesList(c) {
+function rulesList(c, named) {
     const notes = Engine.combatNotes(c);
-    return notes.length ? `<ul class="rules">${notes.map(n => `<li>⚠️ ${esc(n)}</li>`).join('')}</ul>` : '';
+    return notes.length ? `<ul class="rules">${notes.map(n => `<li>⚠️ ${named ? `<b>${esc(c.enemyName)}:</b> ` : ''}${esc(n)}</li>`).join('')}</ul>` : '';
 }
 
 function renderCombatStart(section) {
@@ -403,9 +404,9 @@ function renderCombatStart(section) {
     const first = list[game.currentCombatIndex] || list[0];
     return `<div class="combat">
         <h3>⚔️ Combat ahead</h3>
-        ${list.length > 1 ? `<p style="text-align: center; margin: 0;">You must fight them one after another, in this order:</p>` : ''}
+        ${list.length > 1 ? `<p style="text-align: center; margin: 0;">${list.every(e => e.together) ? 'They attack at the same time. You fight one of them; the others keep attacking you.' : 'You must fight them one after another, in this order:'}</p>` : ''}
         ${list.map((c, i) => `<p style="text-align: center; margin: 0.25rem 0; ${i === game.currentCombatIndex ? 'font-weight: 700;' : ''}">${list.length > 1 ? `${i + 1}. ` : ''}${enemyLine(c)}</p>`).join('')}
-        ${rulesList(first)}
+        ${list.length > 1 ? list.map(c => rulesList(c, true)).join('') : rulesList(first)}
         <button class="btn btn-danger btn-block" onclick="ui.fight()">Fight!</button>
     </div>`;
 }
@@ -420,19 +421,26 @@ function meter(label, value, max, tight) {
 
 function renderCombat() {
     const list = Engine.enemiesOf(game.section());
+    const group = list.length > 1 && list.every(e => e.together);
     const c = game.currentEnemy();
     const st = game.stats;
     const busy = game.pending || autoFightOn;
     const skillNow = Math.max(0, st.skill - game.tempSkillPenalty);
     const fightMod = n => n > 0 ? `−${n} this fight` : `+${-n} this fight`;
     return `<div class="combat">
-        <h3>⚔️ Combat${list.length > 1 ? ` · enemy ${game.currentCombatIndex + 1} of ${list.length}` : ''}</h3>
+        <h3>⚔️ Combat${group ? ` · ${list.length} enemies at once` : list.length > 1 ? ` · enemy ${game.currentCombatIndex + 1} of ${list.length}` : ''}</h3>
         <div class="versus">
             <div class="fighter"><strong>You</strong><div class="skillline">SKILL ${skillNow}${game.tempSkillPenalty ? ` (${fightMod(game.tempSkillPenalty)})` : ''}</div>${meter('STAMINA', st.stamina, st.initialStamina, true)}</div>
-            <div class="fighter"><strong>${esc(c.enemyName)}</strong><div class="skillline">SKILL ${c.enemySkill}</div>${meter('STAMINA', game.enemyCurrentStamina, c.enemyStamina, true)}</div>
+            ${group ? '' : `<div class="fighter"><strong>${esc(c.enemyName)}</strong><div class="skillline">SKILL ${c.enemySkill}</div>${meter('STAMINA', game.enemyCurrentStamina, c.enemyStamina, true)}</div>`}
         </div>
+        ${group ? `<div class="foes" role="group" aria-label="Choose whom to attack">${list.map((e, j) => {
+            const hp = j === game.currentCombatIndex ? game.enemyCurrentStamina : game.groupStamina[j];
+            const alive = hp > 0, target = j === game.currentCombatIndex;
+            return `<div class="foe${target ? ' target' : ''}${alive ? '' : ' down'}"><div><strong>${esc(e.enemyName)}</strong> <span class="skillline">SKILL ${e.enemySkill}</span>${meter('STAMINA', Math.max(0, hp), e.enemyStamina, true)}</div>
+                ${alive ? `<button class="btn btn-small" onclick="ui.target(${j})" aria-pressed="${target}" ${busy ? 'disabled' : ''}>${target ? 'Attacking' : 'Attack this one'}</button>` : '<span class="skillline">defeated</span>'}</div>`;
+        }).join('')}</div>` : ''}
         ${renderGear(c, busy)}
-        ${rulesList(c)}
+        ${group ? list.map(e => rulesList(e, true)).join('') : rulesList(c)}
         <div class="fightlog" role="log" aria-live="polite" tabindex="0" aria-label="Fight log">${game.combatLog.map(l => `<div>${esc(l)}</div>`).join('')}</div>
         ${renderLuckQuestion()}
         <div class="actions">

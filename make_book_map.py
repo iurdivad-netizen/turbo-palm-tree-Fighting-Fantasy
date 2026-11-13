@@ -64,6 +64,8 @@ def links_of(s):
             out.append((e["onDefeatSection"], "lose", f"Lose to {e['enemyName']}"))
         if e.get("fleeSection") is not None:
             out.append((e["fleeSection"], "flee", f"Flee from {e['enemyName']}"))
+        if e.get("onTimeoutSection") is not None:
+            out.append((e["onTimeoutSection"], "lose", f"Out of time against {e['enemyName']}"))
     return out
 
 

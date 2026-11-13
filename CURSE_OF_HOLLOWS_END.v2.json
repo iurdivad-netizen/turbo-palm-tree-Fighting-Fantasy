@@ -452,6 +452,9 @@
         "tags": [
           "undead"
         ],
+        "onWound": {
+          "maxStaminaLoss": 1
+        },
         "victoryText": "The creature collapses with a final, soundless scream, its mummified form crumbling to dust and ancient bones. As the dark magic dissipates, you can breathe easier.  to search the chamber for treasures and information"
       }
     },
@@ -1834,7 +1837,15 @@
         "enemySkill": 7,
         "enemyStamina": 8,
         "onVictorySection": 234,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "spell": {
+          "roll": "1d6",
+          "on": [
+            5,
+            6
+          ],
+          "text": "Command"
+        }
       }
     },
     {
@@ -1997,7 +2008,13 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 132,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "onHurt": {
+          "luckTest": true,
+          "enemyLuck": 7,
+          "attackPenalty": 2,
+          "text": "it shifts forms rapidly"
+        }
       }
     },
     {
@@ -4945,7 +4962,13 @@
         "enemySkill": 7,
         "enemyStamina": 6,
         "onVictorySection": 45,
-        "onDefeatSection": 999
+        "onDefeatSection": 999,
+        "onHurt": {
+          "luckTest": true,
+          "enemyLuck": 7,
+          "attackPenalty": 2,
+          "text": "it shifts forms rapidly"
+        }
       },
       "effects": {
         "addItems": [

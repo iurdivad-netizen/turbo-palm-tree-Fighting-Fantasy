@@ -28,7 +28,7 @@ def targets(section):
             yield o["targetSection"]
     combat = section.get("combat") or []
     for c in combat if isinstance(combat, list) else [combat]:
-        for k in ("onVictorySection", "onDefeatSection", "fleeSection"):
+        for k in ("onVictorySection", "onDefeatSection", "fleeSection", "onTimeoutSection"):
             if c.get(k) is not None:
                 yield c[k]
 
@@ -73,7 +73,7 @@ def targets_v2(section):
                 yield t
     cc = section.get("combat") or []
     for c in cc if isinstance(cc, list) else [cc]:
-        for k in ("onVictorySection", "onDefeatSection", "fleeSection"):
+        for k in ("onVictorySection", "onDefeatSection", "fleeSection", "onTimeoutSection"):
             if c.get(k) is not None:
                 yield c[k]
 

@@ -119,6 +119,25 @@ An array fights several enemies one after another. Optional: `canFlee` with `fle
 `onWound`, `onStart`, `onVictoryEffects`, `reviveOn`, `effectiveWeapons`, `normalWeaponDamage`, `weakTo` – see the `enemy`
 definition in the schema; the Curse book (`CURSE_OF_HOLLOWS_END.v2.json`) uses all of them.
 
+### Monster rules
+
+Every field is optional and goes on the enemy (they are all listed in the `enemy` part of `book.schema.json`; the reader tells the player about each before the fight):
+
+| Field | Rule |
+| --- | --- |
+| `damage: 3` | each of its wounds takes 3 STAMINA instead of 2 (armour takes off its bonus, never below 1); `ignoresArmor: true` skips the armour |
+| `attackDice: 3` | it rolls three dice for its attack |
+| `strikesFirst: true` | in round 1 you can only parry: a round you win does nothing |
+| `tiesWound: true` | it wins a tied round |
+| `regenerates: 1` | it recovers that much STAMINA after every round, up to its start |
+| `onWound: {...}` | your wounds do more: `skillLoss` (with `luckTest` or `permanent`), `maxStaminaLoss` (the maximum falls for good), `staminaLoss` (poison: extra STAMINA), `luckLoss` |
+| `spell: {"roll": "1d6", "on": [5, 6]}` | once per fight, before the first attack, it rolls; on those totals you lose your attack that round |
+| `onHurt: {"luckTest": true, "enemyLuck": 7, "attackPenalty": 2}` | wounded but alive, it tests its luck (2d6 at or below `enemyLuck`); if lucky you lose 2 from your next attack only (a shapechanger) |
+| `maxRounds: 3, onTimeoutSection: 40` | after that many rounds with nobody fallen the fight ends and the book moves on (collapsing rooms, chases) |
+| `together: true` (on every enemy of the group) | they fight at the same time: you choose whom to attack, the others each roll against your attack every round and wound you if they win; a fallen target passes to the next |
+
+Already there before: `effectiveWeapons` and `normalWeaponDamage` (immunities), `weakTo` (a weakness), `reviveOn` (rises again), `onStart` (a wail or a penalty at the start), `tags` (what it is, for charms).
+
 ## 6. Hand-written fixes: the sidecar
 
 Do not edit a generated v2 file by hand if you will convert again. Put your corrections in `<book>.overrides.json` and re-run

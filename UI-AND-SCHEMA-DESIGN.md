@@ -221,6 +221,12 @@ The app's core already follows the Fighting Fantasy books (2d6 + SKILL combat, 2
 
 Not done from the Fighting Fantasy list: special attacks and monster rules beyond what the engine already has, and stat-test options ("Test your Skill") as a separate roll kind.
 
+## Monster rules
+
+The special attacks and monster rules of the Fighting Fantasy books that the engine lacked were added as optional enemy fields (see `AUTHORING.md`, Monster rules): `damage`, `ignoresArmor`, `attackDice`, `strikesFirst`, `tiesWound`, `regenerates`, `spell`, `onHurt`, more `onWound` effects (`maxStaminaLoss`, `staminaLoss`, `luckLoss`), `maxRounds` with `onTimeoutSection`, and `together` for groups that fight at the same time (you choose the target; the others keep rolling against your attack). The engine's round was reorganised around a shared "wound the player" step; dice are asked for in the same order as before whenever none of the new fields is used, which the unchanged simulation fingerprint of the books without them confirms.
+
+In the Curse book the abilities its own text states and the engine could not yet play were filled in: the Cursed Wight's Life Drain (section 5: each wound lowers your maximum STAMINA by 1), the Cult Fanatic's Dark Magic (67: once per fight, a 5 or 6 on a die and you lose your attack that round) and the Doppelganger's Shapechanger (78, 194: wounded, it tests its luck and on success you lose 2 from your next attack). The group fights (three Zombies and a Ghoul at 289, the zombies at 180) were left sequential, since the book does not say they attack together; marking them `together: true` would be a one-line change per enemy and much deadlier.
+
 ## Book issues: status
 
 Fixed in the Curse book (source `CURSE_OF_HOLLOWS_END.json`, v2 regenerated, new fingerprint in `tests/simulation-baseline.json`):

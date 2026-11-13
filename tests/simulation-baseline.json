@@ -5,25 +5,25 @@
   "seed": 20240601,
   "outcomes": {
     "random": {
-      "incomplete-victory": 285,
-      "instant-death": 204,
-      "defeat": 484,
-      "victory": 22,
-      "death": 5
+      "incomplete-victory": 316,
+      "defeat": 496,
+      "instant-death": 151,
+      "victory": 31,
+      "death": 6
     },
     "explorer": {
-      "defeat": 616,
-      "instant-death": 249,
-      "incomplete-victory": 89,
-      "victory": 34,
-      "death": 12
+      "defeat": 629,
+      "instant-death": 241,
+      "victory": 37,
+      "incomplete-victory": 76,
+      "death": 17
     },
     "guided": {
-      "victory": 837,
+      "victory": 828,
       "instant-death": 58,
-      "defeat": 103,
-      "incomplete-victory": 2
+      "defeat": 113,
+      "incomplete-victory": 1
     }
   },
-  "sha256": "331f62f72eccf0ca2f0968f33f1205769dbab008756e8f9685bff0da36b99465"
+  "sha256": "842589093c83a90b1d7543bddada03a4e5865ab5476b01eb7e1fc0802bc9f528"
 }
