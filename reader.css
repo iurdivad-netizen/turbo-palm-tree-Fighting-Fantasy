@@ -264,3 +264,11 @@ details > summary { cursor: pointer; font-weight: 600; min-height: 36px; }
 .gear-pick { display: grid; gap: 0.2rem; font-weight: 600; font-size: 0.85rem; }
 .gear-pick select { font: inherit; padding: 0.45rem; min-height: 44px; border-radius: 6px; max-width: 100%; }
 .gear-warn { margin: 0; font-weight: 700; border-left: 4px solid var(--bad); padding-left: 0.6rem; }
+
+/* maps warn, books open */
+.opt.warned, .opt-inline.warned { border-color: var(--bad); }
+.warn-mark { font-weight: 700; }
+.item .read { margin-top: 0.35rem; }
+.item .read summary { cursor: pointer; font-weight: 600; font-size: 0.85rem; min-height: 24px; }
+.item .readtext { font-family: var(--serif); font-size: 0.95rem; line-height: 1.5; padding: 0.4rem 0 0.2rem; }
+.item .readtext p { margin: 0 0 0.6rem; }

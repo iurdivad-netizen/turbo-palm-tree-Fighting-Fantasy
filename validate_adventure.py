@@ -141,7 +141,7 @@ def validate_v2(book, warnings):
             errors.append(f"item '{iid}' is a {d['type']} but has neither 'restore' nor 'onUse': it could never be used")
         if d["type"] == "weapon" and not d.get("bonus") and not d.get("properties"):
             warnings.append(f"weapon '{iid}' has no bonus or properties: it is a plain weapon")
-    keepsakes = [i for i, d in catalogue.items() if d["type"] in ("other", "treasure", "key") and i not in needed and not d.get("onUse") and not d.get("saveBonus") and not d.get("stealthBonus")]
+    keepsakes = [i for i, d in catalogue.items() if d["type"] in ("other", "treasure", "key") and i not in needed and not d.get("onUse") and not d.get("saveBonus") and not d.get("stealthBonus") and not d.get("reveals") and not d.get("text") and not d.get("countsAs") and d["type"] != "treasure"]
     if keepsakes:
         warnings.append(f"{len(keepsakes)} item(s) have no effect and no option asks for them (shown as keepsakes): {', '.join(sorted(keepsakes))}")
     unreferenced = 0

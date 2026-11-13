@@ -146,6 +146,8 @@
         out.sections = book.sections.map(x => {
             const sec = { id: x.id };
             if (x.title) sec.title = x.title;
+            if (x.area) sec.area = x.area;
+            if (x.tags) sec.tags = x.tags;
             sec.text = String(x.text || '').replace(/\r\n/g, '\n');
             const seen = {};
             const options = (x.choices || []).map(c => {
@@ -163,6 +165,7 @@
                 if (t.gatesChoices) r.gatesOptions = t.gatesChoices;
                 if (t.conditions) r.conditions = t.conditions;
                 if (t.stealth) r.stealth = true;
+                if (t.tags) r.tags = t.tags;
                 [['success', 'successSection', 'successText', 'successEffects'], ['failure', 'failureSection', 'failureText', 'failureEffects']].forEach(([side, sk, tk, ek]) => {
                     const o = {};
                     if (t[tk]) o.text = t[tk];
@@ -313,7 +316,8 @@
             return made;
         }
 
-        hasItem(id) { return this.inventory.some(i => i.id === id); }
+        /** Do you have it? An item can also count as others ("countsAs": a skeleton key opens a brass lock). */
+        hasItem(id) { return this.inventory.some(i => i.id === id || (isArr(i.countsAs) && i.countsAs.includes(id))); }
 
         addItem(ref) {
             const copies = Math.max(1, (ref && ref.qty) || 1);
@@ -334,7 +338,8 @@
         addGold(amount) { if (this.stats) this.stats.gold = Math.max(0, (this.stats.gold || 0) + amount); }
 
         removeItem(id) {
-            const i = this.inventory.findIndex(x => x.id === id);
+            let i = this.inventory.findIndex(x => x.id === id);
+            if (i === -1) i = this.inventory.findIndex(x => isArr(x.countsAs) && x.countsAs.includes(id));
             if (i !== -1) this.inventory.splice(i, 1);
         }
 
@@ -417,7 +422,7 @@
 
         /**
          * The pack for the screen: identical items grouped, each with a category and what can be done with it.
-         * category: weapon | armor | consumable | charm (helps saving throws) | story (the book asks for it somewhere) | keepsake (no effect).
+         * category: weapon | armor | consumable | charm (helps saving throws or sneaking) | map | story | document (has a text to read) | valuable | story (the book asks for it somewhere) | keepsake (no effect).
          */
         inventoryView() {
             const groups = new Map();
@@ -430,8 +435,8 @@
             return [...groups.values()].map(g => {
                 const it = g.item;
                 const usable = !!(it.restore || it.onUse);
-                const category = it.type === 'weapon' ? 'weapon' : it.type === 'armor' ? 'armor' : usable ? 'consumable' : (it.saveBonus || it.stealthBonus) ? 'charm'
-                    : (this.itemsNeeded.has(it.id) || it.type === 'key') ? 'story' : 'keepsake';
+                const category = it.type === 'weapon' ? 'weapon' : it.type === 'armor' ? 'armor' : usable ? 'consumable' : (it.saveBonus || it.stealthBonus) ? 'charm' : it.reveals ? 'map'
+                    : (this.itemsNeeded.has(it.id) || it.type === 'key' || isArr(it.countsAs)) ? 'story' : it.text ? 'document' : it.type === 'treasure' ? 'valuable' : 'keepsake';
                 return Object.assign(g, {
                     category, usable, needed: this.itemsNeeded.has(it.id),
                     equipped: g.uids.includes(it.type === 'weapon' ? (weapon && weapon.uid) : (armor && armor.uid)),   // chosen by the player
@@ -585,9 +590,23 @@
             for (const o of s.options) {
                 if (o.once && this.usedOnce.has(s.id)) continue;
                 if (hasNegativeCondition(o.conditions) && !this.meets(stripPositive(o.conditions))) continue;
-                out.push({ option: o, enabled: this.meets(o.conditions) });
+                out.push({ option: o, enabled: this.meets(o.conditions), revealed: this.revealedBy(o.target) });
             }
             return out;
+        }
+
+        /**
+         * Does a map you carry show what waits in that section? A map has `reveals: {tag, areas?}`; the section has `tags` and an `area`.
+         * Returns { tag, source } (source = the map's name) or null.
+         */
+        revealedBy(sectionId) {
+            const s = this.sections.get(sectionId);
+            if (!s || !isArr(s.tags)) return null;
+            for (const it of this.inventory) {
+                const r = it.reveals;
+                if (r && s.tags.includes(r.tag) && (!isArr(r.areas) || r.areas.includes(s.area))) return { tag: r.tag, source: it.name };
+            }
+            return null;
         }
 
         chooseOption(optionId) {
@@ -645,12 +664,12 @@
          * The bonus a saving throw gets. Charms are carried, not worn: the best one that applies counts (they do not add up).
          * A charm with `versus` (e.g. "undead") only counts in a fight against an enemy with that tag. A scroll adds its bonus for one fight.
          */
-        saveBonus(enemy, stealth) {
+        saveBonus(enemy, stealth, tags) {
             let best = 0, source = null;
             for (const it of this.inventory) {
                 const sb = it.saveBonus;
                 if (!sb || !sb.amount) continue;
-                if (sb.versus && !(enemy && [].concat(enemy.tags || []).includes(sb.versus))) continue;
+                if (sb.versus && !((enemy && [].concat(enemy.tags || []).includes(sb.versus)) || [].concat(tags || []).includes(sb.versus))) continue;
                 if (sb.amount > best) { best = sb.amount; source = it.name; }
             }
             if (this.inCombat && this.tempSave) { best += this.tempSave; source = source ? `${source} and your scroll` : 'your scroll'; }
@@ -662,11 +681,11 @@
             return { amount: best, source };
         }
 
-        *_testLuck(enemy, stealth) {
+        *_testLuck(enemy, stealth, tags) {
             if (!this.stats) return { success: false, newLuck: 0, roll: 0, bonus: 0 };
             const dice = yield { dice: '2d6', reason: 'luck', label: 'Test your Luck' };
             const roll = dice[0] + dice[1];
-            const b = this.saveBonus(enemy, stealth);
+            const b = this.saveBonus(enemy, stealth, tags);
             const success = roll <= this.stats.luck + b.amount;
             this.stats.luck = Math.max(0, this.stats.luck - 1);
             return { success, newLuck: this.stats.luck, roll, dice, bonus: b.amount, source: b.source };
@@ -687,7 +706,7 @@
             if (r.kind === 'luck') {
                 let result;
                 if (r.stealth && this.invisible > 0) result = { success: true, roll: 0, bonus: 0, unseen: true };      // nobody sees you: nothing to roll
-                else result = yield* this._testLuck(this.inCombat ? this.currentEnemy() : null, !!r.stealth);
+                else result = yield* this._testLuck(this.inCombat ? this.currentEnemy() : null, !!r.stealth, r.tags);
                 const side = result.success ? r.success : r.failure;
                 if (result.unseen) { this._say(`👻 You are invisible: they do not notice you. ${side.text || ''}${describeEffects(side.effects)}`); this.applyEffects(side.effects); if (side.target) this.goTo(side.target); return; }
                 this._say(`${result.success ? 'Lucky' : 'Unlucky'}! (rolled ${result.roll}${result.bonus ? `, +${result.bonus} from ${result.source}` : ''}) ${side.text || ''}${describeEffects(side.effects)}`);

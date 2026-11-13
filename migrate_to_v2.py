@@ -295,6 +295,9 @@ def convert_section(x, book_info):
     section = {"id": sid}
     if x.get("title"):
         section["title"] = x["title"]
+    for k in ("area", "tags"):
+        if x.get(k):
+            section[k] = x[k]
     section["text"] = text
     if opts:
         section["options"] = [{k: v for k, v in o.items() if k != "_generic"} for o in opts]
@@ -305,7 +308,7 @@ def convert_section(x, book_info):
         r = {"kind": "luck"}
         if t.get("label"):
             r["label"] = t["label"]
-        for src_k, dst_k in (("once", "once"), ("gatesChoices", "gatesOptions"), ("conditions", "conditions"), ("stealth", "stealth")):
+        for src_k, dst_k in (("once", "once"), ("gatesChoices", "gatesOptions"), ("conditions", "conditions"), ("stealth", "stealth"), ("tags", "tags")):
             if t.get(src_k):
                 r[dst_k] = t[src_k]
         for side, sec_k, txt_k, eff_k in (("success", "successSection", "successText", "successEffects"), ("failure", "failureSection", "failureText", "failureEffects")):

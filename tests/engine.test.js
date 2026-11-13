@@ -901,3 +901,71 @@ test('real book: the sneaking tests (6, 145, 146) are stealth tests; the Cloak o
     assert.equal(g.currentSection, 155);
     assert.deepEqual(g.inventoryView().filter(v => v.item.id === 'cloak-of-shadows').map(v => v.category), ['charm']);
 });
+
+// ---- maps, documents, keys and rings ---------------------------------------------------------------------------------------------
+const lore = Object.assign({}, sneak, {
+    map: { name: 'Map', type: 'other', reveals: { tag: 'trap', areas: ['crypt'] } },
+    diary: { name: 'Diary', type: 'other', text: 'Day one.\n\nDay two.' },
+    skeleton: { name: 'Skeleton Key', type: 'key', countsAs: ['brass-key'] },
+    ring: { name: 'Ring', type: 'other', saveBonus: { amount: 2, versus: 'binding' } },
+    gem: { name: 'Gem', type: 'treasure' }
+});
+
+test('a map marks the options that lead to a trap in the area it covers, and only those', () => {
+    const secs = [sec(1, { options: [opt('a', 2), opt('b', 3), opt('c', 4)] }), sec(2, { tags: ['trap'], area: 'crypt' }), sec(3, { tags: ['trap'], area: 'tower' }), sec(4)];
+    const without = make(secs, {}, { items: lore });
+    assert.deepEqual(without.optionStates().map(s => s.revealed), [null, null, null]);
+    const g = make(secs, {}, { items: lore, startingItems: ['map'] });
+    assert.deepEqual(g.optionStates().map(s => s.revealed && s.revealed.source), ['Map', null, null]);
+    assert.equal(g.revealedBy(2).tag, 'trap');
+});
+
+test('a skeleton key counts as the keys it lists, for conditions and for removal', () => {
+    const g = make([sec(1, { options: [opt('a', 2, { conditions: { requiresItem: 'brass-key' } }), opt('b', 2, { conditions: { requiresItem: 'iron-key' } })] }), sec(2)], {}, { items: lore, startingItems: ['skeleton'] });
+    assert.deepEqual(g.optionStates().map(s => s.enabled), [true, false]);
+    assert.equal(g.hasItem('brass-key'), true);
+    g.removeItem('brass-key');
+    assert.equal(g.inventory.some(i => i.id === 'skeleton'), false, 'the key that stood in for it is used up');
+    assert.equal(g.hasItem('brass-key'), false, 'used up');
+});
+
+test('a ring that helps one kind of test (the binding ritual) adds to that roll only', () => {
+    const ritual = [sec(1, { roll: { kind: 'luck', tags: ['binding'], success: { target: 2 }, failure: { target: 3 } } }), sec(2), sec(3)];
+    const worn = make(ritual, { rng: dice(5, 5) }, { items: lore, startingItems: ['ring'] });
+    worn.stats.luck = 8; worn.doRoll();                  // 10 against 8 + 2
+    assert.equal(worn.currentSection, 2);
+    const plain = make([sec(1, { roll: { kind: 'luck', success: { target: 2 }, failure: { target: 3 } } }), sec(2), sec(3)], { rng: dice(5, 5) }, { items: lore, startingItems: ['ring'] });
+    plain.stats.luck = 8; plain.doRoll();
+    assert.equal(plain.currentSection, 3, 'an ordinary test does not get the ritual bonus');
+});
+
+test('the pack sorts maps, books and valuables, and a book has its text', () => {
+    const g = make([sec(1)], {}, { items: lore, startingItems: ['map', 'diary', 'gem', 'skeleton'] });
+    assert.deepEqual(Object.fromEntries(g.inventoryView().map(v => [v.item.id, v.category])), { map: 'map', diary: 'document', gem: 'valuable', skeleton: 'story' });
+    assert.equal(g.inventory.find(i => i.id === 'diary').text, 'Day one.\n\nDay two.');
+});
+
+test('real book: the maps warn of the traps they cover; the prayer book blesses the next fight; the wedding ring helps the ritual; the old key opens brass and iron locks', () => {
+    const b = real();
+    const trap = id => b.sections.find(s => s.id === id);
+    for (const id of [34, 87, 138, 216, 107, 167, 224]) assert.deepEqual([trap(id).area, trap(id).tags], ['catacombs', ['trap']], `section ${id}`);
+    for (const id of [142, 228, 256, 295, 304]) assert.deepEqual([trap(id).area, trap(id).tags], ['manor', ['trap']], `section ${id}`);
+    const g = play(dice());
+    assert.equal(g.revealedBy(138), null);
+    g.addItem('catacomb-map');
+    assert.equal(g.revealedBy(138).source, 'Map of the Catacombs');
+    assert.equal(g.revealedBy(142), null, 'the catacomb map does not cover the manor');
+    g.addItem('manor-map');
+    assert.equal(g.revealedBy(142).source, 'Map of the Manor');
+    g.goTo(88);
+    assert.deepEqual([g.carriedSkillPenalty, g.carriedSave], [-1, 1]);
+    assert.equal(b.sections.find(s => s.id === 395).roll.tags[0], 'binding');
+    const r = play(dice(5, 5)); r.stats.luck = 8; r.addItem('eliza-ring'); r.addItem('silver-key'); r.addItem('true-name');
+    r.goTo(395); r.doRoll();
+    assert.equal(r.currentSection, 400, 'LUCK 8 + 2 beats a 10');
+    const k = play(dice()); k.addItem('old-key');
+    assert.equal(k.hasItem('brass-key') && k.hasItem('iron-key'), true);
+    assert.equal(k.hasItem('silver-key'), false);
+    k.goTo(303);
+    assert.ok(k.inventory.some(i => i.id === 'hollow-letter'));
+});

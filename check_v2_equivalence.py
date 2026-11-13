@@ -83,7 +83,7 @@ def main():
         t, d, r = a.get("testLuck"), a.get("diceRoll"), b.get("roll")
         if t:
             ok = (r and r["kind"] == "luck" and r.get("once") == t.get("once") and r.get("gatesOptions") == t.get("gatesChoices")
-                  and r.get("conditions") == t.get("conditions") and r.get("stealth") == t.get("stealth")
+                  and r.get("conditions") == t.get("conditions") and r.get("stealth") == t.get("stealth") and r.get("tags") == t.get("tags")
                   and r["success"].get("target") == t.get("successSection") and r["failure"].get("target") == t.get("failureSection")
                   and fx(r["success"].get("effects") or {}) == fx(t.get("successEffects") or {})
                   and fx(r["failure"].get("effects") or {}) == fx(t.get("failureEffects") or {}))
@@ -106,6 +106,8 @@ def main():
                 bad.append((i, "dice roll"))
         if not t and not d and r:
             bad.append((i, "roll that v1 did not have"))
+        if (a.get("area"), a.get("tags")) != (b.get("area"), b.get("tags")):
+            bad.append((i, "area or tags"))
         if bool(a.get("isEnding")) != bool(b.get("ending")):
             led_somewhere = bool(a.get("choices") or t or d or a.get("combat"))
             if not (a.get("isEnding") and led_somewhere):

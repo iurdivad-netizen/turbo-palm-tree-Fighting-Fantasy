@@ -1,5 +1,5 @@
 {
-  "_comment": "Hand-written decisions for migrate_to_v2.py, specific to this book. items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). labels: {section: {option id: button label}}; text: {section: [{replace, with}]} applied to the converted text; notes: {section: a problem in the book that the migration does not change}. See AUTHORING.md.",
+  "_comment": "Hand-written decisions for migrate_to_v2.py, specific to this book. items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). labels: {section: {option id: button label}}; text: {section: [{replace, with}]} applied to the converted text; notes: {section: a problem in the book that the migration does not change}. See AUTHORING.md.",
   "labels": {
     "24": {
       "to-127": "Retreat to the cemetery",
@@ -237,7 +237,8 @@
       "name": "Alchemist's Journal",
       "type": "other",
       "unique": true,
-      "description": "Notes on the binding of the Widow."
+      "description": "Notes on the binding of the Widow.",
+      "text": "A torn, bloodstained page:\n\n\"The Widow is bound by silver chains and dark magic, but the binding is imperfect. It was never meant to last forever - only long enough for the guilty generation to die in peace.\n\nTo properly seal her spirit for eternity requires three components: silver forged specifically for binding (such as the Silver Key), her true name spoken with authority, and the ritual performed at the moment of greatest supernatural power (midnight on the anniversary of her binding).\n\nWithout all three components, the binding will be temporary at best. The Widow will eventually break free again, perhaps even more powerful than before.\""
     },
     "rope": {
       "name": "Rope",
@@ -256,8 +257,12 @@
     },
     "old-key": {
       "name": "Old Key",
-      "type": "other",
-      "description": "\"Might open doors deeper in the manor.\""
+      "type": "key",
+      "countsAs": [
+        "brass-key",
+        "iron-key"
+      ],
+      "description": "\"Might open doors deeper in the manor\": it opens brass and iron locks (not the silver one)."
     },
     "holy-symbol": {
       "name": "Holy Symbol",
@@ -306,13 +311,17 @@
     },
     "golden-ring": {
       "name": "Golden Ring",
-      "type": "other",
-      "description": "Pure gold, worth a considerable sum."
+      "type": "treasure",
+      "description": "Pure gold, worth a considerable sum. Its 40 gold was added to your purse when you took it."
     },
     "eliza-ring": {
       "name": "Eliza's Wedding Ring",
       "type": "other",
-      "description": "The ring Thomas gave her."
+      "saveBonus": {
+        "amount": 2,
+        "versus": "binding"
+      },
+      "description": "The ring Thomas gave her. +2 to the binding ritual (and +1 LUCK for finding it)."
     },
     "cloak-of-shadows": {
       "name": "Cloak of Shadows",
@@ -331,7 +340,8 @@
     "scroll": {
       "name": "Ancient Scroll",
       "type": "other",
-      "description": "Written in elegant, faded script."
+      "description": "Wax-sealed, in faded script. It names the Widow.",
+      "text": "\"Let it be known to any who seek to bind the vengeful spirit: The Widow's true name, hidden from all but those who dare to search the darkest places, is ELIZA HOLLOW. Speak this name with authority and proper binding, and her power may be contained. But beware - to speak her name is to draw her attention. Be certain you are prepared to face her wrath before you invoke it.\""
     },
     "scroll-of-protection": {
       "name": "Scroll of Protection",
@@ -344,37 +354,65 @@
     "diary": {
       "name": "Skeleton's Diary",
       "type": "other",
-      "description": "Clutched in bony hands."
+      "description": "A captive's last days.",
+      "text": "\"Day 12 of captivity: The Widow's wail is stronger tonight. It pierces the walls, pierces my ears, pierces my very mind. I cannot sleep.\n\nDay 13: Sleep deprivation is taking its toll. I hear things that aren't there. See shadows that move when I'm not looking. The food is almost gone.\n\nDay 14: They're at the door. I can hear them scratching, moaning, calling my name in voices of the dead. I've barricaded myself in, but I know it won't hold forever. If anyone finds this - tell my family I love them. Tell them I -\"\n\nThe entry ends there, unfinished. The diary tells you nothing useful, only how deadly the curse is."
     },
     "prayer-book": {
       "name": "Prayer Book",
       "type": "other",
-      "description": "From a kneeling skeleton."
+      "description": "Old but well preserved. Reading it blessed your next fight (+1 SKILL, +1 to saving throws).",
+      "text": "\"Grant strength to those who face darkness. Grant courage to those who stand against evil. Grant protection to those who defend the innocent.\"\n\nOne passage has been circled again and again. Reading the prayers fills you with peace and spiritual strength."
     },
     "old-tome": {
       "name": "Old Tome",
       "type": "other",
-      "description": "The one readable book in the library."
+      "description": "A history of the Hollow family.",
+      "text": "The one book in the library that is still readable: a history of the Hollow family that confirms everything you have learned about the curse.\n\nIt gives detailed accounts of the wedding massacre, of the binding ritual, and of when the binding would fail."
     },
     "torn-map": {
       "name": "Torn Map",
       "type": "other",
-      "description": "Shows a secret entrance to the manor."
+      "reveals": {
+        "tag": "trap",
+        "areas": [
+          "manor"
+        ]
+      },
+      "description": "A secret entrance that bypasses the main defences. It shows where the manor is trapped: the ways that lead to a trap are marked ⚠."
     },
     "catacomb-map": {
       "name": "Map of the Catacombs",
       "type": "other",
-      "description": "Etched into the wall by a long-dead explorer."
+      "reveals": {
+        "tag": "trap",
+        "areas": [
+          "catacombs"
+        ]
+      },
+      "description": "Etched into the wall by a long-dead explorer. It shows where the catacombs are trapped: the ways that lead to a trap are marked ⚠."
     },
     "tomb-map": {
       "name": "Map of the Hollow Tomb",
       "type": "other",
-      "description": "Shows where the Hollow family tomb lies."
+      "description": "Shows where the Hollow family tomb lies in the cemetery.",
+      "text": "A map showing the location of the Hollow family tomb in the cemetery, found with the letter that says the Amulet of the Grave rests there."
     },
     "manor-map": {
       "name": "Map of the Manor",
       "type": "other",
-      "description": "Secret passages and hidden rooms."
+      "reveals": {
+        "tag": "trap",
+        "areas": [
+          "manor"
+        ]
+      },
+      "description": "Secret passages, hidden rooms and safe routes. It shows where the manor is trapped: the ways that lead to a trap are marked ⚠."
+    },
+    "hollow-letter": {
+      "name": "Letter from the Hollow Study",
+      "type": "other",
+      "description": "A clue about the Amulet of the Grave.",
+      "text": "A letter written in a shaking hand:\n\n\"To whoever finds this: The Amulet of the Grave rests in our family tomb. It can absorb dark energy and protect against spectral attacks. You'll need it to survive a confrontation with the Widow.\""
     }
   }
 }

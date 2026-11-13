@@ -284,8 +284,9 @@ function optionButton(state, inline) {
     const waiting = !!game.pending;                  // dice are being asked for: nothing else can be done yet
     const hint = locked ? `<span class="lock-hint"> (${esc(Engine.describeConditions(o.conditions || {}))})</span>` : '';
     const seen = prefs.markSeen && game.visited.has(o.target);     // already been there: shaded, ticked and said aloud
-    const mark = seen ? '<span class="seen-mark" aria-hidden="true">✓ </span><span class="sr-only">(already visited) </span>' : '';
-    return `<button class="${inline ? 'opt-inline' : 'opt'}${seen ? ' seen' : ''}" data-opt="${esc(o.id)}" ${locked || waiting ? 'disabled' : ''}>${mark}${esc(o.label)}${hint}</button>`;
+    const warn = state.revealed ? `<span class="warn-mark" aria-hidden="true">⚠ </span><span class="sr-only">(${esc(state.revealed.tag)}: ${esc(state.revealed.source)} shows it) </span>` : '';
+    const mark = warn + (seen ? '<span class="seen-mark" aria-hidden="true">✓ </span><span class="sr-only">(already visited) </span>' : '');
+    return `<button class="${inline ? 'opt-inline' : 'opt'}${seen ? ' seen' : ''}${state.revealed ? ' warned' : ''}" data-opt="${esc(o.id)}" ${locked || waiting ? 'disabled' : ''}>${mark}${esc(o.label)}${hint}</button>`;
 }
 
 function rollWidget(section) {
@@ -293,7 +294,7 @@ function rollWidget(section) {
     const r = section.roll;
     const label = r.label || (r.kind === 'luck' ? 'Test your Luck' : 'Roll one die');
     const unseen = r.stealth && game.invisible > 0;                      // invisible: the sneaking test needs no roll
-    const sb = r.stealth ? game.saveBonus(null, true) : { amount: 0 };
+    const sb = r.kind === 'luck' ? game.saveBonus(null, !!r.stealth, r.tags) : { amount: 0 };
     const go = unseen ? '👻 Slip by unseen' : r.kind === 'luck' ? '🍀 Test your Luck' : '🎲 Roll the die';
     const note = unseen ? `<span class="muted">You are invisible: no roll needed.</span>` : sb.amount ? `<span class="muted">+${sb.amount} from ${esc(sb.source)}</span>` : '';
     return `<div class="roll-box"><strong>${esc(label)}</strong>${note}<button class="btn btn-primary" onclick="ui.roll()">${go}</button></div>`;
@@ -439,12 +440,15 @@ const CATEGORIES = [
     ['armor', 'Armor', 'One piece is worn. Left on automatic, the one that protects most is worn.'],
     ['consumable', 'Potions and food', 'Use them when you need them: in a fight too.'],
     ['charm', 'Charms', 'Carried, not worn: the best one that applies adds to your saving throws (Luck tests) or to sneaking.'],
+    ['map', 'Maps', 'A map marks the ways that lead to a trap it knows about with ⚠.'],
     ['story', 'Story items', 'The story asks for these at the right moment; nothing to do here.'],
+    ['document', 'Books and papers', 'Open them to read what they say.'],
+    ['valuable', 'Valuables', 'Worth something; their worth is already in your gold.'],
     ['keepsake', 'Keepsakes', 'Described in the book but with no effect on the rules.']
 ];
 function itemRow(g) {
     const item = g.item;
-    const tags = [item.restore && `✨ ${item.restore}`, item.bonus && `⚡ ${item.bonus}`, item.saveBonus && `🍀 +${item.saveBonus.amount} saves${item.saveBonus.versus ? ` vs ${item.saveBonus.versus}` : ''}`, item.stealthBonus && `🥷 +${item.stealthBonus} stealth`, item.properties && item.properties.length && `🏷️ ${item.properties.join(', ')}`].filter(Boolean).join(' · ');
+    const tags = [item.restore && `✨ ${item.restore}`, item.bonus && `⚡ ${item.bonus}`, item.saveBonus && `🍀 +${item.saveBonus.amount} saves${item.saveBonus.versus ? ` vs ${item.saveBonus.versus}` : ''}`, item.stealthBonus && `🥷 +${item.stealthBonus} stealth`, item.reveals && `🗺️ shows ${item.reveals.tag}s${item.reveals.areas ? ` in the ${item.reveals.areas.join(', ')}` : ''}`, item.countsAs && `🔑 opens ${item.countsAs.map(Engine.prettyItemId).join(' or ')} locks`, item.properties && item.properties.length && `🏷️ ${item.properties.join(', ')}`].filter(Boolean).join(' · ');
     const uid = Number(item.uid);
     let badge = '', act = '';
     if (g.category === 'weapon') {
@@ -460,7 +464,7 @@ function itemRow(g) {
     }
     return `<div class="item${badge ? ' active' : ''}">
         <span class="ico" aria-hidden="true">${ICONS[item.type] || ICONS.other}</span>
-        <div class="body"><strong>${esc(item.name)}${g.count > 1 ? ` ×${g.count}` : ''}</strong> ${badge}${item.description ? `<div class="tags">${esc(item.description)}</div>` : ''}${tags ? `<div class="tags">${esc(tags)}</div>` : ''}</div>
+        <div class="body"><strong>${esc(item.name)}${g.count > 1 ? ` ×${g.count}` : ''}</strong> ${badge}${item.description ? `<div class="tags">${esc(item.description)}</div>` : ''}${tags ? `<div class="tags">${esc(tags)}</div>` : ''}${item.text ? `<details class="read"><summary>Read</summary><div class="readtext">${paragraphs(item.text).map(p => `<p>${esc(p)}</p>`).join('')}</div></details>` : ''}</div>
         <div class="acts">${act}<button class="x" onclick="ui.drop(${uid})" aria-label="Drop ${esc(item.name)}" title="Drop one">✕</button></div></div>`;
 }
 function renderPack() {
