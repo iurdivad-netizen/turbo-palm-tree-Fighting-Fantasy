@@ -1,6 +1,6 @@
 # Migration review: CURSE_OF_HOLLOWS_END.json -> CURSE_OF_HOLLOWS_END.v2.json
 
-396 sections, 767 options, 276 labelled just 'Continue'.
+396 sections, 769 options, 276 labelled just 'Continue'.
 
 Items for a human to check. The conversion changed no game logic (every destination, condition, effect, roll and combat is identical to v1); the only flags dropped are 'ending' marks on sections that still lead somewhere (listed below). Run check_v2_equivalence.py to prove it.
 
@@ -16,18 +16,48 @@ Items for a human to check. The conversion changed no game logic (every destinat
 - 45 | to-55 | A Shadow drains your strength (−1 SKILL, −2 STAMINA for good)
 - 155 | to-236 | Go to the left passage (toward candlelight and ritual chambers)
 - 234 | to-116 | A Shadow drains your life force (−1 SKILL, −2 maximum STAMINA for good)
-- 388 | to-163 | A Shadow saps your vitality (−1 SKILL, −1 maximum STAMINA for good)
+- 355 | to-163 | A Shadow saps your vitality (−1 SKILL, −1 maximum STAMINA for good)
 - 395 | to-362 | Face the Widow without the full binding (the incomplete confrontation)
 
-## Options not referenced in the text (listed under it): combat continuations, rewritten choices: 19
+## Options not referenced in the text (listed under it): combat continuations, rewritten choices: 49
 
 - 29 | to-378 | Keep searching for the Silver Key
 - 35 | to-111-2 | Take the vial with you to drink later
 - 35 | to-111-3 | Leave the vial behind and continue
+- 45 | to-194 | Behind the bar: a ledger (and a fight)
+- 111 | to-183 | A sheer cliff edge
+- 111 | to-170 | Find Lydia, chained to a pillar
+- 111 | to-181 | The bridge snaps beneath you
+- 111 | to-186 | Sneak past praying cultists
 - 150 | to-155 | Edge around the trap and continue
 - 155 | to-97 | Visit the healing shrine
+- 155 | to-138 | A passage strung with tripwires
+- 155 | to-150 | A floor that looks solid (danger)
+- 155 | to-160 | Cross a crumbling bridge
+- 155 | to-169 | A Ghoul leaps from the shadows (fight)
+- 155 | to-197 | A Skeleton Warrior attacks (fight)
+- 155 | to-153 | Hide from approaching cultists
+- 155 | to-157 | A heavily locked door
+- 155 | to-187 | A trapped door
+- 180 | to-161 | Search a dead cultist: a note
+- 180 | to-193 | Search a fallen cultist: a medallion
+- 221 | to-167 | The floor gives way: a spike pit
+- 221 | to-199 | The floor gives way beneath you
 - 245 | to-155 | Edge around the collapsed floor and continue
 - 275 | to-301 | Continue
+- 298 | to-148 | A Ghoul's paralysing claws
+- 301 | to-137 | Climb a slippery shaft upward
+- 301 | to-147 | A locked chest
+- 301 | to-168 | Pick a lock to a staircase up
+- 335 | to-179 | A Phantom Servant appears (fight)
+- 355 | to-140 | A Shadow drains your essence (−1 SKILL for good)
+- 355 | to-163 | A Shadow saps your vitality (−1 SKILL, −1 maximum STAMINA for good)
+- 355 | to-185 | A Shadow in the dark (fight)
+- 355 | to-381 | A Phantom Servant blocks the final passage (fight)
+- 355 | to-383 | A Skeleton Warrior guards the way (fight)
+- 355 | to-385 | A Ghoul, the last guardian (fight)
+- 355 | to-387 | A Shadow attacks (fight)
+- 355 | to-389 | A Phantom Servant materializes (fight)
 - 377 | to-355 | Return to the stairs
 - 380 | to-355 | Return to the stairs
 - 381 | to-388 | Return to your preparations

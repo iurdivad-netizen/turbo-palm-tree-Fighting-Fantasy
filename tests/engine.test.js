@@ -982,3 +982,21 @@ test('real book: the maps warn of the traps they cover; the prayer book blesses 
     k.goTo(303);
     assert.ok(k.inventory.some(i => i.id === 'hollow-letter'));
 });
+
+// ---- the preparation hub (388) is a safe place -------------------------------------------------------------------------------
+test('real book: 388 offers only rest and a way out, and the sections moved out of it are still reachable', () => {
+    const b = real(); const S = id => b.sections.find(s => s.id === id);
+    const hub = S(388);
+    assert.deepEqual(hub.options.map(o => o.target).sort((a, c) => a - c), [155, 301, 355, 382, 384, 386, 390, 395]);
+    for (const o of hub.options.filter(o => [382, 384, 386, 390].includes(o.target))) {
+        const t = S(o.target);
+        assert.ok(!t.combat && !t.roll, `${o.target} is a rest, not an ambush`);
+        assert.deepEqual(t.options.map(x => x.target), [388], `${o.target} returns to the hub`);
+    }
+    const seen = new Set([1]); const todo = [1];
+    const out = s => { const t = (s.options || []).map(o => o.target); if (s.roll) JSON.stringify(s.roll).replace(/"target":(\d+)/g, (_, n) => t.push(+n)); [].concat(s.combat || []).forEach(e => ['onVictorySection', 'onDefeatSection', 'fleeSection'].forEach(k => e[k] != null && t.push(e[k]))); return t; };
+    while (todo.length) for (const t of out(S(todo.pop()))) if (!seen.has(t) && S(t)) { seen.add(t); todo.push(t); }
+    for (const id of [381, 383, 385, 387, 389, 140, 163, 169, 170, 194]) assert.ok(seen.has(id), `section ${id} can still be reached`);
+    assert.equal(b.sections.filter(s => s.id !== 0 && !seen.has(s.id)).length, 0, 'every section is reachable');
+    for (const id of [381, 383, 385, 387, 389]) assert.ok(S(355).options.some(o => o.target === id), `the guardian ${id} waits in the upper hall (355)`);
+});

@@ -1437,6 +1437,11 @@
           "id": "to-77",
           "label": "Walk to the edge of the village (dead end)",
           "target": 77
+        },
+        {
+          "id": "to-194",
+          "label": "Behind the bar: a ledger (and a fight)",
+          "target": 194
         }
       ]
     },
@@ -2679,6 +2684,26 @@
           "id": "to-301",
           "label": "Head toward the manor",
           "target": 301
+        },
+        {
+          "id": "to-183",
+          "label": "A sheer cliff edge",
+          "target": 183
+        },
+        {
+          "id": "to-170",
+          "label": "Find Lydia, chained to a pillar",
+          "target": 170
+        },
+        {
+          "id": "to-181",
+          "label": "The bridge snaps beneath you",
+          "target": 181
+        },
+        {
+          "id": "to-186",
+          "label": "Sneak past praying cultists",
+          "target": 186
         }
       ]
     },
@@ -3670,6 +3695,46 @@
           "id": "to-97",
           "label": "Visit the healing shrine",
           "target": 97
+        },
+        {
+          "id": "to-138",
+          "label": "A passage strung with tripwires",
+          "target": 138
+        },
+        {
+          "id": "to-150",
+          "label": "A floor that looks solid (danger)",
+          "target": 150
+        },
+        {
+          "id": "to-160",
+          "label": "Cross a crumbling bridge",
+          "target": 160
+        },
+        {
+          "id": "to-169",
+          "label": "A Ghoul leaps from the shadows (fight)",
+          "target": 169
+        },
+        {
+          "id": "to-197",
+          "label": "A Skeleton Warrior attacks (fight)",
+          "target": 197
+        },
+        {
+          "id": "to-153",
+          "label": "Hide from approaching cultists",
+          "target": 153
+        },
+        {
+          "id": "to-157",
+          "label": "A heavily locked door",
+          "target": 157
+        },
+        {
+          "id": "to-187",
+          "label": "A trapped door",
+          "target": 187
         }
       ],
       "roll": {
@@ -4271,6 +4336,16 @@
           "id": "to-346",
           "label": "Escape toward the cemetery path",
           "target": 346
+        },
+        {
+          "id": "to-161",
+          "label": "Search a dead cultist: a note",
+          "target": 161
+        },
+        {
+          "id": "to-193",
+          "label": "Search a fallen cultist: a medallion",
+          "target": 193
         }
       ],
       "combat": [
@@ -5251,6 +5326,16 @@
           "id": "to-301",
           "label": "Proceed toward the manor",
           "target": 301
+        },
+        {
+          "id": "to-167",
+          "label": "The floor gives way: a spike pit",
+          "target": 167
+        },
+        {
+          "id": "to-199",
+          "label": "The floor gives way beneath you",
+          "target": 199
         }
       ],
       "roll": {
@@ -7253,6 +7338,11 @@
           "id": "to-155",
           "label": "Enter the catacombs",
           "target": 155
+        },
+        {
+          "id": "to-148",
+          "label": "A Ghoul's paralysing claws",
+          "target": 148
         }
       ]
     },
@@ -7362,6 +7452,21 @@
           "id": "to-375",
           "label": "Visit the chapel",
           "target": 375
+        },
+        {
+          "id": "to-137",
+          "label": "Climb a slippery shaft upward",
+          "target": 137
+        },
+        {
+          "id": "to-147",
+          "label": "A locked chest",
+          "target": 147
+        },
+        {
+          "id": "to-168",
+          "label": "Pick a lock to a staircase up",
+          "target": 168
         }
       ],
       "roll": {
@@ -8248,6 +8353,11 @@
           "id": "to-378",
           "label": "Go to the portrait corridor",
           "target": 378
+        },
+        {
+          "id": "to-179",
+          "label": "A Phantom Servant appears (fight)",
+          "target": 179
         }
       ],
       "roll": {
@@ -8948,6 +9058,46 @@
           "id": "to-335",
           "label": "Return to the ballroom",
           "target": 335
+        },
+        {
+          "id": "to-140",
+          "label": "A Shadow drains your essence (−1 SKILL for good)",
+          "target": 140
+        },
+        {
+          "id": "to-163",
+          "label": "A Shadow saps your vitality (−1 SKILL, −1 maximum STAMINA for good)",
+          "target": 163
+        },
+        {
+          "id": "to-185",
+          "label": "A Shadow in the dark (fight)",
+          "target": 185
+        },
+        {
+          "id": "to-381",
+          "label": "A Phantom Servant blocks the final passage (fight)",
+          "target": 381
+        },
+        {
+          "id": "to-383",
+          "label": "A Skeleton Warrior guards the way (fight)",
+          "target": 383
+        },
+        {
+          "id": "to-385",
+          "label": "A Ghoul, the last guardian (fight)",
+          "target": 385
+        },
+        {
+          "id": "to-387",
+          "label": "A Shadow attacks (fight)",
+          "target": 387
+        },
+        {
+          "id": "to-389",
+          "label": "A Phantom Servant materializes (fight)",
+          "target": 389
         }
       ],
       "roll": {
@@ -9732,152 +9882,12 @@
     {
       "id": 388,
       "title": "You take a moment to review everything you've learned about the curse:",
-      "text": "You take a moment to review everything you've learned about the curse:\n\nTHE CURSE OF HOLLOW'S END - Complete History:\n\n242 years ago, Eliza Hollow married Thomas Ashford against her father's wishes. Mordecai Hollow wanted Eliza to marry a noble for political gain. During the wedding ceremony, Mordecai's men murdered Thomas before the altar. They then used forbidden necromancy to bind Eliza's spirit with silver chains, preventing her from seeking justice even in death.\n\nThe binding was designed to last only one generation—long enough for the guilty to die in peace. But it was never meant to be permanent. Each generation, the binding weakened. Now, 242 years later, it has failed completely.\n\nTo bind the Widow permanently, you need:\n\n1. SILVER KEY (for physical binding)\n\n2. HER TRUE NAME: ELIZA HOLLOW (for spiritual authority)\n\n3. MIDNIGHT TIMING (for maximum power)\n\nBefore the final confrontation, you may:\n\n{{opt:to-137}}\n{{opt:to-138}}\n{{opt:to-140}}\n{{opt:to-146}}\n{{opt:to-147}}\n{{opt:to-148}}\n{{opt:to-150}}\n{{opt:to-153}}\n{{opt:to-157}}\n{{opt:to-160}}\n{{opt:to-161}}\n{{opt:to-163}}\n{{opt:to-167}}\n{{opt:to-168}}\n{{opt:to-169}}\n{{opt:to-170}}\n{{opt:to-179}}\n{{opt:to-181}}\n{{opt:to-183}}\n{{opt:to-185}}\n{{opt:to-186}}\n{{opt:to-187}}\n{{opt:to-193}}\n{{opt:to-194}}\n{{opt:to-197}}\n{{opt:to-199}}\n{{opt:to-381}}\n{{opt:to-382}}\n{{opt:to-383}}\n{{opt:to-384}}\n{{opt:to-385}}\n{{opt:to-386}}\n{{opt:to-387}}\n{{opt:to-389}}\n{{opt:to-390}}\n\nWhen ready for the final battle:\n\n{{opt:to-395}}",
+      "text": "You take a moment to review everything you've learned about the curse:\n\nTHE CURSE OF HOLLOW'S END - Complete History:\n\n242 years ago, Eliza Hollow married Thomas Ashford against her father's wishes. Mordecai Hollow wanted Eliza to marry a noble for political gain. During the wedding ceremony, Mordecai's men murdered Thomas before the altar. They then used forbidden necromancy to bind Eliza's spirit with silver chains, preventing her from seeking justice even in death.\n\nThe binding was designed to last only one generation—long enough for the guilty to die in peace. But it was never meant to be permanent. Each generation, the binding weakened. Now, 242 years later, it has failed completely.\n\nTo bind the Widow permanently, you need:\n\n1. SILVER KEY (for physical binding)\n\n2. HER TRUE NAME: ELIZA HOLLOW (for spiritual authority)\n\n3. MIDNIGHT TIMING (for maximum power)\n\nBefore the final confrontation, you may rest and prepare here, in peace:\n\n{{opt:to-382}}\n{{opt:to-384}}\n{{opt:to-386}}\n{{opt:to-390}}\n\nIf you are not ready, you can leave the way you came:\n\n{{opt:to-355}}\n{{opt:to-301}}\n{{opt:to-155}}\n\nWhen ready for the final battle:\n\n{{opt:to-395}}",
       "options": [
-        {
-          "id": "to-137",
-          "label": "Climb a slippery shaft upward",
-          "target": 137
-        },
-        {
-          "id": "to-138",
-          "label": "A passage strung with tripwires",
-          "target": 138
-        },
-        {
-          "id": "to-140",
-          "label": "A Shadow drains your essence (−1 SKILL for good)",
-          "target": 140
-        },
-        {
-          "id": "to-146",
-          "label": "Sit at the bar and play it cool",
-          "target": 146
-        },
-        {
-          "id": "to-147",
-          "label": "A locked chest",
-          "target": 147
-        },
-        {
-          "id": "to-148",
-          "label": "A Ghoul's paralysing claws",
-          "target": 148
-        },
-        {
-          "id": "to-150",
-          "label": "A floor that looks solid (danger)",
-          "target": 150
-        },
-        {
-          "id": "to-153",
-          "label": "Hide from approaching cultists",
-          "target": 153
-        },
-        {
-          "id": "to-157",
-          "label": "A heavily locked door",
-          "target": 157
-        },
-        {
-          "id": "to-160",
-          "label": "Cross a crumbling bridge",
-          "target": 160
-        },
-        {
-          "id": "to-161",
-          "label": "Search a dead cultist: a note",
-          "target": 161
-        },
-        {
-          "id": "to-163",
-          "label": "A Shadow saps your vitality (−1 SKILL, −1 maximum STAMINA for good)",
-          "target": 163
-        },
-        {
-          "id": "to-167",
-          "label": "The floor gives way: a spike pit",
-          "target": 167
-        },
-        {
-          "id": "to-168",
-          "label": "Pick a lock to a staircase up",
-          "target": 168
-        },
-        {
-          "id": "to-169",
-          "label": "A Ghoul leaps from the shadows (fight)",
-          "target": 169
-        },
-        {
-          "id": "to-170",
-          "label": "Find Lydia, chained to a pillar",
-          "target": 170
-        },
-        {
-          "id": "to-179",
-          "label": "A Phantom Servant appears (fight)",
-          "target": 179
-        },
-        {
-          "id": "to-181",
-          "label": "The bridge snaps beneath you",
-          "target": 181
-        },
-        {
-          "id": "to-183",
-          "label": "A sheer cliff edge",
-          "target": 183
-        },
-        {
-          "id": "to-185",
-          "label": "A Shadow in the dark (fight)",
-          "target": 185
-        },
-        {
-          "id": "to-186",
-          "label": "Sneak past praying cultists",
-          "target": 186
-        },
-        {
-          "id": "to-187",
-          "label": "A trapped door",
-          "target": 187
-        },
-        {
-          "id": "to-193",
-          "label": "Search a fallen cultist: a medallion",
-          "target": 193
-        },
-        {
-          "id": "to-194",
-          "label": "Behind the bar: a ledger (and a fight)",
-          "target": 194
-        },
-        {
-          "id": "to-197",
-          "label": "A Skeleton Warrior attacks (fight)",
-          "target": 197
-        },
-        {
-          "id": "to-199",
-          "label": "The floor gives way beneath you",
-          "target": 199
-        },
-        {
-          "id": "to-381",
-          "label": "A Phantom Servant blocks the final passage (fight)",
-          "target": 381
-        },
         {
           "id": "to-382",
           "label": "A dead adventurer's last journal (+1 LUCK)",
           "target": 382
-        },
-        {
-          "id": "to-383",
-          "label": "A Skeleton Warrior guards the way (fight)",
-          "target": 383
         },
         {
           "id": "to-384",
@@ -9885,24 +9895,9 @@
           "target": 384
         },
         {
-          "id": "to-385",
-          "label": "A Ghoul, the last guardian (fight)",
-          "target": 385
-        },
-        {
           "id": "to-386",
           "label": "Thomas Ashford's ghost (+2 LUCK)",
           "target": 386
-        },
-        {
-          "id": "to-387",
-          "label": "A Shadow attacks (fight)",
-          "target": 387
-        },
-        {
-          "id": "to-389",
-          "label": "A Phantom Servant materializes (fight)",
-          "target": 389
         },
         {
           "id": "to-390",
@@ -9913,6 +9908,21 @@
           "id": "to-395",
           "label": "Face the Widow",
           "target": 395
+        },
+        {
+          "id": "to-355",
+          "label": "Go back up to the manor's upper hall",
+          "target": 355
+        },
+        {
+          "id": "to-301",
+          "label": "Go down to the manor's lower floors",
+          "target": 301
+        },
+        {
+          "id": "to-155",
+          "label": "Return to the catacombs",
+          "target": 155
         }
       ]
     },

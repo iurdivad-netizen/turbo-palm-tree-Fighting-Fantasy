@@ -29,7 +29,8 @@
       "to-95": "A ghost materialises",
       "to-101": "A junction of three passages",
       "to-110": "A cultist flees ahead",
-      "to-77": "Walk to the edge of the village (dead end)"
+      "to-77": "Walk to the edge of the village (dead end)",
+      "to-194": "Behind the bar: a ledger (and a fight)"
     },
     "52": {
       "to-3": "Search his body",
@@ -77,7 +78,11 @@
       "to-224": "A passage of tripwires and pressure plates",
       "to-225": "50 feet of rope on a hook",
       "to-226": "A hidden cache: Provisions and 30 gold",
-      "to-227": "A Phantom Servant materializes (fight)"
+      "to-227": "A Phantom Servant materializes (fight)",
+      "to-183": "A sheer cliff edge",
+      "to-170": "Find Lydia, chained to a pillar",
+      "to-181": "The bridge snaps beneath you",
+      "to-186": "Sneak past praying cultists"
     },
     "112": {
       "to-27": "Free Lydia now",
@@ -95,7 +100,15 @@
       "to-89": "Prepare to confront them"
     },
     "155": {
-      "to-97": "Visit the healing shrine"
+      "to-97": "Visit the healing shrine",
+      "to-138": "A passage strung with tripwires",
+      "to-150": "A floor that looks solid (danger)",
+      "to-160": "Cross a crumbling bridge",
+      "to-169": "A Ghoul leaps from the shadows (fight)",
+      "to-197": "A Skeleton Warrior attacks (fight)",
+      "to-153": "Hide from approaching cultists",
+      "to-157": "A heavily locked door",
+      "to-187": "A trapped door"
     },
     "164": {
       "to-109": "Climb down the well on the rope",
@@ -111,7 +124,9 @@
       "to-111": "Explore more of the catacombs first"
     },
     "180": {
-      "to-346": "Escape toward the cemetery path"
+      "to-346": "Escape toward the cemetery path",
+      "to-161": "Search a dead cultist: a note",
+      "to-193": "Search a fallen cultist: a medallion"
     },
     "189": {
       "to-230": "A Shadow emerges from your own shadow (fight)",
@@ -138,6 +153,10 @@
     "209": {
       "to-221": "Continue down the passage",
       "to-111": "Go back and try another route"
+    },
+    "221": {
+      "to-167": "The floor gives way: a spike pit",
+      "to-199": "The floor gives way beneath you"
     },
     "234": {
       "to-10": "Sneak past the undead guardians",
@@ -200,11 +219,20 @@
       "to-295": "A trapped floor",
       "to-296": "A cultist attacks (fight)",
       "to-297": "Check that you have everything you need",
-      "to-299": "A Potion of Strength in a niche"
+      "to-299": "A Potion of Strength in a niche",
+      "to-148": "A Ghoul's paralysing claws"
+    },
+    "301": {
+      "to-137": "Climb a slippery shaft upward",
+      "to-147": "A locked chest",
+      "to-168": "Pick a lock to a staircase up"
     },
     "325": {
       "to-378": "Take the left staircase (the cultists)",
       "to-395": "Take the right staircase (the Widow's lair)"
+    },
+    "335": {
+      "to-179": "A Phantom Servant appears (fight)"
     },
     "341": {
       "to-333": "A Ghoul ambush (fight 3 of 7)",
@@ -239,42 +267,24 @@
       "to-359": "A journal with the final preparations for the ritual",
       "to-372": "A cache of gold (75 gold)"
     },
-    "388": {
-      "to-137": "Climb a slippery shaft upward",
-      "to-138": "A passage strung with tripwires",
+    "355": {
       "to-140": "A Shadow drains your essence (−1 SKILL for good)",
-      "to-146": "Sit at the bar and play it cool",
-      "to-147": "A locked chest",
-      "to-148": "A Ghoul's paralysing claws",
-      "to-150": "A floor that looks solid (danger)",
-      "to-153": "Hide from approaching cultists",
-      "to-157": "A heavily locked door",
-      "to-160": "Cross a crumbling bridge",
-      "to-161": "Search a dead cultist: a note",
       "to-163": "A Shadow saps your vitality (−1 SKILL, −1 maximum STAMINA for good)",
-      "to-167": "The floor gives way: a spike pit",
-      "to-168": "Pick a lock to a staircase up",
-      "to-169": "A Ghoul leaps from the shadows (fight)",
-      "to-170": "Find Lydia, chained to a pillar",
-      "to-179": "A Phantom Servant appears (fight)",
-      "to-181": "The bridge snaps beneath you",
-      "to-183": "A sheer cliff edge",
       "to-185": "A Shadow in the dark (fight)",
-      "to-186": "Sneak past praying cultists",
-      "to-187": "A trapped door",
-      "to-193": "Search a fallen cultist: a medallion",
-      "to-194": "Behind the bar: a ledger (and a fight)",
-      "to-197": "A Skeleton Warrior attacks (fight)",
-      "to-199": "The floor gives way beneath you",
       "to-381": "A Phantom Servant blocks the final passage (fight)",
-      "to-382": "A dead adventurer's last journal (+1 LUCK)",
       "to-383": "A Skeleton Warrior guards the way (fight)",
-      "to-384": "A Potion of Luck",
       "to-385": "A Ghoul, the last guardian (fight)",
-      "to-386": "Thomas Ashford's ghost (+2 LUCK)",
       "to-387": "A Shadow attacks (fight)",
-      "to-389": "A Phantom Servant materializes (fight)",
-      "to-390": "A healing fountain (STAMINA and LUCK restored)"
+      "to-389": "A Phantom Servant materializes (fight)"
+    },
+    "388": {
+      "to-382": "A dead adventurer's last journal (+1 LUCK)",
+      "to-384": "A Potion of Luck",
+      "to-386": "Thomas Ashford's ghost (+2 LUCK)",
+      "to-390": "A healing fountain (STAMINA and LUCK restored)",
+      "to-355": "Go back up to the manor's upper hall",
+      "to-301": "Go down to the manor's lower floors",
+      "to-155": "Return to the catacombs"
     }
   },
   "text": {
