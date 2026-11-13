@@ -1,5 +1,5 @@
 {
-  "_comment": "Hand-written decisions for migrate_to_v2.py, specific to this book. items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). labels: {section: {option id: button label}}; text: {section: [{replace, with}]} applied to the converted text; notes: {section: a problem in the book that the migration does not change}. See AUTHORING.md.",
+  "_comment": "Hand-written decisions for migrate_to_v2.py, specific to this book. items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). labels: {section: {option id: button label}}; text: {section: [{replace, with}]} applied to the converted text; notes: {section: a problem in the book that the migration does not change}. See AUTHORING.md.",
   "labels": {
     "24": {
       "to-127": "Retreat to the cemetery",
@@ -373,23 +373,29 @@
       "name": "Torn Map",
       "type": "other",
       "reveals": {
-        "tag": "trap",
+        "tags": [
+          "trap",
+          "hazard"
+        ],
         "areas": [
           "manor"
         ]
       },
-      "description": "A secret entrance that bypasses the main defences. It shows where the manor is trapped: the ways that lead to a trap are marked ⚠."
+      "description": "A secret entrance that bypasses the main defences. It shows the traps and hazards of the manor: the ways that lead to one are marked ⚠."
     },
     "catacomb-map": {
       "name": "Map of the Catacombs",
       "type": "other",
       "reveals": {
-        "tag": "trap",
+        "tags": [
+          "trap",
+          "hazard"
+        ],
         "areas": [
           "catacombs"
         ]
       },
-      "description": "Etched into the wall by a long-dead explorer. It shows where the catacombs are trapped: the ways that lead to a trap are marked ⚠."
+      "description": "Etched into the wall by a long-dead explorer. It shows the traps and hazards of the catacombs: the ways that lead to one are marked ⚠."
     },
     "tomb-map": {
       "name": "Map of the Hollow Tomb",
@@ -401,12 +407,15 @@
       "name": "Map of the Manor",
       "type": "other",
       "reveals": {
-        "tag": "trap",
+        "tags": [
+          "trap",
+          "hazard"
+        ],
         "areas": [
           "manor"
         ]
       },
-      "description": "Secret passages, hidden rooms and safe routes. It shows where the manor is trapped: the ways that lead to a trap are marked ⚠."
+      "description": "Secret passages, hidden rooms and safe routes. It shows the traps and hazards of the manor: the ways that lead to one are marked ⚠."
     },
     "hollow-letter": {
       "name": "Letter from the Hollow Study",

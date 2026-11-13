@@ -96,7 +96,7 @@
           "properties": { "amount": { "type": "integer", "minimum": 1 }, "versus": { "type": "string", "pattern": "^[a-z][a-z-]*$" } }
         },
         "text": { "type": "string", "description": "What the player reads when they open the item (a diary, a letter, a scroll). Paragraphs separated by a blank line." },
-        "reveals": { "description": "A map: the options that lead to a section with this tag (and, if areas is given, one of these areas) are marked as dangerous.", "type": "object", "additionalProperties": false, "required": ["tag"], "properties": { "tag": { "type": "string", "pattern": "^[a-z][a-z-]*$" }, "areas": { "type": "array", "items": { "type": "string", "pattern": "^[a-z][a-z-]*$" }, "minItems": 1 } } },
+        "reveals": { "description": "A map: the options that lead to a section with one of these tags (and, if areas is given, one of these areas) are marked as dangerous.", "type": "object", "additionalProperties": false, "anyOf": [{ "required": ["tag"] }, { "required": ["tags"] }], "properties": { "tag": { "type": "string", "pattern": "^[a-z][a-z-]*$" }, "tags": { "type": "array", "minItems": 1, "items": { "type": "string", "pattern": "^[a-z][a-z-]*$" } }, "areas": { "type": "array", "items": { "type": "string", "pattern": "^[a-z][a-z-]*$" }, "minItems": 1 } } },
         "countsAs": { "description": "The item also counts as these ids when a condition asks for them (a skeleton key).", "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/slug" } },
         "stealthBonus": { "type": "integer", "minimum": 1, "description": "Added to the roll of a stealth test (a luck roll with stealth: true); the best item counts." },
         "unique": { "type": "boolean" },
@@ -121,7 +121,7 @@
           "properties": { "amount": { "type": "integer", "minimum": 1 }, "versus": { "type": "string", "pattern": "^[a-z][a-z-]*$" } }
         },
         "text": { "type": "string", "description": "What the player reads when they open the item (a diary, a letter, a scroll). Paragraphs separated by a blank line." },
-        "reveals": { "description": "A map: the options that lead to a section with this tag (and, if areas is given, one of these areas) are marked as dangerous.", "type": "object", "additionalProperties": false, "required": ["tag"], "properties": { "tag": { "type": "string", "pattern": "^[a-z][a-z-]*$" }, "areas": { "type": "array", "items": { "type": "string", "pattern": "^[a-z][a-z-]*$" }, "minItems": 1 } } },
+        "reveals": { "description": "A map: the options that lead to a section with one of these tags (and, if areas is given, one of these areas) are marked as dangerous.", "type": "object", "additionalProperties": false, "anyOf": [{ "required": ["tag"] }, { "required": ["tags"] }], "properties": { "tag": { "type": "string", "pattern": "^[a-z][a-z-]*$" }, "tags": { "type": "array", "minItems": 1, "items": { "type": "string", "pattern": "^[a-z][a-z-]*$" } }, "areas": { "type": "array", "items": { "type": "string", "pattern": "^[a-z][a-z-]*$" }, "minItems": 1 } } },
         "countsAs": { "description": "The item also counts as these ids when a condition asks for them (a skeleton key).", "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/slug" } },
         "stealthBonus": { "type": "integer", "minimum": 1, "description": "Added to the roll of a stealth test (a luck roll with stealth: true); the best item counts." },
         "unique": { "type": "boolean" },

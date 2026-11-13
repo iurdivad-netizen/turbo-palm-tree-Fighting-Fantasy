@@ -448,7 +448,7 @@ const CATEGORIES = [
 ];
 function itemRow(g) {
     const item = g.item;
-    const tags = [item.restore && `✨ ${item.restore}`, item.bonus && `⚡ ${item.bonus}`, item.saveBonus && `🍀 +${item.saveBonus.amount} saves${item.saveBonus.versus ? ` vs ${item.saveBonus.versus}` : ''}`, item.stealthBonus && `🥷 +${item.stealthBonus} stealth`, item.reveals && `🗺️ shows ${item.reveals.tag}s${item.reveals.areas ? ` in the ${item.reveals.areas.join(', ')}` : ''}`, item.countsAs && `🔑 opens ${item.countsAs.map(Engine.prettyItemId).join(' or ')} locks`, item.properties && item.properties.length && `🏷️ ${item.properties.join(', ')}`].filter(Boolean).join(' · ');
+    const tags = [item.restore && `✨ ${item.restore}`, item.bonus && `⚡ ${item.bonus}`, item.saveBonus && `🍀 +${item.saveBonus.amount} saves${item.saveBonus.versus ? ` vs ${item.saveBonus.versus}` : ''}`, item.stealthBonus && `🥷 +${item.stealthBonus} stealth`, item.reveals && `🗺️ shows ${[].concat(item.reveals.tag || [], item.reveals.tags || []).join(' and ')}s${item.reveals.areas ? ` in the ${item.reveals.areas.join(', ')}` : ''}`, item.countsAs && `🔑 opens ${item.countsAs.map(Engine.prettyItemId).join(' or ')} locks`, item.properties && item.properties.length && `🏷️ ${item.properties.join(', ')}`].filter(Boolean).join(' · ');
     const uid = Number(item.uid);
     let badge = '', act = '';
     if (g.category === 'weapon') {

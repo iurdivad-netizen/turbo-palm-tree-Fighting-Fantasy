@@ -596,7 +596,7 @@
         }
 
         /**
-         * Does a map you carry show what waits in that section? A map has `reveals: {tag, areas?}`; the section has `tags` and an `area`.
+         * Does a map you carry show what waits in that section? A map has `reveals: {tag or tags, areas?}`; the section has `tags` and an `area`.
          * Returns { tag, source } (source = the map's name) or null.
          */
         revealedBy(sectionId) {
@@ -604,7 +604,9 @@
             if (!s || !isArr(s.tags)) return null;
             for (const it of this.inventory) {
                 const r = it.reveals;
-                if (r && s.tags.includes(r.tag) && (!isArr(r.areas) || r.areas.includes(s.area))) return { tag: r.tag, source: it.name };
+                if (!r) continue;
+                const hit = [].concat(r.tag || [], r.tags || []).find(t => s.tags.includes(t));
+                if (hit && (!isArr(r.areas) || r.areas.includes(s.area))) return { tag: hit, source: it.name };
             }
             return null;
         }

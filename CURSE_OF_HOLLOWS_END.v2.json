@@ -161,12 +161,15 @@
       "name": "Map of the Catacombs",
       "type": "other",
       "reveals": {
-        "tag": "trap",
+        "tags": [
+          "trap",
+          "hazard"
+        ],
         "areas": [
           "catacombs"
         ]
       },
-      "description": "Etched into the wall by a long-dead explorer. It shows where the catacombs are trapped: the ways that lead to a trap are marked ⚠."
+      "description": "Etched into the wall by a long-dead explorer. It shows the traps and hazards of the catacombs: the ways that lead to one are marked ⚠."
     },
     "cloak-of-shadows": {
       "name": "Cloak of Shadows",
@@ -227,12 +230,15 @@
       "name": "Map of the Manor",
       "type": "other",
       "reveals": {
-        "tag": "trap",
+        "tags": [
+          "trap",
+          "hazard"
+        ],
         "areas": [
           "manor"
         ]
       },
-      "description": "Secret passages, hidden rooms and safe routes. It shows where the manor is trapped: the ways that lead to a trap are marked ⚠."
+      "description": "Secret passages, hidden rooms and safe routes. It shows the traps and hazards of the manor: the ways that lead to one are marked ⚠."
     },
     "mayors-ledger": {
       "name": "Mayor's Ledger",
@@ -304,12 +310,15 @@
       "name": "Torn Map",
       "type": "other",
       "reveals": {
-        "tag": "trap",
+        "tags": [
+          "trap",
+          "hazard"
+        ],
         "areas": [
           "manor"
         ]
       },
-      "description": "A secret entrance that bypasses the main defences. It shows where the manor is trapped: the ways that lead to a trap are marked ⚠."
+      "description": "A secret entrance that bypasses the main defences. It shows the traps and hazards of the manor: the ways that lead to one are marked ⚠."
     },
     "true-name": {
       "name": "The Widow's True Name",
@@ -440,6 +449,10 @@
     },
     {
       "id": 7,
+      "area": "manor",
+      "tags": [
+        "trap"
+      ],
       "text": "The rope snaps with a sharp crack that echoes through the chamber! For a heart-stopping moment, you're suspended in mid-air. Then gravity takes hold, and you plummet into the darkness below.\n\nYour stomach lurches. Your arms windmill desperately. A scream tears from your throat—primal and terrified.\n\n{{roll}}",
       "roll": {
         "kind": "dice",
@@ -509,6 +522,10 @@
     {
       "id": 9,
       "title": "The Ghost's wail pierces your skull like a spike of ice!",
+      "area": "tavern",
+      "tags": [
+        "hazard"
+      ],
       "text": "The Ghost's wail pierces your skull like a spike of ice!\n\nThe sound is inhuman, impossible, fundamentally wrong. It's the sound of pure anguish given voice, of rage and despair mixed into something that shouldn't exist. The frequency resonates with your bones, making your teeth ache. You can feel it in your chest, vibrating through your body.\n\n{{roll}}",
       "roll": {
         "kind": "luck",
@@ -643,6 +660,10 @@
     },
     {
       "id": 17,
+      "area": "catacombs",
+      "tags": [
+        "hazard"
+      ],
       "text": "The passage ahead narrows dramatically, the walls pressing in from both sides until you can barely fit through. The ceiling lowers as well, forcing you to hunch forward, then to crouch, then finally to crawl on hands and knees. The air grows thick and stale, heavy with the weight of earth and stone pressing down from above.\n\nClaustrophobia claws at your mind. What if you get stuck? What if the walls close in further? What if the ceiling collapses? You can feel the weight of the entire cemetery, perhaps the entire village, pressing down on this fragile tunnel.\n\nYour armor scrapes against the stone walls with sounds that seem impossibly loud in the confined space. Each inch forward requires effort, your shoulders barely fitting through gaps that seem to shrink with every passing moment.\n\n{{roll}}",
       "roll": {
         "kind": "luck",
@@ -1616,6 +1637,10 @@
     },
     {
       "id": 60,
+      "area": "manor",
+      "tags": [
+        "hazard"
+      ],
       "text": "The floor beneath you is slick with blood—so much blood that it's pooled in the depressions between the stones, creating sticky, viscous puddles that squelch beneath your boots. The coppery smell is overwhelming, making your stomach churn.\n\nWhose blood is this? How many people died here? The questions flash through your mind, but you don't have time to ponder them. {{roll}}",
       "roll": {
         "kind": "luck",
@@ -2341,6 +2366,10 @@
     },
     {
       "id": 103,
+      "area": "catacombs",
+      "tags": [
+        "hazard"
+      ],
       "text": "The passage ahead narrows dramatically, forcing you to turn sideways and shuffle through. The walls press in from both sides, and the ceiling lowers until you're hunched over. Your armor scrapes against stone with sounds that seem impossibly loud in the confined space.\n\nClaustrophobia begins to claw at your mind. What if you get stuck? What if the passage gets even narrower? What if the ceiling collapses? {{roll}}",
       "roll": {
         "kind": "luck",
@@ -3382,6 +3411,10 @@
     {
       "id": 150,
       "title": "The floor ahead looks solid, but your instincts warn you of danger.",
+      "area": "catacombs",
+      "tags": [
+        "trap"
+      ],
       "text": "The floor ahead looks solid, but your instincts warn you of danger.\n\n{{roll}}",
       "options": [
         {
@@ -4393,6 +4426,10 @@
     {
       "id": 189,
       "title": "You discover a pit trap, but your keen eyes spot the pressure plate before you step on it!",
+      "area": "cemetery",
+      "tags": [
+        "trap"
+      ],
       "text": "You discover a pit trap, but your keen eyes spot the pressure plate before you step on it!\n\n{{roll}}\n\nAfter avoiding the trap, you can explore this section:\n\n{{opt:to-230}}\n{{opt:to-231}}\n{{opt:to-232}}\n{{opt:to-233}}\n{{opt:to-235}}\n{{opt:to-238}}\n{{opt:to-239}}\n{{opt:to-240}}\n{{opt:to-242}}\n{{opt:to-243}}\n{{opt:to-244}}\n{{opt:to-246}}\n{{opt:to-248}}\n{{opt:to-249}}\n{{opt:to-251}}\n{{opt:to-253}}\n{{opt:to-254}}\n{{opt:to-255}}\n{{opt:to-256}}\n{{opt:to-257}}\n\nContinue to main areas:\n\n{{opt:to-155}}\n{{opt:to-127}}",
       "options": [
         {
@@ -5882,6 +5919,10 @@
     {
       "id": 245,
       "title": "The floor suddenly collapses beneath you!",
+      "area": "catacombs",
+      "tags": [
+        "trap"
+      ],
       "text": "The floor suddenly collapses beneath you!\n\n{{roll}}",
       "options": [
         {
@@ -6555,6 +6596,10 @@
     {
       "id": 275,
       "title": "The floor collapses!",
+      "area": "manor",
+      "tags": [
+        "trap"
+      ],
       "text": "The floor collapses!\n\n{{roll}}",
       "options": [
         {
@@ -7712,6 +7757,10 @@
     },
     {
       "id": 315,
+      "area": "manor",
+      "tags": [
+        "hazard"
+      ],
       "text": "You discover a room filled with mirrors, each one reflecting not your current appearance but different versions of you—some showing you as you were when you entered Hollow's End, some showing you wounded and dying, some showing you victorious, some showing you as an undead servant of the Widow.\n\nThe mirrors are disorienting, perhaps even dangerous. One mirror in particular seems to pull at your consciousness, trying to trap you in its reflection.\n\n{{roll}}",
       "roll": {
         "kind": "luck",

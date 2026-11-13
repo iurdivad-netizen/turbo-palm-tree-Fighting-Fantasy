@@ -153,7 +153,11 @@
             }
           }
         ]
-      }
+      },
+      "area": "manor",
+      "tags": [
+        "trap"
+      ]
     },
     {
       "id": 8,
@@ -207,7 +211,11 @@
             "stamina": -4
           }
         }
-      }
+      },
+      "area": "tavern",
+      "tags": [
+        "hazard"
+      ]
     },
     {
       "id": 10,
@@ -338,7 +346,11 @@
             "stamina": -2
           }
         }
-      }
+      },
+      "area": "catacombs",
+      "tags": [
+        "hazard"
+      ]
     },
     {
       "id": 18,
@@ -876,9 +888,12 @@
           "id": "torn-map",
           "name": "Torn Map",
           "type": "other",
-          "description": "A secret entrance that bypasses the main defences. It shows where the manor is trapped: the ways that lead to a trap are marked ⚠.",
+          "description": "A secret entrance that bypasses the main defences. It shows the traps and hazards of the manor: the ways that lead to one are marked ⚠.",
           "reveals": {
-            "tag": "trap",
+            "tags": [
+              "trap",
+              "hazard"
+            ],
             "areas": [
               "manor"
             ]
@@ -1270,7 +1285,11 @@
             "stamina": -2
           }
         }
-      }
+      },
+      "area": "manor",
+      "tags": [
+        "hazard"
+      ]
     },
     {
       "id": 61,
@@ -1952,7 +1971,11 @@
             "stamina": -2
           }
         }
-      }
+      },
+      "area": "catacombs",
+      "tags": [
+        "hazard"
+      ]
     },
     {
       "id": 104,
@@ -2257,9 +2280,12 @@
           "id": "catacomb-map",
           "name": "Map of the Catacombs",
           "type": "other",
-          "description": "Etched into the wall by a long-dead explorer. It shows where the catacombs are trapped: the ways that lead to a trap are marked ⚠.",
+          "description": "Etched into the wall by a long-dead explorer. It shows the traps and hazards of the catacombs: the ways that lead to one are marked ⚠.",
           "reveals": {
-            "tag": "trap",
+            "tags": [
+              "trap",
+              "hazard"
+            ],
             "areas": [
               "catacombs"
             ]
@@ -2660,9 +2686,12 @@
           "id": "manor-map",
           "name": "Map of the Manor",
           "type": "other",
-          "description": "Secret passages, hidden rooms and safe routes. It shows where the manor is trapped: the ways that lead to a trap are marked ⚠.",
+          "description": "Secret passages, hidden rooms and safe routes. It shows the traps and hazards of the manor: the ways that lead to one are marked ⚠.",
           "reveals": {
-            "tag": "trap",
+            "tags": [
+              "trap",
+              "hazard"
+            ],
             "areas": [
               "manor"
             ]
@@ -2960,7 +2989,11 @@
         ],
         "once": true,
         "gatesChoices": true
-      }
+      },
+      "area": "catacombs",
+      "tags": [
+        "trap"
+      ]
     },
     {
       "id": 151,
@@ -4001,7 +4034,11 @@
         ],
         "once": true,
         "gatesChoices": true
-      }
+      },
+      "area": "cemetery",
+      "tags": [
+        "trap"
+      ]
     },
     {
       "id": 190,
@@ -4727,9 +4764,12 @@
           "id": "manor-map",
           "name": "Map of the Manor",
           "type": "other",
-          "description": "Secret passages, hidden rooms and safe routes. It shows where the manor is trapped: the ways that lead to a trap are marked ⚠.",
+          "description": "Secret passages, hidden rooms and safe routes. It shows the traps and hazards of the manor: the ways that lead to one are marked ⚠.",
           "reveals": {
-            "tag": "trap",
+            "tags": [
+              "trap",
+              "hazard"
+            ],
             "areas": [
               "manor"
             ]
@@ -5360,7 +5400,11 @@
         ],
         "once": true,
         "gatesChoices": true
-      }
+      },
+      "area": "catacombs",
+      "tags": [
+        "trap"
+      ]
     },
     {
       "id": 246,
@@ -5653,9 +5697,12 @@
           "id": "manor-map",
           "name": "Map of the Manor",
           "type": "other",
-          "description": "Secret passages, hidden rooms and safe routes. It shows where the manor is trapped: the ways that lead to a trap are marked ⚠.",
+          "description": "Secret passages, hidden rooms and safe routes. It shows the traps and hazards of the manor: the ways that lead to one are marked ⚠.",
           "reveals": {
-            "tag": "trap",
+            "tags": [
+              "trap",
+              "hazard"
+            ],
             "areas": [
               "manor"
             ]
@@ -5977,9 +6024,12 @@
           "id": "manor-map",
           "name": "Map of the Manor",
           "type": "other",
-          "description": "Secret passages, hidden rooms and safe routes. It shows where the manor is trapped: the ways that lead to a trap are marked ⚠.",
+          "description": "Secret passages, hidden rooms and safe routes. It shows the traps and hazards of the manor: the ways that lead to one are marked ⚠.",
           "reveals": {
-            "tag": "trap",
+            "tags": [
+              "trap",
+              "hazard"
+            ],
             "areas": [
               "manor"
             ]
@@ -6025,7 +6075,11 @@
         ],
         "once": true,
         "gatesChoices": true
-      }
+      },
+      "area": "manor",
+      "tags": [
+        "trap"
+      ]
     },
     {
       "id": 276,
@@ -7154,7 +7208,11 @@
             "luck": -1
           }
         }
-      }
+      },
+      "area": "manor",
+      "tags": [
+        "hazard"
+      ]
     },
     {
       "id": 316,

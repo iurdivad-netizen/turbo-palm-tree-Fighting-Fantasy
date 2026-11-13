@@ -948,13 +948,20 @@ test('the pack sorts maps, books and valuables, and a book has its text', () => 
 test('real book: the maps warn of the traps they cover; the prayer book blesses the next fight; the wedding ring helps the ritual; the old key opens brass and iron locks', () => {
     const b = real();
     const trap = id => b.sections.find(s => s.id === id);
-    for (const id of [34, 87, 138, 216, 107, 167, 224]) assert.deepEqual([trap(id).area, trap(id).tags], ['catacombs', ['trap']], `section ${id}`);
-    for (const id of [142, 228, 256, 295, 304]) assert.deepEqual([trap(id).area, trap(id).tags], ['manor', ['trap']], `section ${id}`);
+    const placed = (ids, area, tag) => ids.forEach(id => assert.deepEqual([trap(id).area, trap(id).tags], [area, [tag]], `section ${id}`));
+    placed([34, 87, 138, 216, 107, 167, 224, 150, 245], 'catacombs', 'trap');
+    placed([142, 228, 256, 295, 304, 275, 7], 'manor', 'trap');
+    placed([189], 'cemetery', 'trap');
+    placed([17, 103], 'catacombs', 'hazard');
+    placed([60, 315], 'manor', 'hazard');
+    placed([9], 'tavern', 'hazard');
+    assert.equal(b.sections.filter(s => (s.tags || []).some(t => t === 'trap' || t === 'hazard')).length, 22, 'every trap-like section is placed');
     const g = play(dice());
     assert.equal(g.revealedBy(138), null);
     g.addItem('catacomb-map');
     assert.equal(g.revealedBy(138).source, 'Map of the Catacombs');
     assert.equal(g.revealedBy(142), null, 'the catacomb map does not cover the manor');
+    assert.deepEqual([g.revealedBy(17).tag, g.revealedBy(245).tag], ['hazard', 'trap'], 'it shows hazards as well as traps');
     g.addItem('manor-map');
     assert.equal(g.revealedBy(142).source, 'Map of the Manor');
     g.goTo(88);
