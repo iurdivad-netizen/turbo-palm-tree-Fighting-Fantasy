@@ -4,6 +4,7 @@
 
 * **Play:** open `index.html` (or serve the folder, e.g. `python3 -m http.server`, so books can be fetched). Choose a book; buttons sit inside the story text, dice can be rolled by hand (button or **R**) or automatically.
 * **Write a book:** read [`AUTHORING.md`](AUTHORING.md) and start from `templates/minimal-book.v2.json`. The format is fixed by `book.schema.json` (v2).
+* **See a book as a map:** open `book-map.html` (a network of every section and choice: pan, zoom, drag, search, click a section to read it, show the route from the start). For any book: `python3 make_book_map.py book.v2.json map.html`.
 * **Check a book:** `python3 validate_adventure.py book.v2.json`; stress-test it with `node simulate_playthroughs.js book.v2.json 1000`.
 * **Tests:** `npm test` (engine, simulation fingerprint, docs); `npm run test:ui` on its own (needs `npm i` for Playwright).
 * **Design record:** [`UI-AND-SCHEMA-DESIGN.md`](UI-AND-SCHEMA-DESIGN.md).
