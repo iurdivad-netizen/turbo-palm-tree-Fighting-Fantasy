@@ -1,5 +1,5 @@
 {
-  "_comment": "Hand-written decisions for migrate_to_v2.py, specific to this book. items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). labels: {section: {option id: button label}}; text: {section: [{replace, with}]} applied to the converted text; notes: {section: a problem in the book that the migration does not change}. See AUTHORING.md.",
+  "_comment": "Hand-written decisions for migrate_to_v2.py, specific to this book. items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). labels: {section: {option id: button label}}; text: {section: [{replace, with}]} applied to the converted text; notes: {section: a problem in the book that the migration does not change}. See AUTHORING.md.",
   "labels": {
     "24": {
       "to-127": "Retreat to the cemetery",
@@ -317,12 +317,16 @@
     "cloak-of-shadows": {
       "name": "Cloak of Shadows",
       "type": "other",
-      "description": "The book: +2 to stealth (no effect in this app)."
+      "stealthBonus": 2,
+      "description": "Absorbs light: +2 when you sneak or hide."
     },
     "potion-of-invisibility": {
       "name": "Potion of Invisibility",
-      "type": "other",
-      "description": "The book: ten minutes of invisibility (no effect in this app)."
+      "type": "potion",
+      "onUse": {
+        "invisible": 5
+      },
+      "description": "Invisible for 5 moves (the book says ten minutes) or until you attack: sneaking always works, you can slip away from any fight, and your first blow from hiding gets +2."
     },
     "scroll": {
       "name": "Ancient Scroll",

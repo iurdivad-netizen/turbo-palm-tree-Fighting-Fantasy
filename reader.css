@@ -183,6 +183,7 @@ button { cursor: pointer; }
 .meter > span.low { background: var(--bad); }
 .gold { display: flex; justify-content: space-between; margin-top: 0.5rem; padding: 0.5rem 0.75rem; border-radius: 8px; background: var(--pill); color: var(--pill-ink); font-weight: 700; }
 .penalty { color: var(--bad); font-size: 0.9rem; margin: 0 0 0.5rem; }
+.penalty.good { color: var(--ink); font-weight: 600; }
 
 .item { display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.55rem 0; border-bottom: 1px solid var(--line); }
 .item:last-child { border-bottom: 0; }

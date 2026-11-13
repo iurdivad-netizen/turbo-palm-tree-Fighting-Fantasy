@@ -106,7 +106,8 @@
         "successText": "They do not sense your presence.",
         "failureText": "You have been detected!",
         "successSection": 155,
-        "failureSection": 89
+        "failureSection": 89,
+        "stealth": true
       }
     },
     {
@@ -2300,7 +2301,8 @@
           "id": "cloak-of-shadows",
           "name": "Cloak of Shadows",
           "type": "other",
-          "description": "The book: +2 to stealth (no effect in this app)."
+          "description": "Absorbs light: +2 when you sneak or hide.",
+          "stealthBonus": 2
         }
       ]
     },
@@ -2809,7 +2811,8 @@
       "testLuck": {
         "successSection": 71,
         "failureSection": 89,
-        "label": "Sneak closer (Test Your Luck)"
+        "label": "Sneak closer (Test Your Luck)",
+        "stealth": true
       }
     },
     {
@@ -2821,7 +2824,8 @@
         "successText": "You learn enough without tipping him off.",
         "failureText": "The creature realizes you are studying it!",
         "successSection": 203,
-        "failureSection": 78
+        "failureSection": 78,
+        "stealth": true
       }
     },
     {
@@ -2987,8 +2991,11 @@
         {
           "id": "potion-of-invisibility",
           "name": "Potion of Invisibility",
-          "type": "other",
-          "description": "The book: ten minutes of invisibility (no effect in this app)."
+          "type": "potion",
+          "description": "Invisible for 5 moves (the book says ten minutes) or until you attack: sneaking always works, you can slip away from any fight, and your first blow from hiding gets +2.",
+          "onUse": {
+            "invisible": 5
+          }
         }
       ]
     },
@@ -5667,7 +5674,8 @@
           "id": "cloak-of-shadows",
           "name": "Cloak of Shadows",
           "type": "other",
-          "description": "The book: +2 to stealth (no effect in this app)."
+          "description": "Absorbs light: +2 when you sneak or hide.",
+          "stealthBonus": 2
         }
       ]
     },
@@ -6295,8 +6303,11 @@
         {
           "id": "potion-of-invisibility",
           "name": "Potion of Invisibility",
-          "type": "other",
-          "description": "The book: ten minutes of invisibility (no effect in this app)."
+          "type": "potion",
+          "description": "Invisible for 5 moves (the book says ten minutes) or until you attack: sneaking always works, you can slip away from any fight, and your first blow from hiding gets +2.",
+          "onUse": {
+            "invisible": 5
+          }
         }
       ]
     },

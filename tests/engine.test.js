@@ -834,3 +834,70 @@ test('real book: the charms work against the undead and not against cultists; th
     const cats = Object.fromEntries(g.inventoryView().map(v => [v.item.id, v.category]));
     assert.deepEqual([cats['silver-ring'], cats['scroll-of-protection']], ['charm', 'consumable']);
 });
+
+// ---- stealth and invisibility ------------------------------------------------------------------------------------------------------
+const sneak = Object.assign({}, charms, {
+    cloak: { name: 'Cloak of Shadows', type: 'other', stealthBonus: 2 },
+    vanish: { name: 'Potion of Invisibility', type: 'potion', onUse: { invisible: 3 } }
+});
+const sneakBook = [sec(1, { roll: { kind: 'luck', stealth: true, success: { text: 'Unnoticed.', target: 2 }, failure: { target: 3 } } }), sec(2), sec(3)];
+
+test('a stealth test: the cloak adds its bonus, an ordinary charm against undead does not', () => {
+    const bare = make(sneakBook, { rng: dice(5, 4) }, { items: sneak });
+    bare.stats.luck = 7; bare.doRoll();                  // 9 against LUCK 7
+    assert.equal(bare.currentSection, 3);
+    const cloaked = make(sneakBook, { rng: dice(5, 4) }, { items: sneak, startingItems: ['cloak', 'amulet'] });
+    cloaked.stats.luck = 7; cloaked.doRoll();            // 9 against 7 + 2
+    assert.equal(cloaked.currentSection, 2);
+    assert.ok(cloaked.messages.some(m => m.includes('+2 from Cloak of Shadows')));
+    // the same cloak does nothing for an ordinary (non-stealth) Luck test
+    const trap = make([sec(1, { roll: { kind: 'luck', success: { target: 2 }, failure: { target: 3 } } }), sec(2), sec(3)], { rng: dice(5, 4) }, { items: sneak, startingItems: ['cloak'] });
+    trap.stats.luck = 7; trap.doRoll();
+    assert.equal(trap.currentSection, 3);
+});
+
+test('invisible: stealth tests pass with no roll and no Luck spent; every move uses one up; it survives a save', () => {
+    const g = make([sec(0), ...sneakBook], { rng: dice() }, { items: sneak, startingItems: ['vanish'], startingSection: 1 });
+    g.useItem(g.inventory[0].uid);
+    assert.equal(g.invisible, 3);
+    const copy = make(sneakBook, {}, { items: sneak });
+    copy.restore(JSON.parse(JSON.stringify(g.serialize())));
+    assert.equal(copy.invisible, 3);
+    g.doRoll();                                          // no dice are rolled (dice() would throw)
+    assert.equal(g.currentSection, 2);
+    assert.equal(g.stats.luck, 9, 'no Luck spent');
+    assert.equal(g.invisible, 2, 'the move used one');
+    g.goTo(3); g.goTo(2);
+    assert.equal(g.invisible, 0);
+});
+
+test('invisible in a fight: the first blow is an ambush (+2) and ends it; you can slip away without a test', () => {
+    const rat = enemy({ canFlee: true, fleeSection: 2, fleeTestLuck: true, fleeMaxStamina: 3 });
+    const g = make([sec(1, { combat: rat }), sec(2)], { rng: dice(1, 1, 1, 1) }, { items: sneak, startingItems: ['vanish'] });
+    g.useItem(g.inventory[0].uid);
+    g.startCombat();
+    assert.equal(g.canFleeNow(rat), true, 'invisible: you can leave whatever your STAMINA');
+    g.fightRound();                                      // you 2 + 8 SKILL + 2 ambush = 12 against 2 + 5
+    assert.equal(g.invisible, 0, 'attacking ends invisibility');
+    assert.ok(g.combatLog.some(l => l.includes('strike from the shadows')));
+    assert.equal(g.canFleeNow(rat), false);
+    const f = make([sec(1, { combat: rat }), sec(2)], { rng: dice() }, { items: sneak, startingItems: ['vanish'], startingSection: 1 });
+    f.useItem(f.inventory[0].uid); f.startCombat();
+    f.flee();                                            // no dice: the Luck test is skipped
+    assert.equal(f.currentSection, 2);
+});
+
+test('real book: the sneaking tests (6, 145, 146) are stealth tests; the Cloak of Shadows and the Potion of Invisibility work', () => {
+    const b = real();
+    for (const id of [6, 145, 146]) assert.equal(b.sections.find(s => s.id === id).roll.stealth, true, `section ${id}`);
+    assert.equal(b.items['cloak-of-shadows'].stealthBonus, 2);
+    assert.deepEqual(b.items['potion-of-invisibility'].onUse, { invisible: 5 });
+    const g = play(dice());
+    g.addItem('potion-of-invisibility'); g.addItem('cloak-of-shadows');
+    g.goTo(6);
+    assert.equal(g.saveBonus(null, true).amount, 2);
+    g.useItem(g.inventory.find(i => i.id === 'potion-of-invisibility').uid);
+    g.doRoll();                                          // invisible: no dice
+    assert.equal(g.currentSection, 155);
+    assert.deepEqual(g.inventoryView().filter(v => v.item.id === 'cloak-of-shadows').map(v => v.category), ['charm']);
+});

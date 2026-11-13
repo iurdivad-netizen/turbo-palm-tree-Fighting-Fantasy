@@ -15,7 +15,7 @@ from collections import Counter
 
 V1 = sys.argv[1] if len(sys.argv) > 1 else "CURSE_OF_HOLLOWS_END.json"
 V2 = sys.argv[2] if len(sys.argv) > 2 else "CURSE_OF_HOLLOWS_END.v2.json"
-EK = ("modifyStats", "permanentStats", "maxStats", "addItems", "removeItems", "nextFightSkill", "fightSave")
+EK = ("modifyStats", "permanentStats", "maxStats", "addItems", "removeItems", "nextFightSkill", "fightSave", "invisible")
 GOLD = re.compile(r"\b(gold pieces?|coins?|gp)\b", re.I)
 CAT = {}
 
@@ -83,7 +83,7 @@ def main():
         t, d, r = a.get("testLuck"), a.get("diceRoll"), b.get("roll")
         if t:
             ok = (r and r["kind"] == "luck" and r.get("once") == t.get("once") and r.get("gatesOptions") == t.get("gatesChoices")
-                  and r.get("conditions") == t.get("conditions")
+                  and r.get("conditions") == t.get("conditions") and r.get("stealth") == t.get("stealth")
                   and r["success"].get("target") == t.get("successSection") and r["failure"].get("target") == t.get("failureSection")
                   and fx(r["success"].get("effects") or {}) == fx(t.get("successEffects") or {})
                   and fx(r["failure"].get("effects") or {}) == fx(t.get("failureEffects") or {}))

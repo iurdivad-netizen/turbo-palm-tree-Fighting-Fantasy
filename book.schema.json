@@ -62,6 +62,7 @@
         "modifyStats": { "$ref": "#/$defs/statChange" },
         "permanentStats": { "$ref": "#/$defs/statDelta" },
         "maxStats": { "$ref": "#/$defs/statDelta" },
+        "invisible": { "type": "integer", "minimum": 1, "description": "Nobody notices you for this many moves (this one counts): stealth tests succeed without a roll, you can always slip away from a fight, and your first blow from hiding gets +2 and ends it." },
         "fightSave": { "type": "integer", "minimum": 1, "description": "A bonus to saving throws (Luck tests) for one fight, e.g. a scroll: +2." },
         "nextFightSkill": { "type": "integer", "description": "Carried into the next fight: -1 starts that fight at -1 SKILL (a wound that has not healed). Use a negative number." },
         "gold": { "type": "integer", "description": "Gold pieces gained (negative: spent). Gold is a number, not an item." },
@@ -94,6 +95,7 @@
           "type": "object", "additionalProperties": false, "required": ["amount"],
           "properties": { "amount": { "type": "integer", "minimum": 1 }, "versus": { "type": "string", "pattern": "^[a-z][a-z-]*$" } }
         },
+        "stealthBonus": { "type": "integer", "minimum": 1, "description": "Added to the roll of a stealth test (a luck roll with stealth: true); the best item counts." },
         "unique": { "type": "boolean" },
         "onUse": { "$ref": "#/$defs/effects" }
       }
@@ -115,6 +117,7 @@
           "type": "object", "additionalProperties": false, "required": ["amount"],
           "properties": { "amount": { "type": "integer", "minimum": 1 }, "versus": { "type": "string", "pattern": "^[a-z][a-z-]*$" } }
         },
+        "stealthBonus": { "type": "integer", "minimum": 1, "description": "Added to the roll of a stealth test (a luck roll with stealth: true); the best item counts." },
         "unique": { "type": "boolean" },
         "onUse": { "$ref": "#/$defs/effects" }
       }
@@ -166,6 +169,7 @@
         "conditions": { "$ref": "#/$defs/conditions", "description": "The test is only offered when these hold (e.g. only without the key)." },
         "once": { "type": "boolean", "description": "Rolled only the first time the section is entered in a game." },
         "gatesOptions": { "type": "boolean", "description": "The section's options appear only after the roll was made." },
+        "stealth": { "type": "boolean", "description": "A sneaking or hiding test: stealth items add to it and invisibility passes it without a roll." },
         "success": { "$ref": "#/$defs/outcome" },
         "failure": { "$ref": "#/$defs/outcome" }
       }

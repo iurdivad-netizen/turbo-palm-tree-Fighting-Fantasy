@@ -45,6 +45,7 @@
         add(e.permanentStats, ' (permanent)');
         add(e.maxStats, ' (maximum)');
         if (e.nextFightSkill) parts.push(`${e.nextFightSkill > 0 ? '+' : ''}${e.nextFightSkill} SKILL for one fight`);
+        if (e.invisible) parts.push(`invisible for ${e.invisible} moves`);
         if (e.fightSave) parts.push(`+${e.fightSave} to saving throws for one fight`);
         if (e.gold) parts.push(`${e.gold > 0 ? '+' : ''}${e.gold} gold`);
         return parts.length ? ` [${parts.join(', ')}]` : '';
@@ -133,7 +134,7 @@
      */
     function upgradeBook(book) {
         if (!book || book.schemaVersion === 2) return book;
-        const EK = ['modifyStats', 'permanentStats', 'maxStats', 'addItems', 'removeItems', 'nextFightSkill', 'fightSave', 'gold'];
+        const EK = ['modifyStats', 'permanentStats', 'maxStats', 'addItems', 'removeItems', 'nextFightSkill', 'fightSave', 'invisible', 'gold'];
         const fx = d => { const o = {}; EK.forEach(k => { if (d && d[k] && (!isArr(d[k]) || d[k].length)) o[k] = d[k]; }); return o; };
         const hasFx = o => Object.keys(o).length > 0;
         const out = { schemaVersion: 2, id: book.id, title: book.title };
@@ -161,6 +162,7 @@
                 if (t.once) r.once = t.once;
                 if (t.gatesChoices) r.gatesOptions = t.gatesChoices;
                 if (t.conditions) r.conditions = t.conditions;
+                if (t.stealth) r.stealth = true;
                 [['success', 'successSection', 'successText', 'successEffects'], ['failure', 'failureSection', 'failureText', 'failureEffects']].forEach(([side, sk, tk, ek]) => {
                     const o = {};
                     if (t[tk]) o.text = t[tk];
@@ -256,6 +258,7 @@
             this.rollResolved = false;
             this.tempSkillPenalty = 0;
             this.carriedSkillPenalty = 0;   // SKILL lost (or, if negative, gained) in the next fight
+            this.invisible = 0;             // moves left in which nobody notices you (a potion)
             this.tempSave = 0;              // bonus to saving throws (Luck tests) for this fight only, from a scroll
             this.carriedSave = 0;           // the same, for the next fight
             this.equipped = { weapon: null, armor: null };   // uids the player chose; null = the best one is used automatically
@@ -427,7 +430,7 @@
             return [...groups.values()].map(g => {
                 const it = g.item;
                 const usable = !!(it.restore || it.onUse);
-                const category = it.type === 'weapon' ? 'weapon' : it.type === 'armor' ? 'armor' : usable ? 'consumable' : it.saveBonus ? 'charm'
+                const category = it.type === 'weapon' ? 'weapon' : it.type === 'armor' ? 'armor' : usable ? 'consumable' : (it.saveBonus || it.stealthBonus) ? 'charm'
                     : (this.itemsNeeded.has(it.id) || it.type === 'key') ? 'story' : 'keepsake';
                 return Object.assign(g, {
                     category, usable, needed: this.itemsNeeded.has(it.id),
@@ -503,6 +506,7 @@
                 if (this.inCombat) this.tempSkillPenalty -= e.nextFightSkill;       // drunk during the fight: counts now
                 else this.carriedSkillPenalty -= e.nextFightSkill;
             }
+            if (e.invisible) this.invisible = Math.max(this.invisible, e.invisible);
             if (e.fightSave) { if (this.inCombat) this.tempSave += e.fightSave; else this.carriedSave += e.fightSave; }
             if (e.gold) this.addGold(e.gold);
             if (e.addItems) e.addItems.forEach(i => this.addItem(i));
@@ -512,6 +516,7 @@
         // ---- navigation -----------------------------------------------------------------------------------
         /** Go to a section. Its effects apply the first time it is entered, by whatever route. */
         goTo(id) {
+            if (this.invisible > 0) this.invisible--;      // every move uses one up
             this.advance = null;
             this.combatDone = false;
             this.rollResolved = false;
@@ -640,7 +645,7 @@
          * The bonus a saving throw gets. Charms are carried, not worn: the best one that applies counts (they do not add up).
          * A charm with `versus` (e.g. "undead") only counts in a fight against an enemy with that tag. A scroll adds its bonus for one fight.
          */
-        saveBonus(enemy) {
+        saveBonus(enemy, stealth) {
             let best = 0, source = null;
             for (const it of this.inventory) {
                 const sb = it.saveBonus;
@@ -649,14 +654,19 @@
                 if (sb.amount > best) { best = sb.amount; source = it.name; }
             }
             if (this.inCombat && this.tempSave) { best += this.tempSave; source = source ? `${source} and your scroll` : 'your scroll'; }
+            if (stealth) {                                  // sneaking: the best stealth item (a cloak) helps too
+                let sBest = 0, sName = null;
+                for (const it of this.inventory) if ((it.stealthBonus || 0) > sBest) { sBest = it.stealthBonus; sName = it.name; }
+                if (sBest) { best += sBest; source = source ? `${source} and ${sName}` : sName; }
+            }
             return { amount: best, source };
         }
 
-        *_testLuck(enemy) {
+        *_testLuck(enemy, stealth) {
             if (!this.stats) return { success: false, newLuck: 0, roll: 0, bonus: 0 };
             const dice = yield { dice: '2d6', reason: 'luck', label: 'Test your Luck' };
             const roll = dice[0] + dice[1];
-            const b = this.saveBonus(enemy);
+            const b = this.saveBonus(enemy, stealth);
             const success = roll <= this.stats.luck + b.amount;
             this.stats.luck = Math.max(0, this.stats.luck - 1);
             return { success, newLuck: this.stats.luck, roll, dice, bonus: b.amount, source: b.source };
@@ -675,8 +685,11 @@
             this.rollResolved = true;
             if (r.once) this.rolledOnce.add(s.id);
             if (r.kind === 'luck') {
-                const result = yield* this._testLuck(this.inCombat ? this.currentEnemy() : null);
+                let result;
+                if (r.stealth && this.invisible > 0) result = { success: true, roll: 0, bonus: 0, unseen: true };      // nobody sees you: nothing to roll
+                else result = yield* this._testLuck(this.inCombat ? this.currentEnemy() : null, !!r.stealth);
                 const side = result.success ? r.success : r.failure;
+                if (result.unseen) { this._say(`👻 You are invisible: they do not notice you. ${side.text || ''}${describeEffects(side.effects)}`); this.applyEffects(side.effects); if (side.target) this.goTo(side.target); return; }
                 this._say(`${result.success ? 'Lucky' : 'Unlucky'}! (rolled ${result.roll}${result.bonus ? `, +${result.bonus} from ${result.source}` : ''}) ${side.text || ''}${describeEffects(side.effects)}`);
                 this.applyEffects(side.effects);
                 if (this.isGameOver) return;
@@ -704,6 +717,7 @@
         // ---- combat ----------------------------------------------------------------------------------------------------
         canFleeNow(c) {
             if (!c.canFlee) return false;
+            if (this.invisible > 0) return true;                 // nobody can stop you slipping away
             if (c.fleeMaxStamina != null && this.stats.stamina > c.fleeMaxStamina) return false;
             return true;
         }
@@ -774,9 +788,11 @@
             const pd = yield { dice: '2d6', reason: 'attack', label: 'Your attack', who: 'player' };
             const playerDice = pd[0] + pd[1];
             const wield = this.chooseWeapon(combat);
-            const attackBonus = wield.bonus;
+            let attackBonus = wield.bonus;
+            let ambush = 0;
+            if (this.invisible > 0) { ambush = 2; this.invisible = 0; }       // striking breaks the spell
             const effectiveSkill = Math.max(0, this.stats.skill - this.tempSkillPenalty);
-            const playerStrength = playerDice + effectiveSkill + attackBonus;
+            const playerStrength = playerDice + effectiveSkill + attackBonus + ambush;
 
             const ed = yield { dice: '2d6', reason: 'attack', label: `${combat.enemyName}'s attack`, who: 'enemy' };
             const enemyDice = ed[0] + ed[1];
@@ -789,6 +805,7 @@
             log.push(attackBonus !== 0
                 ? `You rolled ${playerDice} + ${effectiveSkill} SKILL + ${attackBonus} (weapon bonus) = ${playerStrength}`
                 : `You rolled ${playerDice} + ${effectiveSkill} SKILL = ${playerStrength}`);
+            if (ambush) log.push(`👻 You strike from the shadows: +${ambush} to your attack. You are visible again.`);
             log.push(`${combat.enemyName} rolled ${enemyDice} + ${combat.enemySkill} SKILL = ${enemyStrength}`);
 
             if (playerStrength > enemyStrength) {
@@ -878,12 +895,12 @@
         }
 
         *_flee(enemy) {
-            if (enemy.fleeTestLuck) {
+            if (enemy.fleeTestLuck && !(this.invisible > 0)) {
                 const lt = yield* this._testLuck(enemy);
                 if (!lt.success) { this.combatLog.push(`\n🎲 Test your Luck (rolled ${lt.roll}): Unlucky! They catch you before you can flee. You must keep fighting.`); return; }
                 this.combatLog.push(`\n🍀 Test your Luck (rolled ${lt.roll}): Lucky! You escape.`);
             }
-            this.combatLog.push(`\n🏃 You flee from ${enemy.enemyName}!`);
+            this.combatLog.push(this.invisible > 0 ? `\n👻 Unseen, you slip away from ${enemy.enemyName}.` : `\n🏃 You flee from ${enemy.enemyName}!`);
             this.inCombat = false;
             this._navigateAfter(enemy.fleeSection);
         }
@@ -896,7 +913,7 @@
                 inventory: this.inventory, visited: Array.from(this.visited), usedOnce: Array.from(this.usedOnce), rolledOnce: Array.from(this.rolledOnce),
                 inCombat: this.inCombat, enemyCurrentStamina: this.enemyCurrentStamina, currentCombatIndex: this.currentCombatIndex, combatLog: this.combatLog,
                 isGameOver: this.isGameOver, gameOverType: this.gameOverType, combatDone: this.combatDone, lastWielded: this.lastWielded,
-                rollResolved: this.rollResolved, tempSkillPenalty: this.tempSkillPenalty, carriedSkillPenalty: this.carriedSkillPenalty, tempSave: this.tempSave, carriedSave: this.carriedSave, equipped: this.equipped, nextUid: this.nextUid, advance: this.advance
+                rollResolved: this.rollResolved, tempSkillPenalty: this.tempSkillPenalty, carriedSkillPenalty: this.carriedSkillPenalty, invisible: this.invisible, tempSave: this.tempSave, carriedSave: this.carriedSave, equipped: this.equipped, nextUid: this.nextUid, advance: this.advance
             };
         }
 
@@ -906,7 +923,7 @@
                 started: d.started, currentSection: d.currentSection, stats: d.stats, inventory: d.inventory, visited: new Set(d.visited),
                 usedOnce: new Set(d.usedOnce || []), rolledOnce: new Set(d.rolledOnce || []), inCombat: !!d.inCombat, enemyCurrentStamina: d.enemyCurrentStamina || 0,
                 currentCombatIndex: d.currentCombatIndex || 0, combatLog: d.combatLog || [], isGameOver: !!d.isGameOver, gameOverType: d.gameOverType || null,
-                combatDone: !!d.combatDone, lastWielded: d.lastWielded || null, rollResolved: !!d.rollResolved, tempSkillPenalty: d.tempSkillPenalty || 0, carriedSkillPenalty: d.carriedSkillPenalty || 0, tempSave: d.tempSave || 0, carriedSave: d.carriedSave || 0, equipped: Object.assign({ weapon: null, armor: null }, d.equipped || {}),
+                combatDone: !!d.combatDone, lastWielded: d.lastWielded || null, rollResolved: !!d.rollResolved, tempSkillPenalty: d.tempSkillPenalty || 0, carriedSkillPenalty: d.carriedSkillPenalty || 0, invisible: d.invisible || 0, tempSave: d.tempSave || 0, carriedSave: d.carriedSave || 0, equipped: Object.assign({ weapon: null, armor: null }, d.equipped || {}),
                 nextUid: d.nextUid || 1, advance: d.advance || null
             });
             this._changed();

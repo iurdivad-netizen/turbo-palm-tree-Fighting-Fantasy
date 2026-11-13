@@ -292,8 +292,11 @@ function rollWidget(section) {
     if (!game.rollPending(section) || game.pending) return '';
     const r = section.roll;
     const label = r.label || (r.kind === 'luck' ? 'Test your Luck' : 'Roll one die');
-    const go = r.kind === 'luck' ? '🍀 Test your Luck' : '🎲 Roll the die';
-    return `<div class="roll-box"><strong>${esc(label)}</strong><button class="btn btn-primary" onclick="ui.roll()">${go}</button></div>`;
+    const unseen = r.stealth && game.invisible > 0;                      // invisible: the sneaking test needs no roll
+    const sb = r.stealth ? game.saveBonus(null, true) : { amount: 0 };
+    const go = unseen ? '👻 Slip by unseen' : r.kind === 'luck' ? '🍀 Test your Luck' : '🎲 Roll the die';
+    const note = unseen ? `<span class="muted">You are invisible: no roll needed.</span>` : sb.amount ? `<span class="muted">+${sb.amount} from ${esc(sb.source)}</span>` : '';
+    return `<div class="roll-box"><strong>${esc(label)}</strong>${note}<button class="btn btn-primary" onclick="ui.roll()">${go}</button></div>`;
 }
 
 // "{{opt:ID}}" becomes that option's button where the book put it, "{{roll}}" the dice; options the text does not mention follow it
@@ -396,7 +399,7 @@ function renderCombat() {
         <div class="actions">
             <button class="btn btn-danger" onclick="ui.round()" ${busy ? 'disabled' : ''}>Fight a round</button>
             <button class="btn" onclick="ui.toggleAutoFight()" ${game.pending && !autoFightOn ? 'disabled' : ''} aria-pressed="${autoFightOn}">${autoFightOn ? '⏸ Stop auto-fight' : '⏩ Auto-fight'}</button>
-            ${game.canFleeNow(c) ? `<button class="btn" onclick="ui.flee()" ${game.pending ? 'disabled' : ''}>${c.fleeTestLuck ? 'Flee (Test your Luck)' : 'Flee'}</button>` : ''}
+            ${game.canFleeNow(c) ? `<button class="btn" onclick="ui.flee()" ${game.pending ? 'disabled' : ''}>${game.invisible > 0 ? 'Slip away unseen' : c.fleeTestLuck ? 'Flee (Test your Luck)' : 'Flee'}</button>` : ''}
         </div>
     </div>`;
 }
@@ -424,6 +427,7 @@ function renderStats() {
         <h2>Character</h2>
         ${meter('SKILL', st.skill, st.initialSkill)}${meter('STAMINA', st.stamina, st.initialStamina)}${meter('LUCK', st.luck, st.initialLuck)}
         ${game.tempSkillPenalty ? `<p class="penalty">${game.tempSkillPenalty > 0 ? '−' : '+'}${Math.abs(game.tempSkillPenalty)} SKILL for this fight</p>` : ''}
+        ${game.invisible > 0 ? `<p class="penalty good">👻 Invisible: ${game.invisible} more move${game.invisible > 1 ? 's' : ''}</p>` : ''}
         ${game.carriedSkillPenalty ? `<p class="penalty">${game.carriedSkillPenalty > 0 ? '−' : '+'}${Math.abs(game.carriedSkillPenalty)} SKILL in your next fight</p>` : ''}
         <div class="gold"><span>💰 Gold</span><span>${st.gold || 0} GP</span></div>
     </section>`;
@@ -434,13 +438,13 @@ const CATEGORIES = [
     ['weapon', 'Weapons', 'Hold one in a fight. Left on automatic, the best one for each enemy is used.'],
     ['armor', 'Armor', 'One piece is worn. Left on automatic, the one that protects most is worn.'],
     ['consumable', 'Potions and food', 'Use them when you need them: in a fight too.'],
-    ['charm', 'Charms', 'Carried, not worn: the best one that applies adds to your saving throws (Luck tests).'],
+    ['charm', 'Charms', 'Carried, not worn: the best one that applies adds to your saving throws (Luck tests) or to sneaking.'],
     ['story', 'Story items', 'The story asks for these at the right moment; nothing to do here.'],
     ['keepsake', 'Keepsakes', 'Described in the book but with no effect on the rules.']
 ];
 function itemRow(g) {
     const item = g.item;
-    const tags = [item.restore && `✨ ${item.restore}`, item.bonus && `⚡ ${item.bonus}`, item.saveBonus && `🍀 +${item.saveBonus.amount} saves${item.saveBonus.versus ? ` vs ${item.saveBonus.versus}` : ''}`, item.properties && item.properties.length && `🏷️ ${item.properties.join(', ')}`].filter(Boolean).join(' · ');
+    const tags = [item.restore && `✨ ${item.restore}`, item.bonus && `⚡ ${item.bonus}`, item.saveBonus && `🍀 +${item.saveBonus.amount} saves${item.saveBonus.versus ? ` vs ${item.saveBonus.versus}` : ''}`, item.stealthBonus && `🥷 +${item.stealthBonus} stealth`, item.properties && item.properties.length && `🏷️ ${item.properties.join(', ')}`].filter(Boolean).join(' · ');
     const uid = Number(item.uid);
     let badge = '', act = '';
     if (g.category === 'weapon') {
@@ -490,6 +494,7 @@ function renderGear(enemy, busy) {
     return `<div class="gear" aria-label="Your equipment">
         <div><span class="ico" aria-hidden="true">🗡️</span> <strong>In your hand:</strong> ${esc(wName)} <span class="muted">(${esc(detail)}${w.chosen ? '' : ', chosen automatically'})</span></div>
         <div><span class="ico" aria-hidden="true">🛡️</span> <strong>Wearing:</strong> ${armor ? esc(armor.name) : 'no armor'}${armor && game._armorValue(armor) ? ` <span class="muted">(${esc(armor.bonus)})</span>` : ''}</div>
+        ${game.invisible > 0 ? `<div><span class="ico" aria-hidden="true">👻</span> <strong>Invisible:</strong> your first blow gets +2 (and ends it)${enemy.canFlee ? '; you can slip away unseen' : ''}</div>` : ''}
         ${saveLine}${picker}${warn}
     </div>`;
 }

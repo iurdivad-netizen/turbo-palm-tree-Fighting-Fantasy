@@ -56,7 +56,7 @@ GENERIC = re.compile(r"^\s*(turn to|go to( section)?)\s+\d+\s*[.:]?\s*$", re.I)
 TURN = re.compile(r"\bTurn to (\d+)\b", re.I)
 # Sections where the generic conversion cannot know which button belongs to which line (several options share one
 # destination). The replacement is applied to the converted text. Keep this table short and reviewed.
-EFFECT_KEYS = ("modifyStats", "permanentStats", "maxStats", "addItems", "removeItems", "nextFightSkill", "fightSave", "gold")
+EFFECT_KEYS = ("modifyStats", "permanentStats", "maxStats", "addItems", "removeItems", "nextFightSkill", "fightSave", "invisible", "gold")
 
 review = {"item_conflicts": [], "uncatalogued": [], "auto_label": [], "residual_roll": [], "victory_narrative": [], "stripped_fragment": [], "unreferenced": [], "dropped_endings": []}
 
@@ -305,7 +305,7 @@ def convert_section(x, book_info):
         r = {"kind": "luck"}
         if t.get("label"):
             r["label"] = t["label"]
-        for src_k, dst_k in (("once", "once"), ("gatesChoices", "gatesOptions"), ("conditions", "conditions")):
+        for src_k, dst_k in (("once", "once"), ("gatesChoices", "gatesOptions"), ("conditions", "conditions"), ("stealth", "stealth")):
             if t.get(src_k):
                 r[dst_k] = t[src_k]
         for side, sec_k, txt_k, eff_k in (("success", "successSection", "successText", "successEffects"), ("failure", "failureSection", "failureText", "failureEffects")):

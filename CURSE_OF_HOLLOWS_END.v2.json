@@ -90,6 +90,14 @@
       "type": "potion",
       "restore": "+6 stamina"
     },
+    "potion-of-invisibility": {
+      "name": "Potion of Invisibility",
+      "type": "potion",
+      "onUse": {
+        "invisible": 5
+      },
+      "description": "Invisible for 5 moves (the book says ten minutes) or until you attack: sneaking always works, you can slip away from any fight, and your first blow from hiding gets +2."
+    },
     "potion-of-luck": {
       "name": "Potion of Luck",
       "type": "potion",
@@ -147,7 +155,8 @@
     "cloak-of-shadows": {
       "name": "Cloak of Shadows",
       "type": "other",
-      "description": "The book: +2 to stealth (no effect in this app)."
+      "stealthBonus": 2,
+      "description": "Absorbs light: +2 when you sneak or hide."
     },
     "cult-medallion": {
       "name": "Cult Medallion",
@@ -212,11 +221,6 @@
       "name": "Old Tome",
       "type": "other",
       "description": "The one readable book in the library."
-    },
-    "potion-of-invisibility": {
-      "name": "Potion of Invisibility",
-      "type": "other",
-      "description": "The book: ten minutes of invisibility (no effect in this app)."
     },
     "prayer-book": {
       "name": "Prayer Book",
@@ -385,6 +389,7 @@
       "roll": {
         "kind": "luck",
         "label": "Test your Luck",
+        "stealth": true,
         "success": {
           "text": "They do not sense your presence.",
           "target": 155
@@ -3243,6 +3248,7 @@
       "roll": {
         "kind": "luck",
         "label": "Sneak closer (Test Your Luck)",
+        "stealth": true,
         "success": {
           "target": 71
         },
@@ -3257,6 +3263,7 @@
       "roll": {
         "kind": "luck",
         "label": "Test your Luck",
+        "stealth": true,
         "success": {
           "text": "You learn enough without tipping him off.",
           "target": 203

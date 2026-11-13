@@ -66,6 +66,8 @@ What the app does with an item depends on what it says it is. This is the whole 
 | `"onUse": { ...effects }` | A **Use** button that applies any effects (e.g. `{"nextFightSkill": 2}`: +2 SKILL for one fight). |
 | `"saveBonus": {"amount": 1, "versus": "undead"}` | A **charm**, carried not worn. A saving throw (Test your Luck) succeeds on a roll of at most LUCK + amount. The best charm that applies counts; charms do not add up. With `versus`, it only counts in a fight against an enemy whose `tags` include that word (`"tags": ["undead"]` on the enemy); without it, it counts at traps too. The fight log says when a charm helped. |
 | `"onUse": {"fightSave": 2}` | A **Use** button: +2 to saving throws for one whole fight (before or during it). |
+| `"stealthBonus": 2` on an item, and `"stealth": true` on a Luck test (`"roll": {"kind": "luck", "stealth": true, ...}`) | The sneaking or hiding test gets +2 (the best stealth item counts). Mark every "sneak past", "hide" or "don't be noticed" test with `stealth: true`. |
+| `"onUse": {"invisible": 5}` | A **Use** button: for that many moves (the current section counts) stealth tests pass with no roll and no LUCK spent, the player can always slip away from a fight, and their first blow gets +2 and ends it. |
 | a `key`/`other` item named in an option's `conditions` | Shown under **Story items**; the story asks for it at the right moment. |
 | anything else | Shown under **Keepsakes** with its description. It has no effect on the rules, so say so in the description or do not give it. |
 
