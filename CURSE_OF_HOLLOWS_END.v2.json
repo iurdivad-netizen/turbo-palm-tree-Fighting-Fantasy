@@ -10,6 +10,252 @@
     "stamina": 20,
     "luck": 9
   },
+  "items": {
+    "blessed-silver-sword": {
+      "name": "Blessed Silver Sword",
+      "type": "weapon",
+      "bonus": "+2 skill",
+      "properties": [
+        "silver",
+        "magical"
+      ],
+      "description": "Silver and blessed."
+    },
+    "magic-longsword": {
+      "name": "+1 Longsword",
+      "type": "weapon",
+      "bonus": "+1 skill",
+      "properties": [
+        "magical"
+      ],
+      "unique": true,
+      "description": "Well balanced and etched with runes; magical."
+    },
+    "magic-mace": {
+      "name": "+1 Mace",
+      "type": "weapon",
+      "bonus": "+1 skill",
+      "properties": [
+        "magical",
+        "crushing"
+      ],
+      "description": "A blessed mace; crushing and magical."
+    },
+    "silver-dagger": {
+      "name": "Silver Dagger",
+      "type": "weapon",
+      "bonus": "+1 skill",
+      "properties": [
+        "silver"
+      ],
+      "description": "Silver wounds the undead."
+    },
+    "sword": {
+      "name": "Sword",
+      "type": "weapon",
+      "description": "A reliable blade."
+    },
+    "cloak-of-protection": {
+      "name": "Cloak of Protection",
+      "type": "armor",
+      "bonus": "+1 defense",
+      "unique": true,
+      "description": "Enemy hits do 1 less damage."
+    },
+    "leather-armor": {
+      "name": "Leather Armor",
+      "type": "armor",
+      "description": "Light protection; no defence bonus."
+    },
+    "healing-potion": {
+      "name": "Healing Potion",
+      "type": "potion",
+      "restore": "+4 stamina"
+    },
+    "luminous-vial": {
+      "name": "Luminous Blue Vial",
+      "type": "potion",
+      "onUse": {
+        "modifyStats": {
+          "luck": -1
+        },
+        "permanentStats": {
+          "skill": 1
+        }
+      },
+      "description": "Permanently +1 SKILL, but costs 1 LUCK when drunk."
+    },
+    "potion-of-healing": {
+      "name": "Potion of Healing",
+      "type": "potion",
+      "restore": "+6 stamina"
+    },
+    "potion-of-luck": {
+      "name": "Potion of Luck",
+      "type": "potion",
+      "restore": "+3 luck"
+    },
+    "potion-of-strength": {
+      "name": "Potion of Strength",
+      "type": "potion",
+      "onUse": {
+        "nextFightSkill": 2
+      },
+      "description": "+2 SKILL for one fight. Drink it before (or during) the fight."
+    },
+    "rations": {
+      "name": "Provisions",
+      "type": "food",
+      "restore": "+4 stamina",
+      "description": "Dried food."
+    },
+    "brass-key": {
+      "name": "Brass Key",
+      "type": "key",
+      "description": "Brass, inscribed with strange symbols."
+    },
+    "iron-key": {
+      "name": "Iron Key",
+      "type": "key",
+      "description": "A rusty iron key."
+    },
+    "silver-key": {
+      "name": "Silver Key",
+      "type": "key",
+      "description": "One of the three things that bind the Widow."
+    },
+    "alchemists-journal": {
+      "name": "Alchemist's Journal",
+      "type": "other",
+      "unique": true,
+      "description": "Notes on the binding of the Widow."
+    },
+    "amulet-of-the-grave": {
+      "name": "Amulet of the Grave",
+      "type": "other",
+      "description": "The book: absorbs dark energy, +2 against undead (no effect in this app)."
+    },
+    "catacomb-map": {
+      "name": "Map of the Catacombs",
+      "type": "other",
+      "description": "Etched into the wall by a long-dead explorer."
+    },
+    "cloak-of-shadows": {
+      "name": "Cloak of Shadows",
+      "type": "other",
+      "description": "The book: +2 to stealth (no effect in this app)."
+    },
+    "cult-medallion": {
+      "name": "Cult Medallion",
+      "type": "other",
+      "description": "Might let you pass as one of them."
+    },
+    "diary": {
+      "name": "Skeleton's Diary",
+      "type": "other",
+      "description": "Clutched in bony hands."
+    },
+    "eliza-ring": {
+      "name": "Eliza's Wedding Ring",
+      "type": "other",
+      "description": "The ring Thomas gave her."
+    },
+    "golden-ring": {
+      "name": "Golden Ring",
+      "type": "other",
+      "description": "Pure gold, worth a considerable sum."
+    },
+    "holy-symbol": {
+      "name": "Holy Symbol",
+      "type": "other",
+      "description": "Blessed silver. The book: +1 to saves against undead (no effect in this app)."
+    },
+    "manor-map": {
+      "name": "Map of the Manor",
+      "type": "other",
+      "description": "Secret passages and hidden rooms."
+    },
+    "mayors-ledger": {
+      "name": "Mayor's Ledger",
+      "type": "other",
+      "unique": true,
+      "description": "Payments to the Hollow Faith cult; proof for the Mayor."
+    },
+    "mysterious-potion": {
+      "name": "Mysterious Potion",
+      "type": "other",
+      "description": "A dark swirling liquid. You can drink it when the story offers it."
+    },
+    "old-key": {
+      "name": "Old Key",
+      "type": "other",
+      "description": "\"Might open doors deeper in the manor.\""
+    },
+    "old-tome": {
+      "name": "Old Tome",
+      "type": "other",
+      "description": "The one readable book in the library."
+    },
+    "potion-of-invisibility": {
+      "name": "Potion of Invisibility",
+      "type": "other",
+      "description": "The book: ten minutes of invisibility (no effect in this app)."
+    },
+    "prayer-book": {
+      "name": "Prayer Book",
+      "type": "other",
+      "description": "From a kneeling skeleton."
+    },
+    "rope": {
+      "name": "Rope",
+      "type": "other",
+      "description": "For wells and chasms."
+    },
+    "scroll": {
+      "name": "Ancient Scroll",
+      "type": "other",
+      "description": "Written in elegant, faded script."
+    },
+    "scroll-of-protection": {
+      "name": "Scroll of Protection",
+      "type": "other",
+      "description": "The book: +2 to saves for one battle (no effect in this app)."
+    },
+    "silver-amulet": {
+      "name": "Silver Amulet",
+      "type": "other",
+      "description": "The book: +1 to saves against undead (no effect in this app)."
+    },
+    "silver-ring": {
+      "name": "Silver Ring",
+      "type": "other",
+      "description": "Worth 30 gold; the book: minor protection against undead (no effect in this app)."
+    },
+    "tomb-map": {
+      "name": "Map of the Hollow Tomb",
+      "type": "other",
+      "description": "Shows where the Hollow family tomb lies."
+    },
+    "torn-map": {
+      "name": "Torn Map",
+      "type": "other",
+      "description": "Shows a secret entrance to the manor."
+    },
+    "true-name": {
+      "name": "The Widow's True Name",
+      "type": "other",
+      "unique": true,
+      "description": "Eliza Hollow. One of the three things that bind the Widow."
+    }
+  },
+  "startingItems": [
+    "sword",
+    "leather-armor",
+    {
+      "id": "rations",
+      "qty": 10
+    }
+  ],
   "sections": [
     {
       "id": 0,
@@ -35,16 +281,7 @@
           "label": "Visit Mayor Hollow's manor",
           "target": 234
         }
-      ],
-      "effects": {
-        "addItems": [
-          {
-            "id": "key",
-            "name": "Key",
-            "type": "key"
-          }
-        ]
-      }
+      ]
     },
     {
       "id": 2,
@@ -78,11 +315,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "brass-key",
-            "name": "Brass Key",
-            "type": "key"
-          }
+          "brass-key"
         ]
       }
     },
@@ -174,11 +407,7 @@
       },
       "effects": {
         "addItems": [
-          {
-            "id": "rope",
-            "name": "Rope",
-            "type": "other"
-          }
+          "rope"
         ]
       }
     },
@@ -195,28 +424,12 @@
       "effects": {
         "addItems": [
           {
-            "id": "gold",
-            "name": "30 Gold Pieces",
-            "type": "treasure"
-          },
-          {
             "id": "healing-potion",
-            "name": "Healing Potion",
-            "type": "potion",
-            "restore": "+4 stamina"
+            "qty": 2
           },
-          {
-            "id": "healing-potion",
-            "name": "Healing Potion",
-            "type": "potion",
-            "restore": "+4 stamina"
-          },
-          {
-            "id": "iron-key",
-            "name": "Iron Key",
-            "type": "key"
-          }
-        ]
+          "iron-key"
+        ],
+        "gold": 30
       }
     },
     {
@@ -303,16 +516,7 @@
             "requiresNoItem": "brass-key"
           }
         }
-      ],
-      "effects": {
-        "addItems": [
-          {
-            "id": "key",
-            "name": "Key",
-            "type": "key"
-          }
-        ]
-      }
+      ]
     },
     {
       "id": 14,
@@ -326,18 +530,8 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "scroll",
-            "name": "Scroll",
-            "type": "other"
-          },
-          {
-            "id": "true-name",
-            "name": "The Widow's True Name",
-            "type": "other",
-            "description": "Eliza Hollow",
-            "unique": true
-          }
+          "scroll",
+          "true-name"
         ]
       }
     },
@@ -425,18 +619,9 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "gold",
-            "name": "50 Gold Pieces",
-            "type": "treasure"
-          },
-          {
-            "id": "healing-potion",
-            "name": "Healing Potion",
-            "type": "potion",
-            "restore": "+4 stamina"
-          }
-        ]
+          "healing-potion"
+        ],
+        "gold": 50
       }
     },
     {
@@ -663,16 +848,7 @@
             "requiresNoItem": "silver-key"
           }
         }
-      ],
-      "effects": {
-        "addItems": [
-          {
-            "id": "key",
-            "name": "Key",
-            "type": "key"
-          }
-        ]
-      }
+      ]
     },
     {
       "id": 30,
@@ -694,18 +870,6 @@
           "property": "crushing",
           "damage": 3
         }
-      },
-      "effects": {
-        "addItems": [
-          {
-            "id": "mace",
-            "name": "Mace",
-            "type": "weapon",
-            "properties": [
-              "crushing"
-            ]
-          }
-        ]
       }
     },
     {
@@ -759,16 +923,7 @@
             "requiresNoItem": "mayors-ledger"
           }
         }
-      ],
-      "effects": {
-        "addItems": [
-          {
-            "id": "book",
-            "name": "Book",
-            "type": "other"
-          }
-        ]
-      }
+      ]
     },
     {
       "id": 34,
@@ -815,20 +970,7 @@
           "target": 111,
           "effects": {
             "addItems": [
-              {
-                "id": "luminous-vial",
-                "name": "Luminous Blue Vial",
-                "type": "potion",
-                "description": "Permanently +1 SKILL, but costs 1 LUCK when drunk.",
-                "onUse": {
-                  "permanentStats": {
-                    "skill": 1
-                  },
-                  "modifyStats": {
-                    "luck": -1
-                  }
-                }
-              }
+              "luminous-vial"
             ]
           },
           "once": true
@@ -843,21 +985,7 @@
         "addItems": [
           {
             "id": "rations",
-            "name": "Provisions",
-            "type": "food",
-            "restore": "+4 stamina"
-          },
-          {
-            "id": "rations",
-            "name": "Provisions",
-            "type": "food",
-            "restore": "+4 stamina"
-          },
-          {
-            "id": "rations",
-            "name": "Provisions",
-            "type": "food",
-            "restore": "+4 stamina"
+            "qty": 3
           }
         ]
       }
@@ -908,11 +1036,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "silver-key",
-            "name": "Silver Key",
-            "type": "key"
-          }
+          "silver-key"
         ]
       }
     },
@@ -989,11 +1113,7 @@
           "luck": 1
         },
         "addItems": [
-          {
-            "id": "map",
-            "name": "Map",
-            "type": "other"
-          }
+          "torn-map"
         ]
       }
     },
@@ -1026,19 +1146,9 @@
           "text": "The lock opens! Inside you find 40 gold pieces and a Cloak of Protection.",
           "effects": {
             "addItems": [
-              {
-                "id": "gold",
-                "name": "40 Gold Pieces",
-                "type": "treasure"
-              },
-              {
-                "id": "cloak-of-protection",
-                "name": "Cloak of Protection",
-                "type": "armor",
-                "bonus": "+1 defense",
-                "unique": true
-              }
-            ]
+              "cloak-of-protection"
+            ],
+            "gold": 40
           }
         },
         "failure": {
@@ -1186,16 +1296,7 @@
           "label": "Explore the village streets",
           "target": 77
         }
-      ],
-      "effects": {
-        "addItems": [
-          {
-            "id": "map",
-            "name": "Map",
-            "type": "other"
-          }
-        ]
-      }
+      ]
     },
     {
       "id": 46,
@@ -1242,11 +1343,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "rope",
-            "name": "Rope",
-            "type": "other"
-          }
+          "rope"
         ]
       }
     },
@@ -1414,20 +1511,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "armor",
-            "name": "Armor",
-            "type": "armor"
-          },
-          {
-            "id": "magic-longsword",
-            "name": "+1 Longsword",
-            "type": "weapon",
-            "bonus": "+1 skill",
-            "properties": [
-              "magical"
-            ]
-          }
+          "magic-longsword"
         ]
       }
     },
@@ -1499,16 +1583,7 @@
           "label": "Continue",
           "target": 301
         }
-      ],
-      "effects": {
-        "addItems": [
-          {
-            "id": "shield",
-            "name": "Shield",
-            "type": "armor"
-          }
-        ]
-      }
+      ]
     },
     {
       "id": 64,
@@ -1546,17 +1621,9 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "scroll",
-            "name": "Scroll",
-            "type": "other"
-          },
-          {
-            "id": "gold",
-            "name": "50 Gold Pieces",
-            "type": "treasure"
-          }
-        ]
+          "scroll-of-protection"
+        ],
+        "gold": 50
       }
     },
     {
@@ -1645,14 +1712,7 @@
       "effects": {
         "modifyStats": {
           "stamina": -3
-        },
-        "addItems": [
-          {
-            "id": "potion",
-            "name": "Potion",
-            "type": "potion"
-          }
-        ]
+        }
       }
     },
     {
@@ -1666,13 +1726,7 @@
         }
       ],
       "effects": {
-        "addItems": [
-          {
-            "id": "gold",
-            "name": "20 Gold Pieces",
-            "type": "treasure"
-          }
-        ]
+        "gold": 20
       }
     },
     {
@@ -1719,13 +1773,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "true-name",
-            "name": "The Widow's True Name",
-            "type": "other",
-            "description": "Eliza Hollow",
-            "unique": true
-          }
+          "true-name"
         ]
       }
     },
@@ -1830,11 +1878,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "book",
-            "name": "Book",
-            "type": "other"
-          }
+          "diary"
         ]
       }
     },
@@ -1913,15 +1957,6 @@
             }
           }
         }
-      },
-      "effects": {
-        "addItems": [
-          {
-            "id": "spear",
-            "name": "Spear",
-            "type": "weapon"
-          }
-        ]
       }
     },
     {
@@ -1936,11 +1971,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "book",
-            "name": "Book",
-            "type": "other"
-          }
+          "prayer-book"
         ]
       }
     },
@@ -2125,11 +2156,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "cult-medallion",
-            "name": "Cult Medallion",
-            "type": "other"
-          }
+          "cult-medallion"
         ]
       }
     },
@@ -2145,17 +2172,9 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "rope",
-            "name": "Rope",
-            "type": "other"
-          },
-          {
-            "id": "gold",
-            "name": "30 Gold Pieces",
-            "type": "treasure"
-          }
-        ]
+          "rope"
+        ],
+        "gold": 30
       }
     },
     {
@@ -2207,27 +2226,9 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "golden-ring",
-            "name": "Golden Ring",
-            "type": "other"
-          },
-          {
-            "id": "ring",
-            "name": "Ring",
-            "type": "other"
-          },
-          {
-            "id": "treasure",
-            "name": "Treasure",
-            "type": "treasure"
-          },
-          {
-            "id": "gold",
-            "name": "40 Gold Pieces",
-            "type": "treasure"
-          }
-        ]
+          "golden-ring"
+        ],
+        "gold": 40
       }
     },
     {
@@ -2263,20 +2264,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "silver-dagger",
-            "name": "Silver Dagger",
-            "type": "weapon",
-            "bonus": "+1",
-            "properties": [
-              "silver"
-            ]
-          },
-          {
-            "id": "blade",
-            "name": "Blade",
-            "type": "weapon"
-          }
+          "silver-dagger"
         ]
       }
     },
@@ -2386,19 +2374,8 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "alchemists-journal",
-            "name": "Alchemist's Journal",
-            "type": "other",
-            "unique": true
-          },
-          {
-            "id": "true-name",
-            "name": "The Widow's True Name",
-            "type": "other",
-            "description": "Eliza Hollow",
-            "unique": true
-          }
+          "alchemists-journal",
+          "true-name"
         ]
       }
     },
@@ -2567,17 +2544,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "mysterious-potion",
-            "name": "Mysterious Potion",
-            "type": "potion"
-          },
-          {
-            "id": "potion-of-luck",
-            "name": "Potion of Luck",
-            "type": "potion",
-            "restore": "+3 luck"
-          }
+          "potion-of-luck"
         ]
       }
     },
@@ -2607,11 +2574,7 @@
           "luck": 1
         },
         "addItems": [
-          {
-            "id": "map",
-            "name": "Map",
-            "type": "other"
-          }
+          "catacomb-map"
         ]
       }
     },
@@ -2680,11 +2643,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "cloak-of-shadows",
-            "name": "Cloak of Shadows",
-            "type": "other"
-          }
+          "cloak-of-shadows"
         ]
       }
     },
@@ -2739,11 +2698,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "healing-potion",
-            "name": "Healing Potion",
-            "type": "potion"
-          }
+          "potion-of-healing"
         ]
       }
     },
@@ -2959,21 +2914,9 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "iron-key",
-            "name": "Iron Key",
-            "type": "key"
-          },
-          {
-            "id": "silver-key",
-            "name": "Silver Key",
-            "type": "key"
-          },
-          {
-            "id": "brass-key",
-            "name": "Brass Key",
-            "type": "key"
-          }
+          "iron-key",
+          "silver-key",
+          "brass-key"
         ]
       }
     },
@@ -2994,18 +2937,9 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "gold",
-            "name": "50 Gold Pieces",
-            "type": "treasure"
-          },
-          {
-            "id": "healing-potion",
-            "name": "Healing Potion",
-            "type": "potion",
-            "restore": "+4 stamina"
-          }
-        ]
+          "healing-potion"
+        ],
+        "gold": 50
       }
     },
     {
@@ -3057,11 +2991,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "manor-map",
-            "name": "Manor Map",
-            "type": "other"
-          }
+          "manor-map"
         ]
       }
     },
@@ -3194,11 +3124,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "holy-symbol",
-            "name": "Holy Symbol",
-            "type": "other"
-          }
+          "holy-symbol"
         ]
       }
     },
@@ -3289,19 +3215,9 @@
           "target": 301,
           "effects": {
             "addItems": [
-              {
-                "id": "gold",
-                "name": "40 Gold Pieces",
-                "type": "treasure"
-              },
-              {
-                "id": "cloak-of-protection",
-                "name": "Cloak of Protection",
-                "type": "armor",
-                "bonus": "+1 defense",
-                "unique": true
-              }
-            ]
+              "cloak-of-protection"
+            ],
+            "gold": 40
           }
         },
         "failure": {
@@ -3389,11 +3305,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "rope",
-            "name": "Rope",
-            "type": "other"
-          }
+          "rope"
         ]
       }
     },
@@ -3409,19 +3321,8 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "alchemists-journal",
-            "name": "Alchemist's Journal",
-            "type": "other",
-            "unique": true
-          },
-          {
-            "id": "true-name",
-            "name": "The Widow's True Name",
-            "type": "other",
-            "description": "Eliza Hollow",
-            "unique": true
-          }
+          "alchemists-journal",
+          "true-name"
         ]
       }
     },
@@ -3453,11 +3354,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "potion-of-invisibility",
-            "name": "Potion of Invisibility",
-            "type": "potion"
-          }
+          "potion-of-invisibility"
         ]
       }
     },
@@ -3643,15 +3540,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "magic-longsword",
-            "name": "+1 Longsword",
-            "type": "weapon",
-            "bonus": "+1 skill",
-            "properties": [
-              "magical"
-            ]
-          }
+          "magic-longsword"
         ]
       }
     },
@@ -3682,15 +3571,6 @@
           "text": "The door will not budge.",
           "target": 28
         }
-      },
-      "effects": {
-        "addItems": [
-          {
-            "id": "key",
-            "name": "Key",
-            "type": "key"
-          }
-        ]
       }
     },
     {
@@ -3754,22 +3634,10 @@
         "addItems": [
           {
             "id": "rations",
-            "name": "Provisions",
-            "type": "food",
-            "restore": "+4 stamina"
-          },
-          {
-            "id": "rations",
-            "name": "Provisions",
-            "type": "food",
-            "restore": "+4 stamina"
-          },
-          {
-            "id": "gold",
-            "name": "20 Gold Pieces",
-            "type": "treasure"
+            "qty": 2
           }
-        ]
+        ],
+        "gold": 20
       }
     },
     {
@@ -3952,20 +3820,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "silver-dagger",
-            "name": "Silver Dagger",
-            "type": "weapon",
-            "bonus": "+1",
-            "properties": [
-              "silver"
-            ]
-          },
-          {
-            "id": "blade",
-            "name": "Blade",
-            "type": "weapon"
-          }
+          "silver-dagger"
         ]
       }
     },
@@ -4259,20 +4114,7 @@
           "fleeMaxStamina": 4,
           "fleeTestLuck": true
         }
-      ],
-      "effects": {
-        "addItems": [
-          {
-            "id": "silver-dagger",
-            "name": "Silver Dagger",
-            "type": "weapon",
-            "bonus": "+1",
-            "properties": [
-              "silver"
-            ]
-          }
-        ]
-      }
+      ]
     },
     {
       "id": 181,
@@ -4297,11 +4139,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "potion",
-            "name": "Potion",
-            "type": "potion"
-          }
+          "potion-of-strength"
         ]
       }
     },
@@ -4329,18 +4167,9 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "gold",
-            "name": "40 Gold Pieces",
-            "type": "treasure"
-          },
-          {
-            "id": "healing-potion",
-            "name": "Healing Potion",
-            "type": "potion",
-            "restore": "+6 stamina"
-          }
-        ]
+          "potion-of-healing"
+        ],
+        "gold": 40
       }
     },
     {
@@ -4553,20 +4382,6 @@
             "text": "You avoid the trap and can explore on."
           }
         ]
-      },
-      "effects": {
-        "addItems": [
-          {
-            "id": "blessed-amulet",
-            "name": "Blessed Amulet",
-            "type": "other"
-          },
-          {
-            "id": "map",
-            "name": "Map",
-            "type": "other"
-          }
-        ]
       }
     },
     {
@@ -4582,16 +4397,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "magic-mace",
-            "name": "+1 Mace",
-            "type": "weapon",
-            "bonus": "+1 skill",
-            "properties": [
-              "magical",
-              "crushing"
-            ]
-          }
+          "magic-mace"
         ]
       }
     },
@@ -4642,11 +4448,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "cult-medallion",
-            "name": "Cult Medallion",
-            "type": "other"
-          }
+          "cult-medallion"
         ]
       }
     },
@@ -4669,16 +4471,7 @@
       },
       "effects": {
         "addItems": [
-          {
-            "id": "book",
-            "name": "Book",
-            "type": "other"
-          },
-          {
-            "id": "mayors-ledger",
-            "name": "Mayor's Ledger",
-            "type": "other"
-          }
+          "mayors-ledger"
         ]
       }
     },
@@ -4694,16 +4487,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "silver-ring",
-            "name": "Silver Ring",
-            "type": "other"
-          },
-          {
-            "id": "ring",
-            "name": "Ring",
-            "type": "other"
-          }
+          "silver-ring"
         ]
       }
     },
@@ -4753,13 +4537,7 @@
         }
       ],
       "effects": {
-        "addItems": [
-          {
-            "id": "gold",
-            "name": "50 Gold Pieces",
-            "type": "treasure"
-          }
-        ]
+        "gold": 50
       }
     },
     {
@@ -4860,7 +4638,12 @@
           "label": "Ignore it and review what you've learned",
           "target": 388
         }
-      ]
+      ],
+      "effects": {
+        "addItems": [
+          "mysterious-potion"
+        ]
+      }
     },
     {
       "id": 204,
@@ -4913,19 +4696,8 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "alchemists-journal",
-            "name": "Alchemist's Journal",
-            "type": "other",
-            "unique": true
-          },
-          {
-            "id": "true-name",
-            "name": "The Widow's True Name",
-            "type": "other",
-            "description": "Eliza Hollow",
-            "unique": true
-          }
+          "alchemists-journal",
+          "true-name"
         ]
       }
     },
@@ -4996,12 +4768,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "cloak-of-protection",
-            "name": "Cloak of Protection",
-            "type": "armor",
-            "bonus": "+1 defense"
-          }
+          "cloak-of-protection"
         ]
       }
     },
@@ -5049,15 +4816,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "magic-longsword",
-            "name": "+1 Longsword",
-            "type": "weapon",
-            "bonus": "+1 skill",
-            "properties": [
-              "magical"
-            ]
-          }
+          "magic-longsword"
         ]
       }
     },
@@ -5085,11 +4844,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "potion",
-            "name": "Potion",
-            "type": "potion"
-          }
+          "potion-of-healing"
         ]
       }
     },
@@ -5160,11 +4915,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "holy-symbol",
-            "name": "Holy Symbol",
-            "type": "other"
-          }
+          "holy-symbol"
         ]
       }
     },
@@ -5349,11 +5100,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "manor-map",
-            "name": "Manor Map",
-            "type": "other"
-          }
+          "manor-map"
         ]
       }
     },
@@ -5404,23 +5151,11 @@
       "effects": {
         "addItems": [
           {
-            "id": "gold",
-            "name": "30 Gold Pieces",
-            "type": "treasure"
-          },
-          {
             "id": "rations",
-            "name": "Provisions",
-            "type": "food",
-            "restore": "+4 stamina"
-          },
-          {
-            "id": "rations",
-            "name": "Provisions",
-            "type": "food",
-            "restore": "+4 stamina"
+            "qty": 2
           }
-        ]
+        ],
+        "gold": 30
       }
     },
     {
@@ -5738,55 +5473,14 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "old-rope",
-            "name": "Old Rope",
-            "type": "other"
-          },
-          {
-            "id": "old-map",
-            "name": "Old Map",
-            "type": "other"
-          },
-          {
-            "id": "silver-dagger",
-            "name": "Silver Dagger",
-            "type": "weapon",
-            "bonus": "+2 attack",
-            "properties": [
-              "silver"
-            ]
-          },
+          "silver-dagger",
           {
             "id": "healing-potion",
-            "name": "Healing Potion",
-            "type": "potion",
-            "restore": "+4 stamina"
+            "qty": 3
           },
-          {
-            "id": "healing-potion",
-            "name": "Healing Potion",
-            "type": "potion",
-            "restore": "+4 stamina"
-          },
-          {
-            "id": "healing-potion",
-            "name": "Healing Potion",
-            "type": "potion",
-            "restore": "+4 stamina"
-          },
-          {
-            "id": "gold",
-            "name": "50 Gold Pieces",
-            "type": "treasure"
-          },
-          {
-            "id": "mayors-ledger",
-            "name": "Mayor's Ledger",
-            "type": "other",
-            "unique": true
-          }
-        ]
+          "mayors-ledger"
+        ],
+        "gold": 50
       }
     },
     {
@@ -5847,16 +5541,7 @@
           "label": "Take the east passage",
           "target": 267
         }
-      ],
-      "effects": {
-        "addItems": [
-          {
-            "id": "book",
-            "name": "Book",
-            "type": "other"
-          }
-        ]
-      }
+      ]
     },
     {
       "id": 237,
@@ -5902,16 +5587,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "magic-mace",
-            "name": "+1 Mace",
-            "type": "weapon",
-            "bonus": "+1 skill",
-            "properties": [
-              "magical",
-              "crushing"
-            ]
-          }
+          "magic-mace"
         ]
       }
     },
@@ -5974,11 +5650,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "potion",
-            "name": "Potion",
-            "type": "potion"
-          }
+          "potion-of-strength"
         ]
       }
     },
@@ -6148,22 +5820,10 @@
         "addItems": [
           {
             "id": "rations",
-            "name": "Provisions",
-            "type": "food",
-            "restore": "+4 stamina"
-          },
-          {
-            "id": "rations",
-            "name": "Provisions",
-            "type": "food",
-            "restore": "+4 stamina"
-          },
-          {
-            "id": "gold",
-            "name": "20 Gold Pieces",
-            "type": "treasure"
+            "qty": 2
           }
-        ]
+        ],
+        "gold": 20
       }
     },
     {
@@ -6201,16 +5861,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "silver-amulet",
-            "name": "Silver Amulet",
-            "type": "other"
-          },
-          {
-            "id": "amulet",
-            "name": "Amulet",
-            "type": "other"
-          }
+          "silver-amulet"
         ]
       }
     },
@@ -6257,18 +5908,9 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "gold",
-            "name": "40 Gold Pieces",
-            "type": "treasure"
-          },
-          {
-            "id": "healing-potion",
-            "name": "Healing Potion",
-            "type": "potion",
-            "restore": "+6 stamina"
-          }
-        ]
+          "potion-of-healing"
+        ],
+        "gold": 40
       }
     },
     {
@@ -6344,15 +5986,6 @@
           "text": "The door will not budge.",
           "target": 28
         }
-      },
-      "effects": {
-        "addItems": [
-          {
-            "id": "key",
-            "name": "Key",
-            "type": "key"
-          }
-        ]
       }
     },
     {
@@ -6367,11 +6000,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "manor-map",
-            "name": "Manor Map",
-            "type": "other"
-          }
+          "manor-map"
         ]
       }
     },
@@ -6462,11 +6091,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "cloak-of-shadows",
-            "name": "Cloak of Shadows",
-            "type": "other"
-          }
+          "cloak-of-shadows"
         ]
       }
     },
@@ -6498,15 +6123,6 @@
           "text": "The door will not budge.",
           "target": 301
         }
-      },
-      "effects": {
-        "addItems": [
-          {
-            "id": "key",
-            "name": "Key",
-            "type": "key"
-          }
-        ]
       }
     },
     {
@@ -6623,15 +6239,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "magic-longsword",
-            "name": "+1 Longsword",
-            "type": "weapon",
-            "bonus": "+1 skill",
-            "properties": [
-              "magical"
-            ]
-          }
+          "magic-longsword"
         ]
       }
     },
@@ -6714,11 +6322,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "manor-map",
-            "name": "Manor Map",
-            "type": "other"
-          }
+          "manor-map"
         ]
       }
     },
@@ -6839,23 +6443,11 @@
       "effects": {
         "addItems": [
           {
-            "id": "gold",
-            "name": "50 Gold Pieces",
-            "type": "treasure"
-          },
-          {
             "id": "healing-potion",
-            "name": "Healing Potion",
-            "type": "potion",
-            "restore": "+4 stamina"
-          },
-          {
-            "id": "healing-potion",
-            "name": "Healing Potion",
-            "type": "potion",
-            "restore": "+4 stamina"
+            "qty": 2
           }
-        ]
+        ],
+        "gold": 50
       }
     },
     {
@@ -6873,21 +6465,7 @@
         "addItems": [
           {
             "id": "rations",
-            "name": "Provisions",
-            "type": "food",
-            "restore": "+4 stamina"
-          },
-          {
-            "id": "rations",
-            "name": "Provisions",
-            "type": "food",
-            "restore": "+4 stamina"
-          },
-          {
-            "id": "rations",
-            "name": "Provisions",
-            "type": "food",
-            "restore": "+4 stamina"
+            "qty": 3
           }
         ]
       }
@@ -6903,13 +6481,7 @@
         }
       ],
       "effects": {
-        "addItems": [
-          {
-            "id": "gold",
-            "name": "15 Gold Pieces",
-            "type": "treasure"
-          }
-        ]
+        "gold": 15
       }
     },
     {
@@ -7119,11 +6691,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "potion-of-invisibility",
-            "name": "Potion of Invisibility",
-            "type": "potion"
-          }
+          "potion-of-invisibility"
         ]
       }
     },
@@ -7198,13 +6766,7 @@
         }
       ],
       "effects": {
-        "addItems": [
-          {
-            "id": "gold",
-            "name": "50 Gold Pieces",
-            "type": "treasure"
-          }
-        ]
+        "gold": 50
       }
     },
     {
@@ -7358,16 +6920,7 @@
           "label": "Enter the catacombs",
           "target": 155
         }
-      ],
-      "effects": {
-        "addItems": [
-          {
-            "id": "potion",
-            "name": "Potion",
-            "type": "potion"
-          }
-        ]
-      }
+      ]
     },
     {
       "id": 299,
@@ -7382,11 +6935,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "potion",
-            "name": "Potion",
-            "type": "potion"
-          }
+          "potion-of-strength"
         ]
       }
     },
@@ -7562,29 +7111,9 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "map",
-            "name": "Map",
-            "type": "other"
-          },
-          {
-            "id": "amulet",
-            "name": "Amulet",
-            "type": "other"
-          },
-          {
-            "id": "alchemists-journal",
-            "name": "Alchemist's Journal",
-            "type": "other",
-            "unique": true
-          },
-          {
-            "id": "true-name",
-            "name": "The Widow's True Name",
-            "type": "other",
-            "description": "Eliza Hollow",
-            "unique": true
-          }
+          "tomb-map",
+          "alchemists-journal",
+          "true-name"
         ]
       }
     },
@@ -7661,15 +7190,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "magic-longsword",
-            "name": "+1 Longsword",
-            "type": "weapon",
-            "bonus": "+1 skill",
-            "properties": [
-              "magical"
-            ]
-          }
+          "magic-longsword"
         ]
       }
     },
@@ -7855,47 +7376,10 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "key",
-            "name": "Key",
-            "type": "key"
-          },
-          {
-            "id": "silver-dagger",
-            "name": "Silver Dagger",
-            "type": "weapon",
-            "bonus": "+1",
-            "properties": [
-              "silver"
-            ]
-          },
-          {
-            "id": "silver-ring",
-            "name": "Silver Ring",
-            "type": "other"
-          },
-          {
-            "id": "silver-amulet",
-            "name": "Silver Amulet",
-            "type": "other"
-          },
-          {
-            "id": "gold",
-            "name": "20 Gold Pieces",
-            "type": "treasure"
-          },
-          {
-            "id": "healing-potion",
-            "name": "Healing Potion",
-            "type": "potion",
-            "restore": "+4 stamina"
-          },
-          {
-            "id": "holy-symbol",
-            "name": "Holy Symbol",
-            "type": "other"
-          }
-        ]
+          "old-key",
+          "healing-potion"
+        ],
+        "gold": 20
       }
     },
     {
@@ -7912,23 +7396,11 @@
       "effects": {
         "addItems": [
           {
-            "id": "gold",
-            "name": "30 Gold Pieces",
-            "type": "treasure"
-          },
-          {
             "id": "rations",
-            "name": "Provisions",
-            "type": "food",
-            "restore": "+4 stamina"
-          },
-          {
-            "id": "rations",
-            "name": "Provisions",
-            "type": "food",
-            "restore": "+4 stamina"
+            "qty": 2
           }
-        ]
+        ],
+        "gold": 30
       }
     },
     {
@@ -8039,28 +7511,10 @@
         "addItems": [
           {
             "id": "rations",
-            "name": "Provisions",
-            "type": "food",
-            "restore": "+4 stamina"
-          },
-          {
-            "id": "rations",
-            "name": "Provisions",
-            "type": "food",
-            "restore": "+4 stamina"
-          },
-          {
-            "id": "rations",
-            "name": "Provisions",
-            "type": "food",
-            "restore": "+4 stamina"
-          },
-          {
-            "id": "gold",
-            "name": "40 Gold Pieces",
-            "type": "treasure"
+            "qty": 3
           }
-        ]
+        ],
+        "gold": 40
       }
     },
     {
@@ -8094,11 +7548,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "book",
-            "name": "Book",
-            "type": "other"
-          }
+          "old-tome"
         ]
       }
     },
@@ -8252,15 +7702,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "silver-dagger",
-            "name": "Silver Dagger",
-            "type": "weapon",
-            "bonus": "+2 attack",
-            "properties": [
-              "silver"
-            ]
-          }
+          "silver-dagger"
         ]
       }
     },
@@ -8295,17 +7737,9 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "gold",
-            "name": "50 Gold Pieces",
-            "type": "treasure"
-          },
-          {
-            "id": "silver-ring",
-            "name": "Silver Ring",
-            "type": "treasure"
-          }
-        ]
+          "silver-ring"
+        ],
+        "gold": 50
       }
     },
     {
@@ -8477,21 +7911,6 @@
             "text": "The spirits ignore you."
           }
         ]
-      },
-      "effects": {
-        "addItems": [
-          {
-            "id": "mysterious-potion",
-            "name": "Mysterious Potion",
-            "type": "potion"
-          },
-          {
-            "id": "cloak-of-protection",
-            "name": "Cloak of Protection",
-            "type": "armor",
-            "bonus": "+1 defense"
-          }
-        ]
       }
     },
     {
@@ -8526,11 +7945,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "potion",
-            "name": "Potion",
-            "type": "potion"
-          }
+          "potion-of-strength"
         ]
       }
     },
@@ -8566,18 +7981,9 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "gold",
-            "name": "100 Gold Pieces",
-            "type": "treasure"
-          },
-          {
-            "id": "cloak-of-protection",
-            "name": "Cloak of Protection",
-            "type": "armor",
-            "bonus": "+1 defense"
-          }
-        ]
+          "cloak-of-protection"
+        ],
+        "gold": 100
       }
     },
     {
@@ -8773,26 +8179,7 @@
           "label": "Face the Widow",
           "target": 395
         }
-      ],
-      "effects": {
-        "addItems": [
-          {
-            "id": "healing-potion",
-            "name": "Healing Potion",
-            "type": "potion"
-          },
-          {
-            "id": "silver-ring",
-            "name": "Silver Ring",
-            "type": "other"
-          },
-          {
-            "id": "map",
-            "name": "Map",
-            "type": "other"
-          }
-        ]
-      }
+      ]
     },
     {
       "id": 342,
@@ -8862,11 +8249,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "amulet-of-the-grave",
-            "name": "Amulet of the Grave",
-            "type": "other"
-          }
+          "amulet-of-the-grave"
         ]
       }
     },
@@ -8953,16 +8336,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "blessed-silver-sword",
-            "name": "Blessed Silver Sword",
-            "type": "weapon",
-            "bonus": "+2 skill",
-            "properties": [
-              "silver",
-              "magical"
-            ]
-          }
+          "blessed-silver-sword"
         ]
       }
     },
@@ -9210,20 +8584,6 @@
             "text": "The stairs are clear."
           }
         ]
-      },
-      "effects": {
-        "addItems": [
-          {
-            "id": "potion",
-            "name": "Potion",
-            "type": "potion"
-          },
-          {
-            "id": "healing-potion",
-            "name": "Healing Potion",
-            "type": "potion"
-          }
-        ]
       }
     },
     {
@@ -9257,13 +8617,7 @@
         }
       ],
       "effects": {
-        "addItems": [
-          {
-            "id": "gold",
-            "name": "50 Gold Pieces",
-            "type": "treasure"
-          }
-        ]
+        "gold": 50
       }
     },
     {
@@ -9414,16 +8768,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "magic-mace",
-            "name": "+1 Mace",
-            "type": "weapon",
-            "bonus": "+1 skill",
-            "properties": [
-              "magical",
-              "crushing"
-            ]
-          }
+          "magic-mace"
         ]
       }
     },
@@ -9489,11 +8834,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "healing-potion",
-            "name": "Healing Potion",
-            "type": "potion"
-          }
+          "potion-of-healing"
         ]
       }
     },
@@ -9563,13 +8904,7 @@
         }
       ],
       "effects": {
-        "addItems": [
-          {
-            "id": "gold",
-            "name": "75 Gold Pieces",
-            "type": "treasure"
-          }
-        ]
+        "gold": 75
       }
     },
     {
@@ -9615,11 +8950,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "holy-symbol",
-            "name": "Holy Symbol",
-            "type": "other"
-          }
+          "holy-symbol"
         ]
       }
     },
@@ -9655,12 +8986,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "potion-of-strength",
-            "name": "Potion of Strength",
-            "type": "potion",
-            "restore": "+2 skill"
-          }
+          "potion-of-strength"
         ]
       }
     },
@@ -9766,11 +9092,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "ring",
-            "name": "Ring",
-            "type": "other"
-          }
+          "eliza-ring"
         ]
       }
     },
@@ -9879,12 +9201,7 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "potion-of-luck",
-            "name": "Potion of Luck",
-            "type": "potion",
-            "restore": "+3 luck"
-          }
+          "potion-of-luck"
         ]
       }
     },
@@ -10128,16 +9445,7 @@
           "label": "Face the Widow",
           "target": 395
         }
-      ],
-      "effects": {
-        "addItems": [
-          {
-            "id": "cloak-of-shadows",
-            "name": "Cloak of Shadows",
-            "type": "other"
-          }
-        ]
-      }
+      ]
     },
     {
       "id": 389,
@@ -10248,34 +9556,10 @@
       "text": "COMPLETE VICTORY!\n\nYou continue speaking the name with absolute conviction, each repetition strengthening the binding: \"Eliza Hollow. Eliza Hollow. ELIZA HOLLOW!\"\n\nThe AMULET OF THE GRAVE (if you found it) glows warm against your chest, absorbing the dark energy that flows from the Widow like poison being drawn from a wound. Each strand of rage, each thread of vengeance, is pulled into the amulet and neutralized.\n\nWith each repetition of her name, the silver chains grow brighter and tighter. The Widow's form begins to change before your eyes:\n\nThe blood staining her dress fades\n\nHer hollow eyes fill with color—beautiful hazel eyes that once sparkled with life\n\nHer rage-twisted features soften, returning to the beauty she possessed in life\n\nHer clawed hands become delicate fingers\n\n\"Eliza,\" you say one final time, but gently now, with compassion rather than command.\n\nShe shimmers, becoming more translucent, more peaceful. For just a moment, you see her as she truly was: a beautiful young woman on her wedding day, smiling with pure joy.\n\nA single tear rolls down her cheek, leaving a trail of silver light.\n\n\"Thank you,\" she whispers, her voice no longer the inhuman wail that chilled your blood. It's simply the voice of a woman who has been in pain for too long. \"Thank you for remembering my name. Thank you for setting me free.\"\n\n\"Where is Thomas?\" she asks, looking around as if seeing clearly for the first time in centuries.\n\nAnd then she sees him.\n\nA second ghostly form materializes—Thomas Ashford, waiting patiently for 242 years, ready to finally take his bride's hand. He wears wedding clothes that are no longer stained with blood, and his eyes are filled with love.\n\nEliza's face transforms with joy so pure it hurts to witness. She reaches out, and Thomas takes her hand. Where their fingers touch, golden light blooms—warm light that fills the room and drives away every shadow.\n\n\"My love,\" she breathes. \"You waited.\"\n\n\"Forever,\" he replies. \"I would have waited forever.\"\n\nThe chains binding Eliza shatter into a thousand motes of silver light that float upward like fireflies ascending to heaven. But she doesn't attack. She simply stands there, holding Thomas's hand, looking into his eyes with all the love that death could not destroy.\n\nTogether, they begin to fade.\n\n\"Peace,\" Eliza whispers, looking back at you. \"I can finally find peace. Tell them... tell the people of Hollow's End... I forgive them. Life is too short, and death too long, for hatred.\"\n\nAnd then they're gone.\n\nThe manor shudders and groans. The walls begin to crumble—the entire structure was being held together by the Widow's rage. Now that she's at peace, the building is finally succumbing to its 242 years of abandonment.   \nYou run through collapsing corridors, down crumbling stairs, across floors that fall away into darkness. You burst through the front doors just as the entire structure implodes behind you, collapsing into rubble and dust.\n\nYou tumble down the steps and roll to a stop in the overgrown garden, gasping for breath.\n\nAnd then you notice: the sky is lightening. Dawn is breaking.\n\nThe first golden rays of sunrise paint the sky in shades of pink and orange and gold. It's the most beautiful sunrise you've ever seen, made more beautiful by the simple fact that you're alive to see it.\n\nDown in the cemetery, you watch the undead collapsing. Zombies fall back into their graves. Ghouls dissolve to dust. Skeletal warriors crumble to bones. The curse has been lifted.\n\nAfter 242 years, Hollow's End is finally free.\n\nTHE AFTERMATH:\n\nYou make your way back to the village square on trembling legs. Doors begin to open. People emerge into the morning light, blinking like prisoners released from dark cells.\n\nThey see you—covered in dust and blood, holding a silver key that still glows faintly—and they understand. The curse has been broken.\n\nA cheer erupts from the crowd. Children run into the streets for the first time in weeks. Adults embrace each other, weeping with relief. An old woman falls to her knees in prayer.\n\nMayor Aldric Hollow rushes from his house, his daughter Lydia at his side (safe, if you rescued her). Both are weeping openly.\n\n\"You did it!\" the Mayor cries. \"The curse that has haunted my family for five generations is finally broken! The sin has been forgiven! Hollow's End is FREE!\"\n\nThe entire village celebrates with a feast that lasts all day. As guest of honor, you're seated at the head of the table. YOU RECEIVE:\n\n500 Gold Pieces from the village treasury\n\n+1 LONGSWORD OF THE HOLLOW GUARD (if you don't already have a magical weapon)\n\nCLOAK OF PROTECTION (if you don't already have it)\n\nPOTION OF GREATER HEALING (restores all STAMINA)\n\nThe eternal gratitude of everyone in Hollow's End\n\n\"You will always have a home here,\" Aldric says, raising his glass. \"Free food, free lodging, free drinks, for as long as you live. You saved us. You saved my daughter. You ended the curse that has haunted my family since before my grandfather's grandfather was born. We can never repay this debt, but we will spend the rest of our lives trying.\"\n\nAs evening approaches and you prepare to depart, you take a moment to reflect:\n\nYou faced undead horrors that would have broken lesser warriors. You navigated deadly catacombs filled with traps and monsters. You battled cultists who served darkness. You pieced together a mystery spanning 242 years. You defeated a malevolent spirit that had grown so powerful she could raise armies of the dead.\n\nBut most importantly, you brought peace to a wronged soul and forgiveness to a cursed family.\n\nThe darkness has been vanquished. The Widow has found rest with her beloved. The innocent people of Hollow's End can finally live without fear.\n\nYou shoulder your pack, now heavier with treasure and magical items, and set off toward new adventures. Behind you, villagers wave and cheer, calling blessings upon the hero who saved them.\n\nYOUR ADVENTURE IS COMPLETE!\n\nYOU HAVE ACHIEVED TOTAL VICTORY!\n\nFINAL SCORE CALCULATION\n\nCalculate your Hero Score:\n\nRemaining STAMINA + Remaining LUCK + (Total Gold ÷ 10) = Your Hero Score\n\nHero Rankings:\n\n50+: Legendary Hero - Songs will be sung of your deeds\n\n40-49: Masterful Adventurer - Your name will be remembered\n\n30-39: Skilled Survivor - You have proven your worth  \n20-29: Lucky Wanderer - You survived by wit and fortune\n\n10-19: Barely Made It - Victory, but at great cost\n\nBelow 10: Pyrrhic Victory - You won, but paid dearly\n\nTHANK YOU FOR PLAYING!\n\nThank you for experiencing THE CURSE OF HOLLOW'S END!\n\nThe choices you made, the battles you fought, and the mysteries you unraveled created a unique story that only you can tell. Whether this was your first attempt or your tenth, you experienced an adventure that tested your courage, challenged your mind, and hopefully entertained you.\n\nWill you try again?\n\nCan you find alternative paths through the catacombs?\n\nCan you discover all secret items and hidden rooms?\n\nCan you achieve victory with a higher score?\n\nCan you complete the adventure without losing any STAMINA?\n\nThe Curse of Hollow's End contains hundreds of paths, dozens of secrets, and multiple ways to reach victory.\n\nThe village of Hollow's End thanks you for your service.\n\nMay your future adventures be equally memorable.\n\nTHE END",
       "effects": {
         "addItems": [
-          {
-            "id": "amulet",
-            "name": "Amulet",
-            "type": "other"
-          },
-          {
-            "id": "gold",
-            "name": "500 Gold Pieces",
-            "type": "treasure"
-          },
-          {
-            "id": "magic-longsword",
-            "name": "+1 Longsword",
-            "type": "weapon",
-            "bonus": "+1 skill",
-            "properties": [
-              "magical"
-            ],
-            "unique": true
-          },
-          {
-            "id": "cloak-of-protection",
-            "name": "Cloak of Protection",
-            "type": "armor",
-            "bonus": "+1 defense",
-            "unique": true
-          }
-        ]
+          "magic-longsword",
+          "cloak-of-protection"
+        ],
+        "gold": 500
       },
       "ending": {
         "type": "victory"

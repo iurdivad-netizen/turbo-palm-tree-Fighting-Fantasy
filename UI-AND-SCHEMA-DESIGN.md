@@ -182,6 +182,15 @@ The page is now four small files and no build step: `index.html` (shell), `reade
 - Save format: version it with `schemaVersion`.
 - Should the UI be a single file (as now) or a small build? Single file is easier to host; decide in step 2.
 
+## Items (review and rework)
+
+* **Engine/format:** a book-level `items` catalogue (one definition per id); sections and `startingItems` name ids, `{id, qty}` for several; gold is `effects.gold`. Old books with inline definitions still load. The validator rejects an item defined two ways, an undefined id, a potion/food that cannot be used, and lists keepsakes.
+* **Choosing what you use:** the player can hold a weapon and wear an armour (`equip`, `unequip`; automatic by default = the best one, as before). A fight shows "In your hand: ... (+1 SKILL, 2 damage)", the armour worn, a picker, and a warning when the weapon cannot hurt the enemy. The pack is grouped (weapons, armor, potions and food, story items, keepsakes) and marks what is in hand or worn.
+* **Armour:** one piece is worn; bonuses no longer add up (only the cloak ever had one).
+* **Potions that did nothing:** the Potion of Strength now works (`onUse: nextFightSkill +2`, also during a fight); the generic "Potion", "Healing Potion" without a value and similar are now the right potions.
+* **The Curse book's items:** 150 item grants (44 ids, plus 28 gold grants) were reviewed against the text. 40 of those grants were not in the text at all (words like "key", "ring", "book" matched in prose, "Do you have the BRASS KEY?" taken as a pickup, whole shopping lists copied onto menu sections) and were removed; ids that stood for several different things were split (three maps, three books...); the book now states its starting kit (Sword, Leather Armor, 10 Provisions; the Backpack and Shield did nothing). 18 items are kept as keepsakes: the book describes charms with "+1 to saves against undead" and the like, which no rule here implements.
+* **Not done:** passive charms and saving-throw bonuses; selling items; weight/pack limit.
+
 ## Book issues: status
 
 Fixed in the Curse book (source `CURSE_OF_HOLLOWS_END.json`, v2 regenerated, new fingerprint in `tests/simulation-baseline.json`):

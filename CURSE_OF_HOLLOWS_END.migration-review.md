@@ -125,6 +125,12 @@ Items for a human to check. The conversion changed no game logic (every destinat
 - 309 | 1 stat-block line(s) of the fight (the combat panel shows them)
 - ... and 48 more
 
+## Items defined differently in different sections (add them to the overrides file's "items"): 0
+
+
+## Items taken from the sections' own definitions (not in the overrides file's "items"): 0
+
+
 ## Sections whose v1 ending flag was dropped (they are not endings): 9
 
 - 14

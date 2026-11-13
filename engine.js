@@ -44,7 +44,8 @@
         add(e.modifyStats, '');
         add(e.permanentStats, ' (permanent)');
         add(e.maxStats, ' (maximum)');
-        if (e.nextFightSkill) parts.push(`${e.nextFightSkill > 0 ? '+' : ''}${e.nextFightSkill} SKILL in your next fight`);
+        if (e.nextFightSkill) parts.push(`${e.nextFightSkill > 0 ? '+' : ''}${e.nextFightSkill} SKILL for one fight`);
+        if (e.gold) parts.push(`${e.gold > 0 ? '+' : ''}${e.gold} gold`);
         return parts.length ? ` [${parts.join(', ')}]` : '';
     }
 
@@ -131,11 +132,12 @@
      */
     function upgradeBook(book) {
         if (!book || book.schemaVersion === 2) return book;
-        const EK = ['modifyStats', 'permanentStats', 'maxStats', 'addItems', 'removeItems', 'nextFightSkill'];
+        const EK = ['modifyStats', 'permanentStats', 'maxStats', 'addItems', 'removeItems', 'nextFightSkill', 'gold'];
         const fx = d => { const o = {}; EK.forEach(k => { if (d && d[k] && (!isArr(d[k]) || d[k].length)) o[k] = d[k]; }); return o; };
         const hasFx = o => Object.keys(o).length > 0;
         const out = { schemaVersion: 2, id: book.id, title: book.title };
         ['author', 'description'].forEach(k => { if (book[k]) out[k] = book[k]; });
+        if (book.items) out.items = book.items;
         out.startingSection = book.startingSection != null ? book.startingSection : 1;
         out.initialStats = book.initialStats;
         if (book.startingItems && book.startingItems.length) out.startingItems = book.startingItems;
@@ -223,6 +225,13 @@
             this.onEvent = o.onEvent || null;
             this.sections = new Map();
             if (this.book) this.book.sections.forEach(s => this.sections.set(s.id, s));
+            this.catalogue = (this.book && this.book.items) || {};     // one definition per item id; sections only name the id
+            this.itemsNeeded = new Set();                               // items some option or roll asks for: story items
+            if (this.book) this.book.sections.forEach(s => {
+                const need = c => c && ['requiresItem', 'requiresNoItem', 'requiresMissingAny'].forEach(k => [].concat(c[k] || []).forEach(id => this.itemsNeeded.add(id)));
+                (s.options || []).forEach(o => need(o.conditions));
+                if (s.roll) need(s.roll.conditions);
+            });
             this._blank();
         }
 
@@ -245,7 +254,8 @@
             this.usedOnce = new Set();
             this.rollResolved = false;
             this.tempSkillPenalty = 0;
-            this.carriedSkillPenalty = 0;   // SKILL lost in the next fight (a wound that is still tingling)
+            this.carriedSkillPenalty = 0;   // SKILL lost (or, if negative, gained) in the next fight
+            this.equipped = { weapon: null, armor: null };   // uids the player chose; null = the best one is used automatically
             this.nextUid = 1;
             this.pending = null;      // { request, gen } while waiting for the player to roll
             this.advance = null;      // { target } navigation waiting for advance()
@@ -268,7 +278,8 @@
             const st = this.book.initialStats;
             this.stats = { skill: st.skill, stamina: st.stamina, luck: st.luck, initialSkill: st.skill, initialStamina: st.stamina, initialLuck: st.luck, gold: 10 };
             const own = this.book.startingItems || [];
-            this.inventory = (own.length === 0 ? DEFAULT_ITEMS() : own).map(i => this.makeItem(i));
+            this.inventory = [];
+            (own.length === 0 ? DEFAULT_ITEMS() : own).forEach(i => this.addItem(i));
             this.currentSection = this.book.startingSection;
             this.visited = new Set([this.book.startingSection]);
             this._changed();
@@ -280,6 +291,16 @@
         }
 
         // ---- items ---------------------------------------------------------------------------------------
+        /** An item as the book names it (an id, {id, qty} or a full definition) with the catalogue's definition filled in. */
+        resolveItem(ref) {
+            const r = typeof ref === 'string' ? { id: ref } : ref;
+            const def = Object.assign({}, this.catalogue[r.id] || {}, r);
+            delete def.qty;
+            if (!def.name) def.name = prettyItemId(def.id);
+            if (!def.type) def.type = 'other';
+            return def;
+        }
+
         makeItem(item) {
             const made = Object.assign({}, item, { uid: this.nextUid++ });
             if (made.type === 'weapon' && !isArr(made.properties)) made.properties = inferWeaponProperties(made.name);
@@ -288,19 +309,23 @@
 
         hasItem(id) { return this.inventory.some(i => i.id === id); }
 
-        addItem(item) {
-            const isGold = /\b(gold pieces?|coins?|gp)\b/.test(item.name.toLowerCase());
-            if (isGold) {
-                const m = item.name.match(/(\d+)/);
-                this.addGold(m ? parseInt(m[1], 10) : 1);
-            } else if ((item.unique || (item.bonus && item.type !== 'potion')) && this.hasItem(item.id)) {
-                // a second copy of a unique item or of bonus equipment would only stack its bonus
-            } else {
-                this.inventory.push(this.makeItem(item));
+        addItem(ref) {
+            const copies = Math.max(1, (ref && ref.qty) || 1);
+            const item = this.resolveItem(ref);
+            for (let n = 0; n < copies; n++) {
+                const isGold = /\b(gold pieces?|coins?|gp)\b/.test(item.name.toLowerCase());
+                if (isGold) {
+                    const m = item.name.match(/(\d+)/);
+                    this.addGold(m ? parseInt(m[1], 10) : 1);
+                } else if ((item.unique || (item.bonus && item.type !== 'potion' && item.type !== 'food')) && this.hasItem(item.id)) {
+                    // a second copy of a unique item or of bonus equipment would only stack its bonus
+                } else {
+                    this.inventory.push(this.makeItem(item));
+                }
             }
         }
 
-        addGold(amount) { if (this.stats) this.stats.gold = (this.stats.gold || 0) + amount; }
+        addGold(amount) { if (this.stats) this.stats.gold = Math.max(0, (this.stats.gold || 0) + amount); }
 
         removeItem(id) {
             const i = this.inventory.findIndex(x => x.id === id);
@@ -319,24 +344,94 @@
             this._changed();
         }
 
+        // ---- what is carried, what is held ------------------------------------------------------------------
+        _slotItem(slot) {
+            const uid = this.equipped[slot];
+            return uid == null ? null : (this.inventory.find(i => i.uid === uid && i.type === slot) || null);
+        }
+
+        /** Choose what to hold or wear (slot is the item's type: 'weapon' or 'armor'). Not during a roll. */
+        equip(uid) {
+            if (this.pending) return false;
+            const item = this.inventory.find(i => i.uid === uid);
+            if (!item || (item.type !== 'weapon' && item.type !== 'armor')) return false;
+            this.equipped[item.type] = uid;
+            if (item.type === 'weapon') this.lastWielded = null;
+            this._changed();
+            return true;
+        }
+
+        /** Back to automatic: the best weapon (armour) for the moment is used. */
+        unequip(slot) {
+            if (this.pending || !this.equipped.hasOwnProperty(slot)) return false;
+            this.equipped[slot] = null;
+            if (slot === 'weapon') this.lastWielded = null;
+            this._changed();
+            return true;
+        }
+
+        /** The weapon that will be used against this enemy: the one the player chose, else the best. */
         chooseWeapon(enemy) {
+            const chosen = this._slotItem('weapon');
+            if (chosen) return { weapon: chosen, damage: damageAgainst(chosen, enemy), bonus: weaponBonus(chosen), chosen: true };
             let best = null, bestDamage = damageAgainst(null, enemy), bestBonus = 0;
             for (const item of this.inventory) {
                 if (item.type !== 'weapon') continue;
                 const damage = damageAgainst(item, enemy), bonus = weaponBonus(item);
                 if (!best || damage > bestDamage || (damage === bestDamage && bonus > bestBonus)) { best = item; bestDamage = damage; bestBonus = bonus; }
             }
-            return { weapon: best, damage: bestDamage, bonus: bestBonus };
+            return { weapon: best, damage: bestDamage, bonus: bestBonus, chosen: false };
         }
 
-        calculateDefenseBonus() {
-            return this.inventory.reduce((total, item) => {
-                if (item.type === 'armor' && item.bonus) {
-                    const m = item.bonus.match(/([+-]\d+)/);
-                    if (m) return total + parseInt(m[1], 10);
-                }
-                return total;
-            }, 0);
+        /** Every weapon with what it would do against this enemy, best first (for the picker in a fight). */
+        weaponChoices(enemy) {
+            const out = this.inventory.filter(i => i.type === 'weapon').map(item => ({ item, damage: damageAgainst(item, enemy), bonus: weaponBonus(item) }));
+            return out.sort((a, b) => b.damage - a.damage || b.bonus - a.bonus);
+        }
+
+        /** The armour being worn: the one the player chose, else the one that protects most. */
+        wornArmor() {
+            const chosen = this._slotItem('armor');
+            if (chosen) return chosen;
+            let best = null, bestValue = -1;
+            for (const item of this.inventory) {
+                if (item.type !== 'armor') continue;
+                const v = this._armorValue(item);
+                if (v > bestValue) { best = item; bestValue = v; }
+            }
+            return best;
+        }
+
+        _armorValue(item) {
+            const m = item && item.bonus ? String(item.bonus).match(/([+-]\d+)/) : null;
+            return m ? parseInt(m[1], 10) : 0;
+        }
+
+        calculateDefenseBonus() { return this._armorValue(this.wornArmor()); }
+
+        /**
+         * The pack for the screen: identical items grouped, each with a category and what can be done with it.
+         * category: weapon | armor | consumable | story (the book asks for it somewhere) | keepsake (no effect).
+         */
+        inventoryView() {
+            const groups = new Map();
+            for (const it of this.inventory) {
+                const key = [it.id, it.name, it.restore || '', it.bonus || '', it.onUse ? 1 : 0].join('|');
+                if (!groups.has(key)) groups.set(key, { item: it, count: 0, uids: [] });
+                const g = groups.get(key); g.count++; g.uids.push(it.uid);
+            }
+            const weapon = this._slotItem('weapon'), armor = this._slotItem('armor'), worn = this.wornArmor();
+            return [...groups.values()].map(g => {
+                const it = g.item;
+                const usable = !!(it.restore || it.onUse);
+                const category = it.type === 'weapon' ? 'weapon' : it.type === 'armor' ? 'armor' : usable ? 'consumable'
+                    : (this.itemsNeeded.has(it.id) || it.type === 'key') ? 'story' : 'keepsake';
+                return Object.assign(g, {
+                    category, usable, needed: this.itemsNeeded.has(it.id),
+                    equipped: g.uids.includes(it.type === 'weapon' ? (weapon && weapon.uid) : (armor && armor.uid)),   // chosen by the player
+                    inUse: it.type === 'armor' ? g.uids.includes(worn && worn.uid) : false
+                });
+            });
         }
 
         /** Eat, drink or use an item (by its unique id). */
@@ -401,7 +496,11 @@
             if (e.modifyStats) this.modifyStats(e.modifyStats);
             if (e.permanentStats) this.reduceStats(e.permanentStats, true);
             if (e.maxStats) this.reduceStats(e.maxStats, false);
-            if (e.nextFightSkill) this.carriedSkillPenalty = Math.max(0, this.carriedSkillPenalty - e.nextFightSkill);   // a negative number is a penalty
+            if (e.nextFightSkill) {                                  // negative: a penalty (a wound); positive: a bonus (a potion)
+                if (this.inCombat) this.tempSkillPenalty -= e.nextFightSkill;       // drunk during the fight: counts now
+                else this.carriedSkillPenalty -= e.nextFightSkill;
+            }
+            if (e.gold) this.addGold(e.gold);
             if (e.addItems) e.addItems.forEach(i => this.addItem(i));
             if (e.removeItems) e.removeItems.forEach(id => this.removeItem(id));
         }
@@ -604,7 +703,8 @@
             const first = list[0];
             this.inCombat = true;
             this.tempSkillPenalty = this.carriedSkillPenalty;
-            if (this.carriedSkillPenalty) this.combatLog.push(`🩸 Your earlier wound still hurts: -${this.carriedSkillPenalty} SKILL for this fight.`);
+            if (this.carriedSkillPenalty > 0) this.combatLog.push(`🩸 Your earlier wound still hurts: -${this.carriedSkillPenalty} SKILL for this fight.`);
+            if (this.carriedSkillPenalty < 0) this.combatLog.push(`✨ You fight with +${-this.carriedSkillPenalty} SKILL for this fight.`);
             this.carriedSkillPenalty = 0;
             this.lastWielded = null;
             this.currentCombatIndex = 0;
@@ -769,7 +869,7 @@
                 inventory: this.inventory, visited: Array.from(this.visited), usedOnce: Array.from(this.usedOnce), rolledOnce: Array.from(this.rolledOnce),
                 inCombat: this.inCombat, enemyCurrentStamina: this.enemyCurrentStamina, currentCombatIndex: this.currentCombatIndex, combatLog: this.combatLog,
                 isGameOver: this.isGameOver, gameOverType: this.gameOverType, combatDone: this.combatDone, lastWielded: this.lastWielded,
-                rollResolved: this.rollResolved, tempSkillPenalty: this.tempSkillPenalty, carriedSkillPenalty: this.carriedSkillPenalty, nextUid: this.nextUid, advance: this.advance
+                rollResolved: this.rollResolved, tempSkillPenalty: this.tempSkillPenalty, carriedSkillPenalty: this.carriedSkillPenalty, equipped: this.equipped, nextUid: this.nextUid, advance: this.advance
             };
         }
 
@@ -779,7 +879,7 @@
                 started: d.started, currentSection: d.currentSection, stats: d.stats, inventory: d.inventory, visited: new Set(d.visited),
                 usedOnce: new Set(d.usedOnce || []), rolledOnce: new Set(d.rolledOnce || []), inCombat: !!d.inCombat, enemyCurrentStamina: d.enemyCurrentStamina || 0,
                 currentCombatIndex: d.currentCombatIndex || 0, combatLog: d.combatLog || [], isGameOver: !!d.isGameOver, gameOverType: d.gameOverType || null,
-                combatDone: !!d.combatDone, lastWielded: d.lastWielded || null, rollResolved: !!d.rollResolved, tempSkillPenalty: d.tempSkillPenalty || 0, carriedSkillPenalty: d.carriedSkillPenalty || 0,
+                combatDone: !!d.combatDone, lastWielded: d.lastWielded || null, rollResolved: !!d.rollResolved, tempSkillPenalty: d.tempSkillPenalty || 0, carriedSkillPenalty: d.carriedSkillPenalty || 0, equipped: Object.assign({ weapon: null, armor: null }, d.equipped || {}),
                 nextUid: d.nextUid || 1, advance: d.advance || null
             });
             this._changed();

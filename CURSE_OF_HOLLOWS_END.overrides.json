@@ -1,5 +1,5 @@
 {
-  "_comment": "Hand-written decisions for migrate_to_v2.py, specific to this book. labels: {section: {option id: button label}}; text: {section: [{replace, with}]} applied to the converted text; notes: {section: a problem in the book that the migration does not change}. See AUTHORING.md.",
+  "_comment": "Hand-written decisions for migrate_to_v2.py, specific to this book. items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). items: the item catalogue (one definition per id; the converter uses it instead of the definitions written inline in the sections). labels: {section: {option id: button label}}; text: {section: [{replace, with}]} applied to the converted text; notes: {section: a problem in the book that the migration does not change}. See AUTHORING.md.",
   "labels": {
     "24": {
       "to-127": "Retreat to the cemetery",
@@ -106,5 +106,243 @@
       }
     ]
   },
-  "notes": {}
+  "notes": {},
+  "items": {
+    "sword": {
+      "name": "Sword",
+      "type": "weapon",
+      "description": "A reliable blade."
+    },
+    "magic-longsword": {
+      "name": "+1 Longsword",
+      "type": "weapon",
+      "bonus": "+1 skill",
+      "properties": [
+        "magical"
+      ],
+      "unique": true,
+      "description": "Well balanced and etched with runes; magical."
+    },
+    "magic-mace": {
+      "name": "+1 Mace",
+      "type": "weapon",
+      "bonus": "+1 skill",
+      "properties": [
+        "magical",
+        "crushing"
+      ],
+      "description": "A blessed mace; crushing and magical."
+    },
+    "silver-dagger": {
+      "name": "Silver Dagger",
+      "type": "weapon",
+      "bonus": "+1 skill",
+      "properties": [
+        "silver"
+      ],
+      "description": "Silver wounds the undead."
+    },
+    "blessed-silver-sword": {
+      "name": "Blessed Silver Sword",
+      "type": "weapon",
+      "bonus": "+2 skill",
+      "properties": [
+        "silver",
+        "magical"
+      ],
+      "description": "Silver and blessed."
+    },
+    "leather-armor": {
+      "name": "Leather Armor",
+      "type": "armor",
+      "description": "Light protection; no defence bonus."
+    },
+    "cloak-of-protection": {
+      "name": "Cloak of Protection",
+      "type": "armor",
+      "bonus": "+1 defense",
+      "unique": true,
+      "description": "Enemy hits do 1 less damage."
+    },
+    "rations": {
+      "name": "Provisions",
+      "type": "food",
+      "restore": "+4 stamina",
+      "description": "Dried food."
+    },
+    "healing-potion": {
+      "name": "Healing Potion",
+      "type": "potion",
+      "restore": "+4 stamina"
+    },
+    "potion-of-healing": {
+      "name": "Potion of Healing",
+      "type": "potion",
+      "restore": "+6 stamina"
+    },
+    "potion-of-luck": {
+      "name": "Potion of Luck",
+      "type": "potion",
+      "restore": "+3 luck"
+    },
+    "potion-of-strength": {
+      "name": "Potion of Strength",
+      "type": "potion",
+      "onUse": {
+        "nextFightSkill": 2
+      },
+      "description": "+2 SKILL for one fight. Drink it before (or during) the fight."
+    },
+    "luminous-vial": {
+      "name": "Luminous Blue Vial",
+      "type": "potion",
+      "onUse": {
+        "modifyStats": {
+          "luck": -1
+        },
+        "permanentStats": {
+          "skill": 1
+        }
+      },
+      "description": "Permanently +1 SKILL, but costs 1 LUCK when drunk."
+    },
+    "brass-key": {
+      "name": "Brass Key",
+      "type": "key",
+      "description": "Brass, inscribed with strange symbols."
+    },
+    "iron-key": {
+      "name": "Iron Key",
+      "type": "key",
+      "description": "A rusty iron key."
+    },
+    "silver-key": {
+      "name": "Silver Key",
+      "type": "key",
+      "description": "One of the three things that bind the Widow."
+    },
+    "true-name": {
+      "name": "The Widow's True Name",
+      "type": "other",
+      "unique": true,
+      "description": "Eliza Hollow. One of the three things that bind the Widow."
+    },
+    "mayors-ledger": {
+      "name": "Mayor's Ledger",
+      "type": "other",
+      "unique": true,
+      "description": "Payments to the Hollow Faith cult; proof for the Mayor."
+    },
+    "alchemists-journal": {
+      "name": "Alchemist's Journal",
+      "type": "other",
+      "unique": true,
+      "description": "Notes on the binding of the Widow."
+    },
+    "rope": {
+      "name": "Rope",
+      "type": "other",
+      "description": "For wells and chasms."
+    },
+    "cult-medallion": {
+      "name": "Cult Medallion",
+      "type": "other",
+      "description": "Might let you pass as one of them."
+    },
+    "mysterious-potion": {
+      "name": "Mysterious Potion",
+      "type": "other",
+      "description": "A dark swirling liquid. You can drink it when the story offers it."
+    },
+    "old-key": {
+      "name": "Old Key",
+      "type": "other",
+      "description": "\"Might open doors deeper in the manor.\""
+    },
+    "holy-symbol": {
+      "name": "Holy Symbol",
+      "type": "other",
+      "description": "Blessed silver. The book: +1 to saves against undead (no effect in this app)."
+    },
+    "silver-amulet": {
+      "name": "Silver Amulet",
+      "type": "other",
+      "description": "The book: +1 to saves against undead (no effect in this app)."
+    },
+    "amulet-of-the-grave": {
+      "name": "Amulet of the Grave",
+      "type": "other",
+      "description": "The book: absorbs dark energy, +2 against undead (no effect in this app)."
+    },
+    "silver-ring": {
+      "name": "Silver Ring",
+      "type": "other",
+      "description": "Worth 30 gold; the book: minor protection against undead (no effect in this app)."
+    },
+    "golden-ring": {
+      "name": "Golden Ring",
+      "type": "other",
+      "description": "Pure gold, worth a considerable sum."
+    },
+    "eliza-ring": {
+      "name": "Eliza's Wedding Ring",
+      "type": "other",
+      "description": "The ring Thomas gave her."
+    },
+    "cloak-of-shadows": {
+      "name": "Cloak of Shadows",
+      "type": "other",
+      "description": "The book: +2 to stealth (no effect in this app)."
+    },
+    "potion-of-invisibility": {
+      "name": "Potion of Invisibility",
+      "type": "other",
+      "description": "The book: ten minutes of invisibility (no effect in this app)."
+    },
+    "scroll": {
+      "name": "Ancient Scroll",
+      "type": "other",
+      "description": "Written in elegant, faded script."
+    },
+    "scroll-of-protection": {
+      "name": "Scroll of Protection",
+      "type": "other",
+      "description": "The book: +2 to saves for one battle (no effect in this app)."
+    },
+    "diary": {
+      "name": "Skeleton's Diary",
+      "type": "other",
+      "description": "Clutched in bony hands."
+    },
+    "prayer-book": {
+      "name": "Prayer Book",
+      "type": "other",
+      "description": "From a kneeling skeleton."
+    },
+    "old-tome": {
+      "name": "Old Tome",
+      "type": "other",
+      "description": "The one readable book in the library."
+    },
+    "torn-map": {
+      "name": "Torn Map",
+      "type": "other",
+      "description": "Shows a secret entrance to the manor."
+    },
+    "catacomb-map": {
+      "name": "Map of the Catacombs",
+      "type": "other",
+      "description": "Etched into the wall by a long-dead explorer."
+    },
+    "tomb-map": {
+      "name": "Map of the Hollow Tomb",
+      "type": "other",
+      "description": "Shows where the Hollow family tomb lies."
+    },
+    "manor-map": {
+      "name": "Map of the Manor",
+      "type": "other",
+      "description": "Secret passages and hidden rooms."
+    }
+  }
 }

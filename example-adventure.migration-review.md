@@ -55,5 +55,11 @@ Items for a human to check. The conversion changed no game logic (every destinat
 ## 'Turn to N' fragments and stray stat blocks removed: 0
 
 
+## Items defined differently in different sections (add them to the overrides file's "items"): 0
+
+
+## Items taken from the sections' own definitions (not in the overrides file's "items"): 0
+
+
 ## Sections whose v1 ending flag was dropped (they are not endings): 0
 

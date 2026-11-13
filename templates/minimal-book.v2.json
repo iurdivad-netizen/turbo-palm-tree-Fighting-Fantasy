@@ -3,20 +3,28 @@
   "id": "my-first-book",
   "title": "My First Book",
   "author": "You",
-  "description": "A four-section template that uses every basic feature: choices in the text, a Luck test, a fight, an item and the three kinds of ending.",
+  "description": "A five-section template that uses every basic feature: choices in the text, an item catalogue, a Luck test, a fight and the endings.",
   "startingSection": 1,
   "initialStats": {
     "skill": 8,
     "stamina": 20,
     "luck": 9
   },
-  "startingItems": [
-    {
-      "id": "sword",
+  "items": {
+    "sword": {
       "name": "Sword",
-      "description": "A plain blade",
-      "type": "weapon"
+      "type": "weapon",
+      "description": "A plain blade."
+    },
+    "healing-potion": {
+      "name": "Healing Potion",
+      "type": "potion",
+      "restore": "+4 stamina",
+      "description": "Drink it when you need it."
     }
+  },
+  "startingItems": [
+    "sword"
   ],
   "sections": [
     {
@@ -39,7 +47,7 @@
     {
       "id": 2,
       "title": "The Tower",
-      "text": "A goblin guards the door. Draw your sword!",
+      "text": "Two potions and a purse lie by the door, guarded by a goblin. Draw your sword!",
       "combat": {
         "enemyName": "GOBLIN",
         "enemySkill": 6,
@@ -47,6 +55,15 @@
         "onVictorySection": 4,
         "onDefeatSection": 5,
         "victoryText": "The goblin falls and the stairs are free."
+      },
+      "effects": {
+        "gold": 5,
+        "addItems": [
+          {
+            "id": "healing-potion",
+            "qty": 2
+          }
+        ]
       }
     },
     {

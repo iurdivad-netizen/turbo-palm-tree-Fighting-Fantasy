@@ -59,7 +59,9 @@ function runPolicy(rawBook, policy, N, seed, opts, cfg) {
   const GOALS = cfg.goalItems;
   const FINAL = cfg.finalSection != null ? [cfg.finalSection] : book.sections.filter(s => s.ending && s.ending.type === 'victory').map(s => s.id);
   const AVOID = new Set(cfg.avoidUntilReady);
-  const addsOf = s => (s.effects && s.effects.addItems) || [];
+  // what a section hands out, as full definitions (a v2 book names ids from its catalogue; an old book writes them out)
+  const CATALOGUE = book.items || {};
+  const addsOf = s => ((s.effects && s.effects.addItems) || []).map(r => typeof r === 'string' ? Object.assign({ id: r }, CATALOGUE[r]) : Object.assign({}, CATALOGUE[r.id], r));
   const WEAPON_SOURCES = book.sections.filter(s => addsOf(s).some(i => (i.properties || []).includes('magical'))).map(s => s.id);
   const GOAL_SOURCES = GOALS.map(g => book.sections.filter(s => addsOf(s).some(i => i.id === g)).map(s => s.id));
 

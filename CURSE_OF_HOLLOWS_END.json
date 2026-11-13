@@ -31,13 +31,6 @@
           "text": "Turn to 234",
           "targetSection": 234
         }
-      ],
-      "addItems": [
-        {
-          "id": "key",
-          "name": "Key",
-          "type": "key"
-        }
       ]
     },
     {
@@ -70,7 +63,8 @@
         {
           "id": "brass-key",
           "name": "Brass Key",
-          "type": "key"
+          "type": "key",
+          "description": "Brass, inscribed with strange symbols."
         }
       ]
     },
@@ -120,7 +114,8 @@
         {
           "id": "rope",
           "name": "Rope",
-          "type": "other"
+          "type": "other",
+          "description": "For wells and chasms."
         }
       ],
       "diceRoll": {
@@ -186,7 +181,8 @@
         {
           "id": "iron-key",
           "name": "Iron Key",
-          "type": "key"
+          "type": "key",
+          "description": "A rusty iron key."
         }
       ]
     },
@@ -263,13 +259,6 @@
             "requiresNoItem": "brass-key"
           }
         }
-      ],
-      "addItems": [
-        {
-          "id": "key",
-          "name": "Key",
-          "type": "key"
-        }
       ]
     },
     {
@@ -284,14 +273,15 @@
       "addItems": [
         {
           "id": "scroll",
-          "name": "Scroll",
-          "type": "other"
+          "name": "Ancient Scroll",
+          "type": "other",
+          "description": "Written in elegant, faded script."
         },
         {
           "id": "true-name",
           "name": "The Widow's True Name",
           "type": "other",
-          "description": "Eliza Hollow",
+          "description": "Eliza Hollow. One of the three things that bind the Widow.",
           "unique": true
         }
       ],
@@ -579,13 +569,6 @@
           }
         }
       ],
-      "addItems": [
-        {
-          "id": "key",
-          "name": "Key",
-          "type": "key"
-        }
-      ],
       "isEnding": true,
       "endingType": "victory"
     },
@@ -608,17 +591,7 @@
           "property": "crushing",
           "damage": 3
         }
-      },
-      "addItems": [
-        {
-          "id": "mace",
-          "name": "Mace",
-          "type": "weapon",
-          "properties": [
-            "crushing"
-          ]
-        }
-      ]
+      }
     },
     {
       "id": 31,
@@ -666,13 +639,6 @@
           "conditions": {
             "requiresNoItem": "mayors-ledger"
           }
-        }
-      ],
-      "addItems": [
-        {
-          "id": "book",
-          "name": "Book",
-          "type": "other"
         }
       ]
     },
@@ -722,11 +688,11 @@
                 "type": "potion",
                 "description": "Permanently +1 SKILL, but costs 1 LUCK when drunk.",
                 "onUse": {
-                  "permanentStats": {
-                    "skill": 1
-                  },
                   "modifyStats": {
                     "luck": -1
+                  },
+                  "permanentStats": {
+                    "skill": 1
                   }
                 }
               }
@@ -743,18 +709,21 @@
           "id": "rations",
           "name": "Provisions",
           "type": "food",
+          "description": "Dried food.",
           "restore": "+4 stamina"
         },
         {
           "id": "rations",
           "name": "Provisions",
           "type": "food",
+          "description": "Dried food.",
           "restore": "+4 stamina"
         },
         {
           "id": "rations",
           "name": "Provisions",
           "type": "food",
+          "description": "Dried food.",
           "restore": "+4 stamina"
         }
       ]
@@ -806,7 +775,8 @@
         {
           "id": "silver-key",
           "name": "Silver Key",
-          "type": "key"
+          "type": "key",
+          "description": "One of the three things that bind the Widow."
         }
       ],
       "isEnding": true,
@@ -876,9 +846,10 @@
       ],
       "addItems": [
         {
-          "id": "map",
-          "name": "Map",
-          "type": "other"
+          "id": "torn-map",
+          "name": "Torn Map",
+          "type": "other",
+          "description": "Shows a secret entrance to the manor."
         }
       ],
       "modifyStats": {
@@ -921,6 +892,7 @@
               "id": "cloak-of-protection",
               "name": "Cloak of Protection",
               "type": "armor",
+              "description": "Enemy hits do 1 less damage.",
               "bonus": "+1 defense",
               "unique": true
             }
@@ -1040,13 +1012,6 @@
           "text": "Turn to 77",
           "targetSection": 77
         }
-      ],
-      "addItems": [
-        {
-          "id": "map",
-          "name": "Map",
-          "type": "other"
-        }
       ]
     },
     {
@@ -1093,7 +1058,8 @@
         {
           "id": "rope",
           "name": "Rope",
-          "type": "other"
+          "type": "other",
+          "description": "For wells and chasms."
         }
       ]
     },
@@ -1241,18 +1207,15 @@
       ],
       "addItems": [
         {
-          "id": "armor",
-          "name": "Armor",
-          "type": "armor"
-        },
-        {
           "id": "magic-longsword",
           "name": "+1 Longsword",
           "type": "weapon",
+          "description": "Well balanced and etched with runes; magical.",
           "bonus": "+1 skill",
           "properties": [
             "magical"
-          ]
+          ],
+          "unique": true
         }
       ]
     },
@@ -1315,13 +1278,6 @@
           "text": "Turn to 301",
           "targetSection": 301
         }
-      ],
-      "addItems": [
-        {
-          "id": "shield",
-          "name": "Shield",
-          "type": "armor"
-        }
       ]
     },
     {
@@ -1355,9 +1311,10 @@
       ],
       "addItems": [
         {
-          "id": "scroll",
-          "name": "Scroll",
-          "type": "other"
+          "id": "scroll-of-protection",
+          "name": "Scroll of Protection",
+          "type": "other",
+          "description": "The book: +2 to saves for one battle (no effect in this app)."
         },
         {
           "id": "gold",
@@ -1442,13 +1399,6 @@
           "targetSection": 156
         }
       ],
-      "addItems": [
-        {
-          "id": "potion",
-          "name": "Potion",
-          "type": "potion"
-        }
-      ],
       "modifyStats": {
         "stamina": -3
       }
@@ -1511,7 +1461,7 @@
           "id": "true-name",
           "name": "The Widow's True Name",
           "type": "other",
-          "description": "Eliza Hollow",
+          "description": "Eliza Hollow. One of the three things that bind the Widow.",
           "unique": true
         }
       ]
@@ -1604,9 +1554,10 @@
       ],
       "addItems": [
         {
-          "id": "book",
-          "name": "Book",
-          "type": "other"
+          "id": "diary",
+          "name": "Skeleton's Diary",
+          "type": "other",
+          "description": "Clutched in bony hands."
         }
       ]
     },
@@ -1664,13 +1615,6 @@
       "id": 87,
       "text": "A trap activates as you step on a hidden pressure plate! Spears shoot from slots in the walls, whistling through the air with deadly precision. Test your Luck. \r\n\r\n\r\nIf Lucky: Your reflexes save you! You see the spears coming and manage to dodge aside at the last instant. One grazes your arm, drawing blood but not doing serious damage. Turn to 155. \r\n\r\n\r\nIf Unlucky: A spear catches you! It grazes along your side, tearing through armor and flesh alike. Lose 4 STAMINA from the spear wound. You press your hand against the injury, feeling warm blood flowing between your fingers. The wound isn't fatal, but it's painful and debilitating. Turn to 155.",
       "choices": [],
-      "addItems": [
-        {
-          "id": "spear",
-          "name": "Spear",
-          "type": "weapon"
-        }
-      ],
       "testLuck": {
         "label": "Test your Luck",
         "successSection": 155,
@@ -1695,9 +1639,10 @@
       ],
       "addItems": [
         {
-          "id": "book",
-          "name": "Book",
-          "type": "other"
+          "id": "prayer-book",
+          "name": "Prayer Book",
+          "type": "other",
+          "description": "From a kneeling skeleton."
         }
       ]
     },
@@ -1859,7 +1804,8 @@
         {
           "id": "cult-medallion",
           "name": "Cult Medallion",
-          "type": "other"
+          "type": "other",
+          "description": "Might let you pass as one of them."
         }
       ]
     },
@@ -1876,7 +1822,8 @@
         {
           "id": "rope",
           "name": "Rope",
-          "type": "other"
+          "type": "other",
+          "description": "For wells and chasms."
         },
         {
           "id": "gold",
@@ -1930,17 +1877,8 @@
         {
           "id": "golden-ring",
           "name": "Golden Ring",
-          "type": "other"
-        },
-        {
-          "id": "ring",
-          "name": "Ring",
-          "type": "other"
-        },
-        {
-          "id": "treasure",
-          "name": "Treasure",
-          "type": "treasure"
+          "type": "other",
+          "description": "Pure gold, worth a considerable sum."
         },
         {
           "id": "gold",
@@ -1980,15 +1918,11 @@
           "id": "silver-dagger",
           "name": "Silver Dagger",
           "type": "weapon",
-          "bonus": "+1",
+          "description": "Silver wounds the undead.",
+          "bonus": "+1 skill",
           "properties": [
             "silver"
           ]
-        },
-        {
-          "id": "blade",
-          "name": "Blade",
-          "type": "weapon"
         }
       ]
     },
@@ -2088,13 +2022,14 @@
           "id": "alchemists-journal",
           "name": "Alchemist's Journal",
           "type": "other",
+          "description": "Notes on the binding of the Widow.",
           "unique": true
         },
         {
           "id": "true-name",
           "name": "The Widow's True Name",
           "type": "other",
-          "description": "Eliza Hollow",
+          "description": "Eliza Hollow. One of the three things that bind the Widow.",
           "unique": true
         }
       ]
@@ -2236,11 +2171,6 @@
       ],
       "addItems": [
         {
-          "id": "mysterious-potion",
-          "name": "Mysterious Potion",
-          "type": "potion"
-        },
-        {
           "id": "potion-of-luck",
           "name": "Potion of Luck",
           "type": "potion",
@@ -2269,9 +2199,10 @@
       ],
       "addItems": [
         {
-          "id": "map",
-          "name": "Map",
-          "type": "other"
+          "id": "catacomb-map",
+          "name": "Map of the Catacombs",
+          "type": "other",
+          "description": "Etched into the wall by a long-dead explorer."
         }
       ],
       "modifyStats": {
@@ -2338,7 +2269,8 @@
         {
           "id": "cloak-of-shadows",
           "name": "Cloak of Shadows",
-          "type": "other"
+          "type": "other",
+          "description": "The book: +2 to stealth (no effect in this app)."
         }
       ]
     },
@@ -2389,9 +2321,10 @@
       ],
       "addItems": [
         {
-          "id": "healing-potion",
-          "name": "Healing Potion",
-          "type": "potion"
+          "id": "potion-of-healing",
+          "name": "Potion of Healing",
+          "type": "potion",
+          "restore": "+6 stamina"
         }
       ]
     },
@@ -2574,17 +2507,20 @@
         {
           "id": "iron-key",
           "name": "Iron Key",
-          "type": "key"
+          "type": "key",
+          "description": "A rusty iron key."
         },
         {
           "id": "silver-key",
           "name": "Silver Key",
-          "type": "key"
+          "type": "key",
+          "description": "One of the three things that bind the Widow."
         },
         {
           "id": "brass-key",
           "name": "Brass Key",
-          "type": "key"
+          "type": "key",
+          "description": "Brass, inscribed with strange symbols."
         }
       ]
     },
@@ -2657,8 +2593,9 @@
       "addItems": [
         {
           "id": "manor-map",
-          "name": "Manor Map",
-          "type": "other"
+          "name": "Map of the Manor",
+          "type": "other",
+          "description": "Secret passages and hidden rooms."
         }
       ]
     },
@@ -2777,7 +2714,8 @@
         {
           "id": "holy-symbol",
           "name": "Holy Symbol",
-          "type": "other"
+          "type": "other",
+          "description": "Blessed silver. The book: +1 to saves against undead (no effect in this app)."
         }
       ]
     },
@@ -2865,6 +2803,7 @@
               "id": "cloak-of-protection",
               "name": "Cloak of Protection",
               "type": "armor",
+              "description": "Enemy hits do 1 less damage.",
               "bonus": "+1 defense",
               "unique": true
             }
@@ -2945,7 +2884,8 @@
         {
           "id": "rope",
           "name": "Rope",
-          "type": "other"
+          "type": "other",
+          "description": "For wells and chasms."
         }
       ]
     },
@@ -2965,13 +2905,14 @@
           "id": "alchemists-journal",
           "name": "Alchemist's Journal",
           "type": "other",
+          "description": "Notes on the binding of the Widow.",
           "unique": true
         },
         {
           "id": "true-name",
           "name": "The Widow's True Name",
           "type": "other",
-          "description": "Eliza Hollow",
+          "description": "Eliza Hollow. One of the three things that bind the Widow.",
           "unique": true
         }
       ]
@@ -3003,7 +2944,8 @@
         {
           "id": "potion-of-invisibility",
           "name": "Potion of Invisibility",
-          "type": "potion"
+          "type": "other",
+          "description": "The book: ten minutes of invisibility (no effect in this app)."
         }
       ]
     },
@@ -3165,10 +3107,12 @@
           "id": "magic-longsword",
           "name": "+1 Longsword",
           "type": "weapon",
+          "description": "Well balanced and etched with runes; magical.",
           "bonus": "+1 skill",
           "properties": [
             "magical"
-          ]
+          ],
+          "unique": true
         }
       ]
     },
@@ -3182,13 +3126,6 @@
           "conditions": {
             "requiresItem": "brass-key"
           }
-        }
-      ],
-      "addItems": [
-        {
-          "id": "key",
-          "name": "Key",
-          "type": "key"
         }
       ],
       "testLuck": {
@@ -3259,12 +3196,14 @@
           "id": "rations",
           "name": "Provisions",
           "type": "food",
+          "description": "Dried food.",
           "restore": "+4 stamina"
         },
         {
           "id": "rations",
           "name": "Provisions",
           "type": "food",
+          "description": "Dried food.",
           "restore": "+4 stamina"
         },
         {
@@ -3438,15 +3377,11 @@
           "id": "silver-dagger",
           "name": "Silver Dagger",
           "type": "weapon",
-          "bonus": "+1",
+          "description": "Silver wounds the undead.",
+          "bonus": "+1 skill",
           "properties": [
             "silver"
           ]
-        },
-        {
-          "id": "blade",
-          "name": "Blade",
-          "type": "weapon"
         }
       ]
     },
@@ -3702,17 +3637,6 @@
           "fleeMaxStamina": 4,
           "fleeTestLuck": true
         }
-      ],
-      "addItems": [
-        {
-          "id": "silver-dagger",
-          "name": "Silver Dagger",
-          "type": "weapon",
-          "bonus": "+1",
-          "properties": [
-            "silver"
-          ]
-        }
       ]
     },
     {
@@ -3736,9 +3660,13 @@
       ],
       "addItems": [
         {
-          "id": "potion",
-          "name": "Potion",
-          "type": "potion"
+          "id": "potion-of-strength",
+          "name": "Potion of Strength",
+          "type": "potion",
+          "description": "+2 SKILL for one fight. Drink it before (or during) the fight.",
+          "onUse": {
+            "nextFightSkill": 2
+          }
         }
       ]
     },
@@ -3769,8 +3697,8 @@
           "type": "treasure"
         },
         {
-          "id": "healing-potion",
-          "name": "Healing Potion",
+          "id": "potion-of-healing",
+          "name": "Potion of Healing",
           "type": "potion",
           "restore": "+6 stamina"
         }
@@ -3925,18 +3853,6 @@
           "targetSection": 127
         }
       ],
-      "addItems": [
-        {
-          "id": "blessed-amulet",
-          "name": "Blessed Amulet",
-          "type": "other"
-        },
-        {
-          "id": "map",
-          "name": "Map",
-          "type": "other"
-        }
-      ],
       "diceRoll": {
         "label": "Roll one die",
         "outcomes": [
@@ -3982,6 +3898,7 @@
           "id": "magic-mace",
           "name": "+1 Mace",
           "type": "weapon",
+          "description": "A blessed mace; crushing and magical.",
           "bonus": "+1 skill",
           "properties": [
             "magical",
@@ -4032,7 +3949,8 @@
         {
           "id": "cult-medallion",
           "name": "Cult Medallion",
-          "type": "other"
+          "type": "other",
+          "description": "Might let you pass as one of them."
         }
       ]
     },
@@ -4054,14 +3972,11 @@
       },
       "addItems": [
         {
-          "id": "book",
-          "name": "Book",
-          "type": "other"
-        },
-        {
           "id": "mayors-ledger",
           "name": "Mayor's Ledger",
-          "type": "other"
+          "type": "other",
+          "description": "Payments to the Hollow Faith cult; proof for the Mayor.",
+          "unique": true
         }
       ]
     },
@@ -4078,12 +3993,8 @@
         {
           "id": "silver-ring",
           "name": "Silver Ring",
-          "type": "other"
-        },
-        {
-          "id": "ring",
-          "name": "Ring",
-          "type": "other"
+          "type": "other",
+          "description": "Worth 30 gold; the book: minor protection against undead (no effect in this app)."
         }
       ]
     },
@@ -4221,6 +4132,14 @@
           "text": "Turn to 388",
           "targetSection": 388
         }
+      ],
+      "addItems": [
+        {
+          "id": "mysterious-potion",
+          "name": "Mysterious Potion",
+          "type": "other",
+          "description": "A dark swirling liquid. You can drink it when the story offers it."
+        }
       ]
     },
     {
@@ -4272,13 +4191,14 @@
           "id": "alchemists-journal",
           "name": "Alchemist's Journal",
           "type": "other",
+          "description": "Notes on the binding of the Widow.",
           "unique": true
         },
         {
           "id": "true-name",
           "name": "The Widow's True Name",
           "type": "other",
-          "description": "Eliza Hollow",
+          "description": "Eliza Hollow. One of the three things that bind the Widow.",
           "unique": true
         }
       ]
@@ -4346,7 +4266,9 @@
           "id": "cloak-of-protection",
           "name": "Cloak of Protection",
           "type": "armor",
-          "bonus": "+1 defense"
+          "description": "Enemy hits do 1 less damage.",
+          "bonus": "+1 defense",
+          "unique": true
         }
       ]
     },
@@ -4389,10 +4311,12 @@
           "id": "magic-longsword",
           "name": "+1 Longsword",
           "type": "weapon",
+          "description": "Well balanced and etched with runes; magical.",
           "bonus": "+1 skill",
           "properties": [
             "magical"
-          ]
+          ],
+          "unique": true
         }
       ]
     },
@@ -4418,9 +4342,10 @@
       ],
       "addItems": [
         {
-          "id": "potion",
-          "name": "Potion",
-          "type": "potion"
+          "id": "potion-of-healing",
+          "name": "Potion of Healing",
+          "type": "potion",
+          "restore": "+6 stamina"
         }
       ]
     },
@@ -4486,7 +4411,8 @@
         {
           "id": "holy-symbol",
           "name": "Holy Symbol",
-          "type": "other"
+          "type": "other",
+          "description": "Blessed silver. The book: +1 to saves against undead (no effect in this app)."
         }
       ]
     },
@@ -4651,8 +4577,9 @@
       "addItems": [
         {
           "id": "manor-map",
-          "name": "Manor Map",
-          "type": "other"
+          "name": "Map of the Manor",
+          "type": "other",
+          "description": "Secret passages and hidden rooms."
         }
       ]
     },
@@ -4704,12 +4631,14 @@
           "id": "rations",
           "name": "Provisions",
           "type": "food",
+          "description": "Dried food.",
           "restore": "+4 stamina"
         },
         {
           "id": "rations",
           "name": "Provisions",
           "type": "food",
+          "description": "Dried food.",
           "restore": "+4 stamina"
         }
       ]
@@ -4984,20 +4913,11 @@
       ],
       "addItems": [
         {
-          "id": "old-rope",
-          "name": "Old Rope",
-          "type": "other"
-        },
-        {
-          "id": "old-map",
-          "name": "Old Map",
-          "type": "other"
-        },
-        {
           "id": "silver-dagger",
           "name": "Silver Dagger",
           "type": "weapon",
-          "bonus": "+2 attack",
+          "description": "Silver wounds the undead.",
+          "bonus": "+1 skill",
           "properties": [
             "silver"
           ]
@@ -5029,6 +4949,7 @@
           "id": "mayors-ledger",
           "name": "Mayor's Ledger",
           "type": "other",
+          "description": "Payments to the Hollow Faith cult; proof for the Mayor.",
           "unique": true
         }
       ]
@@ -5084,13 +5005,6 @@
           "text": "Turn to 267",
           "targetSection": 267
         }
-      ],
-      "addItems": [
-        {
-          "id": "book",
-          "name": "Book",
-          "type": "other"
-        }
       ]
     },
     {
@@ -5137,6 +5051,7 @@
           "id": "magic-mace",
           "name": "+1 Mace",
           "type": "weapon",
+          "description": "A blessed mace; crushing and magical.",
           "bonus": "+1 skill",
           "properties": [
             "magical",
@@ -5195,9 +5110,13 @@
       ],
       "addItems": [
         {
-          "id": "potion",
-          "name": "Potion",
-          "type": "potion"
+          "id": "potion-of-strength",
+          "name": "Potion of Strength",
+          "type": "potion",
+          "description": "+2 SKILL for one fight. Drink it before (or during) the fight.",
+          "onUse": {
+            "nextFightSkill": 2
+          }
         }
       ]
     },
@@ -5354,12 +5273,14 @@
           "id": "rations",
           "name": "Provisions",
           "type": "food",
+          "description": "Dried food.",
           "restore": "+4 stamina"
         },
         {
           "id": "rations",
           "name": "Provisions",
           "type": "food",
+          "description": "Dried food.",
           "restore": "+4 stamina"
         },
         {
@@ -5404,12 +5325,8 @@
         {
           "id": "silver-amulet",
           "name": "Silver Amulet",
-          "type": "other"
-        },
-        {
-          "id": "amulet",
-          "name": "Amulet",
-          "type": "other"
+          "type": "other",
+          "description": "The book: +1 to saves against undead (no effect in this app)."
         }
       ]
     },
@@ -5458,8 +5375,8 @@
           "type": "treasure"
         },
         {
-          "id": "healing-potion",
-          "name": "Healing Potion",
+          "id": "potion-of-healing",
+          "name": "Potion of Healing",
           "type": "potion",
           "restore": "+6 stamina"
         }
@@ -5517,13 +5434,6 @@
           "targetSection": 111
         }
       ],
-      "addItems": [
-        {
-          "id": "key",
-          "name": "Key",
-          "type": "key"
-        }
-      ],
       "testLuck": {
         "successSection": 27,
         "failureSection": 28,
@@ -5547,8 +5457,9 @@
       "addItems": [
         {
           "id": "manor-map",
-          "name": "Manor Map",
-          "type": "other"
+          "name": "Map of the Manor",
+          "type": "other",
+          "description": "Secret passages and hidden rooms."
         }
       ]
     },
@@ -5634,7 +5545,8 @@
         {
           "id": "cloak-of-shadows",
           "name": "Cloak of Shadows",
-          "type": "other"
+          "type": "other",
+          "description": "The book: +2 to stealth (no effect in this app)."
         }
       ]
     },
@@ -5649,13 +5561,6 @@
           "conditions": {
             "requiresItem": "silver-key"
           }
-        }
-      ],
-      "addItems": [
-        {
-          "id": "key",
-          "name": "Key",
-          "type": "key"
         }
       ],
       "testLuck": {
@@ -5773,10 +5678,12 @@
           "id": "magic-longsword",
           "name": "+1 Longsword",
           "type": "weapon",
+          "description": "Well balanced and etched with runes; magical.",
           "bonus": "+1 skill",
           "properties": [
             "magical"
-          ]
+          ],
+          "unique": true
         }
       ]
     },
@@ -5852,8 +5759,9 @@
       "addItems": [
         {
           "id": "manor-map",
-          "name": "Manor Map",
-          "type": "other"
+          "name": "Map of the Manor",
+          "type": "other",
+          "description": "Secret passages and hidden rooms."
         }
       ]
     },
@@ -5997,18 +5905,21 @@
           "id": "rations",
           "name": "Provisions",
           "type": "food",
+          "description": "Dried food.",
           "restore": "+4 stamina"
         },
         {
           "id": "rations",
           "name": "Provisions",
           "type": "food",
+          "description": "Dried food.",
           "restore": "+4 stamina"
         },
         {
           "id": "rations",
           "name": "Provisions",
           "type": "food",
+          "description": "Dried food.",
           "restore": "+4 stamina"
         }
       ]
@@ -6227,7 +6138,8 @@
         {
           "id": "potion-of-invisibility",
           "name": "Potion of Invisibility",
-          "type": "potion"
+          "type": "other",
+          "description": "The book: ten minutes of invisibility (no effect in this app)."
         }
       ]
     },
@@ -6431,13 +6343,6 @@
           "text": "Turn to 155",
           "targetSection": 155
         }
-      ],
-      "addItems": [
-        {
-          "id": "potion",
-          "name": "Potion",
-          "type": "potion"
-        }
       ]
     },
     {
@@ -6452,9 +6357,13 @@
       ],
       "addItems": [
         {
-          "id": "potion",
-          "name": "Potion",
-          "type": "potion"
+          "id": "potion-of-strength",
+          "name": "Potion of Strength",
+          "type": "potion",
+          "description": "+2 SKILL for one fight. Drink it before (or during) the fight.",
+          "onUse": {
+            "nextFightSkill": 2
+          }
         }
       ]
     },
@@ -6610,26 +6519,23 @@
       ],
       "addItems": [
         {
-          "id": "map",
-          "name": "Map",
-          "type": "other"
-        },
-        {
-          "id": "amulet",
-          "name": "Amulet",
-          "type": "other"
+          "id": "tomb-map",
+          "name": "Map of the Hollow Tomb",
+          "type": "other",
+          "description": "Shows where the Hollow family tomb lies."
         },
         {
           "id": "alchemists-journal",
           "name": "Alchemist's Journal",
           "type": "other",
+          "description": "Notes on the binding of the Widow.",
           "unique": true
         },
         {
           "id": "true-name",
           "name": "The Widow's True Name",
           "type": "other",
-          "description": "Eliza Hollow",
+          "description": "Eliza Hollow. One of the three things that bind the Widow.",
           "unique": true
         }
       ]
@@ -6701,10 +6607,12 @@
           "id": "magic-longsword",
           "name": "+1 Longsword",
           "type": "weapon",
+          "description": "Well balanced and etched with runes; magical.",
           "bonus": "+1 skill",
           "properties": [
             "magical"
-          ]
+          ],
+          "unique": true
         }
       ]
     },
@@ -6863,28 +6771,10 @@
       ],
       "addItems": [
         {
-          "id": "key",
-          "name": "Key",
-          "type": "key"
-        },
-        {
-          "id": "silver-dagger",
-          "name": "Silver Dagger",
-          "type": "weapon",
-          "bonus": "+1",
-          "properties": [
-            "silver"
-          ]
-        },
-        {
-          "id": "silver-ring",
-          "name": "Silver Ring",
-          "type": "other"
-        },
-        {
-          "id": "silver-amulet",
-          "name": "Silver Amulet",
-          "type": "other"
+          "id": "old-key",
+          "name": "Old Key",
+          "type": "other",
+          "description": "\"Might open doors deeper in the manor.\""
         },
         {
           "id": "gold",
@@ -6896,11 +6786,6 @@
           "name": "Healing Potion",
           "type": "potion",
           "restore": "+4 stamina"
-        },
-        {
-          "id": "holy-symbol",
-          "name": "Holy Symbol",
-          "type": "other"
         }
       ]
     },
@@ -6924,12 +6809,14 @@
           "id": "rations",
           "name": "Provisions",
           "type": "food",
+          "description": "Dried food.",
           "restore": "+4 stamina"
         },
         {
           "id": "rations",
           "name": "Provisions",
           "type": "food",
+          "description": "Dried food.",
           "restore": "+4 stamina"
         }
       ]
@@ -7032,18 +6919,21 @@
           "id": "rations",
           "name": "Provisions",
           "type": "food",
+          "description": "Dried food.",
           "restore": "+4 stamina"
         },
         {
           "id": "rations",
           "name": "Provisions",
           "type": "food",
+          "description": "Dried food.",
           "restore": "+4 stamina"
         },
         {
           "id": "rations",
           "name": "Provisions",
           "type": "food",
+          "description": "Dried food.",
           "restore": "+4 stamina"
         },
         {
@@ -7082,9 +6972,10 @@
       ],
       "addItems": [
         {
-          "id": "book",
-          "name": "Book",
-          "type": "other"
+          "id": "old-tome",
+          "name": "Old Tome",
+          "type": "other",
+          "description": "The one readable book in the library."
         }
       ]
     },
@@ -7227,7 +7118,8 @@
           "id": "silver-dagger",
           "name": "Silver Dagger",
           "type": "weapon",
-          "bonus": "+2 attack",
+          "description": "Silver wounds the undead.",
+          "bonus": "+1 skill",
           "properties": [
             "silver"
           ]
@@ -7270,7 +7162,8 @@
         {
           "id": "silver-ring",
           "name": "Silver Ring",
-          "type": "treasure"
+          "type": "other",
+          "description": "Worth 30 gold; the book: minor protection against undead (no effect in this app)."
         }
       ]
     },
@@ -7380,19 +7273,6 @@
           "targetSection": 378
         }
       ],
-      "addItems": [
-        {
-          "id": "mysterious-potion",
-          "name": "Mysterious Potion",
-          "type": "potion"
-        },
-        {
-          "id": "cloak-of-protection",
-          "name": "Cloak of Protection",
-          "type": "armor",
-          "bonus": "+1 defense"
-        }
-      ],
       "diceRoll": {
         "label": "Roll one die",
         "outcomes": [
@@ -7466,9 +7346,13 @@
       ],
       "addItems": [
         {
-          "id": "potion",
-          "name": "Potion",
-          "type": "potion"
+          "id": "potion-of-strength",
+          "name": "Potion of Strength",
+          "type": "potion",
+          "description": "+2 SKILL for one fight. Drink it before (or during) the fight.",
+          "onUse": {
+            "nextFightSkill": 2
+          }
         }
       ]
     },
@@ -7510,7 +7394,9 @@
           "id": "cloak-of-protection",
           "name": "Cloak of Protection",
           "type": "armor",
-          "bonus": "+1 defense"
+          "description": "Enemy hits do 1 less damage.",
+          "bonus": "+1 defense",
+          "unique": true
         }
       ]
     },
@@ -7672,23 +7558,6 @@
           "text": "Turn to 395",
           "targetSection": 395
         }
-      ],
-      "addItems": [
-        {
-          "id": "healing-potion",
-          "name": "Healing Potion",
-          "type": "potion"
-        },
-        {
-          "id": "silver-ring",
-          "name": "Silver Ring",
-          "type": "other"
-        },
-        {
-          "id": "map",
-          "name": "Map",
-          "type": "other"
-        }
       ]
     },
     {
@@ -7755,7 +7624,8 @@
         {
           "id": "amulet-of-the-grave",
           "name": "Amulet of the Grave",
-          "type": "other"
+          "type": "other",
+          "description": "The book: absorbs dark energy, +2 against undead (no effect in this app)."
         }
       ]
     },
@@ -7838,6 +7708,7 @@
           "id": "blessed-silver-sword",
           "name": "Blessed Silver Sword",
           "type": "weapon",
+          "description": "Silver and blessed.",
           "bonus": "+2 skill",
           "properties": [
             "silver",
@@ -8012,18 +7883,6 @@
         {
           "text": "Turn to 335",
           "targetSection": 335
-        }
-      ],
-      "addItems": [
-        {
-          "id": "potion",
-          "name": "Potion",
-          "type": "potion"
-        },
-        {
-          "id": "healing-potion",
-          "name": "Healing Potion",
-          "type": "potion"
         }
       ],
       "diceRoll": {
@@ -8247,6 +8106,7 @@
           "id": "magic-mace",
           "name": "+1 Mace",
           "type": "weapon",
+          "description": "A blessed mace; crushing and magical.",
           "bonus": "+1 skill",
           "properties": [
             "magical",
@@ -8313,9 +8173,10 @@
       ],
       "addItems": [
         {
-          "id": "healing-potion",
-          "name": "Healing Potion",
-          "type": "potion"
+          "id": "potion-of-healing",
+          "name": "Potion of Healing",
+          "type": "potion",
+          "restore": "+6 stamina"
         }
       ]
     },
@@ -8428,7 +8289,8 @@
         {
           "id": "holy-symbol",
           "name": "Holy Symbol",
-          "type": "other"
+          "type": "other",
+          "description": "Blessed silver. The book: +1 to saves against undead (no effect in this app)."
         }
       ]
     },
@@ -8465,7 +8327,10 @@
           "id": "potion-of-strength",
           "name": "Potion of Strength",
           "type": "potion",
-          "restore": "+2 skill"
+          "description": "+2 SKILL for one fight. Drink it before (or during) the fight.",
+          "onUse": {
+            "nextFightSkill": 2
+          }
         }
       ]
     },
@@ -8552,9 +8417,10 @@
       ],
       "addItems": [
         {
-          "id": "ring",
-          "name": "Ring",
-          "type": "other"
+          "id": "eliza-ring",
+          "name": "Eliza's Wedding Ring",
+          "type": "other",
+          "description": "The ring Thomas gave her."
         }
       ]
     },
@@ -8859,13 +8725,6 @@
           "text": "Turn to 395",
           "targetSection": 395
         }
-      ],
-      "addItems": [
-        {
-          "id": "cloak-of-shadows",
-          "name": "Cloak of Shadows",
-          "type": "other"
-        }
       ]
     },
     {
@@ -8967,11 +8826,6 @@
       "title": "COMPLETE VICTORY!",
       "addItems": [
         {
-          "id": "amulet",
-          "name": "Amulet",
-          "type": "other"
-        },
-        {
           "id": "gold",
           "name": "500 Gold Pieces",
           "type": "treasure"
@@ -8980,6 +8834,7 @@
           "id": "magic-longsword",
           "name": "+1 Longsword",
           "type": "weapon",
+          "description": "Well balanced and etched with runes; magical.",
           "bonus": "+1 skill",
           "properties": [
             "magical"
@@ -8990,6 +8845,7 @@
           "id": "cloak-of-protection",
           "name": "Cloak of Protection",
           "type": "armor",
+          "description": "Enemy hits do 1 less damage.",
           "bonus": "+1 defense",
           "unique": true
         }
@@ -9011,6 +8867,90 @@
       "choices": [],
       "isEnding": true,
       "endingType": "defeat"
+    }
+  ],
+  "startingItems": [
+    {
+      "id": "sword",
+      "name": "Sword",
+      "type": "weapon",
+      "description": "A reliable blade."
+    },
+    {
+      "id": "leather-armor",
+      "name": "Leather Armor",
+      "type": "armor",
+      "description": "Light protection; no defence bonus."
+    },
+    {
+      "id": "rations",
+      "name": "Provisions",
+      "type": "food",
+      "description": "Dried food.",
+      "restore": "+4 stamina"
+    },
+    {
+      "id": "rations",
+      "name": "Provisions",
+      "type": "food",
+      "description": "Dried food.",
+      "restore": "+4 stamina"
+    },
+    {
+      "id": "rations",
+      "name": "Provisions",
+      "type": "food",
+      "description": "Dried food.",
+      "restore": "+4 stamina"
+    },
+    {
+      "id": "rations",
+      "name": "Provisions",
+      "type": "food",
+      "description": "Dried food.",
+      "restore": "+4 stamina"
+    },
+    {
+      "id": "rations",
+      "name": "Provisions",
+      "type": "food",
+      "description": "Dried food.",
+      "restore": "+4 stamina"
+    },
+    {
+      "id": "rations",
+      "name": "Provisions",
+      "type": "food",
+      "description": "Dried food.",
+      "restore": "+4 stamina"
+    },
+    {
+      "id": "rations",
+      "name": "Provisions",
+      "type": "food",
+      "description": "Dried food.",
+      "restore": "+4 stamina"
+    },
+    {
+      "id": "rations",
+      "name": "Provisions",
+      "type": "food",
+      "description": "Dried food.",
+      "restore": "+4 stamina"
+    },
+    {
+      "id": "rations",
+      "name": "Provisions",
+      "type": "food",
+      "description": "Dried food.",
+      "restore": "+4 stamina"
+    },
+    {
+      "id": "rations",
+      "name": "Provisions",
+      "type": "food",
+      "description": "Dried food.",
+      "restore": "+4 stamina"
     }
   ]
 }

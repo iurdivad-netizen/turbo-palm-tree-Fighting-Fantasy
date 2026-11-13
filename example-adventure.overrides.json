@@ -1,0 +1,12 @@
+{
+  "_comment": "Item definitions the example book's own text only implies. See AUTHORING.md.",
+  "items": {
+    "silver-dagger": { "name": "Silver Dagger", "type": "weapon", "bonus": "+1 skill", "properties": ["silver"], "description": "A fine blade, especially effective against dark creatures." },
+    "sword": { "name": "Iron Sword", "type": "weapon", "description": "Your trusty blade." },
+    "leather-armor": { "name": "Leather Armor", "type": "armor", "bonus": "+1 defense", "description": "Basic protective gear." },
+    "healing-potion": { "name": "Healing Potion", "type": "potion", "restore": "+4 stamina", "description": "Restores 4 STAMINA points." },
+    "rusty-key": { "name": "Rusty Key", "type": "key", "description": "An old key - what does it unlock?" },
+    "cavern-map": { "name": "Cavern Map", "type": "other", "description": "Shows the layout of the cave system." },
+    "mystic-amulet": { "name": "Mystic Amulet", "type": "treasure", "description": "A mysterious protective charm." }
+  }
+}

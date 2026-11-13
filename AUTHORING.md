@@ -41,8 +41,36 @@ Effects (on an option, a section, a roll outcome, a fight victory or an item's `
 score **and** the Initial one), `maxStats` (only the Initial maximum), `addItems`, `removeItems`, `nextFightSkill` (`-1`: the next fight starts at -1 SKILL, for a wound that has not healed).
 Section effects apply the first time the section is entered in a game.
 
-Items: `id`, `name`, `type` (weapon, armor, potion, food, treasure, key, other); optional `description`, `bonus`, `restore`
-(`"+4 stamina"`), `properties` (`magical`, `silver`, `crushing`), `unique` (can be picked up once), `onUse`.
+`gold` (`{"gold": 30}`: gold is a number, not an item), `nextFightSkill` (`-1`: the next fight starts at -1 SKILL, for a wound
+that has not healed; `+2`: a bonus, for a potion).
+
+## 3b. Items: define each one once
+
+Put every item in the book's `items` catalogue, **one definition per id**. Sections and `startingItems` then only name the id:
+
+```json
+"items": { "healing-potion": { "name": "Healing Potion", "type": "potion", "restore": "+4 stamina" },
+           "silver-dagger":  { "name": "Silver Dagger",  "type": "weapon", "bonus": "+1 skill", "properties": ["silver"] } },
+"startingItems": ["sword", { "id": "rations", "qty": 10 }]
+...
+"effects": { "gold": 30, "addItems": [{ "id": "healing-potion", "qty": 2 }, "silver-dagger"] }
+```
+
+What the app does with an item depends on what it says it is. This is the whole list; anything else is a keepsake:
+
+| You write | The app does |
+| --- | --- |
+| `"type": "weapon"` with `bonus` (`"+1 skill"`) and `properties` (`magical`, `silver`, `crushing`) | The player can hold it; in a fight the screen shows what is in hand and what it does against *this* enemy. On automatic the best weapon for the enemy is used. |
+| `"type": "armor"` with `bonus` (`"+1 defense"`) | One piece is worn (automatic: the best); enemy hits do that much less damage. Bonuses never add up. |
+| `"restore": "+4 stamina"` (or luck, skill) | A **Use** button; the item is spent. |
+| `"onUse": { ...effects }` | A **Use** button that applies any effects (e.g. `{"nextFightSkill": 2}`: +2 SKILL for one fight). |
+| a `key`/`other` item named in an option's `conditions` | Shown under **Story items**; the story asks for it at the right moment. |
+| anything else | Shown under **Keepsakes** with its description. It has no effect on the rules, so say so in the description or do not give it. |
+
+Rules of thumb for writing a book that works: never give a potion without `restore` or `onUse`; do not hand out an item by
+entering a section that only *mentions* it ("Do you have the BRASS KEY?" is a condition, not a pickup); give different things
+different ids (a torn map and a manor map are two ids, not "map" twice); say quantities with `qty`, not by repeating the grant;
+use `unique: true` for things that exist once. `validate_adventure.py` checks all of this and lists the keepsakes.
 
 ## 4. Dice
 

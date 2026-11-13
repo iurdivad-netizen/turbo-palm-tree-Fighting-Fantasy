@@ -14,7 +14,13 @@
     "description": { "type": "string" },
     "startingSection": { "type": "integer" },
     "initialStats": { "$ref": "#/$defs/stats" },
-    "startingItems": { "type": "array", "items": { "$ref": "#/$defs/item" } },
+    "items": {
+      "description": "The item catalogue: ONE definition per item id. Sections and startingItems name the id (optionally with a quantity) instead of repeating the definition.",
+      "type": "object",
+      "propertyNames": { "$ref": "#/$defs/slug" },
+      "additionalProperties": { "$ref": "#/$defs/itemDef" }
+    },
+    "startingItems": { "type": "array", "items": { "$ref": "#/$defs/itemRef" } },
     "sections": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/section" } }
   },
   "$defs": {
@@ -57,8 +63,33 @@
         "permanentStats": { "$ref": "#/$defs/statDelta" },
         "maxStats": { "$ref": "#/$defs/statDelta" },
         "nextFightSkill": { "type": "integer", "description": "Carried into the next fight: -1 starts that fight at -1 SKILL (a wound that has not healed). Use a negative number." },
-        "addItems": { "type": "array", "items": { "$ref": "#/$defs/item" } },
+        "gold": { "type": "integer", "description": "Gold pieces gained (negative: spent). Gold is a number, not an item." },
+        "addItems": { "type": "array", "items": { "$ref": "#/$defs/itemRef" } },
         "removeItems": { "type": "array", "items": { "$ref": "#/$defs/slug" } }
+      }
+    },
+    "itemRef": {
+      "description": "What a section hands out: an id from the catalogue, {id, qty} for several, or (older books) a full definition.",
+      "oneOf": [
+        { "$ref": "#/$defs/slug" },
+        { "type": "object", "additionalProperties": false, "required": ["id"], "properties": { "id": { "$ref": "#/$defs/slug" }, "qty": { "type": "integer", "minimum": 1 } } },
+        { "$ref": "#/$defs/item" }
+      ]
+    },
+    "itemDef": {
+      "description": "weapon: bonus ('+1 skill') and properties; armor: bonus ('+1 defense'); potion/food: restore ('+4 stamina') or onUse (any effects); key/other/treasure: carried, used by the story through option conditions.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "type"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "type": { "enum": ["weapon", "armor", "potion", "food", "treasure", "key", "other"] },
+        "description": { "type": "string" },
+        "bonus": { "type": "string" },
+        "restore": { "type": "string", "description": "e.g. '+4 stamina'" },
+        "properties": { "type": "array", "items": { "enum": ["magical", "silver", "crushing"] }, "uniqueItems": true },
+        "unique": { "type": "boolean" },
+        "onUse": { "$ref": "#/$defs/effects" }
       }
     },
     "item": {

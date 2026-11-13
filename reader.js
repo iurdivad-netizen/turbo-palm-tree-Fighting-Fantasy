@@ -62,6 +62,9 @@ const ui = {
     advance() { stopAutoFight(); begin(); game.advanceNow(); },
     use(uid) { begin(); game.useItem(uid); },
     drop(uid) { game.dropItem(uid); },
+    equip(uid) { game.equip(Number(uid)); },
+    unequip(slot) { game.unequip(slot); },
+    equipChoice(v) { v === 'auto' ? game.unequip('weapon') : game.equip(Number(v)); },
     toggleAutoRoll(on) { prefs.autoRoll = !!on; savePrefs(); if (game && !autoFightOn) game.setAutoRoll(prefs.autoRoll); },
     toggleMarkSeen(on) { prefs.markSeen = !!on; savePrefs(); render(); },
     setSize(delta) { prefs.textSize = Math.min(3, Math.max(0, prefs.textSize + delta)); savePrefs(); applyTextSize(); },
@@ -380,12 +383,14 @@ function renderCombat() {
     const st = game.stats;
     const busy = game.pending || autoFightOn;
     const skillNow = Math.max(0, st.skill - game.tempSkillPenalty);
+    const fightMod = n => n > 0 ? `−${n} this fight` : `+${-n} this fight`;
     return `<div class="combat">
         <h3>⚔️ Combat${list.length > 1 ? ` · enemy ${game.currentCombatIndex + 1} of ${list.length}` : ''}</h3>
         <div class="versus">
-            <div class="fighter"><strong>You</strong><div class="skillline">SKILL ${skillNow}${game.tempSkillPenalty ? ` (−${game.tempSkillPenalty} this fight)` : ''}</div>${meter('STAMINA', st.stamina, st.initialStamina, true)}</div>
+            <div class="fighter"><strong>You</strong><div class="skillline">SKILL ${skillNow}${game.tempSkillPenalty ? ` (${fightMod(game.tempSkillPenalty)})` : ''}</div>${meter('STAMINA', st.stamina, st.initialStamina, true)}</div>
             <div class="fighter"><strong>${esc(c.enemyName)}</strong><div class="skillline">SKILL ${c.enemySkill}</div>${meter('STAMINA', game.enemyCurrentStamina, c.enemyStamina, true)}</div>
         </div>
+        ${renderGear(c, busy)}
         ${rulesList(c)}
         <div class="fightlog" role="log" aria-live="polite" tabindex="0" aria-label="Fight log">${game.combatLog.map(l => `<div>${esc(l)}</div>`).join('')}</div>
         <div class="actions">
@@ -418,33 +423,72 @@ function renderStats() {
     return `<section class="card stats-card" aria-label="Character stats">
         <h2>Character</h2>
         ${meter('SKILL', st.skill, st.initialSkill)}${meter('STAMINA', st.stamina, st.initialStamina)}${meter('LUCK', st.luck, st.initialLuck)}
-        ${game.tempSkillPenalty ? `<p class="penalty">−${game.tempSkillPenalty} SKILL for this fight</p>` : ''}
-        ${game.carriedSkillPenalty ? `<p class="penalty">−${game.carriedSkillPenalty} SKILL in your next fight</p>` : ''}
+        ${game.tempSkillPenalty ? `<p class="penalty">${game.tempSkillPenalty > 0 ? '−' : '+'}${Math.abs(game.tempSkillPenalty)} SKILL for this fight</p>` : ''}
+        ${game.carriedSkillPenalty ? `<p class="penalty">${game.carriedSkillPenalty > 0 ? '−' : '+'}${Math.abs(game.carriedSkillPenalty)} SKILL in your next fight</p>` : ''}
         <div class="gold"><span>💰 Gold</span><span>${st.gold || 0} GP</span></div>
     </section>`;
 }
 
 const ICONS = { weapon: '⚔️', armor: '🛡️', potion: '🧪', food: '🍞', treasure: '💎', key: '🔑', other: '📦' };
-function renderPack() {
-    // identical items (ten rations) are shown once with a count
-    const groups = new Map();
-    for (const it of game.inventory) {
-        const key = [it.id, it.name, it.restore || '', it.bonus || '', it.onUse ? 1 : 0].join('|');
-        if (!groups.has(key)) groups.set(key, { item: it, count: 0 });
-        groups.get(key).count++;
+const CATEGORIES = [
+    ['weapon', 'Weapons', 'Hold one in a fight. Left on automatic, the best one for each enemy is used.'],
+    ['armor', 'Armor', 'One piece is worn. Left on automatic, the one that protects most is worn.'],
+    ['consumable', 'Potions and food', 'Use them when you need them: in a fight too.'],
+    ['story', 'Story items', 'The story asks for these at the right moment; nothing to do here.'],
+    ['keepsake', 'Keepsakes', 'Described in the book but with no effect on the rules.']
+];
+function itemRow(g) {
+    const item = g.item;
+    const tags = [item.restore && `✨ ${item.restore}`, item.bonus && `⚡ ${item.bonus}`, item.properties && item.properties.length && `🏷️ ${item.properties.join(', ')}`].filter(Boolean).join(' · ');
+    const uid = Number(item.uid);
+    let badge = '', act = '';
+    if (g.category === 'weapon') {
+        const inHand = game.chooseWeapon({}).weapon;                      // what would be used against an ordinary enemy
+        const held = g.equipped || (!game.equipped.weapon && inHand && g.uids.includes(inHand.uid));
+        badge = held ? `<span class="badge">${g.equipped ? 'In hand' : 'In hand (auto)'}</span>` : '';
+        act = held ? '' : `<button class="btn btn-small" onclick="ui.equip(${uid})" ${game.pending ? 'disabled' : ''}>Hold</button>`;
+    } else if (g.category === 'armor') {
+        badge = g.inUse ? `<span class="badge">${g.equipped ? 'Worn' : 'Worn (auto)'}</span>` : '';
+        act = g.inUse ? '' : `<button class="btn btn-small" onclick="ui.equip(${uid})" ${game.pending ? 'disabled' : ''}>Wear</button>`;
+    } else if (g.usable) {
+        act = `<button class="btn btn-small" onclick="ui.use(${uid})" ${game.pending ? 'disabled' : ''}>Use</button>`;
     }
-    const rows = [...groups.values()].map(({ item, count }) => {
-        const tags = [item.restore && `✨ ${item.restore}`, item.bonus && `⚡ ${item.bonus}`, item.properties && item.properties.length && `🏷️ ${item.properties.join(', ')}`].filter(Boolean).join(' · ');
-        const usable = !!(item.restore || item.onUse);
-        return `<div class="item">
-            <span class="ico" aria-hidden="true">${ICONS[item.type] || ICONS.other}</span>
-            <div class="body"><strong>${esc(item.name)}${count > 1 ? ` ×${count}` : ''}</strong>${item.description ? `<div class="tags">${esc(item.description)}</div>` : ''}${tags ? `<div class="tags">${esc(tags)}</div>` : ''}</div>
-            <div class="acts">
-                ${usable ? `<button class="btn btn-small" onclick="ui.use(${Number(item.uid)})" ${game.pending ? 'disabled' : ''}>Use</button>` : ''}
-                <button class="x" onclick="ui.drop(${Number(item.uid)})" aria-label="Drop ${esc(item.name)}" title="Drop">✕</button>
-            </div></div>`;
+    return `<div class="item${badge ? ' active' : ''}">
+        <span class="ico" aria-hidden="true">${ICONS[item.type] || ICONS.other}</span>
+        <div class="body"><strong>${esc(item.name)}${g.count > 1 ? ` ×${g.count}` : ''}</strong> ${badge}${item.description ? `<div class="tags">${esc(item.description)}</div>` : ''}${tags ? `<div class="tags">${esc(tags)}</div>` : ''}</div>
+        <div class="acts">${act}<button class="x" onclick="ui.drop(${uid})" aria-label="Drop ${esc(item.name)}" title="Drop one">✕</button></div></div>`;
+}
+function renderPack() {
+    const view = game.inventoryView();
+    const sections = CATEGORIES.map(([cat, title, hint]) => {
+        const rows = view.filter(g => g.category === cat);
+        if (!rows.length) return '';
+        const auto = (cat === 'weapon' && game.equipped.weapon != null) || (cat === 'armor' && game.equipped.armor != null)
+            ? `<button class="btn btn-small linkish" onclick="ui.unequip('${cat}')" ${game.pending ? 'disabled' : ''}>Back to automatic</button>` : '';
+        return `<div class="pack-group"><h3>${title} ${auto}</h3><p class="hint">${hint}</p>${rows.map(itemRow).join('')}</div>`;
     }).join('');
-    return `<section class="card" aria-label="Pack"><h2>Pack</h2>${rows || '<p class="empty">Your pack is empty.</p>'}</section>`;
+    return `<section class="card" aria-label="Pack"><h2>Pack</h2>${sections || '<p class="empty">Your pack is empty.</p>'}</section>`;
+}
+
+// what you fight with, shown in the fight: the weapon, what it does against this enemy, the armour; a picker to change them
+function renderGear(enemy, busy) {
+    const w = game.chooseWeapon(enemy);
+    const choices = game.weaponChoices(enemy);
+    const armor = game.wornArmor();
+    const dmgText = d => (d === 0 ? 'cannot hurt it' : `${d} damage`);
+    const wName = w.weapon ? w.weapon.name : 'bare hands';
+    const detail = [w.bonus ? `${w.bonus > 0 ? '+' : ''}${w.bonus} SKILL` : '', dmgText(w.damage)].filter(Boolean).join(' · ');
+    const picker = choices.length > 1 || game.equipped.weapon != null ? `<label class="gear-pick">Change weapon
+        <select onchange="ui.equipChoice(this.value)" ${busy ? 'disabled' : ''} aria-label="Weapon to fight with">
+            <option value="auto" ${game.equipped.weapon == null ? 'selected' : ''}>Automatic (best against this enemy)</option>
+            ${choices.map(c => `<option value="${Number(c.item.uid)}" ${game.equipped.weapon === c.item.uid ? 'selected' : ''}>${esc(c.item.name)}: ${c.bonus ? `${c.bonus > 0 ? '+' : ''}${c.bonus} SKILL, ` : ''}${dmgText(c.damage)}</option>`).join('')}
+        </select></label>` : '';
+    const warn = w.damage === 0 ? `<p class="gear-warn" role="alert">⚠️ ${esc(wName)} cannot hurt ${esc(enemy.enemyName)}. ${(enemy.effectiveWeapons || []).length ? `Only a ${esc(enemy.effectiveWeapons.join(' or '))} weapon can.` : ''}</p>` : '';
+    return `<div class="gear" aria-label="Your equipment">
+        <div><span class="ico" aria-hidden="true">🗡️</span> <strong>In your hand:</strong> ${esc(wName)} <span class="muted">(${esc(detail)}${w.chosen ? '' : ', chosen automatically'})</span></div>
+        <div><span class="ico" aria-hidden="true">🛡️</span> <strong>Wearing:</strong> ${armor ? esc(armor.name) : 'no armor'}${armor && game._armorValue(armor) ? ` <span class="muted">(${esc(armor.bonus)})</span>` : ''}</div>
+        ${picker}${warn}
+    </div>`;
 }
 
 function renderJourney() {

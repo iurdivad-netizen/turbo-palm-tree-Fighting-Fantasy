@@ -491,6 +491,24 @@ test('upgradeBook turns the old format into exactly the structure the converter 
     const strip = s => {
         const c = JSON.parse(JSON.stringify(s));
         delete c.text; delete c.title;
+        // the converter names items by id (with a quantity) and turns gold into a number; the in-memory upgrade keeps what the old book wrote
+        const GOLD = /\b(gold pieces?|coins?|gp)\b/i;
+        const norm = o => {
+            if (Array.isArray(o)) o.forEach(norm);
+            else if (o && typeof o === 'object') {
+                if (Array.isArray(o.addItems)) {
+                    const items = {};
+                    o.addItems.forEach(i => {
+                        if (typeof i === 'object' && i.name && GOLD.test(i.name)) o.gold = (o.gold || 0) + parseInt((i.name.match(/\d+/) || ['1'])[0], 10);
+                        else { const id = typeof i === 'string' ? i : i.id; items[id] = (items[id] || 0) + ((i && i.qty) || 1); }
+                    });
+                    o.addItems = items;
+                    if (!Object.keys(items).length) delete o.addItems;
+                }
+                Object.values(o).forEach(norm);
+            }
+        };
+        norm(c);
         if (c.options) c.options = c.options.map(o => { const { label, ...rest } = o; return rest; });
         if (c.combat) (Array.isArray(c.combat) ? c.combat : [c.combat]).forEach(e => delete e.victoryText);
         return c;
@@ -606,7 +624,7 @@ test('a wound that has not healed (nextFightSkill) is carried into the next figh
     assert.equal(g.carriedSkillPenalty, 0, 'used up');
     g.goTo(3); g.startCombat();
     assert.equal(g.tempSkillPenalty, 0, 'the second fight is not affected');
-    assert.equal(Engine.describeEffects({ nextFightSkill: -1 }), ' [-1 SKILL in your next fight]');
+    assert.equal(Engine.describeEffects({ nextFightSkill: -1 }), ' [-1 SKILL for one fight]');
 });
 
 test('real book: section 22 is a Luck test; the paralysis costs 1 SKILL in the next fight', () => {
@@ -673,4 +691,84 @@ test('real book: the well (54, 164) needs rope and the Mayor (24) needs the ledg
     assert.deepEqual(g.optionStates().map(s => [s.option.id, s.enabled]), [['to-234', false], ['to-127', true]]);
     g.addItem({ id: 'mayors-ledger', name: "Mayor's Ledger", type: 'other' });
     assert.equal(g.optionStates()[0].enabled, true);
+});
+
+// ---- items: one definition per id, quantities, gold as a number, holding and wearing ---------------------------------------
+const gear = { sword: { name: 'Sword', type: 'weapon' }, dagger: { name: 'Silver Dagger', type: 'weapon', bonus: '+1 skill', properties: ['silver'] },
+    cloak: { name: 'Cloak', type: 'armor', bonus: '+1 defense' }, plate: { name: 'Plate', type: 'armor', bonus: '+2 defense' },
+    tonic: { name: 'Tonic', type: 'potion', restore: '+4 stamina' }, bolt: { name: 'Potion of Strength', type: 'potion', onUse: { nextFightSkill: 2 } } };
+
+test('sections name items by id: a quantity gives that many copies, gold is a number, the catalogue supplies the rest', () => {
+    const g = make([sec(1), sec(2, { effects: { addItems: ['tonic', { id: 'tonic', qty: 2 }, 'dagger'], gold: 25 } })], {}, { items: gear, startingItems: [{ id: 'sword', qty: 1 }, { id: 'tonic', qty: 3 }] });
+    g.goTo(2);
+    assert.equal(g.inventory.filter(i => i.id === 'tonic').length, 3 + 3);
+    assert.equal(g.stats.gold, 10 + 25);
+    assert.equal(g.inventory.find(i => i.id === 'tonic').restore, '+4 stamina');
+    assert.deepEqual(g.inventory.find(i => i.id === 'dagger').properties, ['silver']);
+    assert.equal(g.inventory.find(i => i.id === 'sword').name, 'Sword');
+});
+
+test('you choose the weapon: the choice is used even when it is useless, and automatic goes back to the best', () => {
+    const ghost = enemy({ enemyName: 'GHOST', effectiveWeapons: ['silver'], normalWeaponDamage: 0 });
+    const g = make([sec(1, { combat: ghost })], {}, { items: gear, startingItems: ['sword', 'dagger'] });
+    assert.equal(g.chooseWeapon(ghost).weapon.id, 'dagger', 'automatic: the silver one');
+    const sword = g.inventory.find(i => i.id === 'sword');
+    assert.equal(g.equip(sword.uid), true);
+    const w = g.chooseWeapon(ghost);
+    assert.deepEqual([w.weapon.id, w.damage, w.chosen], ['sword', 0, true]);
+    assert.deepEqual(g.weaponChoices(ghost).map(c => [c.item.id, c.damage]), [['dagger', 2], ['sword', 0]]);
+    const copy = make([sec(1, { combat: ghost })], {}, { items: gear, startingItems: ['sword', 'dagger'] });
+    copy.restore(JSON.parse(JSON.stringify(g.serialize())));
+    assert.equal(copy.chooseWeapon(ghost).weapon.id, 'sword', 'the choice survives a save');
+    g.unequip('weapon');
+    assert.equal(g.chooseWeapon(ghost).weapon.id, 'dagger');
+    g.equip(sword.uid); g.dropItem(sword.uid);
+    assert.equal(g.chooseWeapon(ghost).weapon.id, 'dagger', 'a dropped weapon cannot stay in hand');
+});
+
+test('one piece of armour is worn: the best one, or the one you choose - bonuses do not add up', () => {
+    const g = make([sec(1)], {}, { items: gear, startingItems: ['cloak', 'plate'] });
+    assert.equal(g.wornArmor().id, 'plate');
+    assert.equal(g.calculateDefenseBonus(), 2);
+    g.equip(g.inventory.find(i => i.id === 'cloak').uid);
+    assert.equal(g.wornArmor().id, 'cloak');
+    assert.equal(g.calculateDefenseBonus(), 1);
+});
+
+test('the pack is grouped and sorted: weapons, armour, things to use, story items, keepsakes', () => {
+    const items = Object.assign({}, gear, { key: { name: 'Key', type: 'key' }, doll: { name: 'Doll', type: 'other' } });
+    const g = make([sec(1, { options: [opt('a', 2, { conditions: { requiresItem: 'key' } })] }), sec(2)], {}, { items, startingItems: ['sword', 'cloak', { id: 'tonic', qty: 2 }, 'key', 'doll'] });
+    const view = g.inventoryView();
+    assert.deepEqual(view.map(v => [v.item.id, v.category, v.count]), [['sword', 'weapon', 1], ['cloak', 'armor', 1], ['tonic', 'consumable', 2], ['key', 'story', 1], ['doll', 'keepsake', 1]]);
+    assert.equal(view[1].inUse, true);
+});
+
+test('a Potion of Strength gives +2 SKILL for one fight, whether drunk before or during it', () => {
+    const items = gear;
+    const before = make([sec(1, { combat: enemy() })], {}, { items, startingItems: ['bolt'] });
+    before.useItem(before.inventory[0].uid);
+    assert.equal(before.carriedSkillPenalty, -2);
+    before.startCombat();
+    assert.equal(before.tempSkillPenalty, -2);
+    assert.equal(before.carriedSkillPenalty, 0);
+    const during = make([sec(1, { combat: enemy() })], {}, { items, startingItems: ['bolt'] });
+    during.startCombat();
+    during.useItem(during.inventory[0].uid);
+    assert.equal(during.tempSkillPenalty, -2);
+    assert.equal(during.carriedSkillPenalty, 0);
+});
+
+test('real book: every item a section gives is in the catalogue, every potion and food can be used, and the kit is stated', () => {
+    const b = real();
+    const ids = new Set();
+    const walk = o => { if (Array.isArray(o)) o.forEach(walk); else if (o && typeof o === 'object') { (o.addItems || []).forEach(r => ids.add(typeof r === 'string' ? r : r.id)); Object.values(o).forEach(walk); } };
+    walk(b.sections);
+    for (const id of ids) assert.ok(b.items[id], `item ${id}`);
+    for (const [id, d] of Object.entries(b.items)) if (d.type === 'potion' || d.type === 'food') assert.ok(d.restore || d.onUse, `${id} can be used`);
+    const g = play(dice());
+    assert.deepEqual(g.inventory.map(i => i.id).filter(i => i !== 'rations'), ['sword', 'leather-armor']);
+    assert.equal(g.inventory.filter(i => i.id === 'rations').length, 10);
+    g.goTo(8);                               // "30 gold, 2 healing potions, a rusty key"
+    assert.equal(g.stats.gold, 40);
+    assert.equal(g.inventory.filter(i => i.id === 'healing-potion').length, 2);
 });
