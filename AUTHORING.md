@@ -171,6 +171,7 @@ See `CURSE_OF_HOLLOWS_END.sim.json`. Endings come from each section's `ending`, 
 | Schema and cross-references (dead ends, unreachable targets, generic labels, dice coverage, items that can never be found) | `python3 validate_adventure.py book.v2.json` |
 | Rules engine tests | `node --test` |
 | Do the choices make sense? (labels vs where they lead, promised finds, fights, coming back to the menu) | `python3 check_option_coherence.py book.v2.json` |
+| See the book as a flowchart from the first section (layers, every option an arrow) | `python3 make_flowchart.py book.v2.json flow.html` |
 | See the whole book as a network (hubs, dead-end branches, how the endings are reached) | `python3 make_book_map.py book.v2.json map.html` |
 | Playable by bots, endings reachable | `node simulate_playthroughs.js book.v2.json 1000` |
 | The page in a real browser (needs `npm i`) | `npm run test:ui` – run it on its own, not together with `node --test` |
