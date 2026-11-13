@@ -272,3 +272,20 @@ details > summary { cursor: pointer; font-weight: 600; min-height: 36px; }
 .item .read summary { cursor: pointer; font-weight: 600; font-size: 0.85rem; min-height: 24px; }
 .item .readtext { font-family: var(--serif); font-size: 0.95rem; line-height: 1.5; padding: 0.4rem 0 0.2rem; }
 .item .readtext p { margin: 0 0 0.6rem; }
+
+/* optional rules, luck in a fight, a full pack */
+.rules { border: 1px solid var(--line); border-radius: var(--radius); margin: 1rem 0 0.5rem; padding: 0.5rem 0.9rem 0.7rem; font-family: var(--sans); }
+.rules legend { font-weight: 700; padding: 0 0.4rem; }
+.rule { display: flex; gap: 0.6rem; align-items: flex-start; justify-content: space-between; margin: 0.45rem 0; cursor: pointer; }
+.rule small { display: block; color: var(--muted); font-weight: 400; font-size: 0.82rem; }
+.rule input[type=checkbox] { margin-top: 0.3rem; width: 1.1rem; height: 1.1rem; flex: none; }
+.rule input[type=number] { width: 4.5rem; font: inherit; padding: 0.35rem; min-height: 40px; flex: none; }
+.decision { border: 2px solid var(--accent); border-radius: var(--radius); background: var(--accent-soft); padding: 0.6rem 0.9rem; margin: 0.6rem 0; font-family: var(--sans); }
+.decision p { margin: 0 0 0.4rem; } .decision small { display: block; color: var(--muted); }
+.rulesline { font-size: 0.8rem; color: var(--muted); margin: 0.4rem 0 0; }
+.packcount { font: 600 0.8rem var(--sans); color: var(--muted); }
+.pickups { border: 1px dashed var(--accent); border-radius: var(--radius); padding: 0.3rem 0.6rem 0.5rem; margin-bottom: 0.8rem; }
+.pickups h3 { font: 700 0.8rem var(--sans); text-transform: uppercase; letter-spacing: 0.06em; margin: 0.3rem 0; }
+.swap { display: block; font-size: 0.82rem; color: var(--muted); margin-top: 0.3rem; }
+.swap select { font: inherit; max-width: 100%; min-height: 36px; }
+.rule input[type=number], .swap select { background: var(--paper); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; }

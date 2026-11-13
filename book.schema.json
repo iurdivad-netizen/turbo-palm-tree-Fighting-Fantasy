@@ -20,6 +20,17 @@
       "propertyNames": { "$ref": "#/$defs/slug" },
       "additionalProperties": { "$ref": "#/$defs/itemDef" }
     },
+    "rules": {
+      "description": "Optional Fighting Fantasy rules this book is written for (the player can still change them before starting). All off by default.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "luckInCombat": { "type": "boolean", "description": "After a wound, the player may Test their Luck: lucky +2 damage dealt / 1 less taken, unlucky 1 less dealt / 1 more taken." },
+        "randomStats": { "type": "boolean", "description": "SKILL 1d6+6, STAMINA 2d6+12, LUCK 1d6+6 are rolled when the game starts (initialStats is then only shown as a guide)." },
+        "eatOnlyBetweenFights": { "type": "boolean", "description": "Food cannot be eaten in the middle of a fight." },
+        "packLimit": { "type": "integer", "minimum": 1, "description": "Most items the player can carry. Food, keys, gold and anything an option asks for do not count." }
+      }
+    },
     "startingItems": { "type": "array", "items": { "$ref": "#/$defs/itemRef" } },
     "sections": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/section" } }
   },

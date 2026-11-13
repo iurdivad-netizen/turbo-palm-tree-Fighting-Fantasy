@@ -81,6 +81,21 @@ entering a section that only *mentions* it ("Do you have the BRASS KEY?" is a co
 different ids (a torn map and a manor map are two ids, not "map" twice); say quantities with `qty`, not by repeating the grant;
 use `unique: true` for things that exist once. `validate_adventure.py` checks all of this and lists the keepsakes.
 
+## 3c. Optional Fighting Fantasy rules
+
+A book can declare the classic rules it is written for, and the player can switch each one on or off on the book's page before starting (the book's own choice is the default; all are off unless chosen):
+
+```json
+"rules": { "luckInCombat": true, "randomStats": true, "eatOnlyBetweenFights": true, "packLimit": 8 }
+```
+
+| Rule | What the app does |
+| --- | --- |
+| `luckInCombat` | After a wound, in either direction, the player is asked whether to Test their Luck. Their blow: lucky +2 damage, unlucky 1 less. Its blow: lucky 1 less damage, unlucky 1 more. The test costs 1 LUCK like any other (charms help) and is made *before* the wound is applied, so it can save a life or finish an enemy. Auto-fight never asks. |
+| `randomStats` | SKILL 1d6+6, STAMINA 2d6+12, LUCK 1d6+6 are rolled when the game starts; `initialStats` is then only a guide. |
+| `eatOnlyBetweenFights` | Food (`type: food`) cannot be eaten while a fight is on; potions still can. |
+| `packLimit` | At most this many items. Food, keys, gold and anything an option asks for (`requiresItem` and the like) never count, so the limit cannot lock the book. A find that does not fit is left lying: the pack shows it with Take (swap for something) and Leave it. The starting kit is never turned away. |
+
 ## 4. Dice
 
 One `roll` per section, with `{{roll}}` where it belongs in the text.

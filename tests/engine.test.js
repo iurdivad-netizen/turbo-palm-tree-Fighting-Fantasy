@@ -1035,3 +1035,91 @@ test('real book: every side room of every big menu leads back to it, no menu is 
     while (todo.length) for (const t of lasting(todo.pop())) if (!seen.has(t)) { seen.add(t); todo.push(t); }
     assert.deepEqual(hubs.filter(h => !seen.has(h)), [], 'every menu can be reached through lasting options');
 });
+
+// ---- optional Fighting Fantasy rules ------------------------------------------------------------------------------------------------
+const ffItems = Object.assign({}, gear, { key: { name: 'Key', type: 'key' }, rations: { name: 'Provisions', type: 'food', restore: '+4 stamina' } });
+
+test('rules.randomStats rolls SKILL 1d6+6, STAMINA 2d6+12, LUCK 1d6+6 when the game starts; off by default', () => {
+    const rolled = make([sec(1)], { rules: { randomStats: true }, rng: dice(3, 4, 5, 6) });
+    assert.deepEqual([rolled.stats.skill, rolled.stats.stamina, rolled.stats.luck], [9, 21, 12]);
+    assert.deepEqual([rolled.stats.initialSkill, rolled.stats.initialStamina, rolled.stats.initialLuck], [9, 21, 12], 'the rolled scores are the maximums');
+    assert.ok(rolled.messages.some(m => m.includes('SKILL 9, STAMINA 21, LUCK 12')));
+    const fixed = make([sec(1)], { rng: dice() });
+    assert.deepEqual([fixed.stats.skill, fixed.stats.stamina, fixed.stats.luck], [8, 20, 9]);
+    const byBook = make([sec(1)], { rng: dice(1, 1, 1, 1) }, { rules: { randomStats: true } });
+    assert.equal(byBook.stats.skill, 7, 'a book can ask for it');
+});
+
+test('rules.luckInCombat: after a blow you may Test your Luck; lucky +2 / unlucky -1 on yours, lucky -1 / unlucky +1 on its', () => {
+    const fight = (rng, rules) => { const g = make([sec(1, { combat: enemy({ enemyStamina: 8 }) })], { rng, rules }); g.startCombat(); return g; };
+    // you wound it (12+8 against 2+5); the test rolls 1+1: lucky
+    const lucky = fight(dice(6, 6, 1, 1, 1, 1), { luckInCombat: true });
+    lucky.fightRound();
+    assert.equal(lucky.pendingRoll.decision, 'luck');
+    lucky.resolveDecision(true);
+    assert.equal(lucky.enemyCurrentStamina, 4, 'lucky: 4 damage instead of 2');
+    assert.equal(lucky.stats.luck, 8, 'the test cost 1 LUCK');
+    const unlucky = fight(dice(6, 6, 1, 1, 6, 6), { luckInCombat: true });
+    unlucky.fightRound(); unlucky.resolveDecision(true);
+    assert.equal(unlucky.enemyCurrentStamina, 7, 'unlucky: 1 damage');
+    const declined = fight(dice(6, 6, 1, 1), { luckInCombat: true });
+    declined.fightRound(); declined.resolveDecision(false);
+    assert.equal(declined.enemyCurrentStamina, 6);
+    assert.equal(declined.stats.luck, 9, 'no test, no cost');
+    // it wounds you (2+8 against 12+5)
+    const hurt = fight(dice(1, 1, 6, 6, 1, 1), { luckInCombat: true });
+    hurt.fightRound(); hurt.resolveDecision(true);
+    assert.equal(hurt.stats.stamina, 19, 'lucky: 1 damage instead of 2');
+    const worse = fight(dice(1, 1, 6, 6, 6, 6), { luckInCombat: true });
+    worse.fightRound(); worse.resolveDecision(true);
+    assert.equal(worse.stats.stamina, 17, 'unlucky: 3 damage');
+});
+
+test('luck in a fight can save your life, is never asked when switched off or on auto-decline, and cannot be asked with no LUCK', () => {
+    const dying = make([sec(1, { combat: enemy() })], { rng: dice(1, 1, 6, 6, 1, 1), rules: { luckInCombat: true } });
+    dying.stats.stamina = 2; dying.startCombat(); dying.fightRound();
+    assert.equal(dying.isGameOver, false, 'the wound is only dealt after the choice');
+    dying.resolveDecision(true);
+    assert.deepEqual([dying.stats.stamina, dying.isGameOver], [1, false]);
+    const off = make([sec(1, { combat: enemy() })], { rng: dice(6, 6, 1, 1) });
+    off.startCombat(); off.fightRound();
+    assert.equal(off.pending, null);
+    const auto = make([sec(1, { combat: enemy() })], { rng: dice(6, 6, 1, 1), rules: { luckInCombat: true } });
+    auto.autoDecline = true; auto.startCombat(); auto.fightRound();
+    assert.equal(auto.pending, null);
+    const broke = make([sec(1, { combat: enemy() })], { rng: dice(6, 6, 1, 1), rules: { luckInCombat: true } });
+    broke.stats.luck = 0; broke.startCombat(); broke.fightRound();
+    assert.equal(broke.pending, null);
+});
+
+test('rules.eatOnlyBetweenFights: no eating in a fight, eating afterwards is fine; potions are not food', () => {
+    const g = make([sec(1, { combat: enemy() })], { rng: dice(), rules: { eatOnlyBetweenFights: true } }, { items: ffItems, startingItems: ['rations', 'tonic'] });
+    g.stats.stamina = 10;
+    g.startCombat();
+    g.useItem(g.inventory.find(i => i.id === 'rations').uid);
+    assert.equal(g.stats.stamina, 10);
+    assert.ok(g.messages.some(m => m.includes('middle of a fight')));
+    g.useItem(g.inventory.find(i => i.id === 'tonic').uid);
+    assert.equal(g.stats.stamina, 14, 'a potion may be drunk in a fight');
+    g.inCombat = false;
+    g.useItem(g.inventory.find(i => i.id === 'rations').uid);
+    assert.equal(g.stats.stamina, 18);
+});
+
+test('rules.packLimit: a full pack leaves finds lying until you drop something; keys, food and gold never count', () => {
+    const g = make([sec(1), sec(2, { effects: { addItems: ['dagger', 'cloak', 'key', 'rations'], gold: 10 } })], { rng: dice(), rules: { packLimit: 2 } }, { items: ffItems, startingItems: ['sword', 'plate'] });
+    assert.equal(g.packCount(), 2, 'the starting kit is never turned away');
+    g.goTo(2);
+    assert.deepEqual(g.pendingPickups.map(i => i.id), ['dagger', 'cloak'], 'two things did not fit');
+    assert.ok(g.hasItem('key') && g.hasItem('rations'), 'a key and food do not count against the pack');
+    assert.equal(g.stats.gold, 20);
+    assert.equal(g.takePickup(0), false, 'no room yet');
+    assert.equal(g.takePickup(0, g.inventory.find(i => i.id === 'plate').uid), true, 'swap the plate for the dagger');
+    assert.deepEqual(g.inventory.filter(i => ['sword', 'plate', 'dagger'].includes(i.id)).map(i => i.id).sort(), ['dagger', 'sword']);
+    g.leavePickup(0);
+    assert.equal(g.pendingPickups.length, 0);
+    const copy = make([sec(1)], {}, { items: ffItems });
+    g.pendingPickups.push(ffItems.cloak);
+    copy.restore(JSON.parse(JSON.stringify(g.serialize())));
+    assert.deepEqual([copy.rules.packLimit, copy.pendingPickups.length], [2, 1], 'rules and left-behind finds survive a save');
+});

@@ -215,6 +215,12 @@ Before, almost every room offered by a menu dropped you into some other area (th
 
 Side effect on the simulation: the careful explorer, which visits every new section, now meets every ambush: wins 17.2% -> 3.4%, deaths in combat 39% -> 62%. The informed player (83.7%) is unchanged within noise. People can read "(fight)" in the labels and skip; the bot cannot.
 
+## Optional Fighting Fantasy rules
+
+The app's core already follows the Fighting Fantasy books (2d6 + SKILL combat, 2 damage, Test your Luck at or below LUCK costing 1 LUCK, 10 Provisions of +4 STAMINA). Four rules of the books were missing and are now **optional, off by default**: `luckInCombat`, `randomStats`, `eatOnlyBetweenFights`, `packLimit` (see `AUTHORING.md`, 3c). A book declares them in `rules`; the player can change them on the book's page before starting; they are saved with the game. The Curse book leaves them off, so its results and fingerprint are unchanged. Luck in combat is a question put to the player (a new kind of pause beside the dice: `resolveDecision`), asked after the wound is worked out and before it is applied; auto-fight and the bots decline.
+
+Not done from the Fighting Fantasy list: special attacks and monster rules beyond what the engine already has, and stat-test options ("Test your Skill") as a separate roll kind.
+
 ## Book issues: status
 
 Fixed in the Curse book (source `CURSE_OF_HOLLOWS_END.json`, v2 regenerated, new fingerprint in `tests/simulation-baseline.json`):

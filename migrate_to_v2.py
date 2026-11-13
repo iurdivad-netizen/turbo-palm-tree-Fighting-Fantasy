@@ -434,7 +434,7 @@ def normalize_items(v2):
 def main():
     v1 = json.load(open(SRC, encoding="utf-8"))
     v2 = {"schemaVersion": 2, "id": v1["id"], "title": v1["title"]}
-    for k in ("author", "description"):
+    for k in ("author", "description", "rules"):
         if v1.get(k):
             v2[k] = v1[k]
     v2["startingSection"] = v1.get("startingSection", 1)
@@ -444,7 +444,7 @@ def main():
     v2["sections"] = [convert_section(x, v1) for x in v1["sections"]]
     normalize_items(v2)
     # keep the keys in the reader's order: items before sections
-    v2 = {k: v2[k] for k in ("schemaVersion", "id", "title", "author", "description", "startingSection", "initialStats", "items", "startingItems", "sections") if k in v2}
+    v2 = {k: v2[k] for k in ("schemaVersion", "id", "title", "author", "description", "startingSection", "initialStats", "rules", "items", "startingItems", "sections") if k in v2}
     json.dump(v2, open(OUT, "w", encoding="utf-8"), indent=2, ensure_ascii=False)
     open(OUT, "a").write("\n")
 

@@ -140,6 +140,7 @@
         const out = { schemaVersion: 2, id: book.id, title: book.title };
         ['author', 'description'].forEach(k => { if (book[k]) out[k] = book[k]; });
         if (book.items) out.items = book.items;
+        if (book.rules) out.rules = book.rules;
         out.startingSection = book.startingSection != null ? book.startingSection : 1;
         out.initialStats = book.initialStats;
         if (book.startingItems && book.startingItems.length) out.startingItems = book.startingItems;
@@ -229,6 +230,8 @@
             this.autoRoll = o.autoRoll !== false;
             this.autoAdvance = o.autoAdvance !== false;
             this.onEvent = o.onEvent || null;
+            this.rules = Object.assign({ luckInCombat: false, randomStats: false, eatOnlyBetweenFights: false, packLimit: 0 }, (this.book && this.book.rules) || {}, o.rules || {});
+            this.autoDecline = false;        // true: questions put to the player (luck in a fight) are answered "no" (auto-fight, bots)
             this.sections = new Map();
             if (this.book) this.book.sections.forEach(s => this.sections.set(s.id, s));
             this.catalogue = (this.book && this.book.items) || {};     // one definition per item id; sections only name the id
@@ -258,7 +261,8 @@
             this.lastWielded = null;
             this.rolledOnce = new Set();
             this.usedOnce = new Set();
-            this.usedOptions = new Set();   // options marked `vanishes` that were taken ("sectionId:optionId")
+            this.usedOptions = new Set();
+            this.pendingPickups = [];       // things found while the pack was full (rules.packLimit)   // options marked `vanishes` that were taken ("sectionId:optionId")
             this.rollResolved = false;
             this.tempSkillPenalty = 0;
             this.carriedSkillPenalty = 0;   // SKILL lost (or, if negative, gained) in the next fight
@@ -285,11 +289,16 @@
             if (!this.book) return;
             this._blank();
             this.started = true;
-            const st = this.book.initialStats;
+            let st = this.book.initialStats;
+            if (this.rules.randomStats) {                              // the Fighting Fantasy way: SKILL 1d6+6, STAMINA 2d6+12, LUCK 1d6+6
+                const d = () => 1 + Math.floor(this.rng() * 6);
+                st = { skill: d() + 6, stamina: d() + d() + 12, luck: d() + 6 };
+                this._say(`You rolled your character: SKILL ${st.skill}, STAMINA ${st.stamina}, LUCK ${st.luck}.`);
+            }
             this.stats = { skill: st.skill, stamina: st.stamina, luck: st.luck, initialSkill: st.skill, initialStamina: st.stamina, initialLuck: st.luck, gold: 10 };
             const own = this.book.startingItems || [];
             this.inventory = [];
-            (own.length === 0 ? DEFAULT_ITEMS() : own).forEach(i => this.addItem(i));
+            (own.length === 0 ? DEFAULT_ITEMS() : own).forEach(i => this.addItem(i, true));
             this.currentSection = this.book.startingSection;
             this.visited = new Set([this.book.startingSection]);
             this._changed();
@@ -320,10 +329,23 @@
         /** Do you have it? An item can also count as others ("countsAs": a skeleton key opens a brass lock). */
         hasItem(id) { return this.inventory.some(i => i.id === id || (isArr(i.countsAs) && i.countsAs.includes(id))); }
 
-        addItem(ref) {
+        /** Does this item take room in the pack? Food, keys, gold and anything the story asks for never do (they could lock the book). */
+        countsAgainstPack(it) {
+            return it.type !== 'food' && it.type !== 'key' && !this.itemsNeeded.has(it.id) && !(isArr(it.countsAs)) && !/\b(gold pieces?|coins?|gp)\b/.test(String(it.name).toLowerCase());
+        }
+        packCount() { return this.inventory.filter(i => this.countsAgainstPack(i)).length; }
+        packFull() { return this.rules.packLimit > 0 && this.packCount() >= this.rules.packLimit; }
+
+        addItem(ref, force) {
             const copies = Math.max(1, (ref && ref.qty) || 1);
             const item = this.resolveItem(ref);
             for (let n = 0; n < copies; n++) {
+                const unique = (item.unique || (item.bonus && item.type !== 'potion' && item.type !== 'food')) && this.hasItem(item.id);
+                if (!force && !unique && this.countsAgainstPack(item) && this.packFull()) {
+                    this.pendingPickups.push(item);
+                    this._say(`Your pack is full (${this.rules.packLimit} items): you must drop something to take ${item.name}.`);
+                    continue;
+                }
                 const isGold = /\b(gold pieces?|coins?|gp)\b/.test(item.name.toLowerCase());
                 if (isGold) {
                     const m = item.name.match(/(\d+)/);
@@ -335,6 +357,20 @@
                 }
             }
         }
+
+        /** Take a pickup that was left lying (there must be room), optionally dropping something (by uid) to make it. */
+        takePickup(index, dropUid) {
+            if (this.pending) return false;
+            const item = this.pendingPickups[index];
+            if (!item) return false;
+            if (dropUid != null) this.removeItemByUid(dropUid);
+            if (this.packFull()) { this._say('Your pack is still full.'); this._changed(); return false; }
+            this.pendingPickups.splice(index, 1);
+            this.inventory.push(this.makeItem(item));
+            this._changed();
+            return true;
+        }
+        leavePickup(index) { if (this.pendingPickups[index]) { this.pendingPickups.splice(index, 1); this._changed(); } }
 
         addGold(amount) { if (this.stats) this.stats.gold = Math.max(0, (this.stats.gold || 0) + amount); }
 
@@ -447,9 +483,16 @@
         }
 
         /** Eat, drink or use an item (by its unique id). */
+        /** Can this item be used now? (rules.eatOnlyBetweenFights: no eating in the middle of a fight) */
+        canUse(item) {
+            if (this.rules.eatOnlyBetweenFights && this.inCombat && item.type === 'food') return { ok: false, reason: 'You cannot eat in the middle of a fight.' };
+            return { ok: true };
+        }
+
         useItem(uid) {
             if (this.pending) return;
             const item = this.inventory.find(i => i.uid === uid);
+            if (item && !this.canUse(item).ok) { this._say(this.canUse(item).reason); return; }
             if (item && item.onUse) {
                 this._say(`You used ${item.name}!${describeEffects(item.onUse)}`);
                 this.removeItemByUid(uid);
@@ -640,6 +683,13 @@
 
         _drive(gen, step) {
             while (!step.done) {
+                if (step.value && step.value.decision) {              // a question for the player, not dice
+                    if (this.autoDecline) { step = gen.next(false); continue; }
+                    this.pending = { request: step.value, gen };
+                    this._emit({ type: 'decision-needed', request: step.value });
+                    this._changed();
+                    return;
+                }
                 if (this.autoRoll) {
                     const dice = this._autoDice(step.value);
                     this._emit({ type: 'rolled', request: step.value, dice });
@@ -655,8 +705,16 @@
         }
 
         /** The player rolled (values optional): carry on with whatever was waiting for the dice. */
+        /** The player answered a question (yes: Test your Luck). */
+        resolveDecision(yes) {
+            if (!this.pending || !this.pending.request.decision) return;
+            const { gen } = this.pending;
+            this.pending = null;
+            this._drive(gen, gen.next(!!yes));
+        }
+
         resolveRoll(values) {
-            if (!this.pending) return;
+            if (!this.pending || this.pending.request.decision) return;
             const { request, gen } = this.pending;
             this.pending = null;
             const n = request.dice === '2d6' ? 2 : 1;
@@ -797,6 +855,25 @@
             }
         }
 
+        /**
+         * rules.luckInCombat. After a wound is dealt (kind 'hit': you wound it, 'wound': it wounds you) the player may Test their Luck:
+         * your blow: lucky +2 damage, unlucky -1; its blow: lucky -1 damage, unlucky +1. The test costs LUCK like any other.
+         */
+        *_luckOnBlow(kind, damage, enemy) {
+            if (!this.rules.luckInCombat || this.stats.luck <= 0) return damage;
+            const yes = yield { decision: 'luck', kind, damage, label: kind === 'hit' ? 'Test your Luck to wound harder?' : 'Test your Luck to soften the blow?' };
+            if (!yes) return damage;
+            const lt = yield* this._testLuck(enemy);
+            const note = `(rolled ${lt.roll}${lt.bonus ? `, +${lt.bonus} from ${lt.source}` : ''})`;
+            let out;
+            if (kind === 'hit') out = lt.success ? damage + 2 : Math.max(0, damage - 1);
+            else out = lt.success ? Math.max(0, damage - 1) : damage + 1;
+            this.combatLog.push(kind === 'hit'
+                ? (lt.success ? `🍀 Test your Luck ${note}: Lucky! A severe wound: ${out} damage.` : `😱 Test your Luck ${note}: Unlucky! Only a graze: ${out} damage.`)
+                : (lt.success ? `🍀 Test your Luck ${note}: Lucky! You turn the blow aside: ${out} damage.` : `😱 Test your Luck ${note}: Unlucky! A bad wound: ${out} damage.`));
+            return out;
+        }
+
         fightRound() {
             if (this.pending) return;
             const s = this.section();
@@ -838,9 +915,10 @@
                     log.push(`👻 Your blow passes harmlessly through ${combat.enemyName}! Only a ${(combat.effectiveWeapons || []).join(' or ')} weapon can hurt it.`);
                     return;
                 }
-                this.enemyCurrentStamina -= hit;
+                const dealt = yield* this._luckOnBlow('hit', hit, combat);
+                this.enemyCurrentStamina -= dealt;
                 const note = (hit !== 2 && wield.weapon) ? ` (${wield.weapon.name})` : (hit !== 2 ? ' (no suitable weapon)' : '');
-                log.push(`💥 You hit ${combat.enemyName} for ${hit} damage${note}! (${this.enemyCurrentStamina} STAMINA remaining)`);
+                log.push(`💥 You hit ${combat.enemyName} for ${dealt} damage${note}! (${this.enemyCurrentStamina} STAMINA remaining)`);
 
                 if (this.enemyCurrentStamina <= 0 && isArr(combat.reviveOn)) {
                     const rd = yield { dice: '1d6', reason: 'revive', label: `Does ${combat.enemyName} stay down?` };
@@ -872,8 +950,9 @@
                 }
             } else if (enemyStrength > playerStrength) {
                 const defense = this.calculateDefenseBonus();
-                const damage = Math.max(1, 2 - defense);
-                this.modifyStats({ stamina: -damage });
+                const base = Math.max(1, 2 - defense);
+                const damage = yield* this._luckOnBlow('wound', base, combat);
+                if (damage > 0) this.modifyStats({ stamina: -damage });
                 log.push(defense > 0
                     ? `💔 ${combat.enemyName} hits you for ${damage} damage! (reduced from 2 by ${defense} armor bonus)`
                     : `💔 ${combat.enemyName} hits you for ${damage} damage!`);
@@ -934,7 +1013,7 @@
         serialize() {
             return {
                 bookId: this.book.id, started: this.started, currentSection: this.currentSection, stats: this.stats,
-                inventory: this.inventory, visited: Array.from(this.visited), usedOnce: Array.from(this.usedOnce), usedOptions: Array.from(this.usedOptions), rolledOnce: Array.from(this.rolledOnce),
+                inventory: this.inventory, visited: Array.from(this.visited), usedOnce: Array.from(this.usedOnce), usedOptions: Array.from(this.usedOptions), rules: this.rules, pendingPickups: this.pendingPickups, rolledOnce: Array.from(this.rolledOnce),
                 inCombat: this.inCombat, enemyCurrentStamina: this.enemyCurrentStamina, currentCombatIndex: this.currentCombatIndex, combatLog: this.combatLog,
                 isGameOver: this.isGameOver, gameOverType: this.gameOverType, combatDone: this.combatDone, lastWielded: this.lastWielded,
                 rollResolved: this.rollResolved, tempSkillPenalty: this.tempSkillPenalty, carriedSkillPenalty: this.carriedSkillPenalty, invisible: this.invisible, tempSave: this.tempSave, carriedSave: this.carriedSave, equipped: this.equipped, nextUid: this.nextUid, advance: this.advance
@@ -945,7 +1024,7 @@
             this._blank();
             Object.assign(this, {
                 started: d.started, currentSection: d.currentSection, stats: d.stats, inventory: d.inventory, visited: new Set(d.visited),
-                usedOnce: new Set(d.usedOnce || []), usedOptions: new Set(d.usedOptions || []), rolledOnce: new Set(d.rolledOnce || []), inCombat: !!d.inCombat, enemyCurrentStamina: d.enemyCurrentStamina || 0,
+                usedOnce: new Set(d.usedOnce || []), usedOptions: new Set(d.usedOptions || []), rules: Object.assign({}, this.rules, d.rules || {}), pendingPickups: d.pendingPickups || [], rolledOnce: new Set(d.rolledOnce || []), inCombat: !!d.inCombat, enemyCurrentStamina: d.enemyCurrentStamina || 0,
                 currentCombatIndex: d.currentCombatIndex || 0, combatLog: d.combatLog || [], isGameOver: !!d.isGameOver, gameOverType: d.gameOverType || null,
                 combatDone: !!d.combatDone, lastWielded: d.lastWielded || null, rollResolved: !!d.rollResolved, tempSkillPenalty: d.tempSkillPenalty || 0, carriedSkillPenalty: d.carriedSkillPenalty || 0, invisible: d.invisible || 0, tempSave: d.tempSave || 0, carriedSave: d.carriedSave || 0, equipped: Object.assign({ weapon: null, armor: null }, d.equipped || {}),
                 nextUid: d.nextUid || 1, advance: d.advance || null
