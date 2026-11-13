@@ -10,19 +10,52 @@
     "stamina": 20,
     "luck": 9
   },
-  "startingItems": [
-    {
-      "id": "sword",
-      "name": "Iron Sword",
-      "description": "Your trusty blade",
-      "type": "weapon"
+  "items": {
+    "silver-dagger": {
+      "name": "Silver Dagger",
+      "type": "weapon",
+      "bonus": "+1 skill",
+      "properties": [
+        "silver"
+      ],
+      "description": "A fine blade, especially effective against dark creatures."
     },
-    {
-      "id": "leather-armor",
+    "sword": {
+      "name": "Iron Sword",
+      "type": "weapon",
+      "description": "Your trusty blade."
+    },
+    "leather-armor": {
       "name": "Leather Armor",
-      "description": "Basic protective gear",
-      "type": "armor"
+      "type": "armor",
+      "bonus": "+1 defense",
+      "description": "Basic protective gear."
+    },
+    "healing-potion": {
+      "name": "Healing Potion",
+      "type": "potion",
+      "restore": "+4 stamina",
+      "description": "Restores 4 STAMINA points."
+    },
+    "rusty-key": {
+      "name": "Rusty Key",
+      "type": "key",
+      "description": "An old key - what does it unlock?"
+    },
+    "cavern-map": {
+      "name": "Cavern Map",
+      "type": "other",
+      "description": "Shows the layout of the cave system."
+    },
+    "mystic-amulet": {
+      "name": "Mystic Amulet",
+      "type": "treasure",
+      "description": "A mysterious protective charm."
     }
+  },
+  "startingItems": [
+    "sword",
+    "leather-armor"
   ],
   "sections": [
     {
@@ -94,18 +127,8 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "healing-potion",
-            "name": "Healing Potion",
-            "description": "Restores 4 STAMINA points",
-            "type": "potion"
-          },
-          {
-            "id": "mystic-amulet",
-            "name": "Mystic Amulet",
-            "description": "A mysterious protective charm",
-            "type": "treasure"
-          }
+          "healing-potion",
+          "mystic-amulet"
         ]
       }
     },
@@ -127,19 +150,9 @@
       ],
       "effects": {
         "addItems": [
-          {
-            "id": "rusty-key",
-            "name": "Rusty Key",
-            "description": "An old key - what does it unlock?",
-            "type": "key"
-          },
-          {
-            "id": "gold-pieces",
-            "name": "10 Gold Pieces",
-            "description": "Coins from the troll's hoard",
-            "type": "treasure"
-          }
-        ]
+          "rusty-key"
+        ],
+        "gold": 10
       }
     },
     {
@@ -158,18 +171,8 @@
           "stamina": -2
         },
         "addItems": [
-          {
-            "id": "silver-dagger",
-            "name": "Silver Dagger",
-            "description": "A fine blade, especially effective against dark creatures",
-            "type": "weapon"
-          },
-          {
-            "id": "cavern-map",
-            "name": "Cavern Map",
-            "description": "Shows the layout of the cave system",
-            "type": "other"
-          }
+          "silver-dagger",
+          "cavern-map"
         ]
       }
     },
@@ -444,14 +447,7 @@
         }
       ],
       "effects": {
-        "addItems": [
-          {
-            "id": "gold-pieces-2",
-            "name": "5 Gold Pieces",
-            "description": "Coins from the grotto",
-            "type": "treasure"
-          }
-        ]
+        "gold": 5
       }
     },
     {

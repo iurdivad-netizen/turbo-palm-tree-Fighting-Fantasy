@@ -37,28 +37,28 @@ OVERRIDES_FILE = _args.overrides or (_stem + ".overrides.json" if os.path.exists
 
 
 def load_overrides(path):
-    """{'labels': {section: {option id: label}}, 'text': {section: [{replace, with}]}, 'notes': {section: text}}"""
+    """{'labels': {section: {option id: label}}, 'text': {section: [{replace, with}]}, 'notes': {section: text}, 'items': {id: definition}}"""
     if not path:
-        return {}, {}, {}
+        return {}, {}, {}, {}
     data = json.load(open(path, encoding="utf-8"))
-    unknown = set(data) - {"_comment", "labels", "text", "notes"}
+    unknown = set(data) - {"_comment", "labels", "text", "notes", "items"}
     if unknown:
-        raise SystemExit(f"{path}: unknown key(s) {sorted(unknown)}; allowed: labels, text, notes")
+        raise SystemExit(f"{path}: unknown key(s) {sorted(unknown)}; allowed: labels, text, notes, items")
     labels = {(int(sid), oid): lab for sid, d in data.get("labels", {}).items() for oid, lab in d.items()}
     text = {int(sid): [(r["replace"], r["with"]) for r in lst] for sid, lst in data.get("text", {}).items()}
     notes = {int(sid): note for sid, note in data.get("notes", {}).items()}
-    return labels, text, notes
+    return labels, text, notes, data.get("items", {})
 
 
-LABEL_OVERRIDES, TEXT_OVERRIDES, NOTES = load_overrides(OVERRIDES_FILE)
+LABEL_OVERRIDES, TEXT_OVERRIDES, NOTES, ITEM_DEFS = load_overrides(OVERRIDES_FILE)
 
 GENERIC = re.compile(r"^\s*(turn to|go to( section)?)\s+\d+\s*[.:]?\s*$", re.I)
 TURN = re.compile(r"\bTurn to (\d+)\b", re.I)
 # Sections where the generic conversion cannot know which button belongs to which line (several options share one
 # destination). The replacement is applied to the converted text. Keep this table short and reviewed.
-EFFECT_KEYS = ("modifyStats", "permanentStats", "maxStats", "addItems", "removeItems", "nextFightSkill")
+EFFECT_KEYS = ("modifyStats", "permanentStats", "maxStats", "addItems", "removeItems", "nextFightSkill", "fightSave", "invisible", "gold")
 
-review = {"auto_label": [], "residual_roll": [], "victory_narrative": [], "stripped_fragment": [], "unreferenced": [], "dropped_endings": []}
+review = {"item_conflicts": [], "uncatalogued": [], "auto_label": [], "residual_roll": [], "victory_narrative": [], "stripped_fragment": [], "unreferenced": [], "dropped_endings": []}
 
 
 def effects_of(d):
@@ -295,6 +295,9 @@ def convert_section(x, book_info):
     section = {"id": sid}
     if x.get("title"):
         section["title"] = x["title"]
+    for k in ("area", "tags"):
+        if x.get(k):
+            section[k] = x[k]
     section["text"] = text
     if opts:
         section["options"] = [{k: v for k, v in o.items() if k != "_generic"} for o in opts]
@@ -305,7 +308,7 @@ def convert_section(x, book_info):
         r = {"kind": "luck"}
         if t.get("label"):
             r["label"] = t["label"]
-        for src_k, dst_k in (("once", "once"), ("gatesChoices", "gatesOptions"), ("conditions", "conditions")):
+        for src_k, dst_k in (("once", "once"), ("gatesChoices", "gatesOptions"), ("conditions", "conditions"), ("stealth", "stealth"), ("tags", "tags")):
             if t.get(src_k):
                 r[dst_k] = t[src_k]
         for side, sec_k, txt_k, eff_k in (("success", "successSection", "successText", "successEffects"), ("failure", "failureSection", "failureText", "failureEffects")):
@@ -367,6 +370,67 @@ def convert_section(x, book_info):
     return section
 
 
+GOLD = re.compile(r"\b(gold pieces?|coins?|gp)\b", re.I)
+
+
+def normalize_items(v2):
+    """One definition per item id (the catalogue), sections name ids; repeated grants become a quantity; gold becomes a number."""
+    seen = {}                      # id -> definitions found inline
+
+    def refs(lst, where):
+        gold, order, qty = 0, [], {}
+        for it in lst:
+            if GOLD.search(it["name"]):
+                m = re.search(r"(\d+)", it["name"])
+                gold += int(m.group(1)) if m else 1
+                continue
+            d = {k: v for k, v in it.items() if k != "qty"}
+            seen.setdefault(it["id"], []).append(d)
+            if it["id"] not in qty:
+                order.append(it["id"])
+            qty[it["id"]] = qty.get(it["id"], 0) + it.get("qty", 1)
+        return gold, [i if qty[i] == 1 else {"id": i, "qty": qty[i]} for i in order]
+
+    def walk(o, where):
+        if isinstance(o, dict):
+            if isinstance(o.get("addItems"), list):
+                gold, out = refs(o["addItems"], where)
+                if gold:
+                    o["gold"] = o.get("gold", 0) + gold
+                if out:
+                    o["addItems"] = out
+                else:
+                    del o["addItems"]
+            for k, v in list(o.items()):
+                if k != "addItems":
+                    walk(v, where)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v, where)
+
+    for sec in v2["sections"]:
+        walk(sec, sec["id"])
+    if v2.get("startingItems"):
+        gold, out = refs(v2["startingItems"], "start")
+        v2["startingItems"] = out
+    catalogue = {}
+    for iid, defs in seen.items():
+        if iid in ITEM_DEFS:
+            catalogue[iid] = ITEM_DEFS[iid]
+            continue
+        unique = {json.dumps(d, sort_keys=True): d for d in defs}
+        best = max(unique.values(), key=lambda d: len(d))
+        if len(unique) > 1:
+            review["item_conflicts"].append(f"{iid}: {len(unique)} different inline definitions; kept the fullest ({best.get('name')})")
+        review["uncatalogued"].append(f"{iid} ({best.get('name')})")
+        catalogue[iid] = {k: v for k, v in best.items() if k != "id"}
+    # items that only a catalogue entry mentions (never granted) are still listed, in case an option or a rule uses them
+    for iid, d in ITEM_DEFS.items():
+        catalogue.setdefault(iid, d)
+    order = {"weapon": 0, "armor": 1, "potion": 2, "food": 2, "key": 3}
+    v2["items"] = dict(sorted(catalogue.items(), key=lambda kv: (order.get(kv[1].get("type"), 4), kv[0])))
+
+
 def main():
     v1 = json.load(open(SRC, encoding="utf-8"))
     v2 = {"schemaVersion": 2, "id": v1["id"], "title": v1["title"]}
@@ -378,6 +442,9 @@ def main():
     if v1.get("startingItems"):
         v2["startingItems"] = v1["startingItems"]
     v2["sections"] = [convert_section(x, v1) for x in v1["sections"]]
+    normalize_items(v2)
+    # keep the keys in the reader's order: items before sections
+    v2 = {k: v2[k] for k in ("schemaVersion", "id", "title", "author", "description", "startingSection", "initialStats", "items", "startingItems", "sections") if k in v2}
     json.dump(v2, open(OUT, "w", encoding="utf-8"), indent=2, ensure_ascii=False)
     open(OUT, "a").write("\n")
 
@@ -398,6 +465,8 @@ def main():
                  ("residual_roll", "Roll prose cut from inside a paragraph (check the text reads well)", review["residual_roll"]),
                  ("victory_narrative", "Narrative about winning a fight, kept as combat.victoryText", review["victory_narrative"]),
                  ("stripped_fragment", "'Turn to N' fragments and stray stat blocks removed", review["stripped_fragment"]),
+                 ("item_conflicts", "Items defined differently in different sections (add them to the overrides file's \"items\")", review["item_conflicts"]),
+                 ("uncatalogued", "Items taken from the sections' own definitions (not in the overrides file's \"items\")", review["uncatalogued"]),
                  ("dropped_endings", "Sections whose v1 ending flag was dropped (they are not endings)", review["dropped_endings"]))
     # a ready-to-fill skeleton for the sidecar: every section whose buttons would read the same or mostly "Continue"
     todo = {}

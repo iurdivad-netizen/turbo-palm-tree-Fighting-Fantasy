@@ -103,10 +103,47 @@ def validate_v2(book, warnings):
     ids = set(counts)
     if book["startingSection"] not in ids:
         errors.append(f"startingSection {book['startingSection']} does not exist")
-    obtainable = {i["id"] for i in book.get("startingItems") or []}
+    catalogue = book.get("items") or {}
+    inline = {}                                   # id -> the different inline definitions found
+    def ref_id(r):
+        return r if isinstance(r, str) else r["id"]
+    def note_ref(r, where):
+        if isinstance(r, dict) and "name" in r:
+            inline.setdefault(r["id"], []).append(json.dumps({k: v for k, v in r.items() if k != "qty"}, sort_keys=True))
+        elif ref_id(r) not in catalogue:
+            errors.append(f"{where}: item '{ref_id(r)}' is not defined in the book's items")
+    obtainable = set()
+    for r in book.get("startingItems") or []:
+        note_ref(r, "startingItems")
+        obtainable.add(ref_id(r))
+    granted = set(obtainable)
     for s in sections:
         for e in all_effects(s):
-            obtainable |= {i["id"] for i in e.get("addItems") or []}
+            for r in e.get("addItems") or []:
+                note_ref(r, f"section {s['id']}")
+                obtainable.add(ref_id(r))
+                granted.add(ref_id(r))
+            for rid in e.get("removeItems") or []:
+                if rid not in catalogue and rid not in inline:
+                    warnings.append(f"section {s['id']} removes item '{rid}' which is not defined")
+    for rid, defs in inline.items():
+        if len(set(defs)) > 1:
+            errors.append(f"item '{rid}' is defined {len(set(defs))} different ways inline; define it once in the book's items")
+    needed = set()
+    for s in sections:
+        for c in [(o.get("conditions") or {}) for o in s.get("options") or []] + [((s.get("roll") or {}).get("conditions") or {})]:
+            for key in ("requiresItem", "requiresNoItem", "requiresMissingAny"):
+                needed |= set([c[key]] if isinstance(c.get(key), str) else c.get(key) or [])
+    for iid, d in catalogue.items():
+        if iid not in granted:
+            warnings.append(f"item '{iid}' is defined but no section or starting kit gives it")
+        if d["type"] in ("potion", "food") and not (d.get("restore") or d.get("onUse")):
+            errors.append(f"item '{iid}' is a {d['type']} but has neither 'restore' nor 'onUse': it could never be used")
+        if d["type"] == "weapon" and not d.get("bonus") and not d.get("properties"):
+            warnings.append(f"weapon '{iid}' has no bonus or properties: it is a plain weapon")
+    keepsakes = [i for i, d in catalogue.items() if d["type"] in ("other", "treasure", "key") and i not in needed and not d.get("onUse") and not d.get("saveBonus") and not d.get("stealthBonus") and not d.get("reveals") and not d.get("text") and not d.get("countsAs") and d["type"] != "treasure"]
+    if keepsakes:
+        warnings.append(f"{len(keepsakes)} item(s) have no effect and no option asks for them (shown as keepsakes): {', '.join(sorted(keepsakes))}")
     unreferenced = 0
     for s in sections:
         sid = s["id"]

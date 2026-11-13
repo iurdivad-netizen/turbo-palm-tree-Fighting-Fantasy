@@ -85,6 +85,20 @@ try { axeSource = fs.readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8'
         for (let i = 0; i < 2; i++) { asks.push((await page.textContent('.rollrow.ask .what')).replace(/Roll (one|two) dice?/, '').trim()); await page.click('#roll-now'); await page.waitForTimeout(60); }
         assert.deepEqual(asks, ['Your attack', "SKELETON WARRIOR's attack"]);
 
+        // what you fight with is shown in the fight; the weapon can be changed
+        assert.ok((await page.textContent('.gear')).includes('In your hand: Sword'), 'the weapon in use is named');
+        assert.ok((await page.textContent('.gear')).includes('chosen automatically'), 'automatic choice is said to be automatic');
+        await page.evaluate(() => { game.addItem('silver-dagger'); game._changed(); });
+        await page.waitForTimeout(80);
+        const daggerValue = await page.$$eval('.gear-pick option', os => (os.find(o => o.textContent.includes('Silver Dagger')) || {}).value);
+        assert.ok(daggerValue, 'the new weapon is offered in the picker');
+        await page.selectOption('.gear-pick select', daggerValue);
+        await page.waitForTimeout(80);
+        const gearText = await page.textContent('.gear');
+        assert.ok(gearText.includes('In your hand: Silver Dagger') && !gearText.includes('chosen automatically'), 'the chosen weapon is in hand');
+        assert.ok((await page.$$('.item.active .badge')).length >= 1, 'the pack marks what is in hand and worn');
+        assert.ok((await page.$$eval('.pack-group h3', hs => hs.map(h => h.textContent))).some(t => t.includes('Weapons')), 'the pack is grouped');
+
         // auto-fight runs the rest of the fight; Continue moves on
         await page.evaluate(() => { game.stats.skill = 30; });
         await page.click('text=Auto-fight');
@@ -113,6 +127,7 @@ try { axeSource = fs.readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8'
         await page.evaluate(() => game.goTo(155));
 
         // save, reload, continue
+        const staminaAtSave = await page.evaluate(() => game.stats.stamina);
         await page.click('button:has-text("Save")');
         await page.waitForSelector('text=Game saved.');
         assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('ff_saves')).length), 1);
@@ -130,7 +145,7 @@ try { axeSource = fs.readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8'
         assert.equal(loaded, 155);
         await page.click('button:has-text("Load")');
         await page.waitForSelector('.text');
-        assert.equal(await page.evaluate(() => game.stats.stamina), 20, 'loading a manual save restores it');
+        assert.equal(await page.evaluate(() => game.stats.stamina), staminaAtSave, 'loading a manual save restores it');
 
         // a second book in the new format plays
         await page.evaluate(() => ui.loadBook(null));
@@ -166,7 +181,7 @@ try { axeSource = fs.readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8'
         await pp.click('text=Pack');
         await pp.waitForTimeout(350);
         assert.ok(await pp.evaluate(() => document.querySelector('.side').getBoundingClientRect().top < innerHeight - 100), 'the pack opens as a drawer');
-        assert.ok(await pp.isVisible('text=Rations'), 'the pack is readable');
+        assert.ok(await pp.isVisible('text=Provisions'), 'the pack is readable');
         await pp.click('.closer');
         await pp.waitForTimeout(350);
         await pp.evaluate(() => game.goTo(388));

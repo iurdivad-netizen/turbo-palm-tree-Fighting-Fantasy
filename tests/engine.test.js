@@ -491,6 +491,24 @@ test('upgradeBook turns the old format into exactly the structure the converter 
     const strip = s => {
         const c = JSON.parse(JSON.stringify(s));
         delete c.text; delete c.title;
+        // the converter names items by id (with a quantity) and turns gold into a number; the in-memory upgrade keeps what the old book wrote
+        const GOLD = /\b(gold pieces?|coins?|gp)\b/i;
+        const norm = o => {
+            if (Array.isArray(o)) o.forEach(norm);
+            else if (o && typeof o === 'object') {
+                if (Array.isArray(o.addItems)) {
+                    const items = {};
+                    o.addItems.forEach(i => {
+                        if (typeof i === 'object' && i.name && GOLD.test(i.name)) o.gold = (o.gold || 0) + parseInt((i.name.match(/\d+/) || ['1'])[0], 10);
+                        else { const id = typeof i === 'string' ? i : i.id; items[id] = (items[id] || 0) + ((i && i.qty) || 1); }
+                    });
+                    o.addItems = items;
+                    if (!Object.keys(items).length) delete o.addItems;
+                }
+                Object.values(o).forEach(norm);
+            }
+        };
+        norm(c);
         if (c.options) c.options = c.options.map(o => { const { label, ...rest } = o; return rest; });
         if (c.combat) (Array.isArray(c.combat) ? c.combat : [c.combat]).forEach(e => delete e.victoryText);
         return c;
@@ -606,7 +624,7 @@ test('a wound that has not healed (nextFightSkill) is carried into the next figh
     assert.equal(g.carriedSkillPenalty, 0, 'used up');
     g.goTo(3); g.startCombat();
     assert.equal(g.tempSkillPenalty, 0, 'the second fight is not affected');
-    assert.equal(Engine.describeEffects({ nextFightSkill: -1 }), ' [-1 SKILL in your next fight]');
+    assert.equal(Engine.describeEffects({ nextFightSkill: -1 }), ' [-1 SKILL for one fight]');
 });
 
 test('real book: section 22 is a Luck test; the paralysis costs 1 SKILL in the next fight', () => {
@@ -673,4 +691,294 @@ test('real book: the well (54, 164) needs rope and the Mayor (24) needs the ledg
     assert.deepEqual(g.optionStates().map(s => [s.option.id, s.enabled]), [['to-234', false], ['to-127', true]]);
     g.addItem({ id: 'mayors-ledger', name: "Mayor's Ledger", type: 'other' });
     assert.equal(g.optionStates()[0].enabled, true);
+});
+
+// ---- items: one definition per id, quantities, gold as a number, holding and wearing ---------------------------------------
+const gear = { sword: { name: 'Sword', type: 'weapon' }, dagger: { name: 'Silver Dagger', type: 'weapon', bonus: '+1 skill', properties: ['silver'] },
+    cloak: { name: 'Cloak', type: 'armor', bonus: '+1 defense' }, plate: { name: 'Plate', type: 'armor', bonus: '+2 defense' },
+    tonic: { name: 'Tonic', type: 'potion', restore: '+4 stamina' }, bolt: { name: 'Potion of Strength', type: 'potion', onUse: { nextFightSkill: 2 } } };
+
+test('sections name items by id: a quantity gives that many copies, gold is a number, the catalogue supplies the rest', () => {
+    const g = make([sec(1), sec(2, { effects: { addItems: ['tonic', { id: 'tonic', qty: 2 }, 'dagger'], gold: 25 } })], {}, { items: gear, startingItems: [{ id: 'sword', qty: 1 }, { id: 'tonic', qty: 3 }] });
+    g.goTo(2);
+    assert.equal(g.inventory.filter(i => i.id === 'tonic').length, 3 + 3);
+    assert.equal(g.stats.gold, 10 + 25);
+    assert.equal(g.inventory.find(i => i.id === 'tonic').restore, '+4 stamina');
+    assert.deepEqual(g.inventory.find(i => i.id === 'dagger').properties, ['silver']);
+    assert.equal(g.inventory.find(i => i.id === 'sword').name, 'Sword');
+});
+
+test('you choose the weapon: the choice is used even when it is useless, and automatic goes back to the best', () => {
+    const ghost = enemy({ enemyName: 'GHOST', effectiveWeapons: ['silver'], normalWeaponDamage: 0 });
+    const g = make([sec(1, { combat: ghost })], {}, { items: gear, startingItems: ['sword', 'dagger'] });
+    assert.equal(g.chooseWeapon(ghost).weapon.id, 'dagger', 'automatic: the silver one');
+    const sword = g.inventory.find(i => i.id === 'sword');
+    assert.equal(g.equip(sword.uid), true);
+    const w = g.chooseWeapon(ghost);
+    assert.deepEqual([w.weapon.id, w.damage, w.chosen], ['sword', 0, true]);
+    assert.deepEqual(g.weaponChoices(ghost).map(c => [c.item.id, c.damage]), [['dagger', 2], ['sword', 0]]);
+    const copy = make([sec(1, { combat: ghost })], {}, { items: gear, startingItems: ['sword', 'dagger'] });
+    copy.restore(JSON.parse(JSON.stringify(g.serialize())));
+    assert.equal(copy.chooseWeapon(ghost).weapon.id, 'sword', 'the choice survives a save');
+    g.unequip('weapon');
+    assert.equal(g.chooseWeapon(ghost).weapon.id, 'dagger');
+    g.equip(sword.uid); g.dropItem(sword.uid);
+    assert.equal(g.chooseWeapon(ghost).weapon.id, 'dagger', 'a dropped weapon cannot stay in hand');
+});
+
+test('one piece of armour is worn: the best one, or the one you choose - bonuses do not add up', () => {
+    const g = make([sec(1)], {}, { items: gear, startingItems: ['cloak', 'plate'] });
+    assert.equal(g.wornArmor().id, 'plate');
+    assert.equal(g.calculateDefenseBonus(), 2);
+    g.equip(g.inventory.find(i => i.id === 'cloak').uid);
+    assert.equal(g.wornArmor().id, 'cloak');
+    assert.equal(g.calculateDefenseBonus(), 1);
+});
+
+test('the pack is grouped and sorted: weapons, armour, things to use, story items, keepsakes', () => {
+    const items = Object.assign({}, gear, { key: { name: 'Key', type: 'key' }, doll: { name: 'Doll', type: 'other' } });
+    const g = make([sec(1, { options: [opt('a', 2, { conditions: { requiresItem: 'key' } })] }), sec(2)], {}, { items, startingItems: ['sword', 'cloak', { id: 'tonic', qty: 2 }, 'key', 'doll'] });
+    const view = g.inventoryView();
+    assert.deepEqual(view.map(v => [v.item.id, v.category, v.count]), [['sword', 'weapon', 1], ['cloak', 'armor', 1], ['tonic', 'consumable', 2], ['key', 'story', 1], ['doll', 'keepsake', 1]]);
+    assert.equal(view[1].inUse, true);
+});
+
+test('a Potion of Strength gives +2 SKILL for one fight, whether drunk before or during it', () => {
+    const items = gear;
+    const before = make([sec(1, { combat: enemy() })], {}, { items, startingItems: ['bolt'] });
+    before.useItem(before.inventory[0].uid);
+    assert.equal(before.carriedSkillPenalty, -2);
+    before.startCombat();
+    assert.equal(before.tempSkillPenalty, -2);
+    assert.equal(before.carriedSkillPenalty, 0);
+    const during = make([sec(1, { combat: enemy() })], {}, { items, startingItems: ['bolt'] });
+    during.startCombat();
+    during.useItem(during.inventory[0].uid);
+    assert.equal(during.tempSkillPenalty, -2);
+    assert.equal(during.carriedSkillPenalty, 0);
+});
+
+test('real book: every item a section gives is in the catalogue, every potion and food can be used, and the kit is stated', () => {
+    const b = real();
+    const ids = new Set();
+    const walk = o => { if (Array.isArray(o)) o.forEach(walk); else if (o && typeof o === 'object') { (o.addItems || []).forEach(r => ids.add(typeof r === 'string' ? r : r.id)); Object.values(o).forEach(walk); } };
+    walk(b.sections);
+    for (const id of ids) assert.ok(b.items[id], `item ${id}`);
+    for (const [id, d] of Object.entries(b.items)) if (d.type === 'potion' || d.type === 'food') assert.ok(d.restore || d.onUse, `${id} can be used`);
+    const g = play(dice());
+    assert.deepEqual(g.inventory.map(i => i.id).filter(i => i !== 'rations'), ['sword', 'leather-armor']);
+    assert.equal(g.inventory.filter(i => i.id === 'rations').length, 10);
+    g.goTo(8);                               // "30 gold, 2 healing potions, a rusty key"
+    assert.equal(g.stats.gold, 40);
+    assert.equal(g.inventory.filter(i => i.id === 'healing-potion').length, 2);
+});
+
+// ---- charms: saving-throw bonuses ----------------------------------------------------------------------------------------------
+const charms = Object.assign({}, gear, {
+    amulet: { name: 'Silver Amulet', type: 'other', saveBonus: { amount: 1, versus: 'undead' } },
+    grave: { name: 'Amulet of the Grave', type: 'other', saveBonus: { amount: 2, versus: 'undead' } },
+    luckystone: { name: 'Lucky Stone', type: 'other', saveBonus: { amount: 1 } },
+    scroll: { name: 'Scroll of Protection', type: 'other', onUse: { fightSave: 2 } }
+});
+const wraith = (extra = {}) => enemy(Object.assign({ enemyName: 'WRAITH', tags: ['undead'], onStart: { luckTest: true, skillLoss: 1 } }, extra));
+
+test('a charm adds to the saving throw, but only against what it is made for', () => {
+    // LUCK 7 and a roll of 8: unlucky; with +1 against undead: lucky
+    const bare = make([sec(1, { combat: wraith() })], { rng: dice(4, 4) }, { items: charms });
+    bare.stats.luck = 7; bare.startCombat();
+    assert.equal(bare.tempSkillPenalty, 1, 'without a charm the wail costs SKILL');
+    const worn = make([sec(1, { combat: wraith() })], { rng: dice(4, 4) }, { items: charms, startingItems: ['amulet'] });
+    worn.stats.luck = 7; worn.startCombat();
+    assert.equal(worn.tempSkillPenalty, 0, 'with the amulet the same roll saves you');
+    assert.ok(worn.combatLog.some(l => l.includes('+1 from Silver Amulet')), 'and the log says why');
+    const cultist = make([sec(1, { combat: wraith({ enemyName: 'CULTIST', tags: [] }) })], { rng: dice(4, 4) }, { items: charms, startingItems: ['amulet'] });
+    cultist.stats.luck = 7; cultist.startCombat();
+    assert.equal(cultist.tempSkillPenalty, 1, 'against the living an undead charm does nothing');
+});
+
+test('charms do not add up (the best counts); a charm without "versus" counts everywhere, traps included', () => {
+    const g = make([sec(1)], {}, { items: charms, startingItems: ['amulet', 'grave'] });
+    assert.deepEqual(g.saveBonus({ tags: ['undead'] }), { amount: 2, source: 'Amulet of the Grave' });
+    assert.equal(g.saveBonus(null).amount, 0, 'no enemy: an undead charm does not apply');
+    const trap = make([sec(1, { roll: { kind: 'luck', success: { target: 2 }, failure: { target: 3 } } }), sec(2), sec(3)], { rng: dice(4, 4) }, { items: charms, startingItems: ['luckystone'] });
+    trap.stats.luck = 7; trap.doRoll();
+    assert.equal(trap.currentSection, 2, 'LUCK 7 + 1 beats a roll of 8 at a trap');
+    const noStone = make([sec(1, { roll: { kind: 'luck', success: { target: 2 }, failure: { target: 3 } } }), sec(2), sec(3)], { rng: dice(4, 4) }, { items: charms });
+    noStone.stats.luck = 7; noStone.doRoll();
+    assert.equal(noStone.currentSection, 3);
+});
+
+test('a Scroll of Protection adds +2 to the saves of one fight, and survives a save', () => {
+    const g = make([sec(1, { combat: wraith() }), sec(2, { combat: wraith() })], { rng: dice(5, 5) }, { items: charms, startingItems: ['scroll'] });
+    g.stats.luck = 8;                                   // a roll of 10 fails on LUCK 8, passes with +2
+    g.useItem(g.inventory[0].uid);
+    assert.equal(g.carriedSave, 2);
+    const copy = make([sec(1, { combat: wraith() })], {}, { items: charms });
+    copy.restore(JSON.parse(JSON.stringify(g.serialize())));
+    assert.equal(copy.carriedSave, 2);
+    g.startCombat();
+    assert.equal(g.tempSkillPenalty, 0, 'the +2 saved the wail');
+    assert.equal(g.carriedSave, 0);
+    g.goTo(2);
+    assert.equal(g.tempSave, 0, 'it ends with the fight');
+});
+
+test('real book: the charms work against the undead and not against cultists; the scroll is a Use item', () => {
+    const b = real();
+    const tagged = n => b.sections.flatMap(s => [].concat(s.combat || [])).filter(e => e.enemyName.startsWith(n)).every(e => (e.tags || []).includes('undead'));
+    assert.ok(tagged('GHOUL') && tagged('ZOMBIE') && tagged('SHADOW') && tagged('THE WIDOW'));
+    assert.ok(b.sections.flatMap(s => [].concat(s.combat || [])).filter(e => /CULT/.test(e.enemyName)).every(e => !e.tags));
+    for (const id of ['holy-symbol', 'holy-symbol-of-binding', 'silver-amulet', 'amulet-of-the-grave', 'silver-ring']) assert.equal(b.items[id].saveBonus.versus, 'undead', id);
+    const g = play(dice());
+    g.addItem('silver-ring'); g.addItem('scroll-of-protection');
+    const cats = Object.fromEntries(g.inventoryView().map(v => [v.item.id, v.category]));
+    assert.deepEqual([cats['silver-ring'], cats['scroll-of-protection']], ['charm', 'consumable']);
+});
+
+// ---- stealth and invisibility ------------------------------------------------------------------------------------------------------
+const sneak = Object.assign({}, charms, {
+    cloak: { name: 'Cloak of Shadows', type: 'other', stealthBonus: 2 },
+    vanish: { name: 'Potion of Invisibility', type: 'potion', onUse: { invisible: 3 } }
+});
+const sneakBook = [sec(1, { roll: { kind: 'luck', stealth: true, success: { text: 'Unnoticed.', target: 2 }, failure: { target: 3 } } }), sec(2), sec(3)];
+
+test('a stealth test: the cloak adds its bonus, an ordinary charm against undead does not', () => {
+    const bare = make(sneakBook, { rng: dice(5, 4) }, { items: sneak });
+    bare.stats.luck = 7; bare.doRoll();                  // 9 against LUCK 7
+    assert.equal(bare.currentSection, 3);
+    const cloaked = make(sneakBook, { rng: dice(5, 4) }, { items: sneak, startingItems: ['cloak', 'amulet'] });
+    cloaked.stats.luck = 7; cloaked.doRoll();            // 9 against 7 + 2
+    assert.equal(cloaked.currentSection, 2);
+    assert.ok(cloaked.messages.some(m => m.includes('+2 from Cloak of Shadows')));
+    // the same cloak does nothing for an ordinary (non-stealth) Luck test
+    const trap = make([sec(1, { roll: { kind: 'luck', success: { target: 2 }, failure: { target: 3 } } }), sec(2), sec(3)], { rng: dice(5, 4) }, { items: sneak, startingItems: ['cloak'] });
+    trap.stats.luck = 7; trap.doRoll();
+    assert.equal(trap.currentSection, 3);
+});
+
+test('invisible: stealth tests pass with no roll and no Luck spent; every move uses one up; it survives a save', () => {
+    const g = make([sec(0), ...sneakBook], { rng: dice() }, { items: sneak, startingItems: ['vanish'], startingSection: 1 });
+    g.useItem(g.inventory[0].uid);
+    assert.equal(g.invisible, 3);
+    const copy = make(sneakBook, {}, { items: sneak });
+    copy.restore(JSON.parse(JSON.stringify(g.serialize())));
+    assert.equal(copy.invisible, 3);
+    g.doRoll();                                          // no dice are rolled (dice() would throw)
+    assert.equal(g.currentSection, 2);
+    assert.equal(g.stats.luck, 9, 'no Luck spent');
+    assert.equal(g.invisible, 2, 'the move used one');
+    g.goTo(3); g.goTo(2);
+    assert.equal(g.invisible, 0);
+});
+
+test('invisible in a fight: the first blow is an ambush (+2) and ends it; you can slip away without a test', () => {
+    const rat = enemy({ canFlee: true, fleeSection: 2, fleeTestLuck: true, fleeMaxStamina: 3 });
+    const g = make([sec(1, { combat: rat }), sec(2)], { rng: dice(1, 1, 1, 1) }, { items: sneak, startingItems: ['vanish'] });
+    g.useItem(g.inventory[0].uid);
+    g.startCombat();
+    assert.equal(g.canFleeNow(rat), true, 'invisible: you can leave whatever your STAMINA');
+    g.fightRound();                                      // you 2 + 8 SKILL + 2 ambush = 12 against 2 + 5
+    assert.equal(g.invisible, 0, 'attacking ends invisibility');
+    assert.ok(g.combatLog.some(l => l.includes('strike from the shadows')));
+    assert.equal(g.canFleeNow(rat), false);
+    const f = make([sec(1, { combat: rat }), sec(2)], { rng: dice() }, { items: sneak, startingItems: ['vanish'], startingSection: 1 });
+    f.useItem(f.inventory[0].uid); f.startCombat();
+    f.flee();                                            // no dice: the Luck test is skipped
+    assert.equal(f.currentSection, 2);
+});
+
+test('real book: the sneaking tests (6, 145, 146) are stealth tests; the Cloak of Shadows and the Potion of Invisibility work', () => {
+    const b = real();
+    for (const id of [6, 145, 146]) assert.equal(b.sections.find(s => s.id === id).roll.stealth, true, `section ${id}`);
+    assert.equal(b.items['cloak-of-shadows'].stealthBonus, 2);
+    assert.deepEqual(b.items['potion-of-invisibility'].onUse, { invisible: 5 });
+    const g = play(dice());
+    g.addItem('potion-of-invisibility'); g.addItem('cloak-of-shadows');
+    g.goTo(6);
+    assert.equal(g.saveBonus(null, true).amount, 2);
+    g.useItem(g.inventory.find(i => i.id === 'potion-of-invisibility').uid);
+    g.doRoll();                                          // invisible: no dice
+    assert.equal(g.currentSection, 155);
+    assert.deepEqual(g.inventoryView().filter(v => v.item.id === 'cloak-of-shadows').map(v => v.category), ['charm']);
+});
+
+// ---- maps, documents, keys and rings ---------------------------------------------------------------------------------------------
+const lore = Object.assign({}, sneak, {
+    map: { name: 'Map', type: 'other', reveals: { tag: 'trap', areas: ['crypt'] } },
+    diary: { name: 'Diary', type: 'other', text: 'Day one.\n\nDay two.' },
+    skeleton: { name: 'Skeleton Key', type: 'key', countsAs: ['brass-key'] },
+    ring: { name: 'Ring', type: 'other', saveBonus: { amount: 2, versus: 'binding' } },
+    gem: { name: 'Gem', type: 'treasure' }
+});
+
+test('a map marks the options that lead to a trap in the area it covers, and only those', () => {
+    const secs = [sec(1, { options: [opt('a', 2), opt('b', 3), opt('c', 4)] }), sec(2, { tags: ['trap'], area: 'crypt' }), sec(3, { tags: ['trap'], area: 'tower' }), sec(4)];
+    const without = make(secs, {}, { items: lore });
+    assert.deepEqual(without.optionStates().map(s => s.revealed), [null, null, null]);
+    const g = make(secs, {}, { items: lore, startingItems: ['map'] });
+    assert.deepEqual(g.optionStates().map(s => s.revealed && s.revealed.source), ['Map', null, null]);
+    assert.equal(g.revealedBy(2).tag, 'trap');
+});
+
+test('a skeleton key counts as the keys it lists, for conditions and for removal', () => {
+    const g = make([sec(1, { options: [opt('a', 2, { conditions: { requiresItem: 'brass-key' } }), opt('b', 2, { conditions: { requiresItem: 'iron-key' } })] }), sec(2)], {}, { items: lore, startingItems: ['skeleton'] });
+    assert.deepEqual(g.optionStates().map(s => s.enabled), [true, false]);
+    assert.equal(g.hasItem('brass-key'), true);
+    g.removeItem('brass-key');
+    assert.equal(g.inventory.some(i => i.id === 'skeleton'), false, 'the key that stood in for it is used up');
+    assert.equal(g.hasItem('brass-key'), false, 'used up');
+});
+
+test('a ring that helps one kind of test (the binding ritual) adds to that roll only', () => {
+    const ritual = [sec(1, { roll: { kind: 'luck', tags: ['binding'], success: { target: 2 }, failure: { target: 3 } } }), sec(2), sec(3)];
+    const worn = make(ritual, { rng: dice(5, 5) }, { items: lore, startingItems: ['ring'] });
+    worn.stats.luck = 8; worn.doRoll();                  // 10 against 8 + 2
+    assert.equal(worn.currentSection, 2);
+    const plain = make([sec(1, { roll: { kind: 'luck', success: { target: 2 }, failure: { target: 3 } } }), sec(2), sec(3)], { rng: dice(5, 5) }, { items: lore, startingItems: ['ring'] });
+    plain.stats.luck = 8; plain.doRoll();
+    assert.equal(plain.currentSection, 3, 'an ordinary test does not get the ritual bonus');
+});
+
+test('the pack sorts maps, books and valuables, and a book has its text', () => {
+    const g = make([sec(1)], {}, { items: lore, startingItems: ['map', 'diary', 'gem', 'skeleton'] });
+    assert.deepEqual(Object.fromEntries(g.inventoryView().map(v => [v.item.id, v.category])), { map: 'map', diary: 'document', gem: 'valuable', skeleton: 'story' });
+    assert.equal(g.inventory.find(i => i.id === 'diary').text, 'Day one.\n\nDay two.');
+});
+
+test('real book: the maps warn of the traps they cover; the prayer book blesses the next fight; the wedding ring helps the ritual; the old key opens brass and iron locks', () => {
+    const b = real();
+    const trap = id => b.sections.find(s => s.id === id);
+    const placed = (ids, area, tag) => ids.forEach(id => assert.deepEqual([trap(id).area, trap(id).tags], [area, [tag]], `section ${id}`));
+    placed([34, 87, 138, 216, 107, 167, 224, 150, 245], 'catacombs', 'trap');
+    placed([142, 228, 256, 295, 304, 275, 7], 'manor', 'trap');
+    placed([189], 'cemetery', 'trap');
+    placed([17, 103], 'catacombs', 'hazard');
+    placed([60, 315], 'manor', 'hazard');
+    placed([9], 'tavern', 'hazard');
+    assert.equal(b.sections.filter(s => (s.tags || []).some(t => t === 'trap' || t === 'hazard')).length, 22, 'every trap-like section is placed');
+    // every one of them is covered by at least one map the book hands out
+    const maps = Object.entries(b.items).filter(([, d]) => d.reveals);
+    for (const s of b.sections.filter(x => x.tags)) assert.ok(maps.some(([, d]) => [].concat(d.reveals.tag || [], d.reveals.tags || []).some(t => s.tags.includes(t)) && d.reveals.areas.includes(s.area)), `section ${s.id} is on some map`);
+    const g = play(dice());
+    assert.equal(g.revealedBy(138), null);
+    g.addItem('catacomb-map');
+    assert.equal(g.revealedBy(138).source, 'Map of the Catacombs');
+    assert.equal(g.revealedBy(142), null, 'the catacomb map does not cover the manor');
+    assert.deepEqual([g.revealedBy(17).tag, g.revealedBy(245).tag], ['hazard', 'trap'], 'it shows hazards as well as traps');
+    g.addItem('village-map');
+    assert.equal(g.revealedBy(9).source, "Map of Hollow's End");
+    assert.equal(g.revealedBy(189).source, "Map of Hollow's End");
+    g.addItem('manor-map');
+    assert.equal(g.revealedBy(142).source, 'Map of the Manor');
+    g.goTo(88);
+    assert.deepEqual([g.carriedSkillPenalty, g.carriedSave], [-1, 1]);
+    assert.equal(b.sections.find(s => s.id === 395).roll.tags[0], 'binding');
+    const r = play(dice(5, 5)); r.stats.luck = 8; r.addItem('eliza-ring'); r.addItem('silver-key'); r.addItem('true-name');
+    r.goTo(395); r.doRoll();
+    assert.equal(r.currentSection, 400, 'LUCK 8 + 2 beats a 10');
+    const k = play(dice()); k.addItem('old-key');
+    assert.equal(k.hasItem('brass-key') && k.hasItem('iron-key'), true);
+    assert.equal(k.hasItem('silver-key'), false);
+    k.goTo(303);
+    assert.ok(k.inventory.some(i => i.id === 'hollow-letter'));
 });

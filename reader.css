@@ -183,6 +183,7 @@ button { cursor: pointer; }
 .meter > span.low { background: var(--bad); }
 .gold { display: flex; justify-content: space-between; margin-top: 0.5rem; padding: 0.5rem 0.75rem; border-radius: 8px; background: var(--pill); color: var(--pill-ink); font-weight: 700; }
 .penalty { color: var(--bad); font-size: 0.9rem; margin: 0 0 0.5rem; }
+.penalty.good { color: var(--ink); font-weight: 600; }
 
 .item { display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.55rem 0; border-bottom: 1px solid var(--line); }
 .item:last-child { border-bottom: 0; }
@@ -250,3 +251,24 @@ details > summary { cursor: pointer; font-weight: 600; min-height: 36px; }
     .tumble { animation: none; }
     .meter > span, .side { transition: none; }
 }
+
+/* the pack, in groups, and what you fight with */
+.pack-group { margin: 0.6rem 0 1rem; }
+.pack-group h3 { font: 700 0.8rem/1.2 var(--sans); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0 0 0.15rem; display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
+.pack-group .hint { margin: 0 0 0.4rem; font-size: 0.8rem; color: var(--muted); }
+.linkish { text-transform: none; letter-spacing: 0; font-weight: 600; }
+.item.active { border-color: var(--accent); background: var(--accent-soft); }
+.badge { display: inline-block; font: 700 0.7rem/1 var(--sans); padding: 0.2rem 0.45rem; border-radius: 999px; background: var(--accent); color: var(--accent-ink); vertical-align: middle; }
+.gear { border: 1px solid var(--line); border-radius: var(--radius); padding: 0.6rem 0.8rem; margin: 0.6rem 0; display: grid; gap: 0.35rem; font-family: var(--sans); font-size: 0.95rem; }
+.gear .muted { color: var(--muted); }
+.gear-pick { display: grid; gap: 0.2rem; font-weight: 600; font-size: 0.85rem; }
+.gear-pick select { font: inherit; padding: 0.45rem; min-height: 44px; border-radius: 6px; max-width: 100%; }
+.gear-warn { margin: 0; font-weight: 700; border-left: 4px solid var(--bad); padding-left: 0.6rem; }
+
+/* maps warn, books open */
+.opt.warned, .opt-inline.warned { border-color: var(--bad); }
+.warn-mark { font-weight: 700; }
+.item .read { margin-top: 0.35rem; }
+.item .read summary { cursor: pointer; font-weight: 600; font-size: 0.85rem; min-height: 24px; }
+.item .readtext { font-family: var(--serif); font-size: 0.95rem; line-height: 1.5; padding: 0.4rem 0 0.2rem; }
+.item .readtext p { margin: 0 0 0.6rem; }

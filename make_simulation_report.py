@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Builds simulation-report.html from simulation-results.json (see simulate_playthroughs.js).
+The earlier builds it compares against are kept as simulation-results-before / -v2 / -v3 / -v3b / -v4.json.
 
 Usage: python3 make_simulation_report.py [results.json] [book.json] [out.html]
 """
@@ -25,8 +26,8 @@ BLURB = {
     "explorer": "Visits new sections first and avoids the final door until it holds the Silver Key and her true name.",
     "guided": "Knows where the key, the name and a magical weapon are and walks straight there (15% random moves).",
 }
-COL = {"victory": "#2f9e6b", "defeat": "#c2453d", "instant-death": "#7a1f1f", "death": "#e08a3c", "stuck": "#8b8f98", "timeout": "#b9a46a"}
-NAME = {"victory": "Victory", "defeat": "Died in combat / reached the defeat page", "instant-death": "Instant-death section", "death": "Died to a hazard", "stuck": "Stuck (no moves)", "timeout": "Timed out"}
+COL = {"victory": "#2f9e6b", "defeat": "#c2453d", "instant-death": "#7a1f1f", "incomplete-victory": "#d6a23a", "death": "#e08a3c", "stuck": "#8b8f98", "timeout": "#b9a46a"}
+NAME = {"victory": "Victory", "defeat": "Died in combat / reached the defeat page", "instant-death": "Instant-death section", "incomplete-victory": "Incomplete victory (faced the Widow unprepared)", "death": "Died to a hazard", "stuck": "Stuck (no moves)", "timeout": "Timed out"}
 
 
 def e(x):
@@ -77,6 +78,10 @@ def targets(x):
     for o in (x.get("diceRoll") or {}).get("outcomes", []):
         if o.get("targetSection"):
             yield o["targetSection"]
+        for side in ("success", "failure"):                      # a Luck save nested in a dice outcome
+            t_ = ((o.get("luckTest") or {}).get(side) or {}).get("targetSection")
+            if t_:
+                yield t_
     cc = x.get("combat") or []
     for c in cc if isinstance(cc, list) else [cc]:
         for k in ("onVictorySection", "fleeSection"):
@@ -156,7 +161,7 @@ def outcome_block():
         n = a["games"]
         segs = ""
         legend = ""
-        for k in ["victory", "defeat", "instant-death", "death", "stuck", "timeout"]:
+        for k in ["victory", "incomplete-victory", "defeat", "instant-death", "death", "stuck", "timeout"]:
             v = a["outcomes"].get(k, 0)
             if v:
                 segs += f'<span style="width:{100 * v / n:.2f}%;background:{COL[k]}" title="{NAME[k]}: {v}"></span>'
@@ -244,7 +249,9 @@ def load_stage(path):
 
 
 ST0, ST1, ST2 = load_stage("simulation-results-before.json"), load_stage("simulation-results-v2.json"), load_stage("simulation-results-v3.json")
-STAGES = [("Original", ST0), ("Gates converted", ST1), ("Structural fixes", ST2), ("Luck saves", P)]
+ST3, ST4 = load_stage("simulation-results-v3b.json"), load_stage("simulation-results-v4.json")
+STAGES = [("orig", ST0), ("gates", ST1), ("struct", ST2), ("saves", ST3), ("fixes", ST4), ("now", P)]
+STAGE_TEXT = "Original build; chance gates converted; structural fixes (preparation rooms, pits 245 and 189); Luck saves on the other five pit rolls; the open book issues fixed (sections 22, 362, 180, trap failures, item gates); then the item rules (catalogue, hold and wear, charms, stealth and invisibility, maps, readable books, rings)."
 rnd, exp, gd = P["random"], P["explorer"], P["guided"]
 n = N
 W = lambda st: {p: st[p]["outcomes"].get("victory", 0) for p in ORDER}
@@ -291,7 +298,7 @@ n_luck_tests = sum(1 for x in B["sections"] if x.get("testLuck"))
 n_saves = sum(1 for x in B["sections"] for o in (x.get("diceRoll") or {}).get("outcomes", []) if o.get("luckTest"))
 luck_sources = [x["id"] for x in B["sections"] if any(isinstance((x.get(k) or {}).get("luck"), (int, str)) and (x.get(k) or {}).get("luck") not in (0, -1) for k in ("modifyStats",))]
 widow_loss = pct(final_g["finalFightLost"], final_g["finalFightEntered"], 0)
-w0, w1, w2, w3 = W(ST0), W(ST1), W(ST2), W(P)
+w0, w1, w2, w3, w4, w5 = W(ST0), W(ST1), W(ST2), W(ST3), W(ST4), W(P)
 
 
 def ci_overlap(k1, k2):
@@ -300,32 +307,32 @@ def ci_overlap(k1, k2):
     return not (hi1 < lo2 or hi2 < lo1)
 
 
-moved = [LABEL[p].lower() for p in ORDER if not ci_overlap(w2[p], w3[p])]
-flat = [LABEL[p].lower() for p in ORDER if ci_overlap(w2[p], w3[p])]
-headline = (f"The Luck-save fix clearly helped the {' and the '.join(moved)}" if moved else "The Luck-save fix made no clear difference to win rates") + (f"; the {' and the '.join(flat)} " + ("are" if len(flat) > 1 else "is") + " within run-to-run noise." if flat else ".")
+moved = [LABEL[p].lower() for p in ORDER if not ci_overlap(w4[p], w5[p])]
+flat = [LABEL[p].lower() for p in ORDER if ci_overlap(w4[p], w5[p])]
+newest = " and the ".join(moved)
+headline = (f"The item rules and the book fixes since the last build clearly moved the {newest}" + (f"; the {' and the '.join(flat)} " + ("are" if len(flat) > 1 else "is") + " within run-to-run noise." if flat else ".")) if moved else "No win rate moved clearly since the last build: all three players are within run-to-run noise."
+inc = {p: P[p]["outcomes"].get("incomplete-victory", 0) for p in ORDER}
 verdict = f"""
 <p><b>{headline}</b>
-Careful explorer {pct(w2['explorer'], n)} → <b>{pct(w3['explorer'], n)}</b>; random walker {pct(w2['random'], n)} → <b>{pct(w3['random'], n)}</b>;
-informed player {pct(w2['guided'], n)} → <b>{pct(w3['guided'], n)}</b>
-{'(inside the run-to-run noise of about ±2.6 points)' if ci_overlap(w2['guided'], w3['guided']) else ''}.
-Across all four builds: informed {pct(w0['guided'], n)} → {pct(w1['guided'], n)} → {pct(w2['guided'], n)} → {pct(w3['guided'], n)},
-explorer {pct(w0['explorer'], n)} → {pct(w1['explorer'], n)} → {pct(w2['explorer'], n)} → {pct(w3['explorer'], n)}.</p>
+Victory rate, original build → now: informed player {pct(w0['guided'], n)} → <b>{pct(w5['guided'], n)}</b>,
+careful explorer {pct(w0['explorer'], n)} → <b>{pct(w5['explorer'], n)}</b>, random walker {pct(w0['random'], n)} → <b>{pct(w5['random'], n)}</b>.
+Since the previous build (book issues fixed, no item rules): informed {pct(w4['guided'], n)} → {pct(w5['guided'], n)}, explorer {pct(w4['explorer'], n)} → {pct(w5['explorer'], n)}, random {pct(w4['random'], n)} → {pct(w5['random'], n)}
+(a change of about 2.6 points is run-to-run noise).</p>
 <ul>
-<li><b>Deaths at the five rolls</b> (7, 167, 275, 150, 107): {five_before:,} → <b>{five_now:,}</b> across the 3,000 games.</li>
-<li><b>Why they still kill:</b> a Luck save is only as good as the player's LUCK, and every Luck test costs 1 LUCK. The simulated players reach these rolls with an average LUCK of
-<b>{mean_luck:.1f}</b> (out of 9), and {pct(luck_by[7][5], luck_by[7][3], 0)} of the rolls at section 7 are made with LUCK 3 or less. The book refills LUCK in only {len(luck_sources)} sections.</li>
+<li><b>A new ending now exists:</b> “Incomplete victory” (section 998): {inc['random']:,} random walkers, {inc['explorer']:,} careful explorers and {inc['guided']:,} informed player(s) ended there (before, the 362 chain threw them back into the manor).</li>
+<li><b>Every section can now be reached:</b> {len(S) - 1 - len(unreach)} of {len(S) - 1} from section 1, and the bots entered {len(visited_any)} of them.</li>
+<li><b>Still limiting:</b> LUCK (average {mean_luck:.1f} of 9 at the pit rolls, refilled in only {len(luck_sources)} sections) and the Widow's final fight (the informed player loses it {widow_loss} of the time, {final_g['finalFightLost']} of {final_g['finalFightEntered']} fights).</li>
 </ul>
-<p><b>What now limits the book:</b> LUCK running out, the Widow's final fight (the informed player loses it {widow_loss} of the time, {final_g['finalFightLost']} of {final_g['finalFightEntered']} fights), and the pit traps that still kill about one player in ten.
-These results describe this build and these bots, so read them as a diagnosis, not a final balance verdict.</p>
+<p class="small">These results describe this build and these bots, so read them as a diagnosis, not a final balance verdict. The bots do not choose which weapon to hold, read books, drink the Potion of Invisibility or use maps; they do carry and benefit from charms, the Old Key, the wedding ring and the prayer-book blessing.</p>
 """
 
 compare_rows = ""
-if ST0 and ST1 and ST2:
+if all(st for _, st in STAGES[:-1]):
     def quad(k, p):
         vals = [stg[p]["outcomes"].get(k, 0) for _, stg in STAGES]
-        return "".join(f"<td class='num'>{'<b>' if i == 3 else ''}{pct(v, n)}{'</b>' if i == 3 else ''}</td>" for i, v in enumerate(vals))
+        return "".join(f"<td class='num'>{'<b>' if i == 5 else ''}{pct(v, n)}{'</b>' if i == 5 else ''}</td>" for i, v in enumerate(vals))
     def med(p):
-        return "".join(f"<td class='num'>{'<b>' if i == 3 else ''}{median(stg[p]['steps'])}{'</b>' if i == 3 else ''}</td>" for i, (_, stg) in enumerate(STAGES))
+        return "".join(f"<td class='num'>{'<b>' if i == 5 else ''}{median(stg[p]['steps'])}{'</b>' if i == 5 else ''}</td>" for i, (_, stg) in enumerate(STAGES))
     for p in ORDER:
         compare_rows += f"<tr><td>{LABEL[p]}</td>{quad('victory', p)}{quad('instant-death', p)}{quad('defeat', p)}</tr>"
 
@@ -334,55 +341,64 @@ luck_html = "".join(
     for sid, band, ch, rolls, avg, low, died, ib in luck_rows
 )
 
-findings = f"""
-<div class="finding sev-good"><h3><span>✓</span> Fixed: all seven pit traps now have a Luck save <em>done</em></h3>
-<p>Sections 245 and 189 (earlier) and now 7, 167, 275, 150 and 107: the instant-death band of each roll asks for a Luck test to catch the edge. The injury is one notch worse than the neighbouring survivable band
-(8, 6, 4, 4 and 7 STAMINA), and only a failed test falls to the death page. Deaths at the five new ones: <b>{five_before:,} → {five_now:,}</b>; at 245 and 189 the earlier fix cut them from 1,118 to {two_now:,}.</p></div>
+item_names = {}
+for p in ORDER:
+    for k, v in P[p].get("itemsFound", {}).items():
+        item_names[k] = item_names.get(k, 0) + v
+catalogue = (json.load(open("CURSE_OF_HOLLOWS_END.v2.json", encoding="utf-8")).get("items") or {})
+never_found = sorted(d["name"] for d in catalogue.values() if d["name"] not in item_names and d["name"] not in ("Sword", "Leather Armor"))
+top_items = sorted(item_names.items(), key=lambda kv: -kv[1])
+item_rows = "".join(f"<tr><td>{e(k)}</td><td class='num'>{v:,}</td><td style='width:45%'>{bar(v, 3 * N, 'var(--accent)', pct(v, 3 * N, 0))}</td></tr>" for k, v in top_items if k not in ("Sword", "Leather Armor", "Provisions"))
+v2book = json.load(open("CURSE_OF_HOLLOWS_END.v2.json", encoding="utf-8"))
+stray_endings = [x["id"] for x in v2book["sections"] if x.get("ending") and (x.get("options") or x.get("roll") or x.get("combat"))]
+reward_failures = [x["id"] for x in v2book["sections"] if (x.get("roll") or {}).get("kind") == "luck" and (x["roll"]["failure"].get("target") in (97, 117, 152))]
+magic_games = pct(sum(P[p]["itemGamesWithMagic"] for p in ORDER), 3 * N, 0)
+n_inc_total = sum(inc.values())
 
-<div class="finding sev-good"><h3><span>✓</span> Fixed earlier: preparation rooms and the 362 funnel <em>done</em></h3>
-<p>The nine preparation rooms return to their hub and 395 lets an unprepared player back away. Entries into the 362 ambush: {into362(ST1):,} → {into362(ST2):,} → <b>{into362(P):,}</b>.</p></div>
+findings = f"""
+<div class="finding sev-good"><h3><span>✓</span> Fixed since the first report <em>done</em></h3>
+<ul>
+<li><b>Unreachable sections:</b> 17 sections (260–280) could never be reached because the victory link in 180 skipped its menu. Now <b>{len(unreach)}</b> unreachable and <b>{len(never)}</b> never entered in {3 * N:,} games.</li>
+<li><b>Ending flags:</b> 9 mid-game sections carried a wrong ending flag in the old file. In the converted book: <b>{len(stray_endings)}</b>.</li>
+<li><b>The “incomplete victory”:</b> section 362 used to lead into a Phantom Servant fight (363). It now ends in section 998. Entries into 362 over the builds: {into362(ST1):,} → {into362(ST2):,} → {into362(ST3):,} → {into362(ST4):,} → <b>{into362(P):,}</b>.</li>
+<li><b>Luck-test failures that paid a reward</b> (the shrine, the journals): <b>{len(reward_failures)}</b> left; the seven traps cost STAMINA and go where success goes.</li>
+<li><b>Section 22</b> is a real Luck test and its paralysis carries into the next fight.</li>
+<li><b>Items:</b> about 40 pickups that were not in the text were removed, ids that stood for several things were split, every potion can be used, and the book states its starting kit.</li>
+</ul></div>
+
+<div class="finding sev-good"><h3><span>✓</span> The new item rules work in play <em>done</em></h3>
+<p>Share of the {3 * N:,} games that found each item (the three bots pooled; the starting kit left out). The bots collect what lies on their route, so rarely found items sit in side branches.</p>
+<div class="scroll"><table class="t"><thead><tr><th>Item</th><th class="num">Games</th><th>Share</th></tr></thead><tbody>{item_rows}</tbody></table></div>
+<p class="small">{('Never found by any bot: ' + ', '.join(never_found) + '.') if never_found else 'Every item in the catalogue was found at least once.'}
+A magical weapon was found in {magic_games} of games.</p></div>
 
 <div class="finding sev-high"><h3><span>1</span> LUCK is a draining resource that the saves depend on <em>high</em></h3>
-<p>The book now asks for {n_luck_tests} Luck tests plus {n_saves} more nested inside dice rolls (the pit saves and one slip), and each costs 1 LUCK. Only {len(luck_sources)} sections give LUCK back (shrines, fountains, discoveries and potions).
-Simulated players reach the saves with an average LUCK of <b>{mean_luck:.1f}</b>. At LUCK 7 a Luck test passes about 58% of the time, at 6 about 42%, at 3 about 8%.
-That is why the traps still kill: roughly one player in ten at 245 and 189 (they are rolled first, with LUCK still high), and about <b>{pct(luck_by[7][6], luck_by[7][3], 0)}</b> of rolls at section 7, which is rolled again on every visit and tends to come later.</p>
+<p>The book asks for {n_luck_tests} Luck tests plus {n_saves} more nested inside dice rolls, and each costs 1 LUCK. Only {len(luck_sources)} sections give LUCK back. Simulated players reach the pit saves with an average LUCK of <b>{mean_luck:.1f}</b>.
+At LUCK 7 a Luck test passes about 58% of the time, at 6 about 42%, at 3 about 8%. The charms help only against the undead and at the binding ritual, so they do not ease the traps.</p>
 <div class="scroll"><table class="t"><thead><tr><th>Section</th><th>Dies on</th><th class="num">Links in</th><th class="num">Rolls</th><th class="num">Avg LUCK</th><th class="num">LUCK ≤ 3</th><th class="num">Deaths</th><th class="num">Per roll</th></tr></thead><tbody>{luck_html}</tbody></table></div>
-<p class="small">Options: make section 7 (and 167 and 107) roll once per game like the others; add LUCK sources earlier in the book; or let the save work on a SKILL test instead of LUCK.</p></div>
+<p class="small">Options if this feels too hard: make sections 7, 167 and 107 roll once per game like the others; add LUCK sources earlier; or let a save work on a SKILL test instead.</p></div>
 
-<div class="finding sev-high"><h3><span>2</span> The Widow is the final wall <em>high</em></h3>
-<p>The informed player wins the final fight {pct(final_g['finalFightWon'], final_g['finalFightEntered'], 0)} of the time. She is immune to non-magical weapons and her Wail costs 2 SKILL for the whole fight on an unlucky roll, so a player who reaches her without a magical weapon cannot win;
-the book does not guarantee one (the informed bot goes and fetches one). Consider placing a magical weapon on the main route, or letting the silver weapons count.</p></div>
+<div class="finding sev-high"><h3><span>2</span> The Widow is still the final wall <em>high</em></h3>
+<p>The informed player wins the final fight {pct(final_g['finalFightWon'], final_g['finalFightEntered'], 0)} of the time ({final_g['finalFightWon']} of {final_g['finalFightEntered']}); {final_g.get('finalFightNoMagic', 0)} of those fights were fought without a magical weapon, which cannot win.
+She is immune to non-magical weapons and her Wail costs 2 SKILL for the whole fight on an unlucky roll. Letting silver weapons count against her would be the cheapest lever.</p></div>
 
-<div class="finding sev-med"><h3><span>3</span> The "incomplete victory" ending does not exist <em>medium</em></h3>
-<p>Section 362 ends in the text with "THE END (Partial Victory)", but in the data its fight leads on to section 363, an ordinary Phantom Servant ambush, and then back into the hub at 335.
-Players who survive the three Shadows and the weakened Widow get no ending. Add a proper ending section (or make 362 an ending after the fight).</p></div>
+<div class="finding sev-med"><h3><span>3</span> Many players choose the incomplete ending <em>medium</em></h3>
+<p>{n_inc_total:,} of {3 * N:,} games ({pct(n_inc_total, 3 * N, 0)}) end in “Incomplete victory”: the random walker {pct(inc['random'], N, 0)}, the careful explorer {pct(inc['explorer'], N, 0)}, the informed player {pct(inc['guided'], N, 0)}.
+Section 395 offers to face the Widow without the key and the name, and a player who does is always sent there. If that ending should be rarer, or a failure rather than a finish, change what 395 offers; it is a design choice, not a defect.</p></div>
 
-<div class="finding sev-med"><h3><span>4</span> Wrong "ending" flags on {len(false_end)} mid-game sections <em>medium</em></h3>
-<p>Sections {', '.join(map(str, false_end))} are flagged as endings although they carry choices, dice rolls or combat. The reader prints a "Victory!" or "The End" banner on them while the story continues
-(24 and 56 are the Mayor refusing to help, flagged as <i>victory</i>). This came from the converter reading "(VICTORY!)" or "THE END" in prose. Remove <code>isEnding</code> from these sections.</p></div>
-
-<div class="finding sev-med"><h3><span>5</span> {sum(len(m[3]) for m in skipped_menu)} sections can never be reached in play <em>medium</em></h3>
-<p>{'; '.join(f"Section {a} lists {len(m)} places to explore after the fight, but its victory link jumps straight to {b}, so the menu is never shown. Sections {', '.join(map(str, o))} have no other entrance." for a, b, m, o in skipped_menu)}
-These are the {len(never)} sections the bots never entered in {3 * N:,} games. Fix: remove <code>onVictorySection</code> from the fight so its menu appears after the win (and keep the jump target as one of the menu items).</p></div>
-
-<div class="finding sev-med"><h3><span>6</span> Some Luck-test failures lead somewhere that does not fit <em>medium</em></h3>
-<p>The conversion follows the book's own cross-references literally, and some of them do not match the story:
-{'; '.join(f"failing the test in {', '.join(map(str, v))} sends you to <b>{k}</b> ({ {97: 'a healing shrine that fully restores STAMINA and gives +1 LUCK', 117: 'a journal with the curse timeline', 152: 'a study with a journal'}[k] })" for k, v in sorted(mismatch_by.items()))}.
-In those sections an unlucky roll is a reward. I did not guess the author's intent; they need a human decision (most likely a real trap section, such as the dart trap in 58).</p></div>
-
-<div class="finding sev-info"><h3><span>7</span> Still open <em>note</em></h3>
-<p>{', '.join(map(str, left_gates)) or 'None'}: {'section 22 is a Ghoul paralysis test whose SKILL penalty must carry into the next fight; it needs a carry-over penalty mechanic' if 22 in left_gates else 'no remaining unconverted gates'}.</p></div>
+<div class="finding sev-info"><h3><span>4</span> Not simulated <em>note</em></h3>
+<p>The bots never choose a weapon by hand, read books, drink the Potion of Invisibility, use maps or sneak by choice; the Old Key and the charms count when they are carried. All 22 trap and hazard sections are marked on some map, but only for a player who carries that map.</p></div>
 """
 
 method = f"""
 <ul>
-<li><b>Engine:</b> the bots drive the real <code>index.html</code> game logic (<code>GameState</code>, <code>fightRound</code>, <code>handleChoice</code>, Luck tests, dice rolls, item use, conditions) in headless Chromium, with delays and DOM rendering switched off.</li>
-<li><b>Randomness:</b> a seeded generator (seed {R['seed']}) feeds every die and every bot decision, so the run is reproducible. {N:,} games per policy, {3 * N:,} in total, in {R['runtimeSeconds']:.0f}s. All four builds use the same seed. A change of about 2.6 points in a win rate is within run-to-run noise.</li>
+<li><b>Engine:</b> the bots drive the real <code>engine.js</code> (the same module the reader uses) on the converted book <code>{e(R['book'].get('file', ''))}</code>: fights, Luck tests, dice rolls, item use, conditions, charms, stealth.</li>
+<li><b>Randomness:</b> a seeded generator (seed {R['seed']}) feeds every die and every bot decision, so the run is reproducible. {N:,} games per policy, {3 * N:,} in total, in {R['runtimeSeconds']:.0f}s. Every build uses the same seed. A change of about 2.6 points in a win rate is within run-to-run noise, and a rule change also shifts which dice meet which decisions, so small differences are not meaningful.</li>
 <li><b>Shared bot habits:</b> flee when STAMINA ≤ {R['opts']['fleeAt']} and the fight allows it; eat or drink healing items when STAMINA falls below {int(R['opts']['healAt'] * 100)}% of the maximum (and below {int(R['opts']['preFightHeal'] * 100)}% before a fight); a game ends after {R['opts']['maxSteps']:,} moves.</li>
-<li><b>Roll once:</b> encounter hubs (155, 221, 301, 335, 355, 127) and the pit traps 150, 189, 245 and 275 roll only on the first visit per game. Sections 7, 107 and 167 and the other traps roll again on every visit.</li>
-<li><b>Limits:</b> bots are not people. Random under-plays (never plans) and the informed bot over-plays (has read the book), so treat them as bounds. The explorer retreats from the final door when it can. Gold is never spent (the book has no shop). Reading text, noticing hints and risk-aversion are not modelled.</li>
+<li><b>What the bots know:</b> read from <code>CURSE_OF_HOLLOWS_END.sim.json</code>: the informed player goes for the Silver Key, the true name and a magical weapon, then the final door; endings come from each section's own <code>ending</code>.</li>
+<li><b>Limits:</b> bots are not people. Random under-plays (never plans) and the informed bot over-plays (has read the book), so treat them as bounds. Gold is never spent (the book has no shop). Reading text, noticing hints and risk-aversion are not modelled.</li>
 </ul>
-<p class="small">Reproduce: <code>node simulate_playthroughs.js CURSE_OF_HOLLOWS_END.json 1000 simulation-results.json {R['seed']} &amp;&amp; python3 make_simulation_report.py</code>. The earlier builds' results are kept in <code>simulation-results-before.json</code>, <code>-v2.json</code> and <code>-v3.json</code>.</p>
+<p class="small">Reproduce: <code>node simulate_playthroughs.js CURSE_OF_HOLLOWS_END.v2.json 1000 simulation-results.json {R['seed']} &amp;&amp; python3 make_simulation_report.py</code>. The earlier builds' results are kept in <code>simulation-results-before.json</code>, <code>-v2.json</code>, <code>-v3.json</code>, <code>-v3b.json</code> (Luck saves) and <code>-v4.json</code> (book issues fixed).</p>
 """
 
 cards = "".join(
@@ -435,10 +451,10 @@ table.t{{border-collapse:collapse;width:100%;font-size:.92rem}}.t th,.t td{{padd
 <div class="cards">{cards}</div>
 <div class="verdict">{verdict}</div>
 
-<h2>1 · Four builds, same players, same seed</h2>
-<p>Original build; chance gates converted; structural fixes (preparation rooms, pits 245 and 189); Luck saves on the other five rolls.</p>
-<div class="scroll"><table class="t"><thead><tr><th rowspan="2">Player</th><th colspan="4" class="num">Victory</th><th colspan="4" class="num">Instant death</th><th colspan="4" class="num">Died in combat</th></tr>
-<tr>{''.join('<th class="num">orig</th><th class="num">gates</th><th class="num">struct</th><th class="num">now</th>' for _ in range(3))}</tr></thead><tbody>{compare_rows}</tbody></table></div>
+<h2>1 · Six builds, same players, same seed</h2>
+<p>{STAGE_TEXT}</p>
+<div class="scroll"><table class="t"><thead><tr><th rowspan="2">Player</th><th colspan="6" class="num">Victory</th><th colspan="6" class="num">Instant death</th><th colspan="6" class="num">Died in combat</th></tr>
+<tr>{''.join('<th class="num">' + name + '</th>' for _ in range(3) for name, _s in STAGES)}</tr></thead><tbody>{compare_rows}</tbody></table></div>
 
 <h2>2 · How the games ended</h2>
 {outcome_block()}
