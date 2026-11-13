@@ -37,6 +37,62 @@ def is_group(s):
     return isinstance(c, list) and len(c) > 1 and all(e.get("together") for e in c)
 
 
+def enemy_rules(e):
+    """(key, label) for every special rule of one enemy; the keys are what the 'highlight a rule' menu offers."""
+    out = []
+    if isinstance(e.get("effectiveWeapons"), list):
+        w = " or ".join(e["effectiveWeapons"])
+        out.append(("immune" if e.get("normalWeaponDamage") == 0 else "resists", f"Immune to any weapon that is not {w}" if e.get("normalWeaponDamage") == 0 else f"Weapons that are not {w} deal only {e.get('normalWeaponDamage', 2)} damage"))
+    if e.get("weakTo"):
+        out.append(("weakness", f"{e['weakTo']['property']} weapons deal {e['weakTo']['damage']} damage"))
+    if e.get("reviveOn"):
+        out.append(("revives", f"Rises again on a {'/'.join(map(str, e['reviveOn']))} when reduced to 0"))
+    ow = e.get("onWound") or {}
+    if ow.get("luckTest"):
+        out.append(("wound-luck", f"Each wound: Test Luck or lose {ow.get('skillLoss', 1)} SKILL for the fight"))
+    elif ow.get("permanent"):
+        out.append(("wound-skill", f"Each wound permanently drains {ow.get('skillLoss', 1)} SKILL"))
+    if ow.get("maxStaminaLoss"):
+        out.append(("life-drain", f"Each wound lowers your maximum STAMINA by {ow['maxStaminaLoss']} for good"))
+    if ow.get("staminaLoss"):
+        out.append(("poison", f"Each wound is poisoned: {ow['staminaLoss']} more STAMINA"))
+    if ow.get("luckLoss"):
+        out.append(("unnerves", f"Each wound costs {ow['luckLoss']} LUCK"))
+    os_ = e.get("onStart")
+    if os_:
+        out.append(("start-effect", f"At the start: {'Test Luck or lose ' + str(os_.get('skillLoss', 1)) + ' SKILL' if os_.get('luckTest') else '-' + str(os_.get('skillLoss', 1)) + ' SKILL'}"))
+    if e.get("damage") and e["damage"] != 2:
+        out.append(("heavy-damage", f"Each wound does {e['damage']} STAMINA"))
+    if e.get("attackDice") == 3:
+        out.append(("three-dice", "Rolls three dice for its attack"))
+    if e.get("strikesFirst"):
+        out.append(("strikes-first", "Strikes first: you can only parry in round 1"))
+    if e.get("tiesWound"):
+        out.append(("ties-wound", "Wins a tied round"))
+    if e.get("ignoresArmor"):
+        out.append(("ignores-armor", "Ignores your armour"))
+    if e.get("regenerates"):
+        out.append(("regenerates", f"Regenerates {e['regenerates']} STAMINA every round"))
+    if e.get("spell"):
+        out.append(("spell", "Casts a spell once per fight: you may lose your attack for a round"))
+    if (e.get("onHurt") or {}).get("luckTest"):
+        out.append(("shapechanger", "Shapechanger: when wounded it may confuse you (-" + str(e["onHurt"].get("attackPenalty", 2)) + " to your next attack)"))
+    if e.get("maxRounds"):
+        out.append(("time-limit", f"You must win within {e['maxRounds']} rounds"))
+    return out
+
+
+def section_rules(s):
+    c = s.get("combat")
+    out = []
+    for e in (c if isinstance(c, list) else [c] if c else []):
+        for k, l in enemy_rules(e):
+            out.append({"k": k, "l": l, "who": e["enemyName"]})
+    if is_group(s):
+        out.append({"k": "group", "l": "They attack at the same time", "who": "all"})
+    return out
+
+
 def effects_of(s):
     out = [s.get("effects")]
     return [e for e in out if e]
@@ -132,7 +188,7 @@ for sid, s in sections.items():
     nodes.append({
         "id": sid, "kind": kind, "title": s.get("title") or "", "text": text[:420], "out": out_deg[sid], "in": in_deg[sid],
         "area": s.get("area") or "", "tags": s.get("tags") or [], "gives": gives, "foes": enemies(s),
-        "stealth": bool(r and r.get("stealth")), "zone": zone.get(sid, 0), "group": is_group(s),
+        "stealth": bool(r and r.get("stealth")), "zone": zone.get(sid, 0), "group": is_group(s), "rules": section_rules(s),
     })
 
 data = {"title": book["title"], "start": start, "nodes": nodes, "edges": edges}
@@ -164,6 +220,7 @@ label.chk{display:inline-flex;gap:6px;align-items:center;cursor:pointer;color:va
 #results button{display:block;width:100%;text-align:left;border:0;border-radius:0;background:transparent}
 .searchwrap{position:relative}
 #stats{color:var(--muted);font-size:12px}
+#rulefilter{max-width:190px}
 @media (max-width:700px){#legend{display:none}#panel{top:auto;height:46vh}}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 </style></head><body>
@@ -176,6 +233,7 @@ label.chk{display:inline-flex;gap:6px;align-items:center;cursor:pointer;color:va
     <label class="chk"><input type="checkbox" id="hideDeath"> hide links into endings</label>
     <label class="chk"><input type="checkbox" id="labels"> always show numbers</label>
     <label class="chk"><input type="checkbox" id="cluster"> group by area or hub</label>
+    <label class="chk" id="rulewrap">Fight rule <select id="rulefilter" aria-label="Highlight fights with this special rule"><option value="">(none)</option></select></label>
   </div>
   <div class="box"><button id="fit">Fit</button> <button id="reheat" title="Shake the layout">Re-layout</button> <button id="route" aria-pressed="false" title="Show the shortest route from the start to the selected section">Route from start</button> <label class="chk">Focus <select id="focus" aria-label="Show only the neighbourhood of the selection"><option value="0">off</option><option value="1">1 step</option><option value="2">2 steps</option><option value="3">3 steps</option></select></label></div>
 </div>
@@ -259,7 +317,7 @@ function fit() {
 }
 
 // ---- state: selection, hover, route, focus
-let sel = null, hov = null, routeOn = false, focusN = 0, mode = 'kind', showLabels = false;
+let sel = null, hov = null, routeOn = false, focusN = 0, mode = 'kind', showLabels = false, ruleFilter = '';
 let routeSet = new Set(), routeEdges = new Set(), focusSet = null;
 function neighbourhood(n, hops) {
   const s = new Set([n.id]); let frontier = [n.id];
@@ -281,7 +339,7 @@ function draw() {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
   const g = ctx.createRadialGradient(W / 2, H / 2, 50, W / 2, H / 2, Math.max(W, H) * 0.75); g.addColorStop(0, '#10131f'); g.addColorStop(1, '#07080d'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
   const hl = sel || hov; const near = new Set(); if (hl) { near.add(hl.id); outs.get(hl.id).forEach(e => near.add(e.t.id)); ins.get(hl.id).forEach(e => near.add(e.s.id)); }
-  const dim = !!hl || routeSet.size > 0;
+  const dim = !!hl || routeSet.size > 0 || !!ruleFilter;
   // links
   for (const e of E) {
     if (!visible(e.s) || !visible(e.t) || (hideDeath && isEnd(e.t))) continue;
@@ -302,10 +360,15 @@ function draw() {
   for (const n of N) {
     if (!visible(n)) continue;
     const [x, y] = toScreen(n); if (x < -30 || x > W + 30 || y < -30 || y > H + 30) continue;
-    const lit = !dim || near.has(n.id) || routeSet.has(n.id), c = colour(n), r = Math.max(2.2, n.r * zoom * 0.8);
+    const hasRule = !ruleFilter || n.rules.some(q => q.k === ruleFilter);
+    const lit = (!(!!hl || routeSet.size > 0) || near.has(n.id) || routeSet.has(n.id)) && hasRule, c = colour(n), r = Math.max(2.2, n.r * zoom * 0.8);
     ctx.globalAlpha = lit ? 1 : 0.16;
     if (lit) { ctx.shadowColor = c; ctx.shadowBlur = n === sel ? 26 : n.kind === 'hub' || n.kind === 'start' ? 16 : 9; }
     ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill(); ctx.shadowBlur = 0;
+    if (n.rules.length && lit) {                          // a fight with special rules: a small gold star at the top right
+      const bx = x + r * 0.9, by = y - r * 0.9, br = Math.max(3, r * 0.45); ctx.fillStyle = '#ffd166'; ctx.strokeStyle = '#0b0d14'; ctx.lineWidth = 1;
+      ctx.beginPath(); for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4 - Math.PI / 2, rr = i % 2 ? br * 0.45 : br; ctx.lineTo(bx + Math.cos(a) * rr, by + Math.sin(a) * rr); } ctx.closePath(); ctx.fill(); ctx.stroke();
+    }
     if (n.group) {                                       // a group fight: a dashed outer ring
       ctx.strokeStyle = c; ctx.lineWidth = 1.6; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.arc(x, y, r + 5, 0, 6.2832); ctx.stroke(); ctx.setLineDash([]);
     }
@@ -351,7 +414,7 @@ cv.addEventListener('wheel', e => { e.preventDefault(); zoomAt(e.clientX, e.clie
 // ---- tooltip and panel
 const tip = $('tip'), panel = $('panel');
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-function showTip(n, e) { if (!n) return hideTip(); tip.innerHTML = `<b>${n.id}</b> · ${KIND[n.kind].n}${n.group ? ' (group: they attack together)' : ''}${n.title ? `<br>${esc(n.title)}` : ''}<br><span style="color:var(--muted)">${esc(n.text.slice(0, 140))}…</span>`; tip.style.display = 'block'; moveTip(e); }
+function showTip(n, e) { if (!n) return hideTip(); tip.innerHTML = `<b>${n.id}</b> · ${KIND[n.kind].n}${n.group ? ' (group: they attack together)' : ''}${n.rules.length ? ` · ✦ ${n.rules.length} special rule${n.rules.length > 1 ? 's' : ''}` : ''}${n.title ? `<br>${esc(n.title)}` : ''}<br><span style="color:var(--muted)">${esc(n.text.slice(0, 140))}…</span>`; tip.style.display = 'block'; moveTip(e); }
 function moveTip(e) { tip.style.left = Math.min(e.clientX + 14, innerWidth - 320) + 'px'; tip.style.top = Math.min(e.clientY + 14, innerHeight - 120) + 'px'; }
 function hideTip() { tip.style.display = 'none'; }
 function select(n) {
@@ -361,7 +424,7 @@ function select(n) {
   const from = [...new Set(ins.get(n.id).map(e => e.s.id))].sort((a, b) => a - b);
   panel.innerHTML = `<h2>Section ${n.id}</h2><div class="sub">${KIND[n.kind].n}${n.area ? ` · ${esc(n.area)}` : ''}${n.tags.length ? ` · ${esc(n.tags.join(', '))}` : ''}${dist.has(n.id) ? ` · ${dist.get(n.id)} step${dist.get(n.id) === 1 ? '' : 's'} from the start` : ' · not reachable from the start'}</div>
   ${n.title ? `<p><b>${esc(n.title)}</b></p>` : ''}<p>${esc(n.text)}${n.text.length >= 420 ? '…' : ''}</p>
-  ${n.foes.length ? `<h3>${n.group ? 'Group fight' : 'Fight'}</h3><p>${esc(n.foes.join(', '))}${n.group ? '<br><small>They attack at the same time: you choose whom to strike, the others keep attacking you.</small>' : ''}</p>` : ''}${n.gives.length ? `<h3>You find</h3><p>${esc(n.gives.join(', '))}</p>` : ''}
+  ${n.foes.length ? `${n.rules.length ? `<h3>Special rules</h3><ul style="margin:0;padding-left:1.1em">${n.rules.filter(q => q.k !== 'group').map(q => `<li>${esc(n.foes.length > 1 ? q.who + ': ' : '')}${esc(q.l)}</li>`).join('')}</ul>` : ''}<h3>${n.group ? 'Group fight' : 'Fight'}</h3><p>${esc(n.foes.join(', '))}${n.group ? '<br><small>They attack at the same time: you choose whom to strike, the others keep attacking you.</small>' : ''}</p>` : ''}${n.gives.length ? `<h3>You find</h3><p>${esc(n.gives.join(', '))}</p>` : ''}
   <h3>Leads to (${outs.get(n.id).length})</h3><div class="exits">${exits}</div>
   <h3>Reached from (${from.length})</h3><p>${from.map(f => `<a href="#" data-go="${f}" style="color:var(--accent)">${f}</a>`).join(', ') || '<small>nothing</small>'}</p>`;
   panel.style.display = 'block';
@@ -389,6 +452,13 @@ $('focus').onchange = e => { focusN = +e.target.value; recompute(); };
 $('mode').onchange = e => { mode = e.target.value; legend(); };
 $('hideDeath').onchange = e => { hideDeath = e.target.checked; alpha = Math.max(alpha, .4); fit(); };
 $('labels').onchange = e => { showLabels = e.target.checked; };
+{
+  const counts = new Map(); N.forEach(n => { const seen = new Set(); n.rules.forEach(q => { if (!seen.has(q.k)) { seen.add(q.k); const e = counts.get(q.k) || { n: 0, l: q.l }; e.n++; counts.set(q.k, e); } }); });
+  const NAMES = { immune: 'Immune to normal weapons', resists: 'Resists normal weapons', weakness: 'Weakness to a weapon', revives: 'Rises again', 'wound-luck': 'Paralysing wounds (Luck test)', 'wound-skill': 'Drains SKILL for good', 'life-drain': 'Drains maximum STAMINA', poison: 'Poison', unnerves: 'Costs LUCK', 'start-effect': 'Effect at the start', 'heavy-damage': 'Heavy damage', 'three-dice': 'Three attack dice', 'strikes-first': 'Strikes first', 'ties-wound': 'Wins ties', 'ignores-armor': 'Ignores armour', regenerates: 'Regenerates', spell: 'Casts a spell', shapechanger: 'Shapechanger', 'time-limit': 'Time limit', group: 'Group fight' };
+  const sel2 = $('rulefilter'); [...counts.entries()].sort((a, b) => b[1].n - a[1].n).forEach(([k, e]) => { const o = document.createElement('option'); o.value = k; o.textContent = `${NAMES[k] || k} (${e.n})`; sel2.appendChild(o); });
+  if (!counts.size) $('rulewrap').style.display = 'none';
+  sel2.onchange = e => { ruleFilter = e.target.value; };
+}
 $('cluster').onchange = e => { cluster = e.target.checked; alpha = 1; };
 function legend() {
   const used = [...new Set(N.map(n => n.kind))];
@@ -397,6 +467,8 @@ function legend() {
     : AREAS.map(a => `<div><i style="color:${areaColor(a)};background:${areaColor(a)}"></i>${esc(a)} <span>(${N.filter(n => n.area === a).length})</span></div>`).concat(`<div><i style="color:#6f819e;background:#6f819e"></i>no area</div>`);
   const edges = Object.entries({ option: 'choice', success: 'lucky', failure: 'unlucky', dice: 'dice result', win: 'win a fight', lose: 'lose a fight', flee: 'flee' }).map(([k, v]) => `<span style="color:${EDGE[k]}">━ ${v}</span>`).join(' ');
   const groups = N.filter(n => n.group).length;
+  const starred = N.filter(n => n.rules.length).length;
+  if (starred && mode === 'kind') rows.push(`<div><i style="background:#ffd166;color:#ffd166;border-radius:2px;width:10px;height:10px"></i>✦ Fight with special rules <span>(${starred})</span></div>`);
   if (groups && mode === 'kind') rows.push(`<div><i style="background:transparent;border:2px dashed ${KIND.combat.c};color:${KIND.combat.c};box-shadow:none"></i>Group fight, they attack together <span>(${groups})</span></div>`);
   $('legend').innerHTML = rows.join('') + `<div style="display:block;margin-top:6px;line-height:1.7">${edges}</div>`;
 }

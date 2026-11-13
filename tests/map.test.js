@@ -34,6 +34,10 @@ test('endings, fights, rolls and the start are told apart', () => {
     const kind = id => data.nodes.find(n => n.id === id).kind;
     assert.deepEqual([kind(1), kind(400), kind(999), kind(998), kind(30), kind(245)], ['start', 'end-victory', 'end-defeat', 'end-neutral', 'combat', 'dice']);
     assert.deepEqual(data.nodes.filter(n => n.group).map(n => n.id), [180, 289], 'the two group fights are marked');
+    const rules = id => data.nodes.find(n => n.id === id).rules.map(r => r.k);
+    assert.deepEqual([rules(394), rules(5), rules(67), rules(78)], [['immune', 'start-effect'], ['life-drain'], ['spell'], ['shapechanger']], 'special rules are listed per fight');
+    assert.ok(rules(289).includes('group') && rules(289).includes('revives') && rules(289).includes('wound-luck'));
+    assert.equal(data.nodes.filter(n => n.rules.length).length, 40);
     const links = data.edges.filter(e => e.s === 395).map(e => `${e.t}:${e.k}`).sort();
     assert.deepEqual(links, ['362:option', '388:option', '394:failure', '400:success']);
 });
