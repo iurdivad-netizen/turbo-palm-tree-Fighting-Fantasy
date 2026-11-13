@@ -4351,7 +4351,7 @@
     },
     {
       "id": 180,
-      "text": "Your keen senses and quick reflexes alert you just in time. You sidestep behind a massive gravestone as three Zombies emerge from the swirling mist, their burial clothes hanging in tatters, their flesh gray and rotting. They moan hungrily, shuffling toward where you were standing just moments ago.\n\nThe element of surprise is yours. You have the advantage—but you still face three undead creatures animated by dark magic and insatiable hunger. You must fight them one at a time:\n\nSpecial Ability - Undead Fortitude: When a Zombie is reduced to 0 STAMINA, immediately roll one die. On a result of 5-6, the Zombie refuses to stay down! It survives with 1 STAMINA and continues fighting.\n\nFight all three Zombies in sequence!\n\n{{opt:to-259}}\n{{opt:to-260}}\n{{opt:to-261}}\n{{opt:to-262}}\n{{opt:to-263}}\n{{opt:to-264}}\n{{opt:to-265}}\n{{opt:to-268}}\n{{opt:to-269}}\n{{opt:to-270}}\n{{opt:to-271}}\n{{opt:to-273}}\n{{opt:to-274}}\n{{opt:to-276}}\n{{opt:to-277}}\n{{opt:to-278}}\n{{opt:to-279}}\n{{opt:to-280}}\n\nOr proceed to main areas:\n\n{{opt:to-312}}\n{{opt:to-127}}\n\nIf your STAMINA drops to 4 or less during the battle: You may attempt to flee. Test your Luck.\n\n{{opt:to-301}}\n{{opt:to-355}}\n{{opt:to-335}}",
+      "text": "Your keen senses and quick reflexes alert you just in time. You sidestep behind a massive gravestone as three Zombies emerge from the swirling mist, their burial clothes hanging in tatters, their flesh gray and rotting. They moan hungrily, shuffling toward where you were standing just moments ago.\n\nThe element of surprise is yours. You have the advantage—but you still face three undead creatures animated by dark magic and insatiable hunger. They attack together! You choose which of them to strike; the others keep attacking you:\n\nSpecial Ability - Undead Fortitude: When a Zombie is reduced to 0 STAMINA, immediately roll one die. On a result of 5-6, the Zombie refuses to stay down! It survives with 1 STAMINA and continues fighting.\n\nFight all three Zombies at once!\n\n{{opt:to-259}}\n{{opt:to-260}}\n{{opt:to-261}}\n{{opt:to-262}}\n{{opt:to-263}}\n{{opt:to-264}}\n{{opt:to-265}}\n{{opt:to-268}}\n{{opt:to-269}}\n{{opt:to-270}}\n{{opt:to-271}}\n{{opt:to-273}}\n{{opt:to-274}}\n{{opt:to-276}}\n{{opt:to-277}}\n{{opt:to-278}}\n{{opt:to-279}}\n{{opt:to-280}}\n\nOr proceed to main areas:\n\n{{opt:to-312}}\n{{opt:to-127}}\n\nIf your STAMINA drops to 4 or less during the battle: You may attempt to flee. Test your Luck.\n\n{{opt:to-301}}\n{{opt:to-355}}\n{{opt:to-335}}",
       "options": [
         {
           "id": "to-259",
@@ -4520,7 +4520,8 @@
           "fleeTestLuck": true,
           "tags": [
             "undead"
-          ]
+          ],
+          "together": true
         },
         {
           "enemyName": "ZOMBIE 2",
@@ -4537,7 +4538,8 @@
           "fleeTestLuck": true,
           "tags": [
             "undead"
-          ]
+          ],
+          "together": true
         },
         {
           "enemyName": "ZOMBIE 3",
@@ -4554,7 +4556,8 @@
           "fleeTestLuck": true,
           "tags": [
             "undead"
-          ]
+          ],
+          "together": true
         }
       ]
     },
@@ -7271,7 +7274,7 @@
     },
     {
       "id": 289,
-      "text": "You step into the cemetery, and the mist immediately swirls up around your ankles like grasping fingers made of cold vapor. As the mist clears slightly, your worst fears are realized—you're surrounded!\n\nThree Zombies emerge from freshly opened graves, their moaning filling the air with sounds of hunger and mindless rage. But these aren't the only threats. Perched on a gravestone like some grotesque gargoyle sits a Ghoul, its eyes glowing with unholy intelligence, its long claws clicking together in anticipation. This creature is far more dangerous than the Zombies—faster, smarter, and equipped with paralytic toxins in its claws.\n\nYou must fight them all! The Zombies first, one at a time, and then the cunning Ghoul.\n\nAll Zombies have Undead Fortitude: When reduced to 0 STAMINA, roll one die. On 5-6, they survive with 1 STAMINA. After defeating all three Zombies, you must immediately fight:\n\nGhoul's Paralyzing Touch: Each time the Ghoul wounds you, Test your Luck. If Unlucky, the toxins take effect and you lose 1 SKILL for the remainder of this combat (cumulative—each failed test makes you weaker).\n\nIf your STAMINA drops to 4 or less during battle: You may attempt to flee. Test your Luck.",
+      "text": "You step into the cemetery, and the mist immediately swirls up around your ankles like grasping fingers made of cold vapor. As the mist clears slightly, your worst fears are realized—you're surrounded!\n\nThree Zombies emerge from freshly opened graves, their moaning filling the air with sounds of hunger and mindless rage. But these aren't the only threats. Perched on a gravestone like some grotesque gargoyle sits a Ghoul, its eyes glowing with unholy intelligence, its long claws clicking together in anticipation. This creature is far more dangerous than the Zombies—faster, smarter, and equipped with paralytic toxins in its claws.\n\nYou must fight them all, and they attack together! You choose which of them to strike; the others keep attacking you.\n\nAll Zombies have Undead Fortitude: When reduced to 0 STAMINA, roll one die. On 5-6, they survive with 1 STAMINA. The Ghoul fights alongside them:\n\nGhoul's Paralyzing Touch: Each time the Ghoul wounds you, Test your Luck. If Unlucky, the toxins take effect and you lose 1 SKILL for the remainder of this combat (cumulative—each failed test makes you weaker).\n\nIf your STAMINA drops to 4 or less during battle: You may attempt to flee. Test your Luck.",
       "options": [
         {
           "id": "to-312",
@@ -7301,7 +7304,8 @@
           "fleeTestLuck": true,
           "tags": [
             "undead"
-          ]
+          ],
+          "together": true
         },
         {
           "enemyName": "ZOMBIE 2",
@@ -7319,7 +7323,8 @@
           "fleeTestLuck": true,
           "tags": [
             "undead"
-          ]
+          ],
+          "together": true
         },
         {
           "enemyName": "ZOMBIE 3",
@@ -7337,7 +7342,8 @@
           "fleeTestLuck": true,
           "tags": [
             "undead"
-          ]
+          ],
+          "together": true
         },
         {
           "enemyName": "GHOUL",
@@ -7355,7 +7361,8 @@
           },
           "tags": [
             "undead"
-          ]
+          ],
+          "together": true
         }
       ]
     },

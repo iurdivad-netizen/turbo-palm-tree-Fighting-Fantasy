@@ -250,8 +250,9 @@ def load_stage(path):
 
 ST0, ST1, ST2 = load_stage("simulation-results-before.json"), load_stage("simulation-results-v2.json"), load_stage("simulation-results-v3.json")
 ST3, ST4, ST5, ST6, ST7 = load_stage("simulation-results-v3b.json"), load_stage("simulation-results-v4.json"), load_stage("simulation-results-v5.json"), load_stage("simulation-results-v6.json"), load_stage("simulation-results-v7.json")
-STAGES = [("orig", ST0), ("gates", ST1), ("struct", ST2), ("saves", ST3), ("fixes", ST4), ("items", ST5), ("hub", ST6), ("menus", ST7), ("now", P)]
-STAGE_TEXT = "Original build; chance gates converted; structural fixes (preparation rooms, pits 245 and 189); Luck saves on the other five pit rolls; the open book issues fixed (sections 22, 362, 180, trap failures, item gates); the item rules (catalogue, hold and wear, charms, stealth and invisibility, maps, readable books, rings); the choices relabelled and the ambushes moved out of the preparation hub 388; the menus rewired so that every side room leads back to its menu and the rooms leave the menu once explored; and finally the monster rules (the Wight's life drain, the Fanatic's spell, the Doppelganger's shapechanging)."
+ST8 = load_stage("simulation-results-v8.json")
+STAGES = [("orig", ST0), ("gates", ST1), ("struct", ST2), ("saves", ST3), ("fixes", ST4), ("items", ST5), ("hub", ST6), ("menus", ST7), ("rules", ST8), ("now", P)]
+STAGE_TEXT = "Original build; chance gates converted; structural fixes (preparation rooms, pits 245 and 189); Luck saves on the other five pit rolls; the open book issues fixed (sections 22, 362, 180, trap failures, item gates); the item rules (catalogue, hold and wear, charms, stealth and invisibility, maps, readable books, rings); the choices relabelled and the ambushes moved out of the preparation hub 388; the menus rewired so that every side room leads back to its menu and the rooms leave the menu once explored; the monster rules (the Wight's life drain, the Fanatic's spell, the Doppelganger's shapechanging); and finally the group fights at 289 and 180 made to attack together."
 rnd, exp, gd = P["random"], P["explorer"], P["guided"]
 n = N
 W = lambda st: {p: st[p]["outcomes"].get("victory", 0) for p in ORDER}
@@ -298,7 +299,7 @@ n_luck_tests = sum(1 for x in B["sections"] if x.get("testLuck"))
 n_saves = sum(1 for x in B["sections"] for o in (x.get("diceRoll") or {}).get("outcomes", []) if o.get("luckTest"))
 luck_sources = [x["id"] for x in B["sections"] if any(isinstance((x.get(k) or {}).get("luck"), (int, str)) and (x.get(k) or {}).get("luck") not in (0, -1) for k in ("modifyStats",))]
 widow_loss = pct(final_g["finalFightLost"], final_g["finalFightEntered"], 0)
-w0, w1, w2, w3, w4, w5, w6, w7, w8 = W(ST0), W(ST1), W(ST2), W(ST3), W(ST4), W(ST5), W(ST6), W(ST7), W(P)
+w0, w1, w2, w3, w4, w5, w6, w7, w8, w9 = W(ST0), W(ST1), W(ST2), W(ST3), W(ST4), W(ST5), W(ST6), W(ST7), W(ST8), W(P)
 
 
 def ci_overlap(k1, k2):
@@ -307,16 +308,16 @@ def ci_overlap(k1, k2):
     return not (hi1 < lo2 or hi2 < lo1)
 
 
-moved = [LABEL[p].lower() for p in ORDER if not ci_overlap(w7[p], w8[p])]
-flat = [LABEL[p].lower() for p in ORDER if ci_overlap(w7[p], w8[p])]
+moved = [LABEL[p].lower() for p in ORDER if not ci_overlap(w8[p], w9[p])]
+flat = [LABEL[p].lower() for p in ORDER if ci_overlap(w8[p], w9[p])]
 newest = " and the ".join(moved)
 headline = (f"The monster rules clearly moved the {newest}" + (f"; the {' and the '.join(flat)} " + ("are" if len(flat) > 1 else "is") + " within run-to-run noise." if flat else ".")) if moved else "No win rate moved clearly since the last build: all three players are within run-to-run noise."
 inc = {p: P[p]["outcomes"].get("incomplete-victory", 0) for p in ORDER}
 verdict = f"""
 <p><b>{headline}</b>
-Victory rate, original build → now: informed player {pct(w0['guided'], n)} → <b>{pct(w8['guided'], n)}</b>,
-careful explorer {pct(w0['explorer'], n)} → <b>{pct(w8['explorer'], n)}</b>, random walker {pct(w0['random'], n)} → <b>{pct(w8['random'], n)}</b>.
-Since the previous build (menus rewired, before the monster rules): informed {pct(w7['guided'], n)} → {pct(w8['guided'], n)}, explorer {pct(w7['explorer'], n)} → {pct(w8['explorer'], n)}, random {pct(w7['random'], n)} → {pct(w8['random'], n)}
+Victory rate, original build → now: informed player {pct(w0['guided'], n)} → <b>{pct(w9['guided'], n)}</b>,
+careful explorer {pct(w0['explorer'], n)} → <b>{pct(w9['explorer'], n)}</b>, random walker {pct(w0['random'], n)} → <b>{pct(w9['random'], n)}</b>.
+Since the previous build (monster rules added, groups still fought one at a time): informed {pct(w8['guided'], n)} → {pct(w9['guided'], n)}, explorer {pct(w8['explorer'], n)} → {pct(w9['explorer'], n)}, random {pct(w8['random'], n)} → {pct(w9['random'], n)}
 (a change of about 2.6 points is run-to-run noise).</p>
 <ul>
 <li><b>A new ending now exists:</b> “Incomplete victory” (section 998): {inc['random']:,} random walkers, {inc['explorer']:,} careful explorers and {inc['guided']:,} informed player(s) ended there (before, the 362 chain threw them back into the manor).</li>
@@ -402,7 +403,7 @@ method = f"""
 <li><b>What the bots know:</b> read from <code>CURSE_OF_HOLLOWS_END.sim.json</code>: the informed player goes for the Silver Key, the true name and a magical weapon, then the final door; endings come from each section's own <code>ending</code>.</li>
 <li><b>Limits:</b> bots are not people. Random under-plays (never plans) and the informed bot over-plays (has read the book), so treat them as bounds. Gold is never spent (the book has no shop). Reading text, noticing hints and risk-aversion are not modelled.</li>
 </ul>
-<p class="small">Reproduce: <code>node simulate_playthroughs.js CURSE_OF_HOLLOWS_END.v2.json 1000 simulation-results.json {R['seed']} &amp;&amp; python3 make_simulation_report.py</code>. The earlier builds' results are kept in <code>simulation-results-before.json</code>, <code>-v2.json</code>, <code>-v3.json</code>, <code>-v3b.json</code> (Luck saves), <code>-v4.json</code> (book issues fixed) <code>-v5.json</code> (item rules) <code>-v6.json</code> (hub 388 made safe) and <code>-v7.json</code> (menus rewired).</p>
+<p class="small">Reproduce: <code>node simulate_playthroughs.js CURSE_OF_HOLLOWS_END.v2.json 1000 simulation-results.json {R['seed']} &amp;&amp; python3 make_simulation_report.py</code>. The earlier builds' results are kept in <code>simulation-results-before.json</code>, <code>-v2.json</code>, <code>-v3.json</code>, <code>-v3b.json</code> (Luck saves), <code>-v4.json</code> (book issues fixed) <code>-v5.json</code> (item rules) <code>-v6.json</code> (hub 388 made safe), <code>-v7.json</code> (menus rewired) and <code>-v8.json</code> (monster rules).</p>
 """
 
 cards = "".join(
@@ -455,9 +456,9 @@ table.t{{border-collapse:collapse;width:100%;font-size:.92rem}}.t th,.t td{{padd
 <div class="cards">{cards}</div>
 <div class="verdict">{verdict}</div>
 
-<h2>1 · Nine builds, same players, same seed</h2>
+<h2>1 · Ten builds, same players, same seed</h2>
 <p>{STAGE_TEXT}</p>
-<div class="scroll"><table class="t"><thead><tr><th rowspan="2">Player</th><th colspan="9" class="num">Victory</th><th colspan="9" class="num">Instant death</th><th colspan="9" class="num">Died in combat</th></tr>
+<div class="scroll"><table class="t"><thead><tr><th rowspan="2">Player</th><th colspan="10" class="num">Victory</th><th colspan="10" class="num">Instant death</th><th colspan="10" class="num">Died in combat</th></tr>
 <tr>{''.join('<th class="num">' + name + '</th>' for _ in range(3) for name, _s in STAGES)}</tr></thead><tbody>{compare_rows}</tbody></table></div>
 
 <h2>2 · How the games ended</h2>

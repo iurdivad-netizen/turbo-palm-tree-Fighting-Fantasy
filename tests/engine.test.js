@@ -1225,6 +1225,15 @@ test('a group fights together: you choose whom to attack, the others keep attack
     assert.equal(k.inCombat, true);
 });
 
+test('real book: the zombie and ghoul groups (289, 180) attack together', () => {
+    const b = real();
+    for (const id of [289, 180]) { const c = [].concat(b.sections.find(s => s.id === id).combat); assert.ok(c.length >= 3 && c.every(e => e.together), `section ${id}`); }
+    const g = play(dice(6, 6, 1, 1, 1, 1, 1, 1, 1, 1)); g.goTo(180); g.startCombat();
+    assert.ok(g.combatLog.some(l => l.includes('at the same time')));
+    g.fightRound();
+    assert.equal(g.groupStamina.length, 3, 'a group of three is tracked');
+});
+
 test('real book: the Wight drains your life, the Cult Fanatic casts a spell, the Doppelganger shifts forms', () => {
     const b = real(); const S = id => [].concat(b.sections.find(s => s.id === id).combat)[0];
     assert.equal(S(5).onWound.maxStaminaLoss, 1);
