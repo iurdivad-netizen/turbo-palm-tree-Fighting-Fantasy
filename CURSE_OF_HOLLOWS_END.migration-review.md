@@ -10,9 +10,13 @@ Items for a human to check. The conversion changed no game logic (every destinat
 ## Sections that mix 'Continue' with other labels (check they read clearly): 0
 
 
-## Labels longer than 60 characters: 2
+## Labels longer than 60 characters: 6
 
+- 45 | to-18 | A spectral hand passes through your chest (−3 STAMINA, −1 SKILL for good)
+- 45 | to-55 | A Shadow drains your strength (−1 SKILL, −2 STAMINA for good)
 - 155 | to-236 | Go to the left passage (toward candlelight and ritual chambers)
+- 234 | to-116 | A Shadow drains your life force (−1 SKILL, −2 maximum STAMINA for good)
+- 388 | to-163 | A Shadow saps your vitality (−1 SKILL, −1 maximum STAMINA for good)
 - 395 | to-362 | Face the Widow without the full binding (the incomplete confrontation)
 
 ## Options not referenced in the text (listed under it): combat continuations, rewritten choices: 19

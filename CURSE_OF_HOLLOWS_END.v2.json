@@ -1305,7 +1305,7 @@
       "options": [
         {
           "id": "to-78",
-          "label": "Question him about the undead",
+          "label": "Question the bartender about the undead",
           "target": 78
         },
         {
@@ -1315,112 +1315,112 @@
         },
         {
           "id": "to-203",
-          "label": "Search the tavern more carefully",
+          "label": "Search the tavern: a journal and a bottle",
           "target": 203
         },
         {
           "id": "to-9",
-          "label": "Search behind the bar",
+          "label": "A ghost's wail pierces your skull",
           "target": 9
         },
         {
           "id": "to-11",
-          "label": "Examine the fireplace",
+          "label": "The bartender's eyes go black",
           "target": 11
         },
         {
           "id": "to-18",
-          "label": "Search the cellar",
+          "label": "A spectral hand passes through your chest (−3 STAMINA, −1 SKILL for good)",
           "target": 18
         },
         {
           "id": "to-22",
-          "label": "Look through abandoned belongings",
+          "label": "A Ghoul's paralysing claws",
           "target": 22
         },
         {
           "id": "to-24",
-          "label": "Find a hidden compartment",
+          "label": "The Mayor grows suspicious",
           "target": 24
         },
         {
           "id": "to-31",
-          "label": "Examine strange markings on the wall",
+          "label": "Climb the stone stairs",
           "target": 31
         },
         {
           "id": "to-35",
-          "label": "Search the kitchen",
+          "label": "A storage room: 3 Provisions",
           "target": 35
         },
         {
           "id": "to-38",
-          "label": "Find a locked chest",
+          "label": "Lydia thanks you: the Silver Key",
           "target": 38
         },
         {
           "id": "to-40",
-          "label": "Discover an old journal",
+          "label": "An old journal in shaky handwriting",
           "target": 40
         },
         {
           "id": "to-43",
-          "label": "Find a secret passage",
+          "label": "A hidden laboratory behind a false wall",
           "target": 43
         },
         {
           "id": "to-47",
-          "label": "Try to flee",
+          "label": "Try to flee: you stumble",
           "target": 47
         },
         {
           "id": "to-52",
-          "label": "Rest and regain strength",
+          "label": "A dying cultist's last words",
           "target": 52
         },
         {
           "id": "to-55",
-          "label": "Find provisions",
+          "label": "A Shadow drains your strength (−1 SKILL, −2 STAMINA for good)",
           "target": 55
         },
         {
           "id": "to-61",
-          "label": "Examine a painting",
+          "label": "The ritual chanting grows louder (−1 STAMINA)",
           "target": 61
         },
         {
           "id": "to-66",
-          "label": "Find a map",
+          "label": "Disarm a chest trap: a scroll and 50 gold",
           "target": 66
         },
         {
           "id": "to-70",
-          "label": "Discover a hidden room",
+          "label": "A door sealed with glowing runes",
           "target": 70
         },
         {
           "id": "to-79",
-          "label": "Search for weapons",
+          "label": "Flee before combat begins",
           "target": 79
         },
         {
           "id": "to-84",
-          "label": "Find a diary",
+          "label": "Pick the lock on an iron gate",
           "target": 84
         },
         {
           "id": "to-95",
-          "label": "Examine cult symbols",
+          "label": "A ghost materialises",
           "target": 95
         },
         {
           "id": "to-101",
-          "label": "Find a cultist's robe",
+          "label": "A junction of three passages",
           "target": 101
         },
         {
           "id": "to-110",
-          "label": "Discover a ritual chamber beneath",
+          "label": "A cultist flees ahead",
           "target": 110
         },
         {
@@ -1435,7 +1435,7 @@
         },
         {
           "id": "to-77",
-          "label": "Explore the village streets",
+          "label": "Walk to the edge of the village (dead end)",
           "target": 77
         }
       ]
@@ -2567,72 +2567,72 @@
       "options": [
         {
           "id": "to-119",
-          "label": "Follow a narrow passage",
+          "label": "A cultist sounds the alarm",
           "target": 119
         },
         {
           "id": "to-124",
-          "label": "Investigate a side chamber",
+          "label": "Cross a bridge that groans but holds",
           "target": 124
         },
         {
           "id": "to-126",
-          "label": "Search for hidden doors",
+          "label": "The Zombie lets go of your ankle",
           "target": 126
         },
         {
           "id": "to-202",
-          "label": "Examine strange markings",
+          "label": "A locked iron gate",
           "target": 202
         },
         {
           "id": "to-205",
-          "label": "Find a ritual site",
+          "label": "A trapped corridor, safely passed (+1 LUCK)",
           "target": 205
         },
         {
           "id": "to-206",
-          "label": "Discover a tomb",
+          "label": "A hidden laboratory: the journal and the Widow's name",
           "target": 206
         },
         {
           "id": "to-208",
-          "label": "Explore a flooded section",
+          "label": "A Phantom Servant blocks your path (fight)",
           "target": 208
         },
         {
           "id": "to-211",
-          "label": "Find a collapsed passage",
+          "label": "A Zombie's infected bite (−3 STAMINA)",
           "target": 211
         },
         {
           "id": "to-213",
-          "label": "Investigate echoing sounds",
+          "label": "A secret armory: a +1 Longsword",
           "target": 213
         },
         {
           "id": "to-214",
-          "label": "Search for treasure",
+          "label": "A passage ending in a cave-in (dead end)",
           "target": 214
         },
         {
           "id": "to-216",
-          "label": "Find a skeleton clutching a note",
+          "label": "Darts shoot from the walls",
           "target": 216
         },
         {
           "id": "to-217",
-          "label": "Discover a hidden shrine",
+          "label": "Climb a shaft to the surface",
           "target": 217
         },
         {
           "id": "to-218",
-          "label": "Find a weapon cache",
+          "label": "A Skeleton Warrior guards the passage (fight)",
           "target": 218
         },
         {
           "id": "to-220",
-          "label": "Cross an ancient bridge",
+          "label": "The ancient bridge collapses beneath you",
           "target": 220
         },
         {
@@ -2642,27 +2642,27 @@
         },
         {
           "id": "to-223",
-          "label": "Find a journal entry",
+          "label": "A map of the manor",
           "target": 223
         },
         {
           "id": "to-224",
-          "label": "Discover a blessed fountain",
+          "label": "A passage of tripwires and pressure plates",
           "target": 224
         },
         {
           "id": "to-225",
-          "label": "Find healing supplies",
+          "label": "50 feet of rope on a hook",
           "target": 225
         },
         {
           "id": "to-226",
-          "label": "Locate a secret passage",
+          "label": "A hidden cache: Provisions and 30 gold",
           "target": 226
         },
         {
           "id": "to-227",
-          "label": "Find a protective amulet",
+          "label": "A Phantom Servant materializes (fight)",
           "target": 227
         },
         {
@@ -4459,102 +4459,102 @@
       "options": [
         {
           "id": "to-230",
-          "label": "Search a hidden alcove",
+          "label": "A Shadow emerges from your own shadow (fight)",
           "target": 230
         },
         {
           "id": "to-231",
-          "label": "Find a forgotten armory",
+          "label": "Find your way through a maze of passages",
           "target": 231
         },
         {
           "id": "to-232",
-          "label": "Discover a ritual chamber",
+          "label": "A grand chamber with vaulted ceilings",
           "target": 232
         },
         {
           "id": "to-233",
-          "label": "Find a healing shrine",
+          "label": "A Ghoul leaps from an alcove (fight)",
           "target": 233
         },
         {
           "id": "to-235",
-          "label": "Encounter a sealed door",
+          "label": "A sealed door with glowing runes",
           "target": 235
         },
         {
           "id": "to-238",
-          "label": "Find an alchemist's notes",
+          "label": "A Skeleton Warrior blocks the passage (fight)",
           "target": 238
         },
         {
           "id": "to-239",
-          "label": "Discover a tomb",
+          "label": "A hidden armory: a +1 Mace",
           "target": 239
         },
         {
           "id": "to-240",
-          "label": "Find a silver weapon",
+          "label": "A locked iron door in chains",
           "target": 240
         },
         {
           "id": "to-242",
-          "label": "Encounter a ghost",
+          "label": "A niche with a Potion of Strength",
           "target": 242
         },
         {
           "id": "to-243",
-          "label": "Find a blessed amulet",
+          "label": "A cultist guards the passage (fight)",
           "target": 243
         },
         {
           "id": "to-244",
-          "label": "Discover binding chains",
+          "label": "A well-kept prayer shrine",
           "target": 244
         },
         {
           "id": "to-246",
-          "label": "Fight a phantom servant",
+          "label": "A Phantom Servant materializes (fight)",
           "target": 246
         },
         {
           "id": "to-248",
-          "label": "Encounter a shadow",
+          "label": "A Shadow attacks from the dark (fight)",
           "target": 248
         },
         {
           "id": "to-249",
-          "label": "Find a strength potion",
+          "label": "A trapped corridor, carefully crossed (+1 LUCK)",
           "target": 249
         },
         {
           "id": "to-251",
-          "label": "Discover a map",
+          "label": "A Ghoul attacks from hiding (fight)",
           "target": 251
         },
         {
           "id": "to-253",
-          "label": "Find healing potions",
+          "label": "A passage sloping up to the surface",
           "target": 253
         },
         {
           "id": "to-254",
-          "label": "Encounter a cultist",
+          "label": "A Skeleton Warrior guards the section (fight)",
           "target": 254
         },
         {
           "id": "to-255",
-          "label": "Find a journal",
+          "label": "A hidden cache: a Potion of Healing and 40 gold",
           "target": 255
         },
         {
           "id": "to-256",
-          "label": "Discover a secret passage",
+          "label": "A trapped floor",
           "target": 256
         },
         {
           "id": "to-257",
-          "label": "Find a protective ward",
+          "label": "A cultist attacks (fight)",
           "target": 257
         },
         {
@@ -5542,7 +5542,7 @@
       "options": [
         {
           "id": "to-10",
-          "label": "Search the study",
+          "label": "Sneak past the undead guardians",
           "target": 10
         },
         {
@@ -5555,22 +5555,22 @@
         },
         {
           "id": "to-13",
-          "label": "Search the library",
+          "label": "A reinforced door, something moving behind it",
           "target": 13
         },
         {
           "id": "to-16",
-          "label": "Find the family vault",
+          "label": "Step into a chamber holding up the Cult Medallion",
           "target": 16
         },
         {
           "id": "to-19",
-          "label": "Examine the wine cellar",
+          "label": "The real bartender, bound in the cellar",
           "target": 19
         },
         {
           "id": "to-20",
-          "label": "Search bedrooms",
+          "label": "Cross an ancient, rotten bridge",
           "target": 20
         },
         {
@@ -5583,12 +5583,12 @@
         },
         {
           "id": "to-27",
-          "label": "Discover ancestral journals",
+          "label": "Smash through a door",
           "target": 27
         },
         {
           "id": "to-34",
-          "label": "Search the attic",
+          "label": "A floor that looks too solid",
           "target": 34
         },
         {
@@ -5603,7 +5603,7 @@
         },
         {
           "id": "to-44",
-          "label": "Find old correspondence",
+          "label": "Pick the lock of a chest",
           "target": 44
         },
         {
@@ -5613,52 +5613,52 @@
         },
         {
           "id": "to-53",
-          "label": "Examine the garden",
+          "label": "A passage ending in a cave-in (dead end)",
           "target": 53
         },
         {
           "id": "to-56",
-          "label": "Find a servant's diary",
+          "label": "The Mayor turns suspicious",
           "target": 56
         },
         {
           "id": "to-57",
-          "label": "Discover cult artifacts",
+          "label": "Sneak past a guardian creature",
           "target": 57
         },
         {
           "id": "to-58",
-          "label": "Find weapons cache",
+          "label": "A poison dart from the wall (−4 STAMINA)",
           "target": 58
         },
         {
           "id": "to-62",
-          "label": "Search the kitchen",
+          "label": "A Zombie grabs your ankle (fight)",
           "target": 62
         },
         {
           "id": "to-67",
-          "label": "Find family records",
+          "label": "The cult leader raises his dagger (fight)",
           "target": 67
         },
         {
           "id": "to-71",
-          "label": "Examine a strange mirror",
+          "label": "Sneak closer to the ritual chamber",
           "target": 71
         },
         {
           "id": "to-72",
-          "label": "Find healing supplies",
+          "label": "A potion explodes in your hands (−3 STAMINA)",
           "target": 72
         },
         {
           "id": "to-85",
-          "label": "Discover a secret passage",
+          "label": "A Shadow's brief touch (−1 SKILL for good)",
           "target": 85
         },
         {
           "id": "to-87",
-          "label": "Find an old map",
+          "label": "A pressure plate fires spears",
           "target": 87
         },
         {
@@ -5671,42 +5671,42 @@
         },
         {
           "id": "to-94",
-          "label": "Find a protective amulet",
+          "label": "A captive's journal: the Wight is loose",
           "target": 94
         },
         {
           "id": "to-96",
-          "label": "Discover a sealed letter",
+          "label": "Cross a crumbling bridge over a chasm",
           "target": 96
         },
         {
           "id": "to-98",
-          "label": "Find the original binding notes",
+          "label": "Defeat a cultist: a medallion drops",
           "target": 98
         },
         {
           "id": "to-102",
-          "label": "Examine the family crypt entrance",
+          "label": "Pick through a Skeleton Warrior's bones (a ring, 40 gold)",
           "target": 102
         },
         {
           "id": "to-105",
-          "label": "Find a silver weapon",
+          "label": "A Zombie's infected bite (−3 STAMINA, −1 maximum)",
           "target": 105
         },
         {
           "id": "to-112",
-          "label": "Discover ancestral armor",
+          "label": "Smash the door: Lydia, chained to a pillar",
           "target": 112
         },
         {
           "id": "to-114",
-          "label": "Find a blessing scroll",
+          "label": "A passage blocked by rubble (dead end)",
           "target": 114
         },
         {
           "id": "to-116",
-          "label": "Read about the curse origin",
+          "label": "A Shadow drains your life force (−1 SKILL, −2 maximum STAMINA for good)",
           "target": 116
         },
         {
@@ -5721,7 +5721,7 @@
         },
         {
           "id": "to-77",
-          "label": "Explore the village",
+          "label": "Walk to the edge of the village (dead end)",
           "target": 77
         }
       ],
@@ -7161,82 +7161,82 @@
       "options": [
         {
           "id": "to-289",
-          "label": "Surrounded by Zombies and a Ghoul",
+          "label": "Surrounded by three Zombies and a Ghoul (fight)",
           "target": 289
         },
         {
           "id": "to-282",
-          "label": "Search a mausoleum",
+          "label": "A Skeleton Warrior blocks the passage (fight)",
           "target": 282
         },
         {
           "id": "to-283",
-          "label": "Find a hidden vault",
+          "label": "A blessed shrine (+4 STAMINA, +1 LUCK)",
           "target": 283
         },
         {
           "id": "to-284",
-          "label": "Discover a blessing shrine",
+          "label": "A cultist ambush (fight)",
           "target": 284
         },
         {
           "id": "to-286",
-          "label": "Find a silver weapon",
+          "label": "A Shadow emerges (fight)",
           "target": 286
         },
         {
           "id": "to-287",
-          "label": "Encounter a spectre",
+          "label": "A chasm with no way across",
           "target": 287
         },
         {
           "id": "to-288",
-          "label": "Find healing supplies",
+          "label": "A Phantom Servant materializes (fight)",
           "target": 288
         },
         {
           "id": "to-290",
-          "label": "Discover a journal",
+          "label": "A Potion of Invisibility in an alcove",
           "target": 290
         },
         {
           "id": "to-291",
-          "label": "Find a protective ward",
+          "label": "A Ghoul attacks (fight)",
           "target": 291
         },
         {
           "id": "to-292",
-          "label": "Encounter cultists",
+          "label": "Enter the Spectral Manor proper",
           "target": 292
         },
         {
           "id": "to-293",
-          "label": "Find a ritual chamber",
+          "label": "A Skeleton Warrior guards the entrance (fight)",
           "target": 293
         },
         {
           "id": "to-294",
-          "label": "Discover binding notes",
+          "label": "A hidden room: 50 gold and a Scroll of Protection",
           "target": 294
         },
         {
           "id": "to-295",
-          "label": "Find a strength potion",
+          "label": "A trapped floor",
           "target": 295
         },
         {
           "id": "to-296",
-          "label": "Encounter a ghost",
+          "label": "A cultist attacks (fight)",
           "target": 296
         },
         {
           "id": "to-297",
-          "label": "Find an ancient tomb",
+          "label": "Check that you have everything you need",
           "target": 297
         },
         {
           "id": "to-299",
-          "label": "Find a potion cache",
+          "label": "A Potion of Strength in a niche",
           "target": 299
         },
         {
@@ -8402,157 +8402,157 @@
       "options": [
         {
           "id": "to-306",
-          "label": "Search her jewelry box",
+          "label": "A Shadow ambush (fight 1 of 7)",
           "target": 306
         },
         {
           "id": "to-308",
-          "label": "Follow the sound of chanting",
+          "label": "Chanting echoes through the manor walls (−1 STAMINA)",
           "target": 308
         },
         {
           "id": "to-311",
-          "label": "Encounter a ghoul",
+          "label": "A Ghoul ambush (fight 1 of 7)",
           "target": 311
         },
         {
           "id": "to-314",
-          "label": "Fight a phantom servant",
+          "label": "A Phantom Servant ambush (fight 1 of 7)",
           "target": 314
         },
         {
           "id": "to-324",
-          "label": "Find a hidden compartment",
+          "label": "A Ghoul ambush (fight 2 of 7)",
           "target": 324
         },
         {
           "id": "to-327",
-          "label": "Discover a love letter from Thomas",
+          "label": "A Shadow ambush (fight 2 of 7)",
           "target": 327
         },
         {
           "id": "to-329",
-          "label": "Find a protective charm",
+          "label": "A Phantom Servant ambush (fight 2 of 7)",
           "target": 329
         },
         {
           "id": "to-330",
-          "label": "Discover a blessed mirror",
+          "label": "A secret armory: a Silver Dagger",
           "target": 330
         },
         {
           "id": "to-331",
-          "label": "Find a journal about the wedding",
+          "label": "A Skeleton Warrior ambush (fight 1 of 6)",
           "target": 331
         },
         {
           "id": "to-333",
-          "label": "Encounter another ghoul",
+          "label": "A Ghoul ambush (fight 3 of 7)",
           "target": 333
         },
         {
           "id": "to-338",
-          "label": "Find a silver hairpin (weapon)",
+          "label": "A Phantom Servant ambush (fight 3 of 7)",
           "target": 338
         },
         {
           "id": "to-340",
-          "label": "Discover a secret passage",
+          "label": "A Skeleton Warrior ambush (fight 2 of 6)",
           "target": 340
         },
         {
           "id": "to-342",
-          "label": "Fight a ghoul",
+          "label": "A Ghoul ambush (fight 4 of 7)",
           "target": 342
         },
         {
           "id": "to-344",
-          "label": "Encounter a shadow",
+          "label": "A Shadow ambush (fight 3 of 7)",
           "target": 344
         },
         {
           "id": "to-347",
-          "label": "Find a healing potion",
+          "label": "A Phantom Servant ambush (fight 4 of 7)",
           "target": 347
         },
         {
           "id": "to-349",
-          "label": "Discover Eliza's wedding vows",
+          "label": "A Skeleton Warrior ambush (fight 3 of 6)",
           "target": 349
         },
         {
           "id": "to-352",
-          "label": "Find a strength potion",
+          "label": "A Shadow ambush (fight 4 of 7)",
           "target": 352
         },
         {
           "id": "to-354",
-          "label": "Discover a blessing scroll",
+          "label": "A Phantom Servant ambush (fight 5 of 7)",
           "target": 354
         },
         {
           "id": "to-356",
-          "label": "Fight a skeleton warrior",
+          "label": "A Skeleton Warrior ambush (fight 4 of 6)",
           "target": 356
         },
         {
           "id": "to-358",
-          "label": "Find a protective amulet",
+          "label": "A Ghoul ambush (fight 5 of 7)",
           "target": 358
         },
         {
           "id": "to-359",
-          "label": "Discover a ghost",
+          "label": "A journal with the final preparations for the ritual",
           "target": 359
         },
         {
           "id": "to-360",
-          "label": "Find the wedding guest list",
+          "label": "A Shadow ambush (fight 5 of 7)",
           "target": 360
         },
         {
           "id": "to-363",
-          "label": "Discover a hidden diary",
+          "label": "A Phantom Servant ambush (fight 6 of 7)",
           "target": 363
         },
         {
           "id": "to-365",
-          "label": "Find a silver ring",
+          "label": "A Skeleton Warrior ambush (fight 5 of 6)",
           "target": 365
         },
         {
           "id": "to-367",
-          "label": "Encounter a specter",
+          "label": "A Ghoul ambush (fight 6 of 7)",
           "target": 367
         },
         {
           "id": "to-369",
-          "label": "Find healing supplies",
+          "label": "A Shadow ambush (fight 6 of 7)",
           "target": 369
         },
         {
           "id": "to-371",
-          "label": "Discover binding instructions",
+          "label": "A Phantom Servant ambush (fight 7 of 7)",
           "target": 371
         },
         {
           "id": "to-372",
-          "label": "Find a luck charm",
+          "label": "A cache of gold (75 gold)",
           "target": 372
         },
         {
           "id": "to-373",
-          "label": "Discover a map",
+          "label": "A Skeleton Warrior ambush (fight 6 of 6)",
           "target": 373
         },
         {
           "id": "to-376",
-          "label": "Find final preparations",
+          "label": "A Ghoul ambush (fight 7 of 7)",
           "target": 376
         },
         {
           "id": "to-379",
-          "label": "Fight a shadow",
+          "label": "A Shadow ambush (fight 7 of 7)",
           "target": 379
         },
         {
@@ -9736,177 +9736,177 @@
       "options": [
         {
           "id": "to-137",
-          "label": "Search for additional healing supplies",
+          "label": "Climb a slippery shaft upward",
           "target": 137
         },
         {
           "id": "to-138",
-          "label": "Find a hidden weapon cache",
+          "label": "A passage strung with tripwires",
           "target": 138
         },
         {
           "id": "to-140",
-          "label": "Discover a protective ward",
+          "label": "A Shadow drains your essence (−1 SKILL for good)",
           "target": 140
         },
         {
           "id": "to-146",
-          "label": "Find a strength potion",
+          "label": "Sit at the bar and play it cool",
           "target": 146
         },
         {
           "id": "to-147",
-          "label": "Locate a luck charm",
+          "label": "A locked chest",
           "target": 147
         },
         {
           "id": "to-148",
-          "label": "Discover a journal about fighting spirits",
+          "label": "A Ghoul's paralysing claws",
           "target": 148
         },
         {
           "id": "to-150",
-          "label": "Find silver ammunition",
+          "label": "A floor that looks solid (danger)",
           "target": 150
         },
         {
           "id": "to-153",
-          "label": "Search for a shield",
+          "label": "Hide from approaching cultists",
           "target": 153
         },
         {
           "id": "to-157",
-          "label": "Find a cloak of shadows",
+          "label": "A heavily locked door",
           "target": 157
         },
         {
           "id": "to-160",
-          "label": "Discover boots of speed",
+          "label": "Cross a crumbling bridge",
           "target": 160
         },
         {
           "id": "to-161",
-          "label": "Find a ring of protection",
+          "label": "Search a dead cultist: a note",
           "target": 161
         },
         {
           "id": "to-163",
-          "label": "Locate a blessed weapon",
+          "label": "A Shadow saps your vitality (−1 SKILL, −1 maximum STAMINA for good)",
           "target": 163
         },
         {
           "id": "to-167",
-          "label": "Find gauntlets of strength",
+          "label": "The floor gives way: a spike pit",
           "target": 167
         },
         {
           "id": "to-168",
-          "label": "Discover a helm of clarity",
+          "label": "Pick a lock to a staircase up",
           "target": 168
         },
         {
           "id": "to-169",
-          "label": "Find an amulet of life",
+          "label": "A Ghoul leaps from the shadows (fight)",
           "target": 169
         },
         {
           "id": "to-170",
-          "label": "Search for final provisions",
+          "label": "Find Lydia, chained to a pillar",
           "target": 170
         },
         {
           "id": "to-179",
-          "label": "Find a scroll of banishment",
+          "label": "A Phantom Servant appears (fight)",
           "target": 179
         },
         {
           "id": "to-181",
-          "label": "Discover a potion of invulnerability",
+          "label": "The bridge snaps beneath you",
           "target": 181
         },
         {
           "id": "to-183",
-          "label": "Find holy water",
+          "label": "A sheer cliff edge",
           "target": 183
         },
         {
           "id": "to-185",
-          "label": "Locate silver dust",
+          "label": "A Shadow in the dark (fight)",
           "target": 185
         },
         {
           "id": "to-186",
-          "label": "Find a prayer of protection",
+          "label": "Sneak past praying cultists",
           "target": 186
         },
         {
           "id": "to-187",
-          "label": "Discover binding chains",
+          "label": "A trapped door",
           "target": 187
         },
         {
           "id": "to-193",
-          "label": "Find a ghost-speaking amulet",
+          "label": "Search a fallen cultist: a medallion",
           "target": 193
         },
         {
           "id": "to-194",
-          "label": "Locate a spirit trap",
+          "label": "Behind the bar: a ledger (and a fight)",
           "target": 194
         },
         {
           "id": "to-197",
-          "label": "Find a soul anchor",
+          "label": "A Skeleton Warrior attacks (fight)",
           "target": 197
         },
         {
           "id": "to-199",
-          "label": "Discover final secrets",
+          "label": "The floor gives way beneath you",
           "target": 199
         },
         {
           "id": "to-381",
-          "label": "Pray at a shrine",
+          "label": "A Phantom Servant blocks the final passage (fight)",
           "target": 381
         },
         {
           "id": "to-382",
-          "label": "Rest before battle",
+          "label": "A dead adventurer's last journal (+1 LUCK)",
           "target": 382
         },
         {
           "id": "to-383",
-          "label": "Sharpen your weapons",
+          "label": "A Skeleton Warrior guards the way (fight)",
           "target": 383
         },
         {
           "id": "to-384",
-          "label": "Review combat tactics",
+          "label": "A Potion of Luck",
           "target": 384
         },
         {
           "id": "to-385",
-          "label": "Meditate for clarity",
+          "label": "A Ghoul, the last guardian (fight)",
           "target": 385
         },
         {
           "id": "to-386",
-          "label": "Check your equipment",
+          "label": "Thomas Ashford's ghost (+2 LUCK)",
           "target": 386
         },
         {
           "id": "to-387",
-          "label": "Say a final prayer",
+          "label": "A Shadow attacks (fight)",
           "target": 387
         },
         {
           "id": "to-389",
-          "label": "Face a guardian spirit",
+          "label": "A Phantom Servant materializes (fight)",
           "target": 389
         },
         {
           "id": "to-390",
-          "label": "Find a healing fountain",
+          "label": "A healing fountain (STAMINA and LUCK restored)",
           "target": 390
         },
         {
