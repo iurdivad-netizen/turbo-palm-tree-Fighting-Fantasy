@@ -221,6 +221,10 @@ The app's core already follows the Fighting Fantasy books (2d6 + SKILL combat, 2
 
 Not done from the Fighting Fantasy list: special attacks and monster rules beyond what the engine already has, and stat-test options ("Test your Skill") as a separate roll kind.
 
+## Leaving the manor
+
+A player reported that once in the Spectral Manor there was no way out. True: the manor menus (301 entrance hall, 335, 355, 378, 341) linked only to each other, and the single way out was the preparation room 388, reached through 378 or 341 and not signposted. The entrance hall 301 now offers "Leave the manor: back down to the catacombs" (155) and "back out to the cemetery" (127); the cemetery menu 127 also gained the graves (180) and the cemetery path (298), which had no way back. `check_option_coherence.py` now lists *one-way doors* (a menu you can enter but need 4 or more moves to leave again): none remain. Effect on the simulated players: the careful explorer, which had been stuck in the manor, rose from 3.4% to 8.1% wins; the informed player was unchanged.
+
 ## Monster rules
 
 The special attacks and monster rules of the Fighting Fantasy books that the engine lacked were added as optional enemy fields (see `AUTHORING.md`, Monster rules): `damage`, `ignoresArmor`, `attackDice`, `strikesFirst`, `tiesWound`, `regenerates`, `spell`, `onHurt`, more `onWound` effects (`maxStaminaLoss`, `staminaLoss`, `luckLoss`), `maxRounds` with `onTimeoutSection`, and `together` for groups that fight at the same time (you choose the target; the others keep rolling against your attack). The engine's round was reorganised around a shared "wound the player" step; dice are asked for in the same order as before whenever none of the new fields is used, which the unchanged simulation fingerprint of the books without them confirms.

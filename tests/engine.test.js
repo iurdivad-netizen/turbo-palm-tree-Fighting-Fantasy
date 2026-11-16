@@ -1240,3 +1240,13 @@ test('real book: the Wight drains your life, the Cult Fanatic casts a spell, the
     assert.deepEqual(S(67).spell.on, [5, 6]);
     for (const id of [78, 194]) assert.equal(S(id).onHurt.luckTest, true);
 });
+
+test('real book: you can walk out of the manor again - the entrance hall leads back to the catacombs and the cemetery', () => {
+    const b = real(); const S = id => b.sections.find(s => s.id === id);
+    const lasting = h => S(h).options.filter(o => !o.vanishes).map(o => o.target);
+    assert.ok(lasting(301).includes(155) && lasting(301).includes(127), 'leave the manor from its entrance hall');
+    // from every manor menu the outside is at most two moves away
+    const manor = [301, 335, 355, 378, 341, 388];
+    const outside = h => lasting(h).some(t => !manor.includes(t));
+    for (const h of manor) assert.ok(outside(h) || lasting(h).some(t => manor.includes(t) && outside(t)), `menu ${h}: a way out within two moves`);
+});
