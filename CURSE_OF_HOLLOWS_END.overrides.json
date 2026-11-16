@@ -872,7 +872,9 @@
     "301": {
       "to-137": "Climb a slippery shaft upward",
       "to-147": "A locked chest",
-      "to-168": "Pick a lock to a staircase up"
+      "to-168": "Pick a lock to a staircase up",
+      "to-155": "Leave the manor: back down to the catacombs",
+      "to-127": "Leave the manor: back out to the cemetery"
     },
     "303": {
       "to-335": "Back to the ballroom"
@@ -1145,6 +1147,10 @@
     },
     "389": {
       "to-355": "Back to the upper hall"
+    },
+    "127": {
+      "to-298": "Go on along the cemetery path",
+      "to-180": "Go on to the graves"
     }
   },
   "text": {

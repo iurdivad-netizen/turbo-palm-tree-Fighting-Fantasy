@@ -1,6 +1,6 @@
 # Migration review: CURSE_OF_HOLLOWS_END.json -> CURSE_OF_HOLLOWS_END.v2.json
 
-396 sections, 788 options, 34 labelled just 'Continue'.
+396 sections, 792 options, 34 labelled just 'Continue'.
 
 Items for a human to check. The conversion changed no game logic (every destination, condition, effect, roll and combat is identical to v1); the only flags dropped are 'ending' marks on sections that still lead somewhere (listed below). Run check_v2_equivalence.py to prove it.
 

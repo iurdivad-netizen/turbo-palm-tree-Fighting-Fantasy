@@ -79,6 +79,36 @@ print("menu  options  label shares a word with its destination   'find' labels t
 for share, h, n, sh, fl, fk, fd, fg, back in sorted(rows):
     flag = "  <-- labels do not describe where they lead" if share < 0.4 else ""
     print(f"{h:>4}  {n:>7}  {sh:>5} of {n:<3} ({100 * share:>3.0f}%)                        {fg:>3} of {fd:<3}                         {back:>3} of {n:<3}{flag}")
+# ---- one-way doors: a menu you can walk into but not directly back out of
+big = {h for h, s in S.items() if len(s.get("options") or []) >= MIN}
+lasting = {h: {o["target"] for o in S[h]["options"] if not o.get("vanishes") and o["target"] in big} for h in big}
+
+
+def back_moves(a, b):
+    """Fewest lasting moves from a to b (None if you can never get there)."""
+    seen, todo = {a: 0}, [a]
+    while todo:
+        x = todo.pop(0)
+        for y in sorted(lasting[x]):
+            if y not in seen:
+                seen[y] = seen[x] + 1
+                todo.append(y)
+    return seen.get(b)
+
+
+doors = []
+for a in sorted(big):
+    for b in sorted(lasting[a]):
+        if a not in lasting[b]:
+            n_back = back_moves(b, a)
+            if n_back is None or n_back >= 4:
+                doors.append((a, b, n_back))
+if doors:
+    print("\nOne-way doors (a menu leads to another and it takes 4 or more moves to come back):")
+    for a, b, n_back in doors:
+        print(f"  {a} -> {b}: " + ("no way back at all" if n_back is None else f"{n_back} moves back"))
+else:
+    print("\nNo one-way doors: every menu you can walk into can be left again within 3 moves.")
 if tot["n"]:
     print(f"\nall menus: {100 * tot['share'] / tot['n']:.0f}% of labels share a word with their destination; "
           f"{tot['fg']} of {tot['fd']} 'find' labels lead to a place that gives something; "

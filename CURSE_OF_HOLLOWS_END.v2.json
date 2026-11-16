@@ -3017,7 +3017,7 @@
     },
     {
       "id": 127,
-      "text": "You enter the cemetery through the twisted gates, and immediately the mist swirls up around your ankles like grasping fingers. The crooked gravestones lean at odd angles, as if the earth itself is rejecting them, trying to push them up and out.\n\nFresh earth marks three recently opened graves. The coffins have been torn open from the inside, their occupants missing—risen and walking, no doubt. Everywhere you look, you see signs of desecration and unnatural activity.\n\nThen you hear it—a low moaning that makes your skin crawl. The sound of the hungry dead.\n\n{{roll}}\n\nAfter dealing with the immediate threat, you can explore the cemetery:\n\n{{opt:to-21}}\n{{opt:to-46}}\n{{opt:to-69}}\n{{opt:to-117}}\n{{opt:to-128}}\n{{opt:to-129}}\n{{opt:to-130}}\n{{opt:to-131}}\n{{opt:to-132}}\n{{opt:to-133}}\n{{opt:to-144}}\n{{opt:to-237}}\n{{opt:to-272}}\n\nMain destinations:\n\n{{opt:to-155}}\n{{opt:to-234}}\n{{opt:to-45}}",
+      "text": "You enter the cemetery through the twisted gates, and immediately the mist swirls up around your ankles like grasping fingers. The crooked gravestones lean at odd angles, as if the earth itself is rejecting them, trying to push them up and out.\n\nFresh earth marks three recently opened graves. The coffins have been torn open from the inside, their occupants missing—risen and walking, no doubt. Everywhere you look, you see signs of desecration and unnatural activity.\n\nThen you hear it—a low moaning that makes your skin crawl. The sound of the hungry dead.\n\n{{roll}}\n\nAfter dealing with the immediate threat, you can explore the cemetery:\n\n{{opt:to-21}}\n{{opt:to-46}}\n{{opt:to-69}}\n{{opt:to-117}}\n{{opt:to-128}}\n{{opt:to-129}}\n{{opt:to-130}}\n{{opt:to-131}}\n{{opt:to-132}}\n{{opt:to-133}}\n{{opt:to-144}}\n{{opt:to-237}}\n{{opt:to-272}}\n\nMain destinations:\n\n{{opt:to-155}}\n{{opt:to-234}}\n{{opt:to-45}}\n{{opt:to-298}}\n{{opt:to-180}}",
       "options": [
         {
           "id": "to-21",
@@ -3113,6 +3113,16 @@
           "id": "to-45",
           "label": "Go back to the tavern",
           "target": 45
+        },
+        {
+          "id": "to-298",
+          "label": "Go on along the cemetery path",
+          "target": 298
+        },
+        {
+          "id": "to-180",
+          "label": "Go on to the graves",
+          "target": 180
         }
       ],
       "roll": {
@@ -7685,7 +7695,7 @@
     },
     {
       "id": 301,
-      "text": "You step into the Spectral Manor, and the atmosphere changes immediately. The air is thick, heavy, oppressive—not just physically but spiritually, as if the very essence of death and despair has saturated every stone, every beam, every inch of this cursed place.\n\nThe manor exists in a state between worlds. The walls shimmer and phase, sometimes solid stone and wood, sometimes translucent and ghostly. Through the transparent sections, you can see into other rooms, other times—memories playing out like theatrical performances trapped in amber.\n\nThe temperature fluctuates wildly. One moment, you're shivering in bone-deep cold. The next, you feel phantom warmth from fires that burned centuries ago. Shadows move independently of their sources. Sounds echo from empty rooms—footsteps, voices, crying, laughter, screaming.\n\nThis is the heart of the curse. This is where Eliza Hollow was murdered. This is where her rage has festered for 242 years. The grand entrance hall stretches before you, its once-magnificent architecture now corrupted by supernatural malevolence.\n\n{{roll}}\n\nAfter resolving the encounter, you may explore the manor. Several paths lie open:\n\nMain Areas:\n\n{{opt:to-335}}\n{{opt:to-355}}\n{{opt:to-378}}\n\nAdditional Rooms to Search:\n\n{{opt:to-307}}\n{{opt:to-315}}\n{{opt:to-318}}\n{{opt:to-326}}\n{{opt:to-332}}\n{{opt:to-339}}\n{{opt:to-345}}\n{{opt:to-350}}\n{{opt:to-366}}\n{{opt:to-375}}",
+      "text": "You step into the Spectral Manor, and the atmosphere changes immediately. The air is thick, heavy, oppressive—not just physically but spiritually, as if the very essence of death and despair has saturated every stone, every beam, every inch of this cursed place.\n\nThe manor exists in a state between worlds. The walls shimmer and phase, sometimes solid stone and wood, sometimes translucent and ghostly. Through the transparent sections, you can see into other rooms, other times—memories playing out like theatrical performances trapped in amber.\n\nThe temperature fluctuates wildly. One moment, you're shivering in bone-deep cold. The next, you feel phantom warmth from fires that burned centuries ago. Shadows move independently of their sources. Sounds echo from empty rooms—footsteps, voices, crying, laughter, screaming.\n\nThis is the heart of the curse. This is where Eliza Hollow was murdered. This is where her rage has festered for 242 years. The grand entrance hall stretches before you, its once-magnificent architecture now corrupted by supernatural malevolence.\n\n{{roll}}\n\nAfter resolving the encounter, you may explore the manor. Several paths lie open:\n\nMain Areas:\n\n{{opt:to-335}}\n{{opt:to-355}}\n{{opt:to-378}}\n\nAdditional Rooms to Search:\n\n{{opt:to-307}}\n{{opt:to-315}}\n{{opt:to-318}}\n{{opt:to-326}}\n{{opt:to-332}}\n{{opt:to-339}}\n{{opt:to-345}}\n{{opt:to-350}}\n{{opt:to-366}}\n{{opt:to-375}}\n{{opt:to-155}}\n{{opt:to-127}}",
       "options": [
         {
           "id": "to-335",
@@ -7779,6 +7789,16 @@
           "label": "Pick a lock to a staircase up",
           "target": 168,
           "vanishes": true
+        },
+        {
+          "id": "to-155",
+          "label": "Leave the manor: back down to the catacombs",
+          "target": 155
+        },
+        {
+          "id": "to-127",
+          "label": "Leave the manor: back out to the cemetery",
+          "target": 127
         }
       ],
       "roll": {
